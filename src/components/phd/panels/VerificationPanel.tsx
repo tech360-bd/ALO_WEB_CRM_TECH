@@ -225,7 +225,7 @@ export default function VerificationPanel() {
                     {evidence.sourceAuthority.replace(/_/g, ' ').toLowerCase()}
                   </a>
                 ) : (
-                  <span key={`${evidence.id}-nosource`} className="text-[11px] text-amber-700">
+                  <span key={`${evidence.id}-nosource`} className="text-[11px] text-crm-warning-text">
                     no source recorded
                   </span>
                 ),
@@ -259,7 +259,7 @@ export default function VerificationPanel() {
             </div>
           </>
         )}
-        {actionError && <p className="mt-3 text-xs text-red-700">{actionError}</p>}
+        {actionError && <p className="mt-3 text-xs text-crm-danger-text">{actionError}</p>}
       </Card>
 
       <Card

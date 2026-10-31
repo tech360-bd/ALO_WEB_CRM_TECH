@@ -159,19 +159,19 @@ export default function VisaOfficerDashboard() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <h1 className="text-xl font-bold text-[var(--alo-text)]">Welcome back, {officerName}</h1>
-            <Badge className="bg-indigo-100 text-indigo-800 border-indigo-200 font-mono text-xs">
+            <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] font-mono text-xs">
               VISA_INTERVIEW_OFFICER
             </Badge>
-            <Badge className="bg-emerald-50 text-emerald-700 text-[11px]">RBAC Protected</Badge>
+            <Badge className="bg-crm-success-bg text-crm-success-text text-[11px]">RBAC Protected</Badge>
           </div>
           <p className="text-xs text-[var(--alo-text-muted)] flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-1.5"><CalendarClock className="size-3.5 text-[var(--alo-text-muted)]" />Interview Queue: <strong className="text-[var(--alo-body)]">{interviewQueueCount}</strong></span>
             <span>•</span>
-            <span className="inline-flex items-center gap-1.5"><TriangleAlert className="size-3.5 text-[var(--alo-text-muted)]" />High-Risk Cases: <strong className="text-rose-600">{highRiskCount ?? 'Restricted'}</strong></span>
+            <span className="inline-flex items-center gap-1.5"><TriangleAlert className="size-3.5 text-[var(--alo-text-muted)]" />High-Risk Cases: <strong className="text-crm-warning-text">{highRiskCount ?? 'Restricted'}</strong></span>
             <span>•</span>
-            <span className="inline-flex items-center gap-1.5"><FolderClock className="size-3.5 text-[var(--alo-text-muted)]" />Pending Docs: <strong className="text-amber-600">{docsPendingCount}</strong></span>
+            <span className="inline-flex items-center gap-1.5"><FolderClock className="size-3.5 text-[var(--alo-text-muted)]" />Pending Docs: <strong className="text-crm-warning-text">{docsPendingCount}</strong></span>
             <span>•</span>
-            <span className="inline-flex items-center gap-1.5"><UserRoundCheck className="size-3.5 text-[var(--alo-text-muted)]" />Human follow-up: <strong className="text-indigo-600">{metrics.interviewsNeedingHumanFollowUp ?? '—'}</strong></span>
+            <span className="inline-flex items-center gap-1.5"><UserRoundCheck className="size-3.5 text-[var(--alo-text-muted)]" />Human follow-up: <strong className="text-[var(--alo-brand)]">{metrics.interviewsNeedingHumanFollowUp ?? '—'}</strong></span>
           </p>
         </div>
 
@@ -179,7 +179,7 @@ export default function VisaOfficerDashboard() {
           <Button variant="outline" size="sm" className=" " onClick={() => router.push('/employee/visa-cases')}>
             <Eye className="w-3.5 h-3.5 mr-1" /> View Visa Cases
           </Button>
-          <Button size="sm" className=" bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => router.push('/employee/visa-interviews')}>
+          <Button size="sm" className=" bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)] text-white" onClick={() => router.push('/employee/visa-interviews')}>
             <Play className="w-3.5 h-3.5 mr-1" /> Start Interview
           </Button>
           <Button variant="outline" size="sm" className=" " onClick={loadDashboardData}>
@@ -200,7 +200,7 @@ export default function VisaOfficerDashboard() {
               <p className="text-2xl font-bold text-[var(--alo-text)] mt-1">{metricsLoading ? '...' : totalAssigned}</p>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">{totalAssigned === 0 ? 'No cases — empty state' : 'Live count'}</p>
             </div>
-            <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><UserCheck className="w-5 h-5" /></div>
+            <div className="w-9 h-9 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><UserCheck className="w-5 h-5" /></div>
           </CardContent>
         </Card>
 
@@ -211,7 +211,7 @@ export default function VisaOfficerDashboard() {
               <p className="text-2xl font-bold text-[var(--alo-text)] mt-1">{metricsLoading ? '...' : interviewQueueCount}</p>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">API: /api/visa/dashboard</p>
             </div>
-            <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><Clock className="w-5 h-5" /></div>
+            <div className="w-9 h-9 rounded-lg bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><Clock className="w-5 h-5" /></div>
           </CardContent>
         </Card>
 
@@ -219,10 +219,10 @@ export default function VisaOfficerDashboard() {
           <CardContent className="p-4 flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-[var(--alo-text-muted)]">High-Risk Students</p>
-              <p className="text-2xl font-bold text-rose-600 mt-1">{metricsLoading ? '...' : (highRiskCount ?? 'Restricted')}</p>
-              <p className="text-[11px] text-rose-500 mt-0.5">Requires senior review</p>
+              <p className="text-2xl font-bold text-crm-warning-text mt-1">{metricsLoading ? '...' : (highRiskCount ?? 'Restricted')}</p>
+              <p className="text-[11px] text-crm-warning-text mt-0.5">Requires senior review</p>
             </div>
-            <div className="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center"><ShieldAlert className="w-5 h-5" /></div>
+            <div className="w-9 h-9 rounded-lg bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><ShieldAlert className="w-5 h-5" /></div>
           </CardContent>
         </Card>
 
@@ -241,10 +241,10 @@ export default function VisaOfficerDashboard() {
           <CardContent className="p-4 flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-[var(--alo-text-muted)]">Human Follow-up</p>
-              <p className="text-2xl font-bold text-indigo-600 mt-1">{metricsLoading ? '...' : (metrics.interviewsNeedingHumanFollowUp ?? '—')}</p>
+              <p className="text-2xl font-bold text-[var(--alo-brand)] mt-1">{metricsLoading ? '...' : (metrics.interviewsNeedingHumanFollowUp ?? '—')}</p>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">Recorded officer follow-up state</p>
             </div>
-            <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><Award className="w-5 h-5" /></div>
+            <div className="w-9 h-9 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><Award className="w-5 h-5" /></div>
           </CardContent>
         </Card>
 
@@ -252,10 +252,10 @@ export default function VisaOfficerDashboard() {
           <CardContent className="p-4 flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-[var(--alo-text-muted)]">Funding Reviews Pending</p>
-              <p className="text-2xl font-bold text-amber-600 mt-1">{metrics.financialReview?.fundingReviewsPendingHumanReview ?? '—'}</p>
+              <p className="text-2xl font-bold text-crm-warning-text mt-1">{metrics.financialReview?.fundingReviewsPendingHumanReview ?? '—'}</p>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">Recorded internal reviews</p>
             </div>
-            <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><AlertTriangle className="w-5 h-5" /></div>
+            <div className="w-9 h-9 rounded-lg bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><AlertTriangle className="w-5 h-5" /></div>
           </CardContent>
         </Card>
 
@@ -266,7 +266,7 @@ export default function VisaOfficerDashboard() {
               <p className="text-2xl font-bold text-[var(--alo-text)] mt-1">{metrics.refusalHistory?.casesWithPriorRefusal ?? '—'}</p>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">Recorded restricted review count</p>
             </div>
-            <div className="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center"><XCircle className="w-5 h-5" /></div>
+            <div className="w-9 h-9 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><XCircle className="w-5 h-5" /></div>
           </CardContent>
         </Card>
 
@@ -277,7 +277,7 @@ export default function VisaOfficerDashboard() {
               <p className="text-2xl font-bold text-[var(--alo-text)] mt-1">{metrics.counselorHandover?.pendingActions ?? '—'}</p>
               <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">Open tasks assigned for handover</p>
             </div>
-            <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><PhoneCall className="w-5 h-5" /></div>
+            <div className="w-9 h-9 rounded-lg bg-crm-success-bg text-crm-success-text flex items-center justify-center"><PhoneCall className="w-5 h-5" /></div>
           </CardContent>
         </Card>
       </div>
@@ -306,7 +306,7 @@ export default function VisaOfficerDashboard() {
                   return counts;
                 }, {})).map(([stage, count]) => (
                   <div key={stage} className="shrink-0 bg-[var(--alo-surface-muted)]/80 border px-3 py-1.5 rounded-lg text-center min-w-[110px]">
-                    <span className="text-[11px] font-bold text-indigo-600 block">{count} case{count === 1 ? '' : 's'}</span>
+                    <span className="text-[11px] font-bold text-[var(--alo-brand)] block">{count} case{count === 1 ? '' : 's'}</span>
                     <span className="text-[11px] font-semibold text-[var(--alo-text)] line-clamp-1">{stage.replace(/_/g, ' ')}</span>
                   </div>
                 ))}
@@ -352,13 +352,13 @@ export default function VisaOfficerDashboard() {
                     filteredCases.map(item => (
                       <TableRow key={item.id} className="hover:bg-[var(--alo-page)]/80">
                         <TableCell><div><span className="text-xs font-bold block">{item.studentName}</span><span className="text-[11px] text-[var(--alo-text-muted)] font-mono">ID: {item.studentId} • {item.caseCode}</span></div></TableCell>
-                        <TableCell><div className="flex items-center gap-1 text-xs"><Globe className="w-3.5 h-3.5 text-indigo-600" />{item.destinationCountry}</div></TableCell>
+                        <TableCell><div className="flex items-center gap-1 text-xs"><Globe className="w-3.5 h-3.5 text-[var(--alo-brand)]" />{item.destinationCountry}</div></TableCell>
                         <TableCell><div><span className="text-xs font-medium block truncate max-w-[160px]">{item.university}</span><span className="text-[11px] text-[var(--alo-text-muted)] truncate max-w-[160px] block">{item.course}</span></div></TableCell>
-                        <TableCell><Badge variant="outline" className="text-[11px] bg-indigo-50 text-indigo-700 border-indigo-200">{item.currentStage}</Badge></TableCell>
-                        <TableCell><Badge className={`text-[11px] px-2 py-0.5 border ${['high', 'critical'].includes(String(item.riskLevel).toLowerCase()) ? 'bg-rose-50 text-rose-700 border-rose-200' : item.riskLevel === 'medium' ? 'bg-amber-50 text-amber-700 border-amber-200' : item.riskLevel === 'low' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]'}`}>{item.riskLevel ? String(item.riskLevel).replaceAll('_', ' ').toUpperCase() : 'RESTRICTED / NOT ASSESSED'}</Badge></TableCell>
+                        <TableCell><Badge variant="outline" className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]">{item.currentStage}</Badge></TableCell>
+                        <TableCell><Badge className={`text-[11px] px-2 py-0.5 border ${['high', 'critical'].includes(String(item.riskLevel).toLowerCase()) ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' : item.riskLevel === 'medium' ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' : item.riskLevel === 'low' ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]'}`}>{item.riskLevel ? String(item.riskLevel).replaceAll('_', ' ').toUpperCase() : 'RESTRICTED / NOT ASSESSED'}</Badge></TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <Button size="sm" variant="ghost" className="h-7 text-indigo-600 hover:bg-indigo-50" onClick={() => { setSelectedCase(item); router.push(`/employee/visa-interviews/${encodeURIComponent(item.id)}`); }}><Play className="w-3.5 h-3.5 mr-1" /> Interview</Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]" onClick={() => { setSelectedCase(item); router.push(`/employee/visa-interviews/${encodeURIComponent(item.id)}`); }}><Play className="w-3.5 h-3.5 mr-1" /> Interview</Button>
                             <Button size="sm" variant="ghost" className="h-7 " onClick={() => { setSelectedCase(item); setStudentFeedbackModalOpen(true); }}><Send className="w-3.5 h-3.5 mr-1" /> Feedback</Button>
                           </div>
                         </TableCell>
@@ -372,9 +372,9 @@ export default function VisaOfficerDashboard() {
         </div>
 
         <div className="lg:col-span-4 space-y-6">
-          <Card className="bg-white border-rose-200">
-            <CardHeader className="pb-3 border-b border-rose-100 bg-rose-50/40">
-              <div className="flex items-center gap-2"><ShieldAlert className="w-4 h-4 text-rose-600" /><CardTitle className="text-sm font-bold text-rose-900">Risk Flags — Real Data</CardTitle></div>
+          <Card className="bg-white border-crm-warning-border">
+            <CardHeader className="pb-3 border-b border-crm-warning-border bg-crm-warning-bg/40">
+              <div className="flex items-center gap-2"><ShieldAlert className="w-4 h-4 text-crm-warning-text" /><CardTitle className="text-sm font-bold text-crm-warning-text">Risk Flags — Real Data</CardTitle></div>
             </CardHeader>
             <CardContent className="p-4 space-y-3">
               {highRiskCount === null ? (
@@ -383,8 +383,8 @@ export default function VisaOfficerDashboard() {
                 <div className="text-xs text-[var(--alo-text-muted)] p-3 text-center border-dashed border rounded-lg">No high-risk cases — empty state — no fake</div>
               ) : (
                 cases.filter(c => c.riskLevel === 'high' || c.riskLevel === 'critical').slice(0,3).map(c => (
-                  <div key={c.id} className="p-3 bg-rose-50/50 border border-rose-100 rounded-lg text-xs space-y-1">
-                    <div className="flex items-center justify-between font-bold text-rose-900"><span>{c.studentName}</span><Badge className="bg-rose-600 text-white text-[11px]">{c.riskLevel?.toUpperCase()}</Badge></div>
+                  <div key={c.id} className="p-3 bg-crm-warning-bg/50 border border-crm-warning-border rounded-lg text-xs space-y-1">
+                    <div className="flex items-center justify-between font-bold text-crm-warning-text"><span>{c.studentName}</span><Badge className="bg-[var(--alo-error)] text-white text-[11px]">{c.riskLevel?.toUpperCase()}</Badge></div>
                     <p className="text-[var(--alo-body)]">ID: {c.studentId} • {c.destinationCountry}</p>
                     <p className="text-[11px] text-[var(--alo-text-muted)]">Stage: {c.currentStage}</p>
                   </div>
@@ -416,18 +416,18 @@ export default function VisaOfficerDashboard() {
       </div>
 
       {studentFeedbackModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[var(--alo-navy)]/40 flex items-center justify-center p-4">
           <Card className="bg-white max-w-lg w-full rounded-xl shadow-xl border">
             <CardHeader className="pb-3 border-b"><CardTitle className="text-sm font-bold">Review Student-Safe Feedback Before Publishing</CardTitle><CardDescription className="text-xs">Portal-only delivery. Keep the wording supportive and factual; no external message will be sent.</CardDescription></CardHeader>
             <CardContent className="p-4 space-y-4">
-              <div className="p-3 bg-indigo-50/60 border border-indigo-100 rounded-lg text-xs space-y-1">
-                <span className="font-semibold text-indigo-900 block">Officer-authored guidance — no AI draft or official-source claim:</span>
-                <p className="text-indigo-800">Write only case-specific, verified, student-safe preparation guidance. Do not include internal risk labels, medical or criminal information, unsupported requirements, or visa guarantees.</p>
+              <div className="p-3 bg-[var(--alo-brand-pale)]/60 border border-[var(--alo-border)] rounded-lg text-xs space-y-1">
+                <span className="font-semibold text-[var(--alo-brand)] block">Officer-authored guidance — no AI draft or official-source claim:</span>
+                <p className="text-[var(--alo-brand)]">Write only case-specific, verified, student-safe preparation guidance. Do not include internal risk labels, medical or criminal information, unsupported requirements, or visa guarantees.</p>
               </div>
               <Textarea placeholder="Edit student-safe guidance — supportive/clear/professional/actionable" value={feedbackText} onChange={e => setFeedbackText(e.target.value)} className="min-h-[100px] text-xs" />
               <div className="flex items-center justify-end gap-2">
                 <Button variant="outline" size="sm" className=" " onClick={() => setStudentFeedbackModalOpen(false)}>Cancel</Button>
-                <Button size="sm" className=" bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSendFeedback}>Approve & Publish to Student Portal</Button>
+                <Button size="sm" className=" bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)] text-white" onClick={handleSendFeedback}>Approve & Publish to Student Portal</Button>
               </div>
             </CardContent>
           </Card>

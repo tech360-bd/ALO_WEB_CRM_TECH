@@ -963,7 +963,7 @@ function EducationSection({ form, setForm }: { form: Record<string, unknown>; se
               variant="ghost"
               size="sm"
               onClick={() => removeEducation(edu.id)}
-              className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+              className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg h-8 w-8 p-0"
             >
               <Trash2 className="size-4" />
             </Button>
@@ -1602,7 +1602,7 @@ function WorkSection({ form, setForm }: { form: Record<string, unknown>; setForm
                   variant="ghost"
                   size="sm"
                   onClick={() => removeWorkExp(exp.id)}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+                  className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg h-8 w-8 p-0"
                 >
                   <Trash2 className="size-4" />
                 </Button>
@@ -1913,7 +1913,7 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
                       </Select>
                     </FormField>
                   </div>
-                  <Button type="button" variant="ghost" size="sm" onClick={() => removeVisa(idx)} className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 p-0 shrink-0 mb-0.5">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => removeVisa(idx)} className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg h-9 w-9 p-0 shrink-0 mb-0.5">
                     <Trash2 className="size-4" />
                   </Button>
                 </div>
@@ -1952,10 +1952,10 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
           {visaRefusals.map((r) => (
             <Card key={r.id} className="border border-[var(--alo-border)] rounded-xl p-4 bg-white">
               <div className="flex items-start justify-between mb-3">
-                <Badge variant="outline" className="text-xs font-medium border-red-300 text-red-600">
+                <Badge variant="outline" className="text-xs font-medium border-crm-danger-border text-crm-danger-text">
                   {r.country || 'Refusal Entry'}
                 </Badge>
-                <Button type="button" variant="ghost" size="sm" onClick={() => removeRefusal(r.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0">
+                <Button type="button" variant="ghost" size="sm" onClick={() => removeRefusal(r.id)} className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg h-8 w-8 p-0">
                   <Trash2 className="size-4" />
                 </Button>
               </div>
@@ -1984,9 +1984,9 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
                       <span className="inline-flex items-center gap-1 text-[11px] text-[var(--alo-text-muted)]"><Loader2 className="size-3 animate-spin" /> Uploading…</span>
                     )}
                     {r.evidenceFileName && evidenceState[r.id] !== 'error' && (
-                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700"><CheckCircle2 className="size-3" /> {r.evidenceFileName}</span>
+                      <span className="inline-flex items-center gap-1 text-[11px] text-crm-success-text"><CheckCircle2 className="size-3" /> {r.evidenceFileName}</span>
                     )}
-                    {evidenceError[r.id] && <span className="block text-[11px] text-red-600">{evidenceError[r.id]}</span>}
+                    {evidenceError[r.id] && <span className="block text-[11px] text-crm-danger-text">{evidenceError[r.id]}</span>}
                   </div>
                 </FormField>
               </div>
@@ -2056,7 +2056,7 @@ function BackgroundSection({ form, setForm, token }: { form: Record<string, unkn
                       <Input value={im.intake} onChange={(e) => updateImmigration(idx, 'intake', e.target.value)} placeholder="e.g. September 2025" className="border-[var(--alo-border)]" />
                     </FormField>
                   </div>
-                  <Button type="button" variant="ghost" size="sm" onClick={() => removeImmigration(idx)} className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 p-0 shrink-0 mb-0.5">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => removeImmigration(idx)} className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg h-9 w-9 p-0 shrink-0 mb-0.5">
                     <Trash2 className="size-4" />
                   </Button>
                 </div>
@@ -2434,11 +2434,11 @@ export default function StudentProfilePage() {
                         flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors
                         ${isActive
                           ? 'bg-[var(--alo-brand)] text-white shadow-sm'
-                          : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200'
+                          : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]'
                         }
                       `}
                     >
-                      {complete && !isActive && <CheckCircle2 className="size-3.5 text-green-500" />}
+                      {complete && !isActive && <CheckCircle2 className="size-3.5 text-crm-success-text" />}
                       {isActive && SECTION_ICONS[key]}
                       {SECTION_LABELS[key]}
                     </button>
@@ -2471,7 +2471,7 @@ export default function StudentProfilePage() {
                           ${isActive
                             ? 'bg-white/20 text-white'
                             : complete
-                              ? 'bg-green-100 text-green-700'
+                              ? 'bg-crm-success-bg text-crm-success-text'
                               : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]'
                           }
                         `}

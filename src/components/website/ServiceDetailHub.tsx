@@ -33,7 +33,7 @@ export default function ServiceDetailHub({ slug }: Props) {
   }, [slug]);
 
   if (loading) return <div className="p-12 text-center"><div className="h-64 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl animate-pulse max-w-7xl mx-auto" /></div>;
-  if (error || !service) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><Link href="/services"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-12">Browse Services</Button></Link></Card></div>;
+  if (error || !service) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-crm-warning-text mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><Link href="/services"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-12">Browse Services</Button></Link></Card></div>;
 
   const title = service.title;
   const benefits = (()=>{ try{ return typeof service.benefits === 'string' ? JSON.parse(service.benefits) : service.benefits || []; }catch{ return service.benefits ? [service.benefits] : []; } })();
@@ -105,7 +105,7 @@ export default function ServiceDetailHub({ slug }: Props) {
             {/* 10. What Students Receive + 11. What ALO Does Not Guarantee + 12. Common Mistakes */}
             <div className="grid md:grid-cols-3 gap-4">
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2">What Students Receive</h4><p className="text-xs text-[var(--alo-body)]">{service.whatStudentsReceive ? (typeof service.whatStudentsReceive === 'string' ? (()=>{try{return JSON.parse(service.whatStudentsReceive).join(', ')}catch{return service.whatStudentsReceive}})() : service.whatStudentsReceive.join(', ')) : 'Personalized counseling, eligibility check, document guidance, application support'}</p></Card>
-              <Card className="p-5 bg-amber-50 border-amber-200 rounded-2xl"><h4 className="font-bold text-sm mb-2 text-amber-800 flex items-center gap-2"><Shield className="w-4 h-4" />What ALO Does Not Guarantee</h4><p className="text-xs text-amber-700">{service.whatNotGuaranteed || 'ALO does NOT guarantee university admission, scholarship award, or visa approval. All decisions are made by universities and government authorities. Official requirements apply.'}</p></Card>
+              <Card className="p-5 bg-crm-warning-bg border border-crm-warning-border rounded-2xl"><h4 className="font-bold text-sm mb-2 text-crm-warning-text flex items-center gap-2"><Shield className="w-4 h-4 text-[var(--alo-warning)]" />What ALO Does Not Guarantee</h4><p className="text-xs text-crm-warning-text">{service.whatNotGuaranteed || 'ALO does NOT guarantee university admission, scholarship award, or visa approval. All decisions are made by universities and government authorities. Official requirements apply.'}</p></Card>
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm mb-2">Common Mistakes</h4><p className="text-xs text-[var(--alo-body)]">{service.commonMistakes ? (typeof service.commonMistakes === 'string' ? (()=>{try{return JSON.parse(service.commonMistakes).join(', ')}catch{return service.commonMistakes}})() : service.commonMistakes.join(', ')) : 'Incomplete documents, missing deadlines, incorrect English scores, inconsistent financial evidence'}</p></Card>
             </div>
 
@@ -120,7 +120,7 @@ export default function ServiceDetailHub({ slug }: Props) {
                   <p><strong>Credibility Interview:</strong> {service.credibilityPrep || 'Prepare for credibility interview — course knowledge, university knowledge, financial explanation'}</p>
                   <p><strong>Document Consistency:</strong> {service.documentConsistency || 'Ensure all documents consistent — name, dates, financial evidence'}</p>
                   <p><strong>Refusal-Risk Preparation:</strong> {service.refusalRiskPrep || 'Check previous visa refusals, study gaps, financial gaps — human review required'}</p>
-                  <p className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-800"><strong>Official-Source Disclaimer:</strong> {service.officialDisclaimer || 'Visa requirements are set by government authorities. ALO provides guidance, not guarantee. Check official government website for verified requirements.'}</p>
+                  <p className="bg-crm-warning-bg border border-crm-warning-border rounded-xl p-3 text-crm-warning-text"><strong>Official-Source Disclaimer:</strong> {service.officialDisclaimer || 'Visa requirements are set by government authorities. ALO provides guidance, not guarantee. Check official government website for verified requirements.'}</p>
                 </div>
               </Card>
             )}
@@ -176,7 +176,7 @@ export default function ServiceDetailHub({ slug }: Props) {
 
             {/* Visa Guidance (spec §8): mandatory currency disclaimer */}
             {service.slug === 'visa-guidance' && (
-              <p className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-xl p-3">Visa rules can change. Current requirements must be verified against official government and visa-authority sources before submission.</p>
+              <p className="text-[11px] text-crm-warning-text bg-crm-warning-bg border border-crm-warning-border rounded-xl p-3">Visa rules can change. Current requirements must be verified against official government and visa-authority sources before submission.</p>
             )}
 
             {/* 13. FAQ + 14-17 Related */}
@@ -221,7 +221,7 @@ export default function ServiceDetailHub({ slug }: Props) {
                 <Link href="/course-finder"><Button className="bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-12 px-6 font-bold">Start Course Finder</Button></Link>
                 <Link href="/eligibility-check"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Check Eligibility</Button></Link>
                 <Link href="/contact"><Button variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 h-12 px-6">Chat with Counselor</Button></Link>
-                <Button asChild className="bg-emerald-500 text-white hover:bg-emerald-600 h-12 px-6 font-bold"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{ALO_PUBLIC_CONTACT_CTA.label}</a></Button>
+                <Button asChild className="bg-[var(--alo-whatsapp)] text-white hover:opacity-90 h-12 px-6 font-bold"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{ALO_PUBLIC_CONTACT_CTA.label}</a></Button>
               </div>
             </Card>
           </div>
@@ -229,7 +229,7 @@ export default function ServiceDetailHub({ slug }: Props) {
           {/* Sidebar */}
           <div className="space-y-6">
             <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h3 className="font-bold text-[var(--alo-text)] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/book-consultation" className="block"><Button className="w-full bg-[var(--alo-cta)] text-white h-12">Book Consultation</Button></Link><Link href="/contact" className="block"><Button variant="outline" className="w-full border-[var(--alo-border)] h-12">Contact Counselor</Button></Link><Link href="/course-finder" className="block"><Button variant="outline" className="w-full border-[var(--alo-border)] h-12">Find Courses</Button></Link></div></Card>
-            <Card className="p-6 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Sources & Verification</h3><div className="space-y-2 text-xs"><p><strong>Source:</strong> {service.sourceUrl ? <a href={service.sourceUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{service.sourceUrl}</a> : 'ALO Editorial'}</p><p><strong>Status:</strong> <Badge className={`${service.verificationStatus === 'VERIFIED' || service.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{service.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {service.lastVerifiedAt ? new Date(service.lastVerifiedAt).toLocaleDateString() : 'Information not currently verified.'}</p></div></Card>
+            <Card className="p-6 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Sources & Verification</h3><div className="space-y-2 text-xs"><p><strong>Source:</strong> {service.sourceUrl ? <a href={service.sourceUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{service.sourceUrl}</a> : 'ALO Editorial'}</p><p><strong>Status:</strong> <Badge variant={service.verificationStatus === 'VERIFIED' || service.verificationStatus === 'verified' ? 'success' : 'warning'} className="text-[11px]">{service.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {service.lastVerifiedAt ? new Date(service.lastVerifiedAt).toLocaleDateString() : 'Information not currently verified.'}</p></div></Card>
           </div>
         </div>
       </div>

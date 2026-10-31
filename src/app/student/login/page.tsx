@@ -291,7 +291,7 @@ export default function StudentLoginPage() {
 
             {/* Error */}
             {error && (
-              <div className="flex items-start gap-2 bg-[var(--alo-surface-muted)] border border-red-500/20 rounded-xl p-3">
+              <div className="flex items-start gap-2 bg-[var(--alo-surface-muted)] border border-crm-danger-border/20 rounded-xl p-3">
                 <AlertCircle className="w-4 h-4 text-crm-danger-text flex-shrink-0 mt-0.5" />
                 <p className="text-crm-danger-text text-sm">{error}</p>
               </div>

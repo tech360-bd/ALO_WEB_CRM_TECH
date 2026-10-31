@@ -87,8 +87,8 @@ function PendingApprovalCard() {
     <div className="bg-alo-page min-h-screen p-4 lg:p-6 flex items-center justify-center">
       <Card className="bg-white rounded-xl border border-alo-border max-w-md w-full">
         <CardContent className="p-8 text-center">
-          <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mx-auto mb-4">
-            <Timer className="w-8 h-8 text-amber-500" />
+          <div className="w-16 h-16 rounded-full bg-crm-warning-bg flex items-center justify-center mx-auto mb-4">
+            <Timer className="w-8 h-8 text-crm-warning-text" />
           </div>
           <h2 className="text-xl font-bold text-alo-text mb-2">Account Pending Approval</h2>
           <p className="text-sm text-alo-text-muted">
@@ -233,9 +233,9 @@ export default function PartnerDashboard() {
       </div>
 
       {error && (
-        <Card className="border-amber-200 bg-amber-50">
+        <Card className="border-crm-warning-border bg-crm-warning-bg">
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
-            <p className="text-sm text-amber-900">{error}</p>
+            <p className="text-sm text-crm-warning-text">{error}</p>
             <Button variant="outline" size="sm" onClick={() => void fetchDashboardData()}><RefreshCw className="mr-2 h-3.5 w-3.5" />Retry</Button>
           </CardContent>
         </Card>
@@ -304,7 +304,7 @@ export default function PartnerDashboard() {
             <CardHeader className="pb-2"><CardTitle className="text-base font-semibold text-alo-text">Commission Summary</CardTitle></CardHeader>
             <CardContent>
               <div className="flex items-center justify-between text-sm"><span className="text-alo-text-secondary">Paid</span><span className="font-semibold text-alo-text">{formatCurrency(commissionPaid)}</span></div>
-              <div className="mt-3 h-3 rounded-full bg-[var(--alo-surface-muted)] overflow-hidden" role="progressbar" aria-valuenow={Math.round(paidPercent)} aria-valuemin={0} aria-valuemax={100} aria-label="Paid commission percentage"><div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${paidPercent}%` }} /></div>
+              <div className="mt-3 h-3 rounded-full bg-[var(--alo-surface-muted)] overflow-hidden" role="progressbar" aria-valuenow={Math.round(paidPercent)} aria-valuemin={0} aria-valuemax={100} aria-label="Paid commission percentage"><div className="h-full rounded-full bg-[var(--alo-success)] transition-all" style={{ width: `${paidPercent}%` }} /></div>
               <div className="mt-3 flex items-center justify-between text-xs text-alo-text-muted"><span>Pending {formatCurrency(commissionPending)}</span><span>Expected {formatCurrency(commissionExpected)}</span></div>
               <Button variant="link" className="mt-2 h-auto px-0 " onClick={() => router.push('/partner/commission')}>Open commission statement <ChevronRight className="ml-1 h-3.5 w-3.5" /></Button>
             </CardContent>

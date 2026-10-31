@@ -124,7 +124,7 @@ export default function StudentVisaReadiness() {
                 </p>
                 <p className={cn(
                   'mt-2 text-[34px] font-bold leading-none tracking-[-0.02em]',
-                  (data?.overallScore ?? 0) >= 80 ? 'text-emerald-600' : (data?.overallScore ?? 0) >= 50 ? 'text-amber-600' : 'text-red-600',
+                  (data?.overallScore ?? 0) >= 80 ? 'text-crm-success-text' : (data?.overallScore ?? 0) >= 50 ? 'text-crm-warning-text' : 'text-crm-danger-text',
                 )}>
                   {data?.overallScore ?? 0}%
                 </p>
@@ -166,7 +166,7 @@ export default function StudentVisaReadiness() {
                           <span
                             className={cn(
                               'block h-full rounded-full',
-                              value >= 80 ? 'bg-emerald-500' : value >= 50 ? 'bg-amber-500' : 'bg-red-500',
+                              value >= 80 ? 'bg-[var(--alo-success)]' : value >= 50 ? 'bg-[var(--alo-warning)]' : 'bg-[var(--alo-error)]',
                             )}
                             style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
                           />
@@ -184,7 +184,7 @@ export default function StudentVisaReadiness() {
                 <ul className="divide-y divide-[var(--alo-border)]">
                   {flags.map((flag, index) => (
                     <li key={`${flag}-${index}`} className="flex gap-3 px-5 py-3">
-                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
+                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-crm-warning-text" aria-hidden="true" />
                       <span className="text-[13px] leading-relaxed text-[var(--alo-body)]">{flag}</span>
                     </li>
                   ))}
@@ -220,7 +220,7 @@ export default function StudentVisaReadiness() {
                     const Icon = done ? CheckCircle2 : CircleDashed;
                     return (
                       <li key={item.id} className="flex flex-wrap items-start gap-3 px-5 py-3.5">
-                        <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', done ? 'text-emerald-600' : 'text-[var(--alo-text-muted)]')} aria-hidden="true" />
+                        <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', done ? 'text-crm-success-text' : 'text-[var(--alo-text-muted)]')} aria-hidden="true" />
                         <div className="min-w-0 flex-1">
                           <p className="text-[13px] font-semibold text-[var(--alo-text)]">{item.item}</p>
                           {item.reason && <p className="mt-0.5 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">{item.reason}</p>}

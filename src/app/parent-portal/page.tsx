@@ -161,7 +161,7 @@ export default function ParentPortalPage() {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-56 rounded-lg bg-slate-200" />
+          <div className="h-8 w-56 rounded-lg bg-[var(--alo-page)]" />
           <div className="h-40 rounded-2xl bg-[var(--alo-surface-muted)]" />
           <div className="h-40 rounded-2xl bg-[var(--alo-surface-muted)]" />
         </div>
@@ -357,7 +357,7 @@ export default function ParentPortalPage() {
                 <div
                   key={`${deadline.applicationId}-${deadline.date}`}
                   className={`flex items-center justify-between rounded-lg border p-2.5 text-xs ${
-                    urgent ? 'border-red-200 bg-red-50' : 'border-[var(--alo-border)]'
+                    urgent ? 'border-crm-danger-border bg-crm-danger-bg' : 'border-[var(--alo-border)]'
                   }`}
                 >
                   <span className="font-mono text-[var(--alo-body)]">{deadline.applicationId}</span>
@@ -365,7 +365,7 @@ export default function ParentPortalPage() {
                     <span className="font-semibold text-[var(--alo-text)]">
                       {new Date(deadline.date).toLocaleDateString()}
                     </span>
-                    <Badge variant="outline" className={urgent ? 'border-red-300 bg-white text-[11px] text-red-700' : 'text-[11px]'}>
+                    <Badge variant="outline" className={urgent ? 'border-crm-danger-border bg-white text-[11px] text-crm-danger-text' : 'text-[11px]'}>
                       {days} day{days === 1 ? '' : 's'}
                     </Badge>
                   </span>
@@ -399,15 +399,15 @@ export default function ParentPortalPage() {
                       {money(data.finance.totalAmount, data.finance.byParent[0]?.currency ?? 'GBP')}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-                    <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-700">Paid</p>
-                    <p className="text-xl font-black text-emerald-900">
+                  <div className="rounded-xl border border-crm-success-border bg-crm-success-bg p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-crm-success-text">Paid</p>
+                    <p className="text-xl font-black text-crm-success-text">
                       {money(data.finance.totalPaid, data.finance.byParent[0]?.currency ?? 'GBP')}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-                    <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700">Outstanding</p>
-                    <p className="text-xl font-black text-amber-900">
+                  <div className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-crm-warning-text">Outstanding</p>
+                    <p className="text-xl font-black text-crm-warning-text">
                       {money(data.finance.outstanding, data.finance.byParent[0]?.currency ?? 'GBP')}
                     </p>
                   </div>

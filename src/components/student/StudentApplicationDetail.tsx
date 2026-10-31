@@ -216,7 +216,7 @@ export default function StudentApplicationDetail() {
               <StatusBadge value={application.safeStatus} />
               <StatusBadge value={`stage: ${stageLabel(application.stage)}`} />
               {(application.deadline || application.deadlineDate) && (
-                <span className="ml-auto text-[12px] font-semibold text-amber-700">
+                <span className="ml-auto text-[12px] font-semibold text-crm-warning-text">
                   Deadline:{' '}
                   {application.deadlineDate
                     ? new Date(application.deadlineDate).toLocaleDateString('en-GB')
@@ -279,7 +279,7 @@ export default function StudentApplicationDetail() {
                   {application.offer.scholarship && (
                     <div>
                       <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Scholarship</p>
-                      <p className="mt-0.5 text-[13px] font-semibold text-emerald-700">
+                      <p className="mt-0.5 text-[13px] font-semibold text-crm-success-text">
                         {application.offer.scholarship}
                         {application.offer.scholarshipAmount > 0
                           ? ` — ${formatAmount(application.offer.scholarshipAmount, 'GBP')}`
@@ -290,9 +290,9 @@ export default function StudentApplicationDetail() {
                 </div>
 
                 {application.offer.offerConditions && (
-                  <div className="border-t border-amber-200 bg-amber-50 px-5 py-3">
-                    <p className="text-[12px] font-semibold text-amber-800">Conditions</p>
-                    <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-amber-900">
+                  <div className="border-t border-crm-warning-border bg-crm-warning-bg px-5 py-3">
+                    <p className="text-[12px] font-semibold text-crm-warning-text">Conditions</p>
+                    <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-crm-warning-text">
                       {application.offer.offerConditions}
                     </p>
                   </div>
@@ -325,7 +325,7 @@ export default function StudentApplicationDetail() {
                 className="mt-5"
                 title="Documents still needed"
                 description={`${outstanding.length} of ${required.length} outstanding`}
-                icon={<FileText className="mr-2 h-4 w-4 text-amber-600" aria-hidden="true" />}
+                icon={<FileText className="mr-2 h-4 w-4 text-crm-warning-text" aria-hidden="true" />}
                 action={
                   <Button asChild variant="outline" className=" rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold">
                     <Link href="/student/documents">Upload</Link>
@@ -335,7 +335,7 @@ export default function StudentApplicationDetail() {
                 <ul className="divide-y divide-[var(--alo-border)]">
                   {outstanding.map((doc) => (
                     <li key={doc} className="flex items-center gap-2.5 px-5 py-2.5">
-                      <CircleDashed className="h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
+                      <CircleDashed className="h-4 w-4 shrink-0 text-crm-warning-text" aria-hidden="true" />
                       <span className="text-[13px] text-[var(--alo-body)]">{doc}</span>
                     </li>
                   ))}
@@ -383,7 +383,7 @@ export default function StudentApplicationDetail() {
                         {(instruction.deadline || instruction.dueDate) && (
                           <div className="flex gap-2">
                             <dt className="text-[var(--alo-text-muted)]">Due:</dt>
-                            <dd className="font-semibold text-amber-700">{instruction.deadline || instruction.dueDate}</dd>
+                            <dd className="font-semibold text-crm-warning-text">{instruction.deadline || instruction.dueDate}</dd>
                           </div>
                         )}
                       </dl>
@@ -434,7 +434,7 @@ export default function StudentApplicationDetail() {
                 <ol className="divide-y divide-[var(--alo-border)]">
                   {stageHistory.map((entry) => (
                     <li key={entry.id} className="flex items-start gap-3 px-5 py-3.5">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-crm-success-text" aria-hidden="true" />
                       <div className="min-w-0 flex-1">
                         <p className="text-[13px] font-semibold text-[var(--alo-text)]">{stageLabel(entry.stage)}</p>
                         {entry.note && (

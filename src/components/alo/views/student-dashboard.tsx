@@ -120,9 +120,9 @@ function QuickAction({
   const accentMap: Record<string, string> = {
     blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)] group-hover:bg-[var(--alo-brand)] group-hover:text-white",
     orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] group-hover:bg-[var(--alo-cta)] group-hover:text-white",
-    violet: "bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white",
-    emerald: "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white",
-    amber: "bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white",
+    violet: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] group-hover:bg-[var(--alo-brand)] group-hover:text-white",
+    emerald: "bg-crm-success-bg text-crm-success-text group-hover:bg-[var(--alo-success-dark)] group-hover:text-white",
+    amber: "bg-crm-warning-bg text-crm-warning-text group-hover:bg-[var(--alo-warning)] group-hover:text-white",
   };
   return (
     <button
@@ -142,15 +142,15 @@ function TimelineItem({ ev }: { ev: TimelineEventRow }) {
   const iconMap: Record<string, { icon: string; color: string }> = {
     PROFILE_UPDATED: { icon: "UserCog", color: "bg-[var(--alo-brand)] text-white" },
     DOC_UPLOADED: { icon: "Upload", color: "bg-sky-500 text-white" },
-    DOC_APPROVED: { icon: "CheckCircle2", color: "bg-emerald-500 text-white" },
-    APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-violet-500 text-white" },
+    DOC_APPROVED: { icon: "CheckCircle2", color: "bg-[var(--alo-success)] text-white" },
+    APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-[var(--alo-brand-pale)]0 text-white" },
     VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-[var(--alo-cta)] text-white" },
-    INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-rose-500 text-white" },
-    MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-amber-500 text-white" },
-    AI_ACTION: { icon: "Bot", color: "bg-indigo-500 text-white" },
+    INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-crm-warning-bg0 text-white" },
+    MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-[var(--alo-warning)] text-white" },
+    AI_ACTION: { icon: "Bot", color: "bg-[var(--alo-brand-pale)]0 text-white" },
     MESSAGE_SENT: { icon: "MessageSquare", color: "bg-teal-500 text-white" },
-    PAYMENT: { icon: "CreditCard", color: "bg-emerald-600 text-white" },
-    NOTE: { icon: "StickyNote", color: "bg-slate-500 text-white" },
+    PAYMENT: { icon: "CreditCard", color: "bg-[var(--alo-success-dark)] text-white" },
+    NOTE: { icon: "StickyNote", color: "bg-[var(--alo-page)]0 text-white" },
     LEAD_CREATED: { icon: "UserPlus", color: "bg-[var(--alo-brand)] text-white" },
   };
   const cfg = iconMap[ev.type] || { icon: "Activity", color: "bg-[var(--alo-brand)] text-white" };
@@ -181,10 +181,10 @@ function TimelineItem({ ev }: { ev: TimelineEventRow }) {
 // ---------- Readiness helper ----------
 function readinessColor(r?: string | null) {
   if (!r) return "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
-  if (r === "ready") return "bg-emerald-100 text-emerald-700";
-  if (r === "needs_practice") return "bg-amber-100 text-amber-700";
-  if (r === "high_risk") return "bg-red-100 text-red-700";
-  return "bg-indigo-100 text-indigo-700";
+  if (r === "ready") return "bg-crm-success-bg text-crm-success-text";
+  if (r === "needs_practice") return "bg-crm-warning-bg text-crm-warning-text";
+  if (r === "high_risk") return "bg-crm-danger-bg text-crm-danger-text";
+  return "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]";
 }
 function readinessLabel(r?: string | null) {
   if (!r) return "Pending";
@@ -563,8 +563,8 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
                   <p className="truncate font-semibold text-foreground">{counselName}</p>
                   <p className="text-xs text-muted-foreground">Senior Education Counselor</p>
                   <div className="mt-1 flex items-center gap-1.5">
-                    <span className="size-1.5 rounded-full bg-emerald-500" />
-                    <span className="text-[11px] font-medium text-emerald-600">Online · responds in ~2h</span>
+                    <span className="size-1.5 rounded-full bg-[var(--alo-success)]" />
+                    <span className="text-[11px] font-medium text-crm-success-text">Online · responds in ~2h</span>
                   </div>
                 </div>
               </div>

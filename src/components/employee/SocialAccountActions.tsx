@@ -28,19 +28,19 @@ export default function SocialAccountActions({ connected, accountId }: { connect
   return (
     <div className="mt-3">
       <div className="flex flex-wrap gap-2">
-        <button type="button" disabled title="OAuth token exchange and live provider verification are not configured" className="cursor-not-allowed rounded bg-slate-300 px-3 py-1.5 text-xs text-[var(--alo-body)]">
+        <button type="button" disabled title="OAuth token exchange and live provider verification are not configured" className="cursor-not-allowed rounded bg-[var(--alo-page)] px-3 py-1.5 text-xs text-[var(--alo-body)]">
           Connect OAuth — unavailable
         </button>
         <button type="button" disabled title="Official-access request workflow is not implemented" className="cursor-not-allowed rounded border px-3 py-1.5 text-xs text-[var(--alo-text-muted)]">
           Request Official Access — unavailable
         </button>
         {connected && accountId ? (
-          <button type="button" onClick={disconnect} disabled={busy} className="rounded border border-red-300 px-3 py-1.5 text-xs text-red-600 disabled:opacity-50">
+          <button type="button" onClick={disconnect} disabled={busy} className="rounded border border-crm-danger-border px-3 py-1.5 text-xs text-crm-danger-text disabled:opacity-50">
             {busy ? 'Disconnecting…' : 'Disconnect'}
           </button>
         ) : null}
       </div>
-      {error ? <p role="alert" className="mt-2 text-xs text-red-600">{error}</p> : null}
+      {error ? <p role="alert" className="mt-2 text-xs text-crm-danger-text">{error}</p> : null}
     </div>
   );
 }

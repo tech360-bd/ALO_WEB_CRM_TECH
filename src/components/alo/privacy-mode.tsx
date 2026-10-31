@@ -102,7 +102,7 @@ export function SensitiveField({ id, label, value, type = "text", mono }: { id: 
         </button>
       </div>
       {showPinPrompt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => { setShowPinPrompt(false); setPin(""); }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--alo-navy)]/40 p-4" onClick={() => { setShowPinPrompt(false); setPin(""); }}>
           <div className="w-full max-w-xs rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-2">
               <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">

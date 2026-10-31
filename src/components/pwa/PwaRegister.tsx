@@ -75,10 +75,10 @@ export function PwaRegister() {
   };
 
   if (updateAvailable) return (
-    <div role="status" className="fixed bottom-4 left-4 z-[9999] max-w-sm rounded-xl border border-emerald-200 bg-white p-4 shadow-xl">
+    <div role="status" className="fixed bottom-4 left-4 z-[9999] max-w-sm rounded-xl border border-crm-success-border bg-white p-4 shadow-xl">
       <p className="text-sm text-[var(--alo-text)]">A website update is ready. Save your work, then refresh.</p>
       <div className="mt-3 flex gap-3">
-        <button className="min-h-11 rounded-lg bg-emerald-700 px-4 text-sm font-semibold text-white" onClick={() => window.location.reload()}>Refresh</button>
+        <button className="min-h-11 rounded-lg bg-[var(--alo-success-dark)] px-4 text-sm font-semibold text-white" onClick={() => window.location.reload()}>Refresh</button>
         <button className="min-h-11 px-3 text-sm text-[var(--alo-body)]" onClick={() => setUpdateAvailable(false)}>Later</button>
       </div>
     </div>
@@ -86,7 +86,7 @@ export function PwaRegister() {
   if (isStandalone || !showInstall) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-[9999] bg-white dark:bg-slate-900 border border-[var(--alo-border)] dark:border-slate-800 rounded-xl shadow-2xl p-4 animate-in slide-in-from-bottom-4">
+    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-[9999] bg-white dark:bg-[var(--alo-navy)] border border-[var(--alo-border)] dark:border-[var(--alo-border)] rounded-xl shadow-2xl p-4 animate-in slide-in-from-bottom-4">
       <div className="flex gap-3">
         <div className="h-12 w-12 rounded-xl bg-[var(--alo-brand)] flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
           ALO
@@ -105,7 +105,7 @@ export function PwaRegister() {
             </button>
             <button
               onClick={() => setShowInstall(false)}
-              className="px-3 py-2 bg-[var(--alo-surface-muted)] dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[var(--alo-body)] dark:text-[var(--alo-placeholder)] text-xs font-medium rounded-lg transition-colors"
+              className="px-3 py-2 bg-[var(--alo-surface-muted)] dark:bg-[var(--alo-navy)] hover:bg-[var(--alo-page)] dark:hover:bg-[var(--alo-navy)] text-[var(--alo-body)] dark:text-[var(--alo-placeholder)] text-xs font-medium rounded-lg transition-colors"
             >
               Later
             </button>

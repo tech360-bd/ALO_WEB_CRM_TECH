@@ -43,10 +43,10 @@ const CATEGORIES = ["All", "Announcement", "University Update", "Immigration Upd
 const CATEGORY_COLORS: Record<string, string> = {
   Announcement: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
   "University Update": "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-  "Immigration Update": "bg-red-50 text-red-700",
-  "Scholarship Update": "bg-emerald-50 text-emerald-700",
-  "Country Update": "bg-violet-50 text-violet-700",
-  Event: "bg-amber-50 text-amber-700",
+  "Immigration Update": "bg-crm-danger-bg text-crm-danger-text",
+  "Scholarship Update": "bg-crm-success-bg text-crm-success-text",
+  "Country Update": "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  Event: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 export function PublicNews({ slug, onNavigate }: PublicNewsProps) {
@@ -329,7 +329,7 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
               <Badge variant="outline" className="bg-white text-[var(--alo-text)]">{article.country}</Badge>
             )}
             {article.isPinned && (
-              <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+              <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                 <Icon name="Pin" className="mr-1 size-3" /> Pinned
               </Badge>
             )}
@@ -378,7 +378,7 @@ function NewsArticleDetail({ slug, onNavigate }: { slug: string; onNavigate: (v:
         </div>
 
         {/* Disclaimer */}
-        <div className="mt-10 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+        <div className="mt-10 rounded-xl border border-crm-warning-border bg-crm-warning-bg px-4 py-3 text-xs text-crm-warning-text">
           <Icon name="Info" className="mr-1.5 inline size-3.5" />
           Visa and immigration rules change frequently. Always confirm with an ALO counselor before making decisions based on news.
         </div>

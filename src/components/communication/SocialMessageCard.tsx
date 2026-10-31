@@ -20,7 +20,7 @@ export default function SocialMessageCard({ item, onAction }: { item: any; onAct
           <Button size="sm" variant="outline" className="h-6 text-[11px]" onClick={()=>onAction('hide_comment')}><EyeOff className="w-3 h-3 mr-1"/>Hide</Button>
           <Button size="sm" variant="outline" className="h-6 text-[11px]" onClick={()=>onAction('mark_spam')}><Flag className="w-3 h-3 mr-1"/>Spam</Button>
           <Button size="sm" variant="outline" className="h-6 text-[11px]" onClick={()=>onAction('create_lead')}><UserPlus className="w-3 h-3 mr-1"/>Create Lead</Button>
-          <Button size="sm" variant="outline" className="h-6 text-[11px] bg-purple-50 text-purple-700" onClick={()=>onAction('ai_draft')}><Sparkles className="w-3 h-3 mr-1"/>AI Draft</Button>
+          <Button size="sm" variant="outline" className="h-6 text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" onClick={()=>onAction('ai_draft')}><Sparkles className="w-3 h-3 mr-1"/>AI Draft</Button>
         </div>
         <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Marketing can reply to public comments, draft DM, create lead from comment/DM, link to lead, assign counselor — no private visa advice without approval, no guaranteed visa claim, no testimonial without consent</p>
       </CardContent>

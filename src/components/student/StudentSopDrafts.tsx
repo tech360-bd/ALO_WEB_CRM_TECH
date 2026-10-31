@@ -44,8 +44,8 @@ const SEVERITY_ICON = {
 } as const;
 
 const SEVERITY_STYLE = {
-  error: 'text-red-600',
-  warning: 'text-amber-600',
+  error: 'text-crm-danger-text',
+  warning: 'text-crm-warning-text',
   info: 'text-[var(--alo-text-muted)]',
 } as const;
 
@@ -171,7 +171,7 @@ export default function StudentSop() {
                 />
               </div>
               {submitError && (
-                <p className="rounded-input border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700" role="alert">
+                <p className="rounded-input border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-[12px] text-crm-danger-text" role="alert">
                   {submitError}
                 </p>
               )}
@@ -264,9 +264,9 @@ export default function StudentSop() {
                     }
                   >
                     {selected.reviewerNote && (
-                      <div className="border-b border-[var(--alo-border)] bg-amber-50 px-5 py-3">
-                        <p className="text-[12px] font-semibold text-amber-800">Counselor note</p>
-                        <p className="mt-0.5 text-[13px] leading-relaxed text-amber-900">{selected.reviewerNote}</p>
+                      <div className="border-b border-[var(--alo-border)] bg-crm-warning-bg px-5 py-3">
+                        <p className="text-[12px] font-semibold text-crm-warning-text">Counselor note</p>
+                        <p className="mt-0.5 text-[13px] leading-relaxed text-crm-warning-text">{selected.reviewerNote}</p>
                       </div>
                     )}
                     {selected.content?.trim() ? (

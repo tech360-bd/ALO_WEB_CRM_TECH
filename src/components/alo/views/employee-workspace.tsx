@@ -9,14 +9,14 @@ import { type ViewKey } from "@/lib/alo-types";
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   NORMAL: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-  HIGH: "bg-amber-100 text-amber-700",
-  URGENT: "bg-rose-100 text-rose-700",
+  HIGH: "bg-crm-warning-bg text-crm-warning-text",
+  URGENT: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const TASK_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   IN_PROGRESS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
 };
 
 export function EmployeeWorkspace({
@@ -136,14 +136,14 @@ export function EmployeeWorkspace({
 
       {/* SLA alerts */}
       {slaEvents.length > 0 && (
-        <Card className="rounded-2xl border border-rose-200 bg-rose-50/40">
+        <Card className="rounded-2xl border border-crm-warning-border bg-crm-warning-bg/40">
           <CardContent className="p-5">
             <div className="mb-3 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-rose-100 text-rose-700">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-crm-warning-bg text-crm-warning-text">
                 <Icon name="AlertTriangle" className="size-4" />
               </div>
               <h3 className="font-bold text-[var(--alo-text)]">SLA Alerts</h3>
-              <Badge className="bg-rose-600 text-white">{slaEvents.length}</Badge>
+              <Badge className="bg-[var(--alo-error)] text-white">{slaEvents.length}</Badge>
             </div>
             <div className="space-y-2">
               {slaEvents.slice(0, 3).map((e: any) => {
@@ -156,14 +156,14 @@ export function EmployeeWorkspace({
                     className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm"
                   >
                     <div className="flex items-center gap-2">
-                      <Icon name="Clock" className="size-4 text-rose-600" />
+                      <Icon name="Clock" className="size-4 text-crm-warning-text" />
                       <span className="text-[var(--alo-text)]">{e.channel} • {elapsed}m ago</span>
                     </div>
                     <Badge
                       className={
                         e.status === "ESCALATED_50"
-                          ? "bg-rose-600 text-white"
-                          : "bg-amber-100 text-amber-700"
+                          ? "bg-[var(--alo-error)] text-white"
+                          : "bg-crm-warning-bg text-crm-warning-text"
                       }
                     >
                       {e.status.replace(/_/g, " ")}
@@ -210,9 +210,9 @@ export function EmployeeWorkspace({
                   <div
                     className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${
                       t.priority === "URGENT"
-                        ? "bg-rose-100 text-rose-700"
+                        ? "bg-crm-warning-bg text-crm-warning-text"
                         : t.priority === "HIGH"
-                        ? "bg-amber-100 text-amber-700"
+                        ? "bg-crm-warning-bg text-crm-warning-text"
                         : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                     }`}
                   >
@@ -434,7 +434,7 @@ export function EmployeeWorkspace({
               >
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <div className="flex size-9 items-center justify-center rounded-lg bg-violet-100 text-violet-700">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                       <Icon name={rec.icon} className="size-4" />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -473,7 +473,7 @@ export function EmployeeWorkspace({
               </div>
               <div className="rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4">
                 <p className="text-xs text-[var(--alo-text-muted)]">Paid Commission</p>
-                <p className="mt-1 text-2xl font-bold text-emerald-600">
+                <p className="mt-1 text-2xl font-bold text-crm-success-text">
                   {(m.paidCommission || 0).toLocaleString()} BDT
                 </p>
               </div>
@@ -485,7 +485,7 @@ export function EmployeeWorkspace({
               </div>
               <div className="rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4">
                 <p className="text-xs text-[var(--alo-text-muted)]">Partner Referred</p>
-                <p className="mt-1 text-2xl font-bold text-violet-600">
+                <p className="mt-1 text-2xl font-bold text-[var(--alo-brand)]">
                   {m.partnerReferredStudents || 0}
                 </p>
               </div>

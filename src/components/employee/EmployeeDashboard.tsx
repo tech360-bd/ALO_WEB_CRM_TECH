@@ -48,9 +48,9 @@ function slaStatusBadge(status: 'ok' | 'warning' | 'escalated') {
 
 function priorityBadge(priority: 'high' | 'medium' | 'low') {
   const styles = {
-    high: 'bg-red-100 text-red-700 border-red-200',
-    medium: 'bg-amber-100 text-amber-700 border-amber-200',
-    low: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    high: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+    medium: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+    low: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
   };
   return (
     <Badge variant="outline" className={`text-[11px] capitalize ${styles[priority]}`}>
@@ -62,7 +62,7 @@ function priorityBadge(priority: 'high' | 'medium' | 'low') {
 function channelIcon(channel: string) {
   return channel === 'WhatsApp' ? (
     <span className="inline-flex items-center gap-1 text-[11px] text-alo-text-secondary">
-      <MessageSquare className="w-3 h-3 text-emerald-500" /> WhatsApp
+      <MessageSquare className="w-3 h-3 text-crm-success-text" /> WhatsApp
     </span>
   ) : (
     <span className="inline-flex items-center gap-1 text-[11px] text-alo-text-secondary">
@@ -136,7 +136,7 @@ export default function EmployeeDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <ListTodo className="w-5 h-5 text-alo-brand" />
-              <span className="text-[11px] text-red-600 font-medium bg-red-50 px-1.5 py-0.5 rounded">{taskData.filter(t => t.priority === 'high').length} urgent</span>
+              <span className="text-[11px] text-crm-danger-text font-medium bg-crm-danger-bg px-1.5 py-0.5 rounded">{taskData.filter(t => t.priority === 'high').length} urgent</span>
             </div>
             <p className="text-2xl font-bold text-alo-text">{taskData.length}</p>
             <p className="text-xs text-alo-text-muted mt-0.5">Today&apos;s Tasks</p>
@@ -146,7 +146,7 @@ export default function EmployeeDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <Users className="w-5 h-5 text-alo-brand" />
-              <span className="inline-flex items-center text-[11px] text-emerald-600 font-medium"><ArrowUpRight className="w-3 h-3" />+5 today</span>
+              <span className="inline-flex items-center text-[11px] text-crm-success-text font-medium"><ArrowUpRight className="w-3 h-3" />+5 today</span>
             </div>
             <p className="text-2xl font-bold text-alo-text">47</p>
             <p className="text-xs text-alo-text-muted mt-0.5">Assigned Leads</p>
@@ -156,7 +156,7 @@ export default function EmployeeDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <Users className="w-5 h-5 text-alo-brand" />
-              <span className="inline-flex items-center text-[11px] text-emerald-600 font-medium"><ArrowUpRight className="w-3 h-3" />+2 this week</span>
+              <span className="inline-flex items-center text-[11px] text-crm-success-text font-medium"><ArrowUpRight className="w-3 h-3" />+2 this week</span>
             </div>
             <p className="text-2xl font-bold text-alo-text">32</p>
             <p className="text-xs text-alo-text-muted mt-0.5">Active Students</p>
@@ -166,7 +166,7 @@ export default function EmployeeDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <Inbox className="w-5 h-5 text-alo-brand" />
-              <span className="text-[11px] text-amber-600 font-medium bg-amber-50 px-1.5 py-0.5 rounded">3 SLA warning</span>
+              <span className="text-[11px] text-crm-warning-text font-medium bg-crm-warning-bg px-1.5 py-0.5 rounded">3 SLA warning</span>
             </div>
             <p className="text-2xl font-bold text-alo-text">14</p>
             <p className="text-xs text-alo-text-muted mt-0.5">Unread Messages</p>
@@ -257,9 +257,9 @@ export default function EmployeeDashboard() {
                   </div>
                   <Progress value={68} className="h-2" />
                 </div>
-                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200">
-                  <TrendingUp className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <div><p className="text-sm font-medium text-emerald-700">Weekly Trend</p><p className="text-xs text-emerald-600">+4.2% compared to last week</p></div>
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-crm-success-bg border border-crm-success-border">
+                  <TrendingUp className="w-4 h-4 text-crm-success-text shrink-0" />
+                  <div><p className="text-sm font-medium text-crm-success-text">Weekly Trend</p><p className="text-xs text-crm-success-text">+4.2% compared to last week</p></div>
                 </div>
               </div>
             </CardContent>
@@ -271,7 +271,7 @@ export default function EmployeeDashboard() {
                 {deadlines.map((dl, i) => (
                   <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-alo-brand-light/30 transition-colors">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className={`w-2 h-2 rounded-full shrink-0 ${dl.urgent ? 'bg-red-500 animate-pulse' : 'bg-alo-border'}`} />
+                      <div className={`w-2 h-2 rounded-full shrink-0 ${dl.urgent ? 'bg-[var(--alo-error)] animate-pulse' : 'bg-alo-border'}`} />
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-alo-text truncate">{dl.title}</p>
                         <p className="text-[11px] text-alo-text-muted">{dl.date}</p>

@@ -73,7 +73,7 @@ export default async function CountryUniversitiesPage({ params }: { params: Prom
                     <Building2 className="w-5 h-5 text-[var(--alo-brand)]" />
                   </div>
                   {uni.worldRanking > 0 && (
-                    <span className="text-[11px] font-bold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full border border-amber-200 flex items-center gap-1">
+                    <span className="text-[11px] font-bold bg-crm-warning-bg text-crm-warning-text px-2.5 py-1 rounded-full border border-crm-warning-border flex items-center gap-1">
                       <Award className="w-3 h-3" /> QS #{uni.worldRanking}
                     </span>
                   )}

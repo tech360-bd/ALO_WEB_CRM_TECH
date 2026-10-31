@@ -67,21 +67,21 @@ interface Assessment {
 }
 
 const RISK_STYLE: Record<RiskLevel, string> = {
-  GREEN: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  AMBER: 'border-amber-200 bg-amber-50 text-amber-800',
-  RED: 'border-red-200 bg-red-50 text-red-800',
+  GREEN: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
+  AMBER: 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text',
+  RED: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text',
 };
 
 const BAND_STYLE: Record<SuccessBand, string> = {
-  ON_TRACK: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+  ON_TRACK: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
   NEEDS_SUPPORT: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
-  AT_RISK: 'border-amber-200 bg-amber-50 text-amber-800',
-  CRITICAL: 'border-red-200 bg-red-50 text-red-800',
+  AT_RISK: 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text',
+  CRITICAL: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text',
 };
 
 const SEVERITY_STYLE: Record<string, string> = {
-  HIGH: 'bg-red-100 text-red-700',
-  MEDIUM: 'bg-amber-100 text-amber-800',
+  HIGH: 'bg-crm-danger-bg text-crm-danger-text',
+  MEDIUM: 'bg-crm-warning-bg text-crm-warning-text',
   LOW: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
@@ -223,13 +223,13 @@ export default function RiskDashboardPage() {
       )}
 
       {failure && (
-        <Card className="rounded-2xl border-2 border-red-200">
+        <Card className="rounded-2xl border-2 border-crm-danger-border">
           <CardContent className="flex flex-col items-start gap-3 pt-6 pb-6">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="mt-0.5 size-5 shrink-0 text-red-600" />
+              <AlertTriangle className="mt-0.5 size-5 shrink-0 text-crm-danger-text" />
               <div>
-                <p className="text-sm font-bold text-red-800">Risk engine unavailable</p>
-                <p className="mt-0.5 text-xs text-red-700">{failure}</p>
+                <p className="text-sm font-bold text-crm-danger-text">Risk engine unavailable</p>
+                <p className="mt-0.5 text-xs text-crm-danger-text">{failure}</p>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={() => void load(country, stage)}>
@@ -266,7 +266,7 @@ export default function RiskDashboardPage() {
                   {assessed} of {totalApplications} applications scored ({assessedPct}%)
                 </p>
                 {unassessed > 0 && (
-                  <p className="mt-1 flex items-start gap-1.5 text-amber-800">
+                  <p className="mt-1 flex items-start gap-1.5 text-crm-warning-text">
                     <Info className="mt-0.5 size-3.5 shrink-0" />
                     <span>
                       {unassessed} application{unassessed === 1 ? '' : 's'} ha
@@ -346,12 +346,12 @@ export default function RiskDashboardPage() {
 
               {lookupState === 'loading' && <p className="text-xs text-[var(--alo-text-muted)]">Scoring…</p>}
               {lookupState === 'none' && (
-                <p className="rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-900">
+                <p className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-2.5 text-xs text-crm-warning-text">
                   {lookupMessage}
                 </p>
               )}
               {lookupState === 'error' && (
-                <p className="rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-800">
+                <p className="rounded-lg border border-crm-danger-border bg-crm-danger-bg p-2.5 text-xs text-crm-danger-text">
                   {lookupMessage}
                 </p>
               )}
@@ -404,11 +404,11 @@ export default function RiskDashboardPage() {
                   )}
 
                   {assessment.missingItems.length > 0 && (
-                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-2.5">
-                      <p className="text-[11px] font-bold uppercase tracking-wide text-amber-800">
+                    <div className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-2.5">
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-crm-warning-text">
                         Missing items
                       </p>
-                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-xs text-amber-900">
+                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-xs text-crm-warning-text">
                         {assessment.missingItems.map((item) => (
                           <li key={item}>{item}</li>
                         ))}

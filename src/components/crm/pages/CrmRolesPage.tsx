@@ -19,29 +19,29 @@ interface Role {
 }
 
 const roleIcons: Record<string, React.ReactNode> = {
-  super_admin: <Shield className="w-4 h-4 text-red-500" />,
-  ceo: <Shield className="w-4 h-4 text-red-400" />,
-  branch_manager: <Users className="w-4 h-4 text-amber-500" />,
+  super_admin: <Shield className="w-4 h-4 text-crm-danger-text" />,
+  ceo: <Shield className="w-4 h-4 text-[var(--alo-error)]" />,
+  branch_manager: <Users className="w-4 h-4 text-crm-warning-text" />,
   counselor: <Users className="w-4 h-4 text-[var(--alo-brand)]" />,
-  application_team: <Lock className="w-4 h-4 text-green-500" />,
-  visa_officer: <Shield className="w-4 h-4 text-purple-500" />,
+  application_team: <Lock className="w-4 h-4 text-crm-success-text" />,
+  visa_officer: <Shield className="w-4 h-4 text-[var(--alo-brand)]" />,
   finance: <Lock className="w-4 h-4 text-teal-500" />,
-  marketing_manager: <Shield className="w-4 h-4 text-pink-500" />,
+  marketing_manager: <Shield className="w-4 h-4 text-crm-danger-text" />,
   front_desk: <Users className="w-4 h-4 text-[var(--alo-text-muted)]" />,
-  hr: <Shield className="w-4 h-4 text-indigo-500" />,
+  hr: <Shield className="w-4 h-4 text-[var(--alo-brand)]" />,
   partner_manager: <Users className="w-4 h-4 text-[var(--alo-cta)]" />,
-  document_officer: <Lock className="w-4 h-4 text-cyan-500" />,
+  document_officer: <Lock className="w-4 h-4 text-[var(--alo-info-text)]" />,
   data_manager: <Lock className="w-4 h-4 text-lime-600" />,
   support_agent: <Users className="w-4 h-4 text-sky-500" />,
-  ai_manager: <Shield className="w-4 h-4 text-violet-500" />,
+  ai_manager: <Shield className="w-4 h-4 text-[var(--alo-brand)]" />,
 };
 
 const roleBorders: Record<string, string> = {
-  super_admin: 'border-red-500', ceo: 'border-red-400', branch_manager: 'border-amber-500',
-  counselor: 'border-[var(--alo-brand)]', application_team: 'border-green-500', visa_officer: 'border-purple-500',
-  finance: 'border-teal-500', marketing_manager: 'border-pink-500', front_desk: 'border-gray-400',
-  hr: 'border-indigo-500', partner_manager: 'border-[var(--alo-cta)]', document_officer: 'border-cyan-500',
-  data_manager: 'border-lime-600', support_agent: 'border-sky-500', ai_manager: 'border-violet-500',
+  super_admin: 'border-crm-danger-border', ceo: 'border-crm-danger-border', branch_manager: 'border-crm-warning-border',
+  counselor: 'border-[var(--alo-brand)]', application_team: 'border-[var(--alo-success)]', visa_officer: 'border-[var(--alo-brand)]',
+  finance: 'border-teal-500', marketing_manager: 'border-crm-danger-border', front_desk: 'border-[var(--alo-border)]',
+  hr: 'border-[var(--alo-brand)]', partner_manager: 'border-[var(--alo-cta)]', document_officer: 'border-[var(--alo-info-border)]',
+  data_manager: 'border-lime-600', support_agent: 'border-sky-500', ai_manager: 'border-[var(--alo-brand)]',
 };
 
 export default function CrmRolesPage() {
@@ -102,8 +102,8 @@ export default function CrmRolesPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]"><Shield className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{roles.length}</p><p className="text-xs text-[var(--alo-text-muted)]">Total Roles</p></div></CardContent></Card>
-        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-green-50 text-green-600"><Users className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{totalUsers}</p><p className="text-xs text-[var(--alo-text-muted)]">Users Assigned</p></div></CardContent></Card>
-        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-purple-50 text-purple-600"><Lock className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{roles.length > 0 ? Math.round(totalPerms / roles.length) : 0}</p><p className="text-xs text-[var(--alo-text-muted)]">Avg Permissions</p></div></CardContent></Card>
+        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-crm-success-bg text-crm-success-text"><Users className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{totalUsers}</p><p className="text-xs text-[var(--alo-text-muted)]">Users Assigned</p></div></CardContent></Card>
+        <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]"><Lock className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{roles.length > 0 ? Math.round(totalPerms / roles.length) : 0}</p><p className="text-xs text-[var(--alo-text-muted)]">Avg Permissions</p></div></CardContent></Card>
         <Card><CardContent className="p-4 flex items-center gap-3"><div className="p-2 rounded-lg bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]"><Edit className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{customCount}</p><p className="text-xs text-[var(--alo-text-muted)]">Custom Roles</p></div></CardContent></Card>
       </div>
 

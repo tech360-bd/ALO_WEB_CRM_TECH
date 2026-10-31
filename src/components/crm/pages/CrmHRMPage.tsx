@@ -29,10 +29,10 @@ import {
 import { toast } from 'sonner';
 
 const empStatusColors: Record<string, string> = {
-  active: 'bg-emerald-100 text-emerald-700',
-  invited: 'bg-amber-100 text-amber-700',
+  active: 'bg-crm-success-bg text-crm-success-text',
+  invited: 'bg-crm-warning-bg text-crm-warning-text',
   suspended: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-  terminated: 'bg-red-100 text-red-700',
+  terminated: 'bg-crm-danger-bg text-crm-danger-text',
 };
 
 interface Employee {
@@ -200,7 +200,7 @@ export default function CrmHRMPage() {
           <Button
             onClick={() => setShowReassignModal(true)}
             variant="outline"
-            className="border-slate-700 bg-slate-800 text-white text-xs font-bold gap-2 hover:bg-slate-700"
+            className="border-[var(--alo-border)] bg-[var(--alo-page)] text-white text-xs font-bold gap-2 hover:bg-[var(--alo-page)]"
           >
             <ArrowRight className="w-4 h-4 text-[var(--alo-cta)]" /> Work Reassignment
           </Button>
@@ -225,7 +225,7 @@ export default function CrmHRMPage() {
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-crm-success-bg text-crm-success-text flex items-center justify-center font-bold">
               <UserCheck className="w-5 h-5" />
             </div>
             <div>
@@ -236,7 +236,7 @@ export default function CrmHRMPage() {
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-crm-warning-bg text-crm-warning-text flex items-center justify-center font-bold">
               <Clock className="w-5 h-5" />
             </div>
             <div>
@@ -247,7 +247,7 @@ export default function CrmHRMPage() {
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center font-bold">
               <CreditCard className="w-5 h-5" />
             </div>
             <div>
@@ -373,7 +373,7 @@ export default function CrmHRMPage() {
                   <Button
  onClick={handleApprovePayroll}
  disabled={payrollLoading}
- className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl"
+ className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white font-bold px-4 py-2 rounded-xl"
  >
                     2. Human Final Approve & Disburse
                   </Button>
@@ -389,8 +389,8 @@ export default function CrmHRMPage() {
                 </div>
                 <div className="grid grid-cols-3 gap-3 pt-2 font-mono">
                   <div>Gross Payroll: <strong className="text-[var(--alo-text)]">৳{currentPayroll.totalGross?.toLocaleString()}</strong></div>
-                  <div>Deductions (Tax/PF): <strong className="text-red-600">৳{currentPayroll.totalDeduction?.toLocaleString()}</strong></div>
-                  <div>Net Payable: <strong className="text-emerald-700">৳{currentPayroll.totalNet?.toLocaleString()}</strong></div>
+                  <div>Deductions (Tax/PF): <strong className="text-crm-danger-text">৳{currentPayroll.totalDeduction?.toLocaleString()}</strong></div>
+                  <div>Net Payable: <strong className="text-crm-success-text">৳{currentPayroll.totalNet?.toLocaleString()}</strong></div>
                 </div>
               </div>
             )}
@@ -411,7 +411,7 @@ export default function CrmHRMPage() {
 
       {/* REASSIGNMENT MODAL */}
       {showReassignModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-[var(--alo-page)]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <Card className="p-6 bg-white w-full max-w-md rounded-2xl shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-3">
               <h3 className="font-bold text-sm text-[var(--alo-text)] flex items-center gap-2">

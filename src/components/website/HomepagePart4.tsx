@@ -422,7 +422,7 @@ function SuccessStoriesSection() {
                     {Array.from({ length: 5 }).map((_, si) => (
                       <Star
                         key={si}
-                        className={`h-4.5 w-4.5 ${si < (story.stars ?? 0) ? 'fill-amber-400 text-amber-400' : 'text-[var(--alo-placeholder)]'}`}
+                        className={`h-4.5 w-4.5 ${si < (story.stars ?? 0) ? 'fill-amber-400 text-crm-warning-text' : 'text-[var(--alo-placeholder)]'}`}
                       />
                     ))}
                   </div>
@@ -818,12 +818,12 @@ function FinalCtaSection() {
                   <div
                     className={`rounded-xl p-4 mb-6 flex items-start gap-3 ${
                       submitResult.success
-                        ? 'bg-green-50 border border-green-200'
-                        : 'bg-red-50 border border-red-200'
+                        ? 'border border-crm-success-border bg-crm-success-bg'
+                        : 'border border-crm-danger-border bg-crm-danger-bg'
                     }`}
                   >
-                    <CheckCircle2 className={`h-5 w-5 shrink-0 mt-0.5 ${submitResult.success ? 'text-green-600' : 'text-red-600'}`} />
-                    <p className={`text-sm ${submitResult.success ? 'text-green-700' : 'text-red-700'}`}>
+                    <CheckCircle2 className={`h-5 w-5 shrink-0 mt-0.5 ${submitResult.success ? 'text-crm-success-text' : 'text-crm-danger-text'}`} />
+                    <p className={`text-sm ${submitResult.success ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
                       {submitResult.message}
                     </p>
                   </div>

@@ -76,7 +76,7 @@ export default function BranchManagerDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <kpi.icon className="w-5 h-5 text-alo-brand" />
-                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
+                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
                   {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}{kpi.change}
                 </span>
               </div>
@@ -164,7 +164,7 @@ export default function BranchManagerDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <UserPlus className="w-4 h-4 text-amber-500" /> Unassigned Leads
+                  <UserPlus className="w-4 h-4 text-crm-warning-text" /> Unassigned Leads
                 </CardTitle>
                 <Badge variant="warning" className="text-[11px]">{unassignedLeads.length}</Badge>
               </div>
@@ -192,7 +192,7 @@ export default function BranchManagerDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-500" /> Overdue Follow-ups
+                  <AlertTriangle className="w-4 h-4 text-crm-danger-text" /> Overdue Follow-ups
                 </CardTitle>
                 <Badge variant="danger" className="text-[11px]">{overdueFollowups.length}+</Badge>
               </div>
@@ -200,7 +200,7 @@ export default function BranchManagerDashboard() {
             <CardContent>
               <div className="space-y-2 max-h-56 overflow-y-auto">
                 {overdueFollowups.map((f) => (
-                  <div key={f.student} className="p-2.5 rounded-lg border border-red-200 bg-red-50">
+                  <div key={f.student} className="p-2.5 rounded-lg border border-crm-danger-border bg-crm-danger-bg">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text">{f.student}</p>
                       <Badge variant="danger" className="text-[11px]">{f.type}</Badge>

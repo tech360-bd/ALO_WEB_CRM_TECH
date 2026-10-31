@@ -102,27 +102,27 @@ type PartnerData = {
 
 const LEAD_STATUS_COLORS: Record<string, string> = {
   NEW: "bg-sky-100 text-sky-700",
-  CONTACTED: "bg-indigo-100 text-indigo-700",
-  QUALIFIED: "bg-violet-100 text-violet-700",
-  CONVERTED: "bg-emerald-100 text-emerald-700",
-  LOST: "bg-rose-100 text-rose-700",
+  CONTACTED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  QUALIFIED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  CONVERTED: "bg-crm-success-bg text-crm-success-text",
+  LOST: "bg-crm-warning-bg text-crm-warning-text",
   DUPLICATE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const COMMISSION_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   APPROVED: "bg-sky-100 text-sky-700",
-  PAID: "bg-emerald-100 text-emerald-700",
+  PAID: "bg-crm-success-bg text-crm-success-text",
 };
 
 const STUDENT_STAGE_COLORS: Record<string, string> = {
   COUNSELING: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  APPLICATION_SUBMITTED: "bg-indigo-100 text-indigo-700",
-  CONDITIONAL_OFFFER: "bg-violet-100 text-violet-700",
-  UNCONDITIONAL_OFFER: "bg-violet-100 text-violet-700",
+  APPLICATION_SUBMITTED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  CONDITIONAL_OFFFER: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  UNCONDITIONAL_OFFER: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   CAS_ISSUED: "bg-teal-100 text-teal-700",
-  VISA_APPROVED: "bg-emerald-100 text-emerald-700",
-  ENROLLED: "bg-emerald-100 text-emerald-700",
+  VISA_APPROVED: "bg-crm-success-bg text-crm-success-text",
+  ENROLLED: "bg-crm-success-bg text-crm-success-text",
 };
 
 function stageLabel(stage: string): string {
@@ -237,8 +237,8 @@ export function PartnerPortal() {
                       Partner
                     </Badge>
                     {partner.status && (
-                      <Badge variant="outline" className="border-emerald-200 text-emerald-700">
-                        <span className="mr-1 inline-block size-1.5 rounded-full bg-emerald-500" />
+                      <Badge variant="outline" className="border-crm-success-border text-crm-success-text">
+                        <span className="mr-1 inline-block size-1.5 rounded-full bg-[var(--alo-success)]" />
                         {partner.status}
                       </Badge>
                     )}
@@ -349,7 +349,7 @@ export function PartnerPortal() {
                 />
               </div>
             </div>
-            <div className="rounded-xl border-2 border-amber-200 bg-amber-50/60 px-4 py-3">
+            <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/60 px-4 py-3">
               <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Pending Commission</p>
               <div className="mt-1">
                 <SensitiveField
@@ -360,7 +360,7 @@ export function PartnerPortal() {
                 />
               </div>
             </div>
-            <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/60 px-4 py-3">
+            <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/60 px-4 py-3">
               <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Paid Commission</p>
               <div className="mt-1">
                 <SensitiveField
@@ -619,7 +619,7 @@ export function PartnerPortal() {
                   </TableBody>
                 </Table>
               </div>
-              <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
+              <div className="mt-4 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2.5 text-xs text-crm-warning-text">
                 <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0" />
                 <p>
                   Commission amounts are private and visible only to you and the ALO Finance team. Per-row commission

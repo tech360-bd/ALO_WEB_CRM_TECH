@@ -32,9 +32,9 @@ const TEST_TYPES = [
 ];
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   IN_PROGRESS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
 };
 
 export function StudentMockTests() {

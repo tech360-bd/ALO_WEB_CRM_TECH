@@ -84,13 +84,13 @@ export default function AdminCreateUniversityPage() {
       <div className="mx-auto max-w-4xl space-y-6">
         <header className="rounded-3xl border border-[var(--alo-border)] bg-white p-6 shadow-sm sm:p-8">
           <Badge className="mb-3 border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]">University research workflow</Badge>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Add a university</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--alo-text)] sm:text-3xl">Add a university</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--alo-body)]">
             Save a sourced research draft for review. The server generates its university ID; this form never publishes or marks facts verified.
           </p>
           <ol className="mt-6 grid gap-2 sm:grid-cols-3" aria-label="University creation steps">
             {STEPS.map((step, index) => (
-              <li key={step} aria-current={activeStep === index ? 'step' : undefined} className={`rounded-xl border px-3 py-2 text-sm ${activeStep === index ? 'border-blue-300 bg-[var(--alo-brand-pale)] font-semibold text-[var(--alo-brand-deep)]' : index < activeStep ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]'}`}>
+              <li key={step} aria-current={activeStep === index ? 'step' : undefined} className={`rounded-xl border px-3 py-2 text-sm ${activeStep === index ? 'border-[var(--alo-brand-border)] bg-[var(--alo-brand-pale)] font-semibold text-[var(--alo-brand-deep)]' : index < activeStep ? 'border-crm-success-border bg-crm-success-bg text-crm-success-text' : 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]'}`}>
                 <span className="mr-2 inline-flex size-6 items-center justify-center rounded-full bg-white text-xs font-bold">{index + 1}</span>{step}
               </li>
             ))}
@@ -102,8 +102,8 @@ export default function AdminCreateUniversityPage() {
             <section className="space-y-5" aria-labelledby="details-heading">
               <div><h2 id="details-heading" className="text-lg font-semibold text-[var(--alo-text)]">University details</h2><p className="mt-1 text-sm text-[var(--alo-text-muted)]">Provide the entity name and location used for deduplication and the public-page slug.</p></div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2"><Label htmlFor="university-name">University name <span className="text-red-600">*</span></Label><Input id="university-name" autoComplete="organization" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="University of Example" maxLength={180} required /></div>
-                <div className="space-y-2"><Label htmlFor="university-country">Country <span className="text-red-600">*</span></Label><Input id="university-country" autoComplete="country-name" value={form.country} onChange={(event) => update('country', event.target.value)} placeholder="Canada" maxLength={120} required /></div>
+                <div className="space-y-2"><Label htmlFor="university-name">University name <span className="text-crm-danger-text">*</span></Label><Input id="university-name" autoComplete="organization" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="University of Example" maxLength={180} required /></div>
+                <div className="space-y-2"><Label htmlFor="university-country">Country <span className="text-crm-danger-text">*</span></Label><Input id="university-country" autoComplete="country-name" value={form.country} onChange={(event) => update('country', event.target.value)} placeholder="Canada" maxLength={120} required /></div>
                 <div className="space-y-2"><Label htmlFor="university-city">City</Label><Input id="university-city" value={form.city} onChange={(event) => update('city', event.target.value)} placeholder="Toronto" maxLength={120} /></div>
                 <div className="space-y-2"><Label htmlFor="university-website">Official website</Label><Input id="university-website" type="url" inputMode="url" value={form.website} onChange={(event) => update('website', event.target.value)} placeholder="https://www.example.edu" maxLength={500} /></div>
               </div>
@@ -131,14 +131,14 @@ export default function AdminCreateUniversityPage() {
                 <div><dt className="text-xs font-medium uppercase tracking-wide text-[var(--alo-text-muted)]">Initial status</dt><dd className="mt-1 text-[var(--alo-text)]">RESEARCH_REQUIRED · draft · inactive</dd></div>
               </dl>
               {result?.success && result.university && (
-                <div role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-950">
+                <div role="status" className="rounded-xl border border-crm-success-border bg-crm-success-bg p-4 text-sm text-crm-success-text">
                   <p className="font-semibold">Research draft saved</p>
                   <p className="mt-1">Generated university ID: <code className="rounded bg-white px-1.5 py-0.5">{result.university.universityId}</code></p>
                   <p className="mt-1">Status: {result.university.verificationStatus} · {result.university.publicationStatus}</p>
                 </div>
               )}
               {result?.duplicateDetected && result.existingUniversity && (
-                <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+                <div role="alert" className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-4 text-sm text-crm-warning-text">
                   <p className="font-semibold">Possible duplicate found</p>
                   <p className="mt-1">{result.existingUniversity.name} · {result.existingUniversity.country} · {result.existingUniversity.universityId}</p>
                   <p className="mt-1">Review the existing university record instead of creating another one.</p>
@@ -147,7 +147,7 @@ export default function AdminCreateUniversityPage() {
             </section>
           )}
 
-          {formError && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{formError}</p>}
+          {formError && <p role="alert" className="mt-5 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-sm text-crm-danger-text">{formError}</p>}
 
           <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--alo-border)] pt-5">
             <Link href="/admin/universities" className="text-sm font-medium text-[var(--alo-body)] underline-offset-4 hover:text-[var(--alo-text)] hover:underline">Back to universities</Link>

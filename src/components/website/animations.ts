@@ -10,10 +10,10 @@ export const BRAND = {
   blue: '#0057B8',      // Education Blue
   orange: '#E8501A',     // ALO Orange (primary CTA)
   sunshine: '#C93D13',   // Sunshine Accent
-  text: '#0F172A',       // Neutral Dark
-  textSoft: '#555555',  // Neutral Gray
-  softBg: '#FFF8F0',    // Warm off-white
-  lightBg: '#F0F7FF',   // Light blue tint
+  text: '#0F172A',       // Neutral Dark — master main text
+  textSoft: '#64748B',   // Neutral Gray — master secondary text (#555555 was off-palette)
+  softBg: '#FFF1EA',     // Warm off-white — master pale orange
+  lightBg: '#F4F8FF',    // Light blue tint — master pale blue
   border: '#E2E8F0',
   bg: '#F8FAFC',
   whatsapp: '#25D366',

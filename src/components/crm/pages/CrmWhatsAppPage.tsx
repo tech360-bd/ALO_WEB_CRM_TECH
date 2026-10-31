@@ -63,9 +63,9 @@ interface LoadState {
 }
 
 const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
-  high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
-  urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
-  medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
+  high: { label: 'High', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  urgent: { label: 'Urgent', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  medium: { label: 'Medium', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
   low: { label: 'Low', cls: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
   normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
@@ -238,7 +238,7 @@ export default function CrmWhatsAppPage() {
               <p className="text-2xl font-bold">{meta.escalatedCount ?? 0}</p>
             </div>
             <AlertTriangle
-              className={`h-5 w-5 ${(meta.escalatedCount ?? 0) > 0 ? 'text-red-600' : 'text-muted-foreground'}`}
+              className={`h-5 w-5 ${(meta.escalatedCount ?? 0) > 0 ? 'text-crm-danger-text' : 'text-muted-foreground'}`}
             />
           </CardContent>
         </Card>

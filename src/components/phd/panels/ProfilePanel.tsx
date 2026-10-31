@@ -103,7 +103,7 @@ export default function ProfilePanel() {
             </ul>
           </>
         ) : (
-          <p className="mt-2 text-xs text-emerald-700">All core fields are complete.</p>
+          <p className="mt-2 text-xs text-crm-success-text">All core fields are complete.</p>
         )}
         <p className="mt-4 text-[11px] text-[var(--alo-text-muted)]">
           Sensitive or optional fields stay optional. Nothing here is sent to a university automatically.
@@ -211,7 +211,7 @@ export default function ProfilePanel() {
             {busy ? 'Saving…' : 'Save profile'}
           </Button>
           {saved && <Pill tone="ok">Saved</Pill>}
-          {saveError && <span className="text-xs text-red-700">{saveError}</span>}
+          {saveError && <span className="text-xs text-crm-danger-text">{saveError}</span>}
         </div>
       </Card>
     </div>

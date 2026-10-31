@@ -72,10 +72,10 @@ interface LoadState {
 }
 
 const VOUCHER_STATUS_CLS: Record<string, string> = {
-  available: 'bg-emerald-100 text-emerald-800',
+  available: 'bg-crm-success-bg text-crm-success-text',
   used: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-  expired: 'bg-amber-100 text-amber-800',
-  revoked: 'bg-red-100 text-red-700',
+  expired: 'bg-crm-warning-bg text-crm-warning-text',
+  revoked: 'bg-crm-danger-bg text-crm-danger-text',
 };
 
 function formatTimestamp(value?: string | null): string {
@@ -142,7 +142,7 @@ export default function PartnerSuperAdminDashboard() {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-xl font-bold text-[var(--alo-text)]">Partner Administration</h1>
-            <Badge className="border-indigo-200 bg-indigo-100 font-mono text-xs text-indigo-800">
+            <Badge className="border-[var(--alo-border)] bg-[var(--alo-brand-pale)] font-mono text-xs text-[var(--alo-brand)]">
               B2B PARTNER SUPER ADMIN
             </Badge>
             {partnerId ? (
@@ -158,7 +158,7 @@ export default function PartnerSuperAdminDashboard() {
         <div className="flex flex-wrap items-center gap-2">
           <Button
  size="sm"
- className=" bg-indigo-600 text-white hover:bg-indigo-700"
+ className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]"
  onClick={() => setView('partner-admin-marketing-studio')}
           >
             <Sparkles className="mr-1 h-3.5 w-3.5" /> Open Marketing Studio
@@ -179,8 +179,8 @@ export default function PartnerSuperAdminDashboard() {
       </div>
 
       {state.error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
               <p className="font-medium">{state.error}</p>
@@ -229,8 +229,8 @@ export default function PartnerSuperAdminDashboard() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             {/* ── Marketing quota ── */}
             <div className="space-y-6 lg:col-span-7">
-              <Card className="border-indigo-200 bg-white shadow-xs">
-                <CardHeader className="flex flex-row items-center justify-between border-b border-indigo-100 bg-indigo-50/30 pb-3">
+              <Card className="border-[var(--alo-border)] bg-white shadow-xs">
+                <CardHeader className="flex flex-row items-center justify-between border-b border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/30 pb-3">
                   <div>
                     <CardTitle className="text-sm font-bold text-[var(--alo-text)]">
                       Marketing quota this month
@@ -239,7 +239,7 @@ export default function PartnerSuperAdminDashboard() {
                       Generated images and short videos against your monthly allowance.
                     </CardDescription>
                   </div>
-                  <Sparkles className="h-5 w-5 text-indigo-600" />
+                  <Sparkles className="h-5 w-5 text-[var(--alo-brand)]" />
                 </CardHeader>
                 <CardContent className="space-y-4 p-4">
                   <div>
@@ -283,7 +283,7 @@ export default function PartnerSuperAdminDashboard() {
                   <div className="flex justify-end">
                     <Button
  size="sm"
- className=" bg-indigo-600 text-white hover:bg-indigo-700"
+ className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]"
  onClick={() => setView('partner-admin-marketing-studio')}
                     >
                       Generate campaign
@@ -296,7 +296,7 @@ export default function PartnerSuperAdminDashboard() {
               <Card className="border-[var(--alo-border)] bg-white shadow-xs">
                 <CardHeader className="border-b border-[var(--alo-border)] pb-3">
                   <CardTitle className="flex items-center gap-2 text-sm font-bold text-[var(--alo-text)]">
-                    <Users className="h-4 w-4 text-indigo-600" />
+                    <Users className="h-4 w-4 text-[var(--alo-brand)]" />
                     Counsellor seats
                   </CardTitle>
                   <CardDescription className="text-xs text-[var(--alo-text-muted)]">
@@ -322,10 +322,10 @@ export default function PartnerSuperAdminDashboard() {
                               variant="outline"
                               className={`text-[11px] ${
                                 request.status === 'approved'
-                                  ? 'bg-emerald-100 text-emerald-800'
+                                  ? 'bg-crm-success-bg text-crm-success-text'
                                   : request.status === 'rejected'
-                                    ? 'bg-red-100 text-red-700'
-                                    : 'bg-amber-100 text-amber-800'
+                                    ? 'bg-crm-danger-bg text-crm-danger-text'
+                                    : 'bg-crm-warning-bg text-crm-warning-text'
                               }`}
                             >
                               {(request.status || 'pending').toUpperCase()}
@@ -358,7 +358,7 @@ export default function PartnerSuperAdminDashboard() {
                     <CardTitle className="text-sm font-bold text-[var(--alo-text)]">
                       Student benefit vouchers
                     </CardTitle>
-                    <Ticket className="h-4 w-4 text-emerald-600" />
+                    <Ticket className="h-4 w-4 text-crm-success-text" />
                   </div>
                   <CardDescription className="text-xs text-[var(--alo-text-muted)]">
                     Mock test vouchers issued to students with an active application.

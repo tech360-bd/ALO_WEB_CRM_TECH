@@ -272,7 +272,7 @@ function ExamDetail({
                   </Badge>
                 )}
                 <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                  <Icon name="ShieldCheck" className="size-3 text-emerald-600" />
+                  <Icon name="ShieldCheck" className="size-3 text-crm-success-text" />
                   Last verified {fmtDate(exam.lastVerifiedAt)}
                 </span>
               </div>
@@ -360,7 +360,7 @@ function ExamDetail({
             <ul className="space-y-2.5">
               {mockRules.map((rule, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm">
-                  <Icon name="CircleCheck" className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                  <Icon name="CircleCheck" className="mt-0.5 size-4 shrink-0 text-crm-success-text" />
                   <span className="text-foreground/80">{rule}</span>
                 </li>
               ))}
@@ -452,11 +452,11 @@ function ExamDetail({
                         {SECTION_LABELS[key] || key.replace(/_/g, " ")}
                       </p>
                       {String(val).toLowerCase().includes("auto") ? (
-                        <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                        <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
                           Auto-scored
                         </Badge>
                       ) : (
-                        <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">
+                        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                           AI-evaluated
                         </Badge>
                       )}
@@ -510,7 +510,7 @@ function ExamDetail({
                   key={i}
                   className="flex items-start gap-2.5 rounded-lg border border-[var(--alo-brand)]/10 bg-[var(--alo-page)] p-3"
                 >
-                  <Icon name="CircleCheck" className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                  <Icon name="CircleCheck" className="mt-0.5 size-4 shrink-0 text-crm-success-text" />
                   <span className="text-sm text-foreground/80">{item}</span>
                 </div>
               ))}
@@ -525,10 +525,10 @@ function ExamDetail({
           icon="CreditCard"
         >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50/60 p-5">
+            <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/60 p-5">
               <div className="flex items-center gap-2">
-                <Icon name="Gift" className="size-5 text-emerald-600" />
-                <p className="font-bold text-emerald-700">Free</p>
+                <Icon name="Gift" className="size-5 text-crm-success-text" />
+                <p className="font-bold text-crm-success-text">Free</p>
               </div>
               <p className="mt-2 text-sm text-foreground/80">
                 {pricing.free || `${freeQuota.aloStudents || "3 mocks for ALO students"}, ${freeQuota.guestStudents || "1 for guests"}`}
@@ -656,7 +656,7 @@ function FreeQuotaCard({
       <ul className="mt-3 space-y-1.5">
         {perks.map((p, i) => (
           <li key={i} className="flex items-start gap-2 text-xs text-foreground/80">
-            <Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />
+            <Icon name="Check" className="mt-0.5 size-3 shrink-0 text-crm-success-text" />
             {p}
           </li>
         ))}

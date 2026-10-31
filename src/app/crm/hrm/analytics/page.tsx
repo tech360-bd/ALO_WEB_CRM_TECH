@@ -19,7 +19,7 @@ export default function HrmAnalyticsPage() {
     })();
   }, []);
   if (loading) return <div className="min-h-screen bg-white p-6 text-xs text-[var(--alo-text-muted)]">Loading HR analytics...</div>;
-  if (!data) return <div role="alert" className="min-h-screen bg-white p-6 text-sm text-amber-800">{error || 'HR analytics are not available for this account.'}</div>;
+  if (!data) return <div role="alert" className="min-h-screen bg-white p-6 text-sm text-crm-warning-text">{error || 'HR analytics are not available for this account.'}</div>;
   return (
     <div className="min-h-screen bg-white p-4 sm:p-6 space-y-4">
       <div><h1 className="text-xl font-bold text-[var(--alo-text)]">HR Analytics — Verified Data</h1><p className="text-xs text-[var(--alo-text-muted)]">Headcount • recorded attendance • payroll subject to permission • employee lifecycle</p><p className="mt-1 text-xs text-[var(--alo-text-muted)]">{data.attendanceNote}</p></div>
@@ -49,7 +49,7 @@ export default function HrmAnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="bg-white border-[var(--alo-border)]"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Upcoming Birthdays (30 days)</CardTitle></CardHeader>
-          <CardContent className="p-3 space-y-2">{data.upcomingBirthday == null ? <p className="text-xs text-[var(--alo-text-muted)]">Individual birthdays are omitted from this analytics endpoint for privacy.</p> : data.upcomingBirthday.length ? data.upcomingBirthday.map((b:any)=> <div key={b.employeeId} className="flex justify-between text-xs p-2 bg-pink-50 border border-pink-100 rounded"><span>{b.fullName} — {b.dob}</span><Badge className="bg-white text-pink-700 text-xs">{b.daysLeft}d</Badge></div>) : <p className="text-xs text-[var(--alo-text-muted)]">No birthdays in the reporting window.</p>}</CardContent></Card>
+          <CardContent className="p-3 space-y-2">{data.upcomingBirthday == null ? <p className="text-xs text-[var(--alo-text-muted)]">Individual birthdays are omitted from this analytics endpoint for privacy.</p> : data.upcomingBirthday.length ? data.upcomingBirthday.map((b:any)=> <div key={b.employeeId} className="flex justify-between text-xs p-2 bg-crm-danger-bg border border-crm-danger-border rounded"><span>{b.fullName} — {b.dob}</span><Badge className="bg-white text-crm-danger-text text-xs">{b.daysLeft}d</Badge></div>) : <p className="text-xs text-[var(--alo-text-muted)]">No birthdays in the reporting window.</p>}</CardContent></Card>
         <Card className="bg-white border-[var(--alo-border)]"><CardHeader className="p-4 border-b"><CardTitle className="text-sm font-bold">Upcoming Work Anniversary</CardTitle></CardHeader>
           <CardContent className="p-3 space-y-2">{data.upcomingWorkAnniversary == null ? <p className="text-xs text-[var(--alo-text-muted)]">Individual work-anniversary dates are omitted from this analytics endpoint for privacy.</p> : data.upcomingWorkAnniversary.length ? data.upcomingWorkAnniversary.map((a:any)=> <div key={a.employeeId} className="flex justify-between text-xs p-2 bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded"><span>{a.fullName} — {a.years} years</span><span className="text-xs">{a.joiningDate}</span></div>) : <p className="text-xs text-[var(--alo-text-muted)]">No anniversaries in the reporting window.</p>}</CardContent></Card>
       </div>

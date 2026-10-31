@@ -223,9 +223,9 @@ export default function CrmCommunicationsPage() {
       </div>
 
       {/* No send log exists */}
-      <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50/70 p-3">
-        <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
-        <p className="text-xs text-amber-900 leading-relaxed">
+      <div className="flex items-start gap-2.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg/70 p-3">
+        <AlertTriangle className="h-4 w-4 shrink-0 text-crm-warning-text mt-0.5" />
+        <p className="text-xs text-crm-warning-text leading-relaxed">
           No outbound message log is stored for email, SMS or WhatsApp in this workspace, so no send
           history or delivery statistics are displayed here. Figures would otherwise have to be invented.
         </p>
@@ -305,7 +305,7 @@ export default function CrmCommunicationsPage() {
                             <Badge variant="outline" className="text-[11px] font-normal">{template.channel}</Badge>
                             {template.category && <Badge variant="muted" className="text-[11px]">{template.category}</Badge>}
                             {template.requiresApproval && (
-                              <Badge className="text-[11px] bg-amber-100 text-amber-700">Needs approval</Badge>
+                              <Badge className="text-[11px] bg-crm-warning-bg text-crm-warning-text">Needs approval</Badge>
                             )}
                             {template.isLocked && <Badge variant="muted" className="text-[11px]">Locked</Badge>}
                           </div>

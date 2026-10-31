@@ -14,9 +14,9 @@ const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-700',
   pending_review: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   needs_update: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-  approved: 'bg-emerald-100 text-emerald-700',
-  accepted: 'bg-emerald-100 text-emerald-700',
-  rejected: 'bg-red-100 text-red-700',
+  approved: 'bg-crm-success-bg text-crm-success-text',
+  accepted: 'bg-crm-success-bg text-crm-success-text',
+  rejected: 'bg-crm-danger-bg text-crm-danger-text',
   uploaded: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   not_uploaded: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
@@ -125,8 +125,8 @@ export default function CrmDocumentsPage() {
                         <td className="py-3 text-right">
                           <div className="flex justify-end gap-1">
                             <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
-                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-green-500"><CheckCircle className="h-4 w-4" /></Button>
-                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-red-500"><XCircle className="h-4 w-4" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-crm-success-text"><CheckCircle className="h-4 w-4" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-crm-danger-text"><XCircle className="h-4 w-4" /></Button>
                           </div>
                         </td>
                       </tr>

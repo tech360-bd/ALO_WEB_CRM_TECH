@@ -71,15 +71,15 @@ export interface TimelineEntry {
 const VISIBILITY_BADGES: Record<VisibilityLevel, { label: string; bg: string; text: string }> = {
   public_safe: { label: 'Public Safe', bg: 'bg-[var(--alo-surface-muted)]', text: 'text-[var(--alo-body)]' },
   student_visible: { label: 'Student Visible', bg: 'bg-[var(--alo-brand-pale)]', text: 'text-[var(--alo-brand)]' },
-  partner_visible: { label: 'Partner Visible', bg: 'bg-emerald-50', text: 'text-emerald-700' },
-  counselor_visible: { label: 'Counselor Only', bg: 'bg-purple-50', text: 'text-purple-700' },
-  application_team_visible: { label: 'App Team', bg: 'bg-amber-50', text: 'text-amber-700' },
-  visa_team_visible: { label: 'Visa Team', bg: 'bg-cyan-50', text: 'text-cyan-700' },
+  partner_visible: { label: 'Partner Visible', bg: 'bg-crm-success-bg', text: 'text-crm-success-text' },
+  counselor_visible: { label: 'Counselor Only', bg: 'bg-[var(--alo-brand-pale)]', text: 'text-[var(--alo-brand)]' },
+  application_team_visible: { label: 'App Team', bg: 'bg-crm-warning-bg', text: 'text-crm-warning-text' },
+  visa_team_visible: { label: 'Visa Team', bg: 'bg-[var(--alo-info-bg)]', text: 'text-[var(--alo-info-text)]' },
   finance_visible: { label: 'Finance Team', bg: 'bg-teal-50', text: 'text-teal-700' },
-  marketing_visible: { label: 'Marketing', bg: 'bg-pink-50', text: 'text-pink-700' },
-  b2b_confidential: { label: 'B2B Confidential', bg: 'bg-rose-100', text: 'text-rose-800' },
-  internal_only: { label: 'Internal Only', bg: 'bg-amber-100', text: 'text-amber-900' },
-  super_admin_only: { label: 'Super Admin', bg: 'bg-red-100', text: 'text-red-900' },
+  marketing_visible: { label: 'Marketing', bg: 'bg-crm-danger-bg', text: 'text-crm-danger-text' },
+  b2b_confidential: { label: 'B2B Confidential', bg: 'bg-crm-warning-bg', text: 'text-crm-warning-text' },
+  internal_only: { label: 'Internal Only', bg: 'bg-crm-warning-bg', text: 'text-crm-warning-text' },
+  super_admin_only: { label: 'Super Admin', bg: 'bg-crm-danger-bg', text: 'text-crm-danger-text' },
 };
 
 const TYPE_ICONS: Record<TimelineItemType, React.ElementType> = {
@@ -219,12 +219,12 @@ export default function UnifiedCommunicationTimeline({
     <Card className="border border-[var(--alo-border)] shadow-sm bg-white rounded-xl">
       <CardHeader className="pb-3 border-b border-[var(--alo-border)] flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-indigo-600" />
+          <MessageSquare className="w-5 h-5 text-[var(--alo-brand)]" />
           <CardTitle className="text-sm font-bold text-[var(--alo-text)]">
             Unified Communication Timeline ({entityType.toUpperCase()} #{entityId})
           </CardTitle>
         </div>
-        <Badge variant="outline" className="text-[11px] bg-indigo-50 text-indigo-700 border-indigo-200">
+        <Badge variant="outline" className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]">
           {visibleEntries.length} Records
         </Badge>
       </CardHeader>
@@ -282,7 +282,7 @@ export default function UnifiedCommunicationTimeline({
               <span className="text-[11px] text-[var(--alo-text-muted)]">
                 All communication is logged to database &amp; audit trail
               </span>
-              <Button size="sm" className=" bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSend}>
+              <Button size="sm" className=" bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)] text-white" onClick={handleSend}>
                 <Send className="w-3.5 h-3.5 mr-1" />
                 Send &amp; Log
               </Button>
@@ -291,7 +291,7 @@ export default function UnifiedCommunicationTimeline({
         ) : null}
 
         {/* Timeline Entries List */}
-        <div className="relative border-l-2 border-indigo-100 pl-4 space-y-4">
+        <div className="relative border-l-2 border-[var(--alo-border)] pl-4 space-y-4">
           {visibleEntries.map((item) => {
             const Icon = TYPE_ICONS[item.type] || MessageSquare;
             const visMeta = VISIBILITY_BADGES[item.visibility] || VISIBILITY_BADGES.public_safe;
@@ -299,8 +299,8 @@ export default function UnifiedCommunicationTimeline({
             return (
               <div key={item.id} className="relative group">
                 {/* Timeline node */}
-                <div className="absolute -left-[25px] top-1.5 w-6 h-6 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center">
-                  <Icon className="w-3 h-3 text-indigo-600" />
+                <div className="absolute -left-[25px] top-1.5 w-6 h-6 rounded-full bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] flex items-center justify-center">
+                  <Icon className="w-3 h-3 text-[var(--alo-brand)]" />
                 </div>
 
                 <div className="bg-white border border-[var(--alo-border)] rounded-lg p-3 shadow-xs space-y-1.5">
@@ -330,7 +330,7 @@ export default function UnifiedCommunicationTimeline({
                   )}
 
                   {item.aiDrafted && (
-                    <div className="text-[11px] text-purple-600 font-medium flex items-center gap-1">
+                    <div className="text-[11px] text-[var(--alo-brand)] font-medium flex items-center gap-1">
                       <Sparkles className="w-3 h-3" />
                       Generated by AI Assistant (Pending Manager Approval)
                     </div>

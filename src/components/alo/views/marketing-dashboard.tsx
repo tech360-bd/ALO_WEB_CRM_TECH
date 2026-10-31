@@ -243,13 +243,13 @@ const PLATFORM_ICON: Record<string, string> = {
 };
 
 const PLATFORM_COLOR: Record<string, string> = {
-  WHATSAPP: "bg-green-100 text-green-700",
+  WHATSAPP: "bg-crm-success-bg text-crm-success-text",
   FACEBOOK: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  INSTAGRAM: "bg-pink-100 text-pink-700",
+  INSTAGRAM: "bg-crm-danger-bg text-crm-danger-text",
   MESSENGER: "bg-sky-100 text-sky-700",
-  EMAIL: "bg-violet-100 text-violet-700",
+  EMAIL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   SMS: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  WEBSITE_CHAT: "bg-cyan-100 text-cyan-700",
+  WEBSITE_CHAT: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]",
 };
 
 const POST_CATEGORIES = [
@@ -291,11 +291,11 @@ const POST_SIZES = [
 
 const APPROVAL_STATUS_BADGE: Record<string, string> = {
   DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  PENDING_APPROVAL: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-green-100 text-green-700",
-  SCHEDULED: "bg-cyan-100 text-cyan-700",
-  PUBLISHED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-red-100 text-red-700",
+  PENDING_APPROVAL: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  SCHEDULED: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]",
+  PUBLISHED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-danger-bg text-crm-danger-text",
 };
 
 const APPROVAL_STATUS_LABEL: Record<string, string> = {
@@ -317,15 +317,15 @@ const TRIGGER_TYPES = [
 
 const TRIGGER_TYPE_BADGE: Record<string, string> = {
   LEAD_CREATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  FOLLOW_UP: "bg-amber-100 text-amber-700",
-  WHATSAPP_REPLY: "bg-green-100 text-green-700",
-  CAMPAIGN_REPORT: "bg-violet-100 text-violet-700",
+  FOLLOW_UP: "bg-crm-warning-bg text-crm-warning-text",
+  WHATSAPP_REPLY: "bg-crm-success-bg text-crm-success-text",
+  CAMPAIGN_REPORT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   COUNSELOR_NOTIFY: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const CONSENT_BADGE: Record<string, string> = {
-  OPTED_IN: "bg-emerald-100 text-emerald-700",
-  OPTED_OUT: "bg-red-100 text-red-700",
+  OPTED_IN: "bg-crm-success-bg text-crm-success-text",
+  OPTED_OUT: "bg-crm-danger-bg text-crm-danger-text",
   UNKNOWN: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
@@ -356,9 +356,9 @@ function getSlaLevel(lastMessageAt: string): { level: "ok" | "warn" | "late"; mi
 function SLAIndicator({ lastMessageAt }: { lastMessageAt: string }) {
   const { level, minutes } = getSlaLevel(lastMessageAt);
   const map = {
-    ok: { color: "bg-emerald-500", text: "text-emerald-700", label: "Within SLA" },
-    warn: { color: "bg-amber-500", text: "text-amber-700", label: `${minutes}m — Escalate` },
-    late: { color: "bg-red-500", text: "text-red-700", label: `${minutes}m — BREACHED` },
+    ok: { color: "bg-[var(--alo-success)]", text: "text-crm-success-text", label: "Within SLA" },
+    warn: { color: "bg-[var(--alo-warning)]", text: "text-crm-warning-text", label: `${minutes}m — Escalate` },
+    late: { color: "bg-[var(--alo-error)]", text: "text-crm-danger-text", label: `${minutes}m — BREACHED` },
   } as const;
   const cfg = map[level];
   return (
@@ -469,8 +469,8 @@ export function MarketingDashboard() {
         icon="Megaphone"
         action={
           <div className="flex items-center gap-2">
-            <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200">
-              <span className="mr-1.5 inline-block size-2 animate-pulse rounded-full bg-emerald-500" />
+            <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg border-crm-success-border">
+              <span className="mr-1.5 inline-block size-2 animate-pulse rounded-full bg-[var(--alo-success)]" />
               Automation Active 24/7
             </Badge>
             <Button
@@ -740,10 +740,10 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
                         <div className="mt-1.5 flex items-center gap-2">
                           <SLAIndicator lastMessageAt={c.lastMessageAt} />
                           {c.unread > 0 && (
-                            <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">{c.unread} unread</Badge>
+                            <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">{c.unread} unread</Badge>
                           )}
                           {c.aiHandled && (
-                            <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">
+                            <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                               <Icon name="Bot" className="mr-1 size-3" /> AI
                             </Badge>
                           )}
@@ -799,15 +799,15 @@ function SocialInboxTab({ data, onDataChanged }: { data: InboxResponse | null; o
                                   <span>{isOutbound ? "ALO Education" : m.senderName}</span>
                                   <span>·</span>
                                   <span>{timeAgo(m.sentAt || m.receivedAt)}</span>
-                                  {m.aiHandled && <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100 px-1 py-0 text-[11px]">AI</Badge>}
+                                  {m.aiHandled && <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] px-1 py-0 text-[11px]">AI</Badge>}
                                   {m.aiDraftReply && !isOutbound && (
-                                    <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 px-1 py-0 text-[11px]">Draft Ready</Badge>
+                                    <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg px-1 py-0 text-[11px]">Draft Ready</Badge>
                                   )}
                                 </div>
                                 {m.aiDraftReply && !isOutbound && (
-                                  <div className="mt-2 rounded-lg border border-dashed border-amber-300 bg-amber-50 px-2.5 py-1.5">
-                                    <p className="text-[11px] font-semibold text-amber-800">AI Draft Reply</p>
-                                    <p className="mt-0.5 text-xs text-amber-900">{m.aiDraftReply}</p>
+                                  <div className="mt-2 rounded-lg border border-dashed border-crm-warning-border bg-crm-warning-bg px-2.5 py-1.5">
+                                    <p className="text-[11px] font-semibold text-crm-warning-text">AI Draft Reply</p>
+                                    <p className="mt-0.5 text-xs text-crm-warning-text">{m.aiDraftReply}</p>
                                   </div>
                                 )}
                               </div>
@@ -944,12 +944,12 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
 
   const flowSteps = [
     { icon: "MessageSquare", label: "Comment", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
-    { icon: "Search", label: "Keyword Match", color: "bg-violet-100 text-violet-700" },
-    { icon: "Reply", label: "Auto-Reply", color: "bg-emerald-100 text-emerald-700" },
+    { icon: "Search", label: "Keyword Match", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+    { icon: "Reply", label: "Auto-Reply", color: "bg-crm-success-bg text-crm-success-text" },
     { icon: "Send", label: "Auto-DM", color: "bg-sky-100 text-sky-700" },
     { icon: "UserPlus", label: "Create Lead", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
-    { icon: "UserCheck", label: "Assign Counselor", color: "bg-amber-100 text-amber-700" },
-    { icon: "Link", label: "Send Portal Link", color: "bg-cyan-100 text-cyan-700" },
+    { icon: "UserCheck", label: "Assign Counselor", color: "bg-crm-warning-bg text-crm-warning-text" },
+    { icon: "Link", label: "Send Portal Link", color: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]" },
     { icon: "Database", label: "Save to CRM Timeline", color: "bg-[var(--alo-brand)] text-white" },
   ];
 
@@ -1113,7 +1113,7 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Switch checked={t.status === "ACTIVE"} onCheckedChange={() => toggleStatus(t)} />
-                        <span className={cn("text-xs font-semibold", t.status === "ACTIVE" ? "text-emerald-600" : "text-[var(--alo-text-muted)]")}>
+                        <span className={cn("text-xs font-semibold", t.status === "ACTIVE" ? "text-crm-success-text" : "text-[var(--alo-text-muted)]")}>
                           {t.status === "ACTIVE" ? "Active" : "Paused"}
                         </span>
                       </div>
@@ -1161,10 +1161,10 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
 
   const miniStats = [
     { label: "Draft", value: summary?.draft ?? 0, color: "text-[var(--alo-body)]", bg: "bg-[var(--alo-surface-muted)]" },
-    { label: "Pending", value: summary?.pendingApproval ?? 0, color: "text-amber-700", bg: "bg-amber-100" },
-    { label: "Approved", value: summary?.approved ?? 0, color: "text-green-700", bg: "bg-green-100" },
-    { label: "Published", value: summary?.published ?? 0, color: "text-emerald-700", bg: "bg-emerald-100" },
-    { label: "Rejected", value: summary?.rejected ?? 0, color: "text-red-700", bg: "bg-red-100" },
+    { label: "Pending", value: summary?.pendingApproval ?? 0, color: "text-crm-warning-text", bg: "bg-crm-warning-bg" },
+    { label: "Approved", value: summary?.approved ?? 0, color: "text-crm-success-text", bg: "bg-crm-success-bg" },
+    { label: "Published", value: summary?.published ?? 0, color: "text-crm-success-text", bg: "bg-crm-success-bg" },
+    { label: "Rejected", value: summary?.rejected ?? 0, color: "text-crm-danger-text", bg: "bg-crm-danger-bg" },
   ];
 
   const patchPost = async (id: string, action: string, extra: Record<string, unknown> = {}) => {
@@ -1279,13 +1279,13 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
 
       {/* Logo missing alert */}
       {logoMissing && (
-        <div className="flex items-start gap-3 rounded-2xl border-2 border-red-200 bg-red-50 px-4 py-3">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
+        <div className="flex items-start gap-3 rounded-2xl border-2 border-crm-danger-border bg-crm-danger-bg px-4 py-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-crm-danger-bg text-crm-danger-text">
             <Icon name="AlertTriangle" className="size-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-red-800">ALO logo is missing!</p>
-            <p className="text-xs text-red-700">
+            <p className="text-sm font-bold text-crm-danger-text">ALO logo is missing!</p>
+            <p className="text-xs text-crm-danger-text">
               Upload the logo in <button className="underline" onClick={() => toast({ title: "Switch to Brand Assets tab", description: "Upload your logo there first." })}>Brand Assets</button> before creating posts. Every post must carry the ALO brand identity.
             </p>
           </div>
@@ -1412,7 +1412,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                       <TableCell>
                         <p className="font-medium text-foreground line-clamp-1">{p.title}</p>
                         {tags.length > 0 && <p className="text-[11px] text-muted-foreground line-clamp-1">{tags.slice(0, 3).join(" ")}</p>}
-                        {p.rejectionReason && <p className="flex items-start gap-1 text-[11px] text-red-600 line-clamp-1"><TriangleAlert className="mt-0.5 size-3 shrink-0" />{p.rejectionReason}</p>}
+                        {p.rejectionReason && <p className="flex items-start gap-1 text-[11px] text-crm-danger-text line-clamp-1"><TriangleAlert className="mt-0.5 size-3 shrink-0" />{p.rejectionReason}</p>}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="border-[var(--alo-border)]">{p.category.replace(/_/g, " ")}</Badge>
@@ -1427,7 +1427,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                       </TableCell>
                       <TableCell>
                         {p.brandAssetApplied ? (
-                          <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100"><Icon name="Check" className="mr-1 size-3" /> Applied</Badge>
+                          <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg"><Icon name="Check" className="mr-1 size-3" /> Applied</Badge>
                         ) : (
                           <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text-muted)]">None</Badge>
                         )}
@@ -1442,10 +1442,10 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                           )}
                           {p.approvalStatus === "PENDING_APPROVAL" && (
                             <>
-                              <Button size="sm" className=" bg-emerald-600 text-white hover:bg-emerald-600/90" disabled={saving} onClick={() => patchPost(p.id, "approve")}>
+                              <Button size="sm" className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90" disabled={saving} onClick={() => patchPost(p.id, "approve")}>
                                 <Icon name="Check" className="size-3" /> Approve
                               </Button>
-                              <Button size="sm" variant="outline" className=" border-red-300 text-red-600" onClick={() => { setRejectTarget(p); setRejectionReason(""); }}>
+                              <Button size="sm" variant="outline" className=" border-crm-danger-border text-crm-danger-text" onClick={() => { setRejectTarget(p); setRejectionReason(""); }}>
                                 <Icon name="X" className="size-3" /> Reject
                               </Button>
                             </>
@@ -1462,7 +1462,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                           )}
                           {p.approvalStatus === "PUBLISHED" && p.publishedUrl && (
                             <a href={p.publishedUrl} target="_blank" rel="noopener noreferrer">
-                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" border-emerald-300 text-emerald-700">
+                              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" border-crm-success-border text-crm-success-text">
                                 <Icon name="ExternalLink" className="size-3" /> View
                               </Button>
                             </a>
@@ -1473,7 +1473,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
                             </Button>
                           )}
                           {p.approvalStatus === "SCHEDULED" && (
-                            <Badge className="bg-cyan-100 text-cyan-700 hover:bg-cyan-100"><Icon name="Clock" className="mr-1 size-3" /> {fmtDate(p.scheduledAt)}</Badge>
+                            <Badge className="bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] hover:bg-[var(--alo-info-bg)]"><Icon name="Clock" className="mr-1 size-3" /> {fmtDate(p.scheduledAt)}</Badge>
                           )}
                         </div>
                       </TableCell>
@@ -1498,7 +1498,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
       <Dialog open={!!rejectTarget} onOpenChange={(o) => !o && setRejectTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-red-700">Reject Post</DialogTitle>
+            <DialogTitle className="text-crm-danger-text">Reject Post</DialogTitle>
             <DialogDescription>Please provide a reason. The creator will be notified and can edit & resubmit.</DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
@@ -1513,7 +1513,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
           <DialogFooter>
             <Button variant="outline" className="" onClick={() => setRejectTarget(null)}>Cancel</Button>
             <Button
- className=" bg-red-600 text-white hover:bg-red-600/90"
+ className=" bg-[var(--alo-error)] text-white hover:bg-[var(--alo-error)]/90"
  disabled={saving || !rejectionReason.trim()}
  onClick={() => {
                 if (rejectTarget) {
@@ -1639,12 +1639,12 @@ function BrandAssetsTab({ data, onDataChanged }: { data: BrandAssetsResponse | n
                   <>
                     <p className="text-xs text-muted-foreground">{logo?.name}</p>
                     <p className="mt-1 text-[11px] font-mono text-[var(--alo-text-muted)]">{logo?.fileUrl}</p>
-                    <Badge className="mt-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                    <Badge className="mt-2 bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
                       <Icon name="Check" className="mr-1 size-3" /> Active
                     </Badge>
                   </>
                 ) : (
-                  <p className="mt-1 text-xs text-red-600">No logo uploaded. Posts cannot be created without it.</p>
+                  <p className="mt-1 text-xs text-crm-danger-text">No logo uploaded. Posts cannot be created without it.</p>
                 )}
               </div>
               <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
@@ -1949,7 +1949,7 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
                 <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">{r.trigger}</Badge>
               </div>
               <p className="flex-1 text-xs text-foreground">{r.reply}</p>
-              <Badge variant="outline" className="border-emerald-200 text-emerald-700">No AI cost</Badge>
+              <Badge variant="outline" className="border-crm-success-border text-crm-success-text">No AI cost</Badge>
             </div>
           ))}
         </div>
@@ -1960,7 +1960,7 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
         title="AI Draft Reply Queue"
         icon="Sparkles"
         description={`${draftQueue.length} messages with AI-drafted replies awaiting human approval`}
-        action={<Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{draftQueue.length} pending</Badge>}
+        action={<Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">{draftQueue.length} pending</Badge>}
       >
         {draftQueue.length === 0 ? (
           <EmptyState icon="CheckCircle2" title="No drafts awaiting approval" description="When AI generates a draft reply, it will appear here for human review before sending." />
@@ -1983,16 +1983,16 @@ function AIReplyManagerTab({ data, onDataChanged }: { data: InboxResponse | null
                     <p className="text-[11px] font-semibold uppercase text-[var(--alo-text-muted)]">Inbound</p>
                     <p className="mt-1 text-xs text-foreground">{msg.messageText}</p>
                   </div>
-                  <div className="rounded-lg border border-dashed border-amber-300 bg-amber-50 p-2.5">
-                    <p className="text-[11px] font-semibold uppercase text-amber-800">AI Draft Reply</p>
-                    <p className="mt-1 text-xs text-amber-900">{msg.aiDraftReply}</p>
+                  <div className="rounded-lg border border-dashed border-crm-warning-border bg-crm-warning-bg p-2.5">
+                    <p className="text-[11px] font-semibold uppercase text-crm-warning-text">AI Draft Reply</p>
+                    <p className="mt-1 text-xs text-crm-warning-text">{msg.aiDraftReply}</p>
                   </div>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <Button size="sm" className=" bg-emerald-600 text-white hover:bg-emerald-600/90" disabled={saving} onClick={() => approveDraft(msg)}>
+                  <Button size="sm" className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90" disabled={saving} onClick={() => approveDraft(msg)}>
                     <Icon name="Check" className="size-3" /> Approve Draft Only
                   </Button>
-                  <Button size="sm" variant="outline" className=" border-red-300 text-red-600" disabled={saving} onClick={() => rejectDraft(msg)}>
+                  <Button size="sm" variant="outline" className=" border-crm-danger-border text-crm-danger-text" disabled={saving} onClick={() => rejectDraft(msg)}>
                     <Icon name="X" className="size-3" /> Reject Draft
                   </Button>
                 </div>
@@ -2177,9 +2177,9 @@ function N8nAutomationTab({ workflows, onDataChanged }: { workflows: N8nWorkflow
         )}
       </SectionCard>
 
-      <div className="flex items-start gap-3 rounded-2xl border-2 border-amber-200 bg-amber-50 px-4 py-3">
-        <Icon name="ShieldAlert" className="mt-0.5 size-4 shrink-0 text-amber-700" />
-        <p className="text-xs leading-relaxed text-amber-900">
+      <div className="flex items-start gap-3 rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg px-4 py-3">
+        <Icon name="ShieldAlert" className="mt-0.5 size-4 shrink-0 text-crm-warning-text" />
+        <p className="text-xs leading-relaxed text-crm-warning-text">
           n8n execution is intentionally unavailable. No webhook was called, no external workflow was disabled by local cleanup, and no execution counter is treated as verified evidence.
         </p>
       </div>
@@ -2207,13 +2207,13 @@ function LeadOutreachTab({ outreach }: { outreach: LeadOutreach[] }) {
         <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="py-4">
             <p className="text-[11px] font-medium uppercase text-muted-foreground">Opted In</p>
-            <p className="mt-1 text-2xl font-bold text-emerald-600">{optedIn}</p>
+            <p className="mt-1 text-2xl font-bold text-crm-success-text">{optedIn}</p>
           </CardContent>
         </Card>
         <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="py-4">
             <p className="text-[11px] font-medium uppercase text-muted-foreground">Opted Out</p>
-            <p className="mt-1 text-2xl font-bold text-red-600">{optedOut}</p>
+            <p className="mt-1 text-2xl font-bold text-crm-danger-text">{optedOut}</p>
           </CardContent>
         </Card>
         <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
@@ -2228,7 +2228,7 @@ function LeadOutreachTab({ outreach }: { outreach: LeadOutreach[] }) {
         title="Outreach Records"
         icon="Megaphone"
         description="Manager-only unsent outreach drafts linked to the consent ledger; records do not prove delivery."
-        action={<Badge variant="outline" className="border-amber-300 text-amber-800">Provider sending unavailable</Badge>}
+        action={<Badge variant="outline" className="border-crm-warning-border text-crm-warning-text">Provider sending unavailable</Badge>}
       >
         {outreach.length === 0 ? (
           <EmptyState icon="Megaphone" title="No outreach drafts" description="No draft records are available. Outreach cannot be sent from this dashboard." />
@@ -2377,7 +2377,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
         <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
           <CardContent className="py-4">
             <p className="text-[11px] font-medium uppercase text-muted-foreground">Slots Remaining</p>
-            <p className="mt-1 text-2xl font-bold text-emerald-600">{slotsRemaining}</p>
+            <p className="mt-1 text-2xl font-bold text-crm-success-text">{slotsRemaining}</p>
           </CardContent>
         </Card>
         <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
@@ -2460,7 +2460,7 @@ function UserAccessTab({ data, onDataChanged }: { data: UserAccessResponse | nul
                       )}
                     </div>
                   </div>
-                  <Button size="sm" variant="outline" className=" border-red-300 text-red-600" onClick={() => revoke(a)}>
+                  <Button size="sm" variant="outline" className=" border-crm-danger-border text-crm-danger-text" onClick={() => revoke(a)}>
                     <Icon name="UserX" className="size-3" /> Revoke
                   </Button>
                 </div>
@@ -2564,7 +2564,7 @@ function LibraryRepostTab() {
           {posts.map((p:any)=>(
             <Card key={p.id} className="rounded-2xl border-2 border-[var(--alo-border)] overflow-hidden">
               <CardContent className="p-4 space-y-2">
-                <div className="flex items-center gap-2"><Badge variant="outline">{p.platform}</Badge><Badge className="bg-emerald-100 text-emerald-700">{p.approvalStatus}</Badge><span className="text-[11px] text-muted-foreground">{p.platformSize||"SQUARE"}</span></div>
+                <div className="flex items-center gap-2"><Badge variant="outline">{p.platform}</Badge><Badge className="bg-crm-success-bg text-crm-success-text">{p.approvalStatus}</Badge><span className="text-[11px] text-muted-foreground">{p.platformSize||"SQUARE"}</span></div>
                 <p className="font-semibold text-sm line-clamp-2">{p.title}</p>
                 <p className="text-xs text-muted-foreground line-clamp-2">{p.caption?.slice(0,120)}</p>
                 <div className="flex flex-wrap gap-1.5 pt-2">
@@ -2633,9 +2633,9 @@ function AnalyticsTab() {
         </SectionCard>
         <SectionCard title="Outreach & Automations" icon="Zap">
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="rounded-xl bg-[var(--alo-page)] p-3"><p className="text-muted-foreground">Outreach Opted-In</p><p className="text-2xl font-bold text-emerald-600">{outreach.optedIn}</p><p className="text-[11px] text-muted-foreground">vs {outreach.optedOut} opted-out • {outreach.total} total</p></div>
+            <div className="rounded-xl bg-[var(--alo-page)] p-3"><p className="text-muted-foreground">Outreach Opted-In</p><p className="text-2xl font-bold text-crm-success-text">{outreach.optedIn}</p><p className="text-[11px] text-muted-foreground">vs {outreach.optedOut} opted-out • {outreach.total} total</p></div>
             <div className="rounded-xl bg-[var(--alo-page)] p-3"><p className="text-muted-foreground">Keyword Triggers</p><p className="text-2xl font-bold text-[var(--alo-brand)]">{triggers.active}/{triggers.total}</p><p className="text-[11px] text-muted-foreground">{triggers.totalFires} fires • {workflows.active}/{workflows.total} workflows</p></div>
-            <div className="rounded-xl bg-[var(--alo-page)] p-3 col-span-2"><p className="text-muted-foreground">Pending Approvals</p><p className="text-2xl font-bold text-amber-600">{posts.pendingApproval}</p><p className="text-[11px] text-muted-foreground">Manager/SA must approve before publish — audit-logged</p></div>
+            <div className="rounded-xl bg-[var(--alo-page)] p-3 col-span-2"><p className="text-muted-foreground">Pending Approvals</p><p className="text-2xl font-bold text-crm-warning-text">{posts.pendingApproval}</p><p className="text-[11px] text-muted-foreground">Manager/SA must approve before publish — audit-logged</p></div>
           </div>
         </SectionCard>
       </div>
@@ -2668,7 +2668,7 @@ function LeadPipelineTab() {
     try { const r= await fetch("/api/marketing/lead-pipeline",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:assignOpen.id,counselorId:counselor,counselorName:counselor,followUpDueAt: followUp || undefined})}); const j=await r.json(); if(j.lead){ toast({title:"Assigned",description:`${assignOpen.name} → ${counselor}`}); setAssignOpen(null); setCounselor(""); setFollowUp(""); load(); } else throw new Error(j.error);} catch(e:any){ toast({title:"Assign failed",description:e.message,variant:"destructive"});}
   };
   const STAGES = ["new","contacted","qualified","assigned","converted","lost"] as const;
-  const STAGE_COLOR: Record<string,string> = { new:"bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", contacted:"bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]", qualified:"bg-violet-100 text-violet-700", assigned:"bg-amber-100 text-amber-700", converted:"bg-emerald-100 text-emerald-700", lost:"bg-red-100 text-red-700" };
+  const STAGE_COLOR: Record<string,string> = { new:"bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", contacted:"bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]", qualified:"bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]", assigned:"bg-crm-warning-bg text-crm-warning-text", converted:"bg-crm-success-bg text-crm-success-text", lost:"bg-crm-danger-bg text-crm-danger-text" };
   if (loading) return <LoadingGrid count={6} />;
   const byStatus = data?.byStatus || {};
   return (
@@ -2680,7 +2680,7 @@ function LeadPipelineTab() {
           <Button variant="outline" className="" onClick={load}><Icon name="RefreshCw" className="size-3.5"/> Refresh</Button>
         </div>
       </div>
-      {data?.overdueFollowUps ? <div className="rounded-2xl border-2 border-red-200 bg-red-50 px-4 py-3 flex items-center gap-3"><Icon name="AlertTriangle" className="size-5 text-red-600"/><p className="text-sm font-semibold text-red-700">{data.overdueFollowUps} overdue follow-ups</p><span className="text-xs text-red-600">— move to Contacted or schedule next date</span></div> : null}
+      {data?.overdueFollowUps ? <div className="rounded-2xl border-2 border-crm-danger-border bg-crm-danger-bg px-4 py-3 flex items-center gap-3"><Icon name="AlertTriangle" className="size-5 text-crm-danger-text"/><p className="text-sm font-semibold text-crm-danger-text">{data.overdueFollowUps} overdue follow-ups</p><span className="text-xs text-crm-danger-text">— move to Contacted or schedule next date</span></div> : null}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {STAGES.map(stage => (
           <Card key={stage} className="rounded-2xl border-2 border-[var(--alo-border)]">
@@ -2692,7 +2692,7 @@ function LeadPipelineTab() {
                     <p className="text-sm font-semibold">{l.name || "Unknown"} {l.hotLead ? <Badge className="ml-1 bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] text-[11px]">HOT</Badge>:null}</p>
                     <p className="text-[11px] text-muted-foreground">{l.phone || l.email || l.id.slice(0,8)} • {l.destination || "—"} • Score {l.score||0}</p>
                     {l.counselorName ? <p className="text-[11px]"><span className="font-semibold text-[var(--alo-brand)]">Counselor:</span> {l.counselorName}</p>:null}
-                    {l.followUpDueAt ? <p className="text-[11px]"><Icon name="Calendar" className="inline size-3"/> {fmtDate(l.followUpDueAt)} {new Date(l.followUpDueAt) < new Date() && !l.followUpDone ? <Badge className="bg-red-100 text-red-700 ml-1">OVERDUE</Badge>:null}</p>:null}
+                    {l.followUpDueAt ? <p className="text-[11px]"><Icon name="Calendar" className="inline size-3"/> {fmtDate(l.followUpDueAt)} {new Date(l.followUpDueAt) < new Date() && !l.followUpDone ? <Badge className="bg-crm-danger-bg text-crm-danger-text ml-1">OVERDUE</Badge>:null}</p>:null}
                     <p className="text-[11px] text-muted-foreground">{l.source || "UNKNOWN"} • {timeAgo(l.createdAt)}</p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {STAGES.filter(s=>s!==stage).slice(0,3).map(ns=>(
@@ -2753,7 +2753,7 @@ function CalendarTab() {
                   <TableCell className="text-xs whitespace-nowrap">{fmtDate(it.scheduledAt)}<br/><span className="text-[11px] text-muted-foreground">{timeAgo(it.scheduledAt)}</span></TableCell>
                   <TableCell className="max-w-[260px] truncate text-sm font-medium">{it.title}</TableCell>
                   <TableCell><Badge variant="outline">{it.platform}</Badge></TableCell>
-                  <TableCell><span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", it.status==="published"?"bg-emerald-100 text-emerald-700": it.status==="scheduled"?"bg-cyan-100 text-cyan-700":"bg-[var(--alo-surface-muted)] text-[var(--alo-body)]")}>{it.status}</span></TableCell>
+                  <TableCell><span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", it.status==="published"?"bg-crm-success-bg text-crm-success-text": it.status==="scheduled"?"bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]":"bg-[var(--alo-surface-muted)] text-[var(--alo-body)]")}>{it.status}</span></TableCell>
                   <TableCell className="text-xs text-muted-foreground">{it.type}</TableCell>
                 </TableRow>
               ))}
@@ -2807,9 +2807,9 @@ function WhatsAppCard() {
   const { toast } = useToast();
 
   const slaSteps = [
-    { time: "40 min", label: "Response SLA", color: "bg-emerald-100 text-emerald-700" },
-    { time: "20 min", label: "Escalate to Manager", color: "bg-amber-100 text-amber-700" },
-    { time: "10 min", label: "Escalate to Super Admin", color: "bg-red-100 text-red-700" },
+    { time: "40 min", label: "Response SLA", color: "bg-crm-success-bg text-crm-success-text" },
+    { time: "20 min", label: "Escalate to Manager", color: "bg-crm-warning-bg text-crm-warning-text" },
+    { time: "10 min", label: "Escalate to Super Admin", color: "bg-crm-danger-bg text-crm-danger-text" },
   ];
 
   return (
@@ -2817,14 +2817,14 @@ function WhatsAppCard() {
       <CardContent className="pt-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-green-100 text-green-700">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-crm-success-bg text-crm-success-text">
               <Icon name="MessageCircle" className="size-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-[var(--alo-brand)]">WhatsApp Automation — 24/7</h3>
-                <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
-                  <span className="mr-1 size-1.5 animate-pulse rounded-full bg-emerald-500" /> AI Agent Active
+                <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
+                  <span className="mr-1 size-1.5 animate-pulse rounded-full bg-[var(--alo-success)]" /> AI Agent Active
                 </Badge>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -2834,7 +2834,7 @@ function WhatsAppCard() {
           </div>
           <Button
  variant="outline"
- className=" border-green-300 text-green-700"
+ className=" border-[var(--alo-success)] text-crm-success-text"
  onClick={() => toast({ title: "Webhook test sent", description: "Test payload delivered to WhatsApp webhook. Check n8n for response." })}
           >
             <Icon name="Webhook" className="size-4" /> Test WhatsApp Webhook
@@ -2887,7 +2887,7 @@ function WhatsAppCard() {
             <p className="mt-2 text-[11px] text-muted-foreground">
               WhatsApp documents (passport, IELTS, transcripts) auto-detect type and save to student profile.
             </p>
-            <Badge className="mt-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+            <Badge className="mt-2 bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
               <Icon name="Check" className="mr-1 size-3" /> Active
             </Badge>
           </div>

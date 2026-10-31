@@ -33,7 +33,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
   }, [slug]);
 
   if (loading) return <div className="p-12 text-center"><div className="h-64 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl animate-pulse max-w-7xl mx-auto" /></div>;
-  if (error || !scholarship) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><Link href="/scholarships"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-12">Browse Scholarships</Button></Link></Card></div>;
+  if (error || !scholarship) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-crm-warning-text mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><Link href="/scholarships"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-12">Browse Scholarships</Button></Link></Card></div>;
 
   return (
     <div className="bg-white">
@@ -49,27 +49,27 @@ export default function ScholarshipDetailHub({ slug }: Props) {
               const st = computeScholarshipStatus(scholarship);
               const badge = SCHOLARSHIP_STATUS_BADGES[st];
               const chip: Record<string, string> = {
-                OPEN: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                CLOSING_SOON: 'bg-amber-50 text-amber-700 border-amber-200',
+                OPEN: 'bg-crm-success-bg text-crm-success-text border border-crm-success-border',
+                CLOSING_SOON: 'bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border',
                 UPCOMING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
-                CLOSED: 'bg-red-50 text-red-700 border-red-200',
+                CLOSED: 'bg-crm-danger-bg text-crm-danger-text border border-crm-danger-border',
                 NEEDS_VERIFICATION: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
               };
               return <Badge className={`${chip[st]} text-[11px] border`}>{badge.label}</Badge>;
             })()}
             <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-xs">{scholarship.country || 'Global'}</Badge>
             <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-xs">{scholarship.university || 'Multiple Universities'}</Badge>
-            {scholarship.isFeatured && <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-xs">Featured</Badge>}
-            {scholarship.verificationStatus && <Badge className={`${scholarship.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{scholarship.verificationStatus} {scholarship.lastVerifiedAt ? `• ${new Date(scholarship.lastVerifiedAt).toLocaleDateString()}` : ''}</Badge>}
+            {scholarship.isFeatured && <Badge variant="neutral" className="text-xs">Featured</Badge>}
+            {scholarship.verificationStatus && <Badge variant={scholarship.verificationStatus === 'verified' ? 'success' : 'warning'} className="text-[11px]">{scholarship.verificationStatus} {scholarship.lastVerifiedAt ? `• ${new Date(scholarship.lastVerifiedAt).toLocaleDateString()}` : ''}</Badge>}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-[var(--alo-text)] tracking-tight mb-3">{scholarship.name}</h1>
           <p className="text-lg text-[var(--alo-body)] mb-2 flex items-center gap-2"><Award className="w-5 h-5 text-[var(--alo-cta)]" />{scholarship.fundingAmount || `${scholarship.currency || ''} ${scholarship.amount || 'Check eligibility'}`} • {scholarship.fundingType || 'Funding'}</p>
           <p className="text-sm text-[var(--alo-text-muted)] mb-6">{scholarship.overview?.substring(0, 200) || scholarship.eligibility?.substring(0, 200) || 'Scholarship overview — check eligibility, funding amount, deadline, required documents, how to apply.'}</p>
           <div className="flex flex-wrap gap-3">
             {computeScholarshipStatus(scholarship) === 'NEEDS_VERIFICATION' && (
-              <p className="w-full text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-3 mb-2">
-                Needs Manual Verification — information may have changed. Please verify the latest requirements on the official source before applying; do not treat this scholarship as currently open.
-              </p>
+                <p className="w-full text-xs bg-crm-warning-bg border border-crm-warning-border text-crm-warning-text rounded-xl p-3 mb-2">
+                  Needs Manual Verification — information may have changed. Please verify the latest requirements on the official source before applying; do not treat this scholarship as currently open.
+                </p>
             )}
             <Link href="/eligibility-check"><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 px-6 font-bold">Check Eligibility</Button></Link>
             <Link href="/book-consultation"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6">Book Consultation</Button></Link>
@@ -90,7 +90,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl"><h4 className="font-bold text-sm mb-2">Course & University Eligibility</h4><p className="text-xs text-[var(--alo-body)]">Course: {scholarship.courseEligibility || 'Check'} • University: {scholarship.universityEligibility || 'Check'}</p></Card>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
-              <Card className="p-5 bg-emerald-50 border-emerald-200 rounded-2xl"><h4 className="font-bold text-sm mb-2 text-emerald-800">Funding Amount</h4><p className="text-sm font-bold text-emerald-900">{scholarship.fundingAmount || `${scholarship.currency} ${scholarship.amount}`}</p><p className="text-xs text-emerald-700 mt-1">{scholarship.fundingType}</p></Card>
+              <Card className="p-5 bg-crm-success-bg border border-crm-success-border rounded-2xl"><h4 className="font-bold text-sm mb-2 text-crm-success-text">Funding Amount</h4><p className="text-sm font-bold text-crm-success-text">{scholarship.fundingAmount || `${scholarship.currency} ${scholarship.amount}`}</p><p className="text-xs text-crm-success-text mt-1">{scholarship.fundingType}</p></Card>
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl"><h4 className="font-bold text-sm mb-2">What Covers / Not Covers</h4><p className="text-xs text-[var(--alo-body)]">Covers: {scholarship.whatCovers || 'Tuition waiver, check official source'} • Not covers: {scholarship.whatNotCovers || 'Living cost, travel — check'}</p></Card>
             </div>
             <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
@@ -120,7 +120,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
                   const active = known.filter((k) => covers.toLowerCase().includes(k.split(' ')[0].toLowerCase()));
                   const shown = covers.trim() ? active : [];
                   return shown.length > 0 ? shown.map((k) => (
-                    <div key={k} className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span className="font-semibold text-emerald-800">{k}</span></div>
+                    <div key={k} className="bg-crm-success-bg border border-crm-success-border rounded-xl p-3 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-crm-success-text shrink-0" /><span className="font-semibold text-crm-success-text">{k}</span></div>
                   )) : <p className="col-span-3 text-[var(--alo-body)]">Coverage is not publicly confirmed for this scholarship. Only verified coverage is displayed — check the official scholarship terms.</p>;
                 })()}
               </div>
@@ -187,7 +187,7 @@ export default function ScholarshipDetailHub({ slug }: Props) {
           </div>
           <div className="space-y-6">
             <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h3 className="font-bold text-[var(--alo-text)] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/eligibility-check" className="block"><Button className="w-full bg-[var(--alo-cta)] text-white h-12">Check Eligibility</Button></Link><Link href="/book-consultation" className="block"><Button variant="outline" className="w-full border-[var(--alo-border)] h-12">Book Consultation</Button></Link><Link href="/scholarships" className="block"><Button variant="outline" className="w-full border-[var(--alo-border)] h-12">Find All Scholarships</Button></Link></div></Card>
-            <Card className="p-6 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Source & Verification</h3><div className="space-y-2 text-xs"><p><strong>Official URL:</strong> {scholarship.officialSourceUrl ? <a href={scholarship.officialSourceUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{scholarship.officialSourceUrl}</a> : 'Information not currently verified.'}</p><p><strong>Status:</strong> <Badge className={`${scholarship.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{scholarship.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {scholarship.lastVerifiedAt ? new Date(scholarship.lastVerifiedAt).toLocaleDateString() : 'Not verified'}</p></div></Card>
+            <Card className="p-6 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Source & Verification</h3><div className="space-y-2 text-xs"><p><strong>Official URL:</strong> {scholarship.officialSourceUrl ? <a href={scholarship.officialSourceUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{scholarship.officialSourceUrl}</a> : 'Information not currently verified.'}</p><p><strong>Status:</strong> <Badge variant={scholarship.verificationStatus === 'verified' ? 'success' : 'warning'} className="text-[11px]">{scholarship.verificationStatus || 'pending'}</Badge></p><p><strong>Last Verified:</strong> {scholarship.lastVerifiedAt ? new Date(scholarship.lastVerifiedAt).toLocaleDateString() : 'Not verified'}</p></div></Card>
           </div>
         </div>
       </div>

@@ -161,8 +161,8 @@ function intakeLabel(intake: CourseIntake): string {
 }
 
 function interviewCell(row: CourseRow): { text: string; tone: string } {
-  if (row.interviewRequired === true) return { text: 'Yes', tone: 'text-amber-700' };
-  if (row.interviewRequired === false) return { text: 'No', tone: 'text-emerald-700' };
+  if (row.interviewRequired === true) return { text: 'Yes', tone: 'text-crm-warning-text' };
+  if (row.interviewRequired === false) return { text: 'No', tone: 'text-crm-success-text' };
   return { text: '—', tone: 'text-alo-text-muted' };
 }
 
@@ -758,7 +758,7 @@ export default function PublicCourseFinder() {
                         <td className={`whitespace-nowrap px-4 py-3 text-[13px] font-semibold ${interview.tone}`}>
                           {interview.text}
                           {course.portfolioRequired === true && course.interviewRequired === false && (
-                            <span className="block text-[11px] font-normal text-amber-700">Portfolio required</span>
+                            <span className="block text-[11px] font-normal text-crm-warning-text">Portfolio required</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-[12px] text-alo-text-secondary">

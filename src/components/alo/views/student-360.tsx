@@ -200,7 +200,7 @@ interface StudentDetail {
 
 // ---------- Color maps ----------
 const STUDENT_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
@@ -208,14 +208,14 @@ const STUDENT_STATUS_COLORS: Record<string, string> = {
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  HIGH: "bg-amber-100 text-amber-700",
-  URGENT: "bg-rose-100 text-rose-700",
+  HIGH: "bg-crm-warning-bg text-crm-warning-text",
+  URGENT: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  PAID: "bg-emerald-100 text-emerald-700",
-  REFUNDED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  PAID: "bg-crm-success-bg text-crm-success-text",
+  REFUNDED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const PAYMENT_STATUS_LABELS: Record<string, string> = {
@@ -225,16 +225,16 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
 };
 
 const COMMISSION_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   APPROVED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  PAID: "bg-emerald-100 text-emerald-700",
+  PAID: "bg-crm-success-bg text-crm-success-text",
 };
 
 const READINESS_COLORS: Record<string, string> = {
-  ready: "bg-emerald-100 text-emerald-700",
-  needs_practice: "bg-amber-100 text-amber-700",
-  high_risk: "bg-rose-100 text-rose-700",
-  human_review_required: "bg-violet-100 text-violet-700",
+  ready: "bg-crm-success-bg text-crm-success-text",
+  needs_practice: "bg-crm-warning-bg text-crm-warning-text",
+  high_risk: "bg-crm-warning-bg text-crm-warning-text",
+  human_review_required: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const READINESS_LABELS: Record<string, string> = {
@@ -245,14 +245,14 @@ const READINESS_LABELS: Record<string, string> = {
 };
 
 const RISK_COLORS: Record<string, string> = {
-  LOW: "bg-emerald-100 text-emerald-700",
-  MEDIUM: "bg-amber-100 text-amber-700",
-  HIGH: "bg-rose-100 text-rose-700",
+  LOW: "bg-crm-success-bg text-crm-success-text",
+  MEDIUM: "bg-crm-warning-bg text-crm-warning-text",
+  HIGH: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const INTERVIEW_STATUS_COLORS: Record<string, string> = {
-  IN_PROGRESS: "bg-amber-100 text-amber-700",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
+  IN_PROGRESS: "bg-crm-warning-bg text-crm-warning-text",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
 };
 
 const INTERVIEW_TYPE_LABELS: Record<string, string> = {
@@ -266,17 +266,17 @@ const INTERVIEW_TYPE_LABELS: Record<string, string> = {
 const TIMELINE_META: Record<string, { icon: string; color: string }> = {
   LEAD_CREATED: { icon: "UserPlus", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   PROFILE_UPDATED: { icon: "UserCog", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
-  DOC_UPLOADED: { icon: "FileUp", color: "bg-amber-100 text-amber-700" },
-  DOC_APPROVED: { icon: "FileCheck2", color: "bg-emerald-100 text-emerald-700" },
-  DOC_REJECTED: { icon: "FileX2", color: "bg-rose-100 text-rose-700" },
+  DOC_UPLOADED: { icon: "FileUp", color: "bg-crm-warning-bg text-crm-warning-text" },
+  DOC_APPROVED: { icon: "FileCheck2", color: "bg-crm-success-bg text-crm-success-text" },
+  DOC_REJECTED: { icon: "FileX2", color: "bg-crm-warning-bg text-crm-warning-text" },
   APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
-  INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-violet-100 text-violet-700" },
-  MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-violet-100 text-violet-700" },
-  AI_ACTION: { icon: "Bot", color: "bg-violet-100 text-violet-700" },
+  INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  AI_ACTION: { icon: "Bot", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   MESSAGE_SENT: { icon: "MessageSquare", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
-  PAYMENT: { icon: "CreditCard", color: "bg-emerald-100 text-emerald-700" },
-  NOTE: { icon: "StickyNote", color: "bg-amber-100 text-amber-700" },
+  PAYMENT: { icon: "CreditCard", color: "bg-crm-success-bg text-crm-success-text" },
+  NOTE: { icon: "StickyNote", color: "bg-crm-warning-bg text-crm-warning-text" },
 };
 
 const DOC_CATEGORY_LABELS: Record<string, string> = {
@@ -645,9 +645,9 @@ function OverviewTab({ student }: { student: StudentDetail }) {
           label="Has Passport"
           value={
             student.hasPassport ? (
-              <span className="text-emerald-600">Yes</span>
+              <span className="text-crm-success-text">Yes</span>
             ) : (
-              <span className="text-rose-600">No</span>
+              <span className="text-crm-warning-text">No</span>
             )
           }
         />
@@ -904,7 +904,7 @@ function DocumentsTab({ documents }: { documents: Document[] }) {
                   {doc.uploadedAt ? fmtDate(doc.uploadedAt) : "—"}
                 </TableCell>
                 <TableCell className="text-sm">{doc.reviewer?.name ?? "—"}</TableCell>
-                <TableCell className="max-w-[220px] text-xs text-rose-600">
+                <TableCell className="max-w-[220px] text-xs text-crm-warning-text">
                   {doc.status === "REJECTED" && doc.rejectionReason
                     ? doc.rejectionReason
                     : "—"}
@@ -1041,15 +1041,15 @@ function PaymentsTab({ payments }: { payments: Payment[] }) {
     <SectionCard title="Payments" icon="CreditCard" description={`${payments.length} total`}>
       {/* Summary */}
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50 p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-emerald-700">Total Paid</p>
-          <p className="mt-1 text-lg font-bold tabular-nums text-emerald-700">
+        <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-crm-success-text">Total Paid</p>
+          <p className="mt-1 text-lg font-bold tabular-nums text-crm-success-text">
             ৳{totalPaid.toLocaleString()}
           </p>
         </div>
-        <div className="rounded-xl border-2 border-amber-200 bg-amber-50 p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-amber-700">Pending</p>
-          <p className="mt-1 text-lg font-bold tabular-nums text-amber-700">
+        <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-crm-warning-text">Pending</p>
+          <p className="mt-1 text-lg font-bold tabular-nums text-crm-warning-text">
             ৳{totalPending.toLocaleString()}
           </p>
         </div>

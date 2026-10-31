@@ -196,7 +196,7 @@ export default function StudentSavedCourses() {
                     <div className="flex shrink-0 items-center gap-2">
                       <Button
  variant="outline"
- className=" rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold text-red-600"
+ className=" rounded-button border-[var(--alo-border)] px-3 text-[12px] font-semibold text-crm-danger-text"
  onClick={() => remove(course)}
                         disabled={removing === course.id}
                       >

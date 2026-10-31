@@ -95,10 +95,10 @@ function safeParse<T>(value: unknown, fallback: T): T {
 }
 
 const STATUS_TONE: Record<string, string> = {
-  ELIGIBLE: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  ELIGIBLE: "bg-crm-success-bg text-crm-success-text border-crm-success-border",
   POSSIBLY_ELIGIBLE: "bg-sky-50 text-sky-700 border-sky-200",
-  NEEDS_COUNSELOR_REVIEW: "bg-amber-50 text-amber-700 border-amber-200",
-  NOT_READY_YET: "bg-rose-50 text-rose-700 border-rose-200",
+  NEEDS_COUNSELOR_REVIEW: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
+  NOT_READY_YET: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
 };
 
 const APPLY_FLOW = [
@@ -257,7 +257,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
                 <Icon name="Award" className="mr-1 size-3" /> Scholarship
               </Badge>
             )}
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-crm-success-bg px-3 py-1 text-xs font-semibold text-crm-success-text">
               <Icon name="ShieldCheck" className="size-3" />
               Verified {course.lastVerifiedAt ? fmtDate(course.lastVerifiedAt) : "recently"}
             </span>
@@ -644,14 +644,14 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
               <p className="mt-3 text-sm text-foreground">{eligResult.summary}</p>
               {eligResult.strengths && eligResult.strengths.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-xs font-semibold text-emerald-700">Strengths</p>
-                  <ul className="mt-1 space-y-1">{eligResult.strengths.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><Icon name="CheckCircle2" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />{s}</li>)}</ul>
+                  <p className="text-xs font-semibold text-crm-success-text">Strengths</p>
+                  <ul className="mt-1 space-y-1">{eligResult.strengths.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><Icon name="CheckCircle2" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />{s}</li>)}</ul>
                 </div>
               )}
               {eligResult.concerns && eligResult.concerns.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-xs font-semibold text-amber-700">Concerns</p>
-                  <ul className="mt-1 space-y-1">{eligResult.concerns.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><Icon name="AlertTriangle" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />{s}</li>)}</ul>
+                  <p className="text-xs font-semibold text-crm-warning-text">Concerns</p>
+                  <ul className="mt-1 space-y-1">{eligResult.concerns.map((s, i) => <li key={i} className="flex items-start gap-1.5 text-xs text-foreground"><Icon name="AlertTriangle" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />{s}</li>)}</ul>
                 </div>
               )}
               {eligResult.recommendedDocuments && eligResult.recommendedDocuments.length > 0 && (
@@ -670,7 +670,7 @@ export function PublicCourse({ slug, onNavigate }: PublicCourseProps) {
                 <p className="mt-3 rounded-lg bg-[var(--alo-brand-light)]/60 px-3 py-2 text-xs text-[var(--alo-brand)]"><span className="font-semibold">English test advice:</span> {eligResult.englishTestAdvice}</p>
               )}
               {eligResult.visaRiskNote && (
-                <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800"><span className="font-semibold">Visa risk note:</span> {eligResult.visaRiskNote}</p>
+                <p className="mt-3 rounded-lg bg-crm-warning-bg px-3 py-2 text-xs text-crm-warning-text"><span className="font-semibold">Visa risk note:</span> {eligResult.visaRiskNote}</p>
               )}
               <Button
  variant="outline"

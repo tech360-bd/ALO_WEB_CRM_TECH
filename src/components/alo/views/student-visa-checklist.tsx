@@ -79,21 +79,21 @@ export function StudentVisaChecklist() {
   const renderStatusIcon = (status?: string) => {
     if (status === "APPROVED") {
       return (
-        <div className="flex size-8 items-center justify-center rounded-full bg-emerald-100">
-          <Icon name="Check" className="size-4 text-emerald-600" />
+        <div className="flex size-8 items-center justify-center rounded-full bg-crm-success-bg">
+          <Icon name="Check" className="size-4 text-crm-success-text" />
         </div>
       );
     }
     if (status === "REJECTED") {
       return (
-        <div className="flex size-8 items-center justify-center rounded-full bg-rose-100">
-          <Icon name="X" className="size-4 text-rose-600" />
+        <div className="flex size-8 items-center justify-center rounded-full bg-crm-warning-bg">
+          <Icon name="X" className="size-4 text-crm-warning-text" />
         </div>
       );
     }
     return (
-      <div className="flex size-8 items-center justify-center rounded-full bg-amber-100">
-        <Icon name="Clock" className="size-4 text-amber-600" />
+      <div className="flex size-8 items-center justify-center rounded-full bg-crm-warning-bg">
+        <Icon name="Clock" className="size-4 text-crm-warning-text" />
       </div>
     );
   };
@@ -128,7 +128,7 @@ export function StudentVisaChecklist() {
                   {renderStatusIcon(item.status)}
                 </div>
                 {item.isBlocking && item.status !== "APPROVED" && (
-                  <p className="mt-3 text-xs font-semibold text-rose-600">
+                  <p className="mt-3 text-xs font-semibold text-crm-warning-text">
                     ⚠ Required for visa submission
                   </p>
                 )}

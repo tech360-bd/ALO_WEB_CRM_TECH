@@ -90,19 +90,19 @@ interface LoadState {
 }
 
 const STATUS_CLS: Record<string, string> = {
-  EXECUTED: 'bg-green-100 text-green-700 border-green-200',
+  EXECUTED: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
   APPROVED: 'bg-sky-100 text-sky-700 border-sky-200',
   EXECUTING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
   REJECTED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
-  PENDING: 'bg-amber-100 text-amber-700 border-amber-200',
-  FAILED: 'bg-red-100 text-red-700 border-red-200',
+  PENDING: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+  FAILED: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
   ROLLED_BACK: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
-  ACTIVE: 'bg-green-100 text-green-700 border-green-200',
+  ACTIVE: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
 };
 
 const RISK_CLS: Record<string, string> = {
-  HIGH: 'bg-red-100 text-red-700 border-red-200',
-  MEDIUM: 'bg-amber-100 text-amber-700 border-amber-200',
+  HIGH: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+  MEDIUM: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
   LOW: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 
@@ -239,8 +239,8 @@ export default function CrmAgentOperationsPage() {
       </div>
 
       {stats?.globalAiPaused && (
-        <Card className="border-amber-200 bg-amber-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-amber-800">
+        <Card className="border-crm-warning-border bg-crm-warning-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-warning-text">
             <Pause className="mt-0.5 h-4 w-4 shrink-0" />
             <p className="font-medium">
               Global AI execution is paused. Requested actions will queue but not run.
@@ -283,7 +283,7 @@ export default function CrmAgentOperationsPage() {
               <p className="text-muted-foreground text-xs">Failed</p>
               <p className="text-2xl font-bold">{failedCount}</p>
             </div>
-            <AlertTriangle className={`h-5 w-5 ${failedCount > 0 ? 'text-red-600' : 'text-muted-foreground'}`} />
+            <AlertTriangle className={`h-5 w-5 ${failedCount > 0 ? 'text-crm-danger-text' : 'text-muted-foreground'}`} />
           </CardContent>
         </Card>
       </div>
@@ -469,7 +469,7 @@ export default function CrmAgentOperationsPage() {
                               {action.targetId ? ` · ${action.targetId}` : ''}
                             </p>
                             {action.lastError ? (
-                              <p className="mt-1 text-[11px] text-red-600">{action.lastError}</p>
+                              <p className="mt-1 text-[11px] text-crm-danger-text">{action.lastError}</p>
                             ) : null}
                           </TableCell>
                           <TableCell>{riskBadge(action.riskLevel)}</TableCell>
@@ -566,7 +566,7 @@ export default function CrmAgentOperationsPage() {
                           {failure.retryCount ? ` · ${failure.retryCount} retries` : ''}
                         </p>
                         {failure.lastError ? (
-                          <p className="mt-0.5 text-[11px] text-red-600">{failure.lastError}</p>
+                          <p className="mt-0.5 text-[11px] text-crm-danger-text">{failure.lastError}</p>
                         ) : null}
                       </div>
                       <span className="text-muted-foreground text-xs">

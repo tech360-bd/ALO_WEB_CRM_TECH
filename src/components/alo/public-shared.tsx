@@ -26,8 +26,8 @@ export function Breadcrumb({ items }: { items: { label: string; onClick?: () => 
 
 export function SourceVerification({ sourceUrl, lastVerifiedAt, verificationStatus }: { sourceUrl?: string | null; lastVerifiedAt?: string | Date | null; verificationStatus?: string }) {
   const statusColor: Record<string, string> = {
-    VERIFIED: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    NEEDS_REVIEW: "bg-amber-50 text-amber-700 border-amber-200",
+    VERIFIED: "bg-crm-success-bg text-crm-success-text border-crm-success-border",
+    NEEDS_REVIEW: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
     UNVERIFIED: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]",
   };
   const statusLabel: Record<string, string> = {
@@ -61,8 +61,8 @@ export function SourceVerification({ sourceUrl, lastVerifiedAt, verificationStat
 
 export function Disclaimer({ text }: { text: string }) {
   return (
-    <div className="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
-      <Icon name="Info" className="mt-0.5 size-4 shrink-0 text-amber-600" />
+    <div className="flex items-start gap-2.5 rounded-xl border border-crm-warning-border bg-crm-warning-bg px-4 py-3 text-xs text-crm-warning-text">
+      <Icon name="Info" className="mt-0.5 size-4 shrink-0 text-crm-warning-text" />
       <p className="leading-relaxed">{text}</p>
     </div>
   );

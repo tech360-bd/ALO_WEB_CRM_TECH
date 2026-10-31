@@ -248,12 +248,12 @@ export function PublicVisaSupport({ onNavigate }: PublicVisaSupportProps) {
               <Card key={i} className="rounded-2xl border border-[var(--alo-border)] bg-white">
                 <CardContent className="p-5">
                   <div className="flex items-start gap-3">
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-50 text-sm font-black text-red-700">
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-crm-danger-bg text-sm font-black text-crm-danger-text">
                       {i + 1}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-bold text-[var(--alo-text)]">{r.reason}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-emerald-700">
+                      <p className="mt-1 text-xs leading-relaxed text-crm-success-text">
                         <Icon name="ShieldCheck" className="mr-1 inline size-3" />
                         Prevention: {r.prevention}
                       </p>

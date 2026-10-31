@@ -23,11 +23,11 @@ type PlatformKey = 'facebook' | 'instagram' | 'messenger' | 'linkedin' | 'tiktok
 const platformConfig: Record<PlatformKey, { label: string; bg: string; icon: React.ElementType }> = {
   facebook: { label: 'Facebook', bg: 'bg-[var(--alo-brand)]', icon: Facebook },
   instagram: { label: 'Instagram', bg: 'bg-gradient-to-r from-purple-600 to-pink-500', icon: Instagram },
-  messenger: { label: 'Messenger', bg: 'bg-purple-600', icon: MessageSquare },
+  messenger: { label: 'Messenger', bg: 'bg-[var(--alo-brand)]', icon: MessageSquare },
   linkedin: { label: 'LinkedIn', bg: 'bg-[var(--alo-brand-hover)]', icon: Linkedin },
-  tiktok: { label: 'TikTok', bg: 'bg-gray-900', icon: Youtube },
-  youtube: { label: 'YouTube', bg: 'bg-red-600', icon: Youtube },
-  whatsapp_status: { label: 'WhatsApp', bg: 'bg-green-600', icon: MessageCircle },
+  tiktok: { label: 'TikTok', bg: 'bg-[var(--alo-page)]', icon: Youtube },
+  youtube: { label: 'YouTube', bg: 'bg-[var(--alo-error)]', icon: Youtube },
+  whatsapp_status: { label: 'WhatsApp', bg: 'bg-[var(--alo-success-dark)]', icon: MessageCircle },
   website: { label: 'Website', bg: 'bg-teal-600', icon: Globe },
 };
 
@@ -35,7 +35,7 @@ function platformMeta(value: string) {
   const key = (value || '').toLowerCase();
   if (key === 'whatsapp') return platformConfig.whatsapp_status;
   const match = platformConfig[key as PlatformKey];
-  return match ?? { label: value || 'Unspecified', bg: 'bg-gray-500', icon: Globe };
+  return match ?? { label: value || 'Unspecified', bg: 'bg-[var(--alo-page)]', icon: Globe };
 }
 
 // ============================================================
@@ -426,7 +426,7 @@ export default function SocialMediaAutomationView() {
                     return (
                       <div key={conversation.conversationId} className="p-3 rounded-lg bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] transition-colors">
                         <div className="flex items-start gap-2.5">
-                          <span className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-[11px] font-bold text-[var(--alo-body)] shrink-0">
+                          <span className="w-8 h-8 rounded-full bg-[var(--alo-page)] flex items-center justify-center text-[11px] font-bold text-[var(--alo-body)] shrink-0">
                             {initials}
                           </span>
                           <div className="flex-1 min-w-0">
@@ -444,7 +444,7 @@ export default function SocialMediaAutomationView() {
                             <div className="flex items-center gap-1.5 mt-1.5">
                               <span className="text-[11px] text-[var(--alo-text-muted)]">{config.label}</span>
                               {conversation.aiHandled && (
-                                <Badge className="text-[11px] bg-purple-100 text-purple-700">
+                                <Badge className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                                   <Sparkles className="w-2.5 h-2.5 mr-0.5" />AI handled
                                 </Badge>
                               )}
@@ -511,7 +511,7 @@ export default function SocialMediaAutomationView() {
                         const Icon = config.icon;
                         const isConverted = Boolean(comment.convertedToLead);
                         return (
-                          <tr key={comment.id} className="border-b border-gray-50 hover:bg-[var(--alo-page)]">
+                          <tr key={comment.id} className="border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)]">
                             <td className="py-2.5">
                               <span className="flex items-center gap-1.5">
                                 <span className={`w-5 h-5 rounded ${config.bg} flex items-center justify-center`}>
@@ -529,7 +529,7 @@ export default function SocialMediaAutomationView() {
                             </td>
                             <td className="py-2.5">
                               {comment.repliedAt ? (
-                                <Badge className="text-[11px] bg-green-100 text-green-700">
+                                <Badge className="text-[11px] bg-crm-success-bg text-crm-success-text">
                                   <CheckCircle className="w-2.5 h-2.5 mr-0.5" />Sent
                                 </Badge>
                               ) : (
@@ -609,7 +609,7 @@ export default function SocialMediaAutomationView() {
                         const Icon = config.icon;
                         const isActive = trigger.status === 'ACTIVE';
                         return (
-                          <tr key={trigger.id} className="border-b border-gray-50 hover:bg-[var(--alo-page)]">
+                          <tr key={trigger.id} className="border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)]">
                             <td className="py-2.5">
                               <span className="text-xs font-bold text-[var(--alo-cta-active)]">{trigger.keyword}</span>
                               <Badge variant="outline" className="ml-1.5 text-[11px] font-normal">{trigger.keywordType}</Badge>
@@ -647,7 +647,7 @@ export default function SocialMediaAutomationView() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
+                                  className="h-7 w-7 p-0 text-crm-danger-text hover:text-crm-danger-text"
                                   disabled={busyId === trigger.id}
                                   onClick={() => void handleDeleteTrigger(trigger)}
                                   aria-label={`Delete keyword ${trigger.keyword}`}
@@ -698,9 +698,9 @@ export default function SocialMediaAutomationView() {
               <CardContent>
                 {consent ? (
                   <div className="flex items-center gap-4">
-                    <div className="px-3 py-2 rounded bg-green-50 border border-green-100">
-                      <p className="text-xs font-bold text-green-600">{(consent.count ?? 0).toLocaleString()}</p>
-                      <p className="text-[11px] text-green-500">Active consented contacts</p>
+                    <div className="px-3 py-2 rounded bg-crm-success-bg border border-crm-success-border">
+                      <p className="text-xs font-bold text-crm-success-text">{(consent.count ?? 0).toLocaleString()}</p>
+                      <p className="text-[11px] text-crm-success-text">Active consented contacts</p>
                     </div>
                     <div className="px-3 py-2 rounded bg-yellow-50 border border-yellow-100">
                       <p className="text-xs font-bold text-yellow-600">{(consent.optedOut ?? 0).toLocaleString()}</p>

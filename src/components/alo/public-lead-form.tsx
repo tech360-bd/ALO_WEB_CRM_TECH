@@ -146,14 +146,14 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
 
   if (result?.ok) {
     return (
-      <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50 p-6 text-center">
-        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-500 text-white">
+      <div className="rounded-2xl border-2 border-crm-success-border bg-crm-success-bg p-6 text-center">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[var(--alo-success)] text-white">
           <Icon name="Check" className="size-7" />
         </div>
-        <p className="mt-4 text-lg font-bold text-emerald-900">Enquiry received</p>
-        <p className="mt-1 text-sm text-emerald-800">{result.message}</p>
+        <p className="mt-4 text-lg font-bold text-crm-success-text">Enquiry received</p>
+        <p className="mt-1 text-sm text-crm-success-text">{result.message}</p>
         {result.leadId && (
-          <p className="mt-3 text-xs text-emerald-700">
+          <p className="mt-3 text-xs text-crm-success-text">
             Lead ID: <span className="font-mono font-bold">{result.leadId}</span>
           </p>
         )}
@@ -161,7 +161,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           <Button className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => router.push("/application-process")}>
             View Application Process
           </Button>
-          <Button variant="outline" className="border-emerald-400 text-emerald-700 hover:bg-emerald-100" onClick={() => setResult(null)}>
+          <Button variant="outline" className="border-[var(--alo-success)] text-crm-success-text hover:bg-crm-success-bg" onClick={() => setResult(null)}>
             Submit another lead
           </Button>
         </div>
@@ -253,7 +253,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           )}
         </Button>
         {result && !result.ok && (
-          <p className="text-center text-xs font-medium text-red-600">{result.message}</p>
+          <p className="text-center text-xs font-medium text-crm-danger-text">{result.message}</p>
         )}
       </form>
     </div>

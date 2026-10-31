@@ -12,7 +12,7 @@ export default function AccessibilityPage() {
   return (
     <div className="min-h-screen bg-white pt-8 pb-20">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-100 mb-4">ACCESSIBILITY</Badge>
+        <Badge className="bg-crm-success-bg text-crm-success-text border border-crm-success-border mb-4">ACCESSIBILITY</Badge>
         <h1 className="text-3xl font-bold text-[var(--alo-text)] flex items-center gap-3"><Accessibility className="h-7 w-7 text-[var(--alo-brand)]" /> Accessibility Statement</h1>
         <p className="text-sm text-[var(--alo-text-muted)] mt-2 mb-8">We aim to make https://aloeducation.com usable by everyone, including people using assistive technologies. Target: <strong>WCAG 2.1 AA</strong>.</p>
 

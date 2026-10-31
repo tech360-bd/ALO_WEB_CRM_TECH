@@ -214,7 +214,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
       <div className="p-3">
         <Button
  variant="ghost"
- className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 "
+ className="w-full justify-start text-alo-text-secondary hover:text-crm-danger-text hover:bg-crm-danger-bg "
  onClick={logout}
  >
           <LogOut className="w-4 h-4 mr-2" />
@@ -229,7 +229,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
       {actingAs && (
         <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-md z-50">
           <div className="flex items-center gap-2 text-sm font-semibold">
-            <ShieldAlert className="w-5 h-5 text-amber-200 animate-pulse" />
+            <ShieldAlert className="w-5 h-5 text-crm-warning-text animate-pulse" />
             <span>SUPER ADMIN ACTING AS: <span className="underline decoration-wavy">{actingAs.role} / {actingAs.name}</span></span>
             <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-2">Real actor: {actingAs.realActor} · Reason: {actingAs.reason} · Expires {actingAs.expiresAt ? new Date(actingAs.expiresAt).toLocaleTimeString() : 'in 30 minutes'}</span>
           </div>
@@ -282,7 +282,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
             >
               <Bell className="w-5 h-5 text-alo-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-[var(--alo-error)] text-white text-[11px] flex items-center justify-center font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}

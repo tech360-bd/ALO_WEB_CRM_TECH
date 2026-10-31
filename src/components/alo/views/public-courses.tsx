@@ -383,8 +383,8 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
                         <span
                           className={cn(
                             "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
-                            tone === "near" && "bg-amber-50 text-amber-700",
-                            tone === "open" && "bg-emerald-50 text-emerald-700",
+                            tone === "near" && "bg-crm-warning-bg text-crm-warning-text",
+                            tone === "open" && "bg-crm-success-bg text-crm-success-text",
                             tone === "neutral" && "bg-[var(--alo-page)] text-[var(--alo-body)]"
                           )}
                         >
@@ -400,7 +400,7 @@ export function PublicCourses({ onNavigate }: PublicCoursesProps) {
                     {/* Footer */}
                     <div className="mt-auto flex flex-col gap-2 pt-4">
                       <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                        <Icon name="ShieldCheck" className="size-3 text-emerald-600" />
+                        <Icon name="ShieldCheck" className="size-3 text-crm-success-text" />
                         <span>Verified {c.lastVerifiedAt ? fmtDate(c.lastVerifiedAt) : "recently"}</span>
                       </div>
                       <div className="flex gap-2">

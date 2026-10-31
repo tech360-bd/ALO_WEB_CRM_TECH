@@ -112,9 +112,9 @@ export default function VideoStudioPage() {
   };
 
   const statusColor = (status: string) => {
-    if (status === 'online') return 'bg-emerald-50 border-emerald-200 text-emerald-800';
-    if (status === 'not_configured') return 'bg-amber-50 border-amber-200 text-amber-800';
-    if (status === 'offline' || status === 'failed') return 'bg-red-50 border-red-200 text-red-800';
+    if (status === 'online') return 'bg-crm-success-bg border-crm-success-border text-crm-success-text';
+    if (status === 'not_configured') return 'bg-crm-warning-bg border-crm-warning-border text-crm-warning-text';
+    if (status === 'offline' || status === 'failed') return 'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text';
     return 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]';
   };
 
@@ -164,23 +164,23 @@ export default function VideoStudioPage() {
           </Card>
           <Card className="p-4 bg-white border rounded-xl">
             <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">P0 Critical</span>
-            <p className="text-2xl font-extrabold text-red-600">{stats.p0}</p>
+            <p className="text-2xl font-extrabold text-crm-danger-text">{stats.p0}</p>
           </Card>
           <Card className="p-4 bg-white border rounded-xl">
             <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">P1 Important</span>
-            <p className="text-2xl font-extrabold text-amber-600">{stats.p1}</p>
+            <p className="text-2xl font-extrabold text-crm-warning-text">{stats.p1}</p>
           </Card>
           <Card className="p-4 bg-white border rounded-xl">
             <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Integrated</span>
-            <p className="text-2xl font-extrabold text-emerald-600">{stats.integrated}</p>
+            <p className="text-2xl font-extrabold text-crm-success-text">{stats.integrated}</p>
           </Card>
           <Card className="p-4 bg-white border rounded-xl">
             <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Adapter Ready</span>
-            <p className="text-2xl font-extrabold text-indigo-600">{stats.adapterReady}</p>
+            <p className="text-2xl font-extrabold text-[var(--alo-brand)]">{stats.adapterReady}</p>
           </Card>
           <Card className="p-4 bg-white border rounded-xl">
             <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">AI Gen</span>
-            <p className="text-2xl font-extrabold text-purple-600">{stats.categories?.ai_generation}</p>
+            <p className="text-2xl font-extrabold text-[var(--alo-brand)]">{stats.categories?.ai_generation}</p>
           </Card>
           <Card className="p-4 bg-white border rounded-xl">
             <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Automation</span>
@@ -233,7 +233,7 @@ export default function VideoStudioPage() {
             </div>
           </Card>
           <Card className="p-6 bg-white border rounded-2xl space-y-4">
-            <h2 className="text-base font-bold flex items-center gap-2"><Zap className="w-5 h-5 text-amber-500" /> Quick Actions</h2>
+            <h2 className="text-base font-bold flex items-center gap-2"><Zap className="w-5 h-5 text-crm-warning-text" /> Quick Actions</h2>
             <div className="space-y-3">
               <div className="p-3 bg-[var(--alo-page)] rounded-xl border">
                 <h3 className="font-bold text-sm">n8n Video Workflows</h3>
@@ -243,12 +243,12 @@ export default function VideoStudioPage() {
               <div className="p-3 bg-[var(--alo-page)] rounded-xl border">
                 <h3 className="font-bold text-sm">Remotion Templates</h3>
                 <p className="text-xs text-[var(--alo-body)] mt-1">{compositions.length} templates: UniversityPromo, CourseExplainer, Testimonial, etc.</p>
-                <Button onClick={() => setActiveTab('remotion')} className="mt-2 w-full text-xs bg-emerald-600 text-white rounded-xl">Render Video</Button>
+                <Button onClick={() => setActiveTab('remotion')} className="mt-2 w-full text-xs bg-[var(--alo-success-dark)] text-white rounded-xl">Render Video</Button>
               </div>
               <div className="p-3 bg-[var(--alo-page)] rounded-xl border">
                 <h3 className="font-bold text-sm">AI Providers</h3>
                 <p className="text-xs text-[var(--alo-body)] mt-1">LTX (fast, 12GB), CogVideo (18GB), Hunyuan (24GB, best quality), LongCat, Pixelle</p>
-                <Button onClick={() => setActiveTab('ai')} className="mt-2 w-full text-xs bg-purple-600 text-white rounded-xl">Generate AI Video</Button>
+                <Button onClick={() => setActiveTab('ai')} className="mt-2 w-full text-xs bg-[var(--alo-brand)] text-white rounded-xl">Generate AI Video</Button>
               </div>
             </div>
           </Card>
@@ -312,7 +312,7 @@ export default function VideoStudioPage() {
       {/* AI Generation */}
       {activeTab === 'ai' && (
         <Card className="p-6 bg-white border rounded-2xl space-y-6">
-          <h2 className="text-base font-bold flex items-center gap-2"><Sparkles className="w-5 h-5 text-purple-600" /> AI Video Generation (CogVideo, Hunyuan, LTX, LongCat, Pixelle, ComfyUI)</h2>
+          <h2 className="text-base font-bold flex items-center gap-2"><Sparkles className="w-5 h-5 text-[var(--alo-brand)]" /> AI Video Generation (CogVideo, Hunyuan, LTX, LongCat, Pixelle, ComfyUI)</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
             {[
@@ -323,8 +323,8 @@ export default function VideoStudioPage() {
               { id: 'pixelle', name: 'Pixelle-Video', desc: 'DiT research', quality: '⭐⭐⭐', speed: '⭐⭐⭐', vram: '16GB' },
               { id: 'comfyui', name: 'ComfyUI-VideoHelperSuite', desc: 'Node-based workflows', quality: '⭐⭐⭐⭐', speed: '⭐⭐⭐', vram: '12GB' },
             ].map(p => (
-              <div key={p.id} className={`p-4 border rounded-xl cursor-pointer ${provider === p.id ? 'bg-purple-50 border-purple-300' : 'bg-[var(--alo-page)]'}`} onClick={() => setProvider(p.id)}>
-                <div className="font-bold">{p.name} <span className="text-[11px] px-1.5 py-0.5 bg-slate-200 rounded">{p.vram}</span></div>
+              <div key={p.id} className={`p-4 border rounded-xl cursor-pointer ${provider === p.id ? 'bg-[var(--alo-brand-pale)] border-[var(--alo-border)]' : 'bg-[var(--alo-page)]'}`} onClick={() => setProvider(p.id)}>
+                <div className="font-bold">{p.name} <span className="text-[11px] px-1.5 py-0.5 bg-[var(--alo-page)] rounded">{p.vram}</span></div>
                 <div className="text-[var(--alo-body)] mt-1">{p.desc}</div>
                 <div className="mt-1">Quality: {p.quality} • Speed: {p.speed}</div>
               </div>
@@ -334,7 +334,7 @@ export default function VideoStudioPage() {
           <div className="space-y-3">
             <label className="text-xs font-bold">Prompt (education-optimized)</label>
             <textarea value={prompt} onChange={e => setPrompt(e.target.value)} rows={3} className="w-full p-2.5 border rounded-xl text-sm" />
-            <Button onClick={() => handleRender('ai')} disabled={rendering} className="bg-purple-600 text-white rounded-xl">
+            <Button onClick={() => handleRender('ai')} disabled={rendering} className="bg-[var(--alo-brand)] text-white rounded-xl">
               {rendering ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
               Generate with {provider}
             </Button>
@@ -351,14 +351,14 @@ export default function VideoStudioPage() {
       {/* Captioning */}
       {activeTab === 'caption' && (
         <Card className="p-6 bg-white border rounded-2xl space-y-4">
-          <h2 className="text-base font-bold flex items-center gap-2"><Captions className="w-5 h-5 text-emerald-600" /> VideoCaptioner — Whisper + LLM, 99 Languages (WEIFENG2333/VideoCaptioner)</h2>
+          <h2 className="text-base font-bold flex items-center gap-2"><Captions className="w-5 h-5 text-crm-success-text" /> VideoCaptioner — Whisper + LLM, 99 Languages (WEIFENG2333/VideoCaptioner)</h2>
           <p className="text-xs text-[var(--alo-body)]">Free & open-source AI subtitle tool: Whisper STT + LLM intelligent segmentation + translation + batch + VAD + speaker diarization. Supports SRT/ASS/VTT/TXT.</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
               <label className="text-xs font-bold">Video URL</label>
               <input value={videoUrl} onChange={e => setVideoUrl(e.target.value)} placeholder="https://.../video.mp4 or /uploads/..." className="w-full p-2.5 border rounded-xl text-sm" />
-              <Button onClick={() => handleRender('caption')} disabled={rendering} className="w-full bg-emerald-600 text-white rounded-xl">
+              <Button onClick={() => handleRender('caption')} disabled={rendering} className="w-full bg-[var(--alo-success-dark)] text-white rounded-xl">
                 {rendering ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Captions className="w-4 h-4 mr-2" />}
                 Auto-Caption (99 langs)
               </Button>
@@ -394,8 +394,8 @@ export default function VideoStudioPage() {
                   <div>
                     <div className="font-bold text-sm flex items-center gap-2">
                       {r.name}
-                      <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${r.integration.priority === 'P0' ? 'bg-red-100 text-red-700' : r.integration.priority === 'P1' ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-[var(--alo-body)]'}`}>{r.integration.priority}</span>
-                      <span className={`px-2 py-0.5 rounded-full text-[11px] ${r.integration.status === 'integrated' ? 'bg-emerald-100 text-emerald-700' : r.integration.status === 'adapter_ready' ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' : 'bg-slate-200'}`}>{r.integration.status}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${r.integration.priority === 'P0' ? 'bg-crm-danger-bg text-crm-danger-text' : r.integration.priority === 'P1' ? 'bg-crm-warning-bg text-crm-warning-text' : 'bg-[var(--alo-page)] text-[var(--alo-body)]'}`}>{r.integration.priority}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[11px] ${r.integration.status === 'integrated' ? 'bg-crm-success-bg text-crm-success-text' : r.integration.status === 'adapter_ready' ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' : 'bg-[var(--alo-page)]'}`}>{r.integration.status}</span>
                     </div>
                     <div className="mt-1 text-[var(--alo-body)]">{r.description.slice(0, 200)}...</div>
                     <div className="mt-2 flex flex-wrap gap-1.5">

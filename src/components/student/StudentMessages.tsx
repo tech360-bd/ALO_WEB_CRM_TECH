@@ -111,7 +111,7 @@ const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
 function SourceIcon({ source }: { source: MessageSource }) {
   switch (source) {
     case 'whatsapp':
-      return <MessageSquare className="w-3 h-3 text-green-600" />;
+      return <MessageSquare className="w-3 h-3 text-crm-success-text" />;
     case 'email':
       return <Mail className="w-3 h-3 text-[var(--alo-text-muted)]" />;
     default:
@@ -127,7 +127,7 @@ function MessageBubble({ message }: { message: Message }) {
   if (isSystem) {
     return (
       <div className="flex justify-center my-3">
-        <div className="bg-amber-50 text-amber-800 text-xs px-4 py-2 rounded-full max-w-md text-center border border-amber-100">
+        <div className="bg-crm-warning-bg text-crm-warning-text text-xs px-4 py-2 rounded-full max-w-md text-center border border-crm-warning-border">
           {message.content}
         </div>
       </div>
@@ -148,7 +148,7 @@ function MessageBubble({ message }: { message: Message }) {
             className={cn(
               'text-[11px] font-semibold',
               isAi
-                ? 'bg-purple-100 text-purple-700'
+                ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                 : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
             )}
           >
@@ -165,7 +165,7 @@ function MessageBubble({ message }: { message: Message }) {
             isSent
               ? 'bg-[var(--alo-brand)] text-white rounded-tr-md'
               : isAi
-                ? 'bg-purple-50 text-purple-900 border border-purple-200 rounded-tl-md'
+                ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)] rounded-tl-md'
                 : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text)] rounded-tl-md'
           )}
         >
@@ -400,8 +400,8 @@ export default function StudentMessages() {
           <Collapsible open={aiOpen} onOpenChange={setAiOpen}>
             <CollapsibleTrigger className="w-full px-3 pt-3 pb-1">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                <div className="w-6 h-6 rounded-full bg-[var(--alo-brand-pale)] flex items-center justify-center">
+                  <Sparkles className="w-3.5 h-3.5 text-[var(--alo-brand)]" />
                 </div>
                 <span className="text-xs font-semibold text-[var(--alo-text)] flex-1 text-left">
                   Ask AI anything about your application
@@ -421,7 +421,7 @@ export default function StudentMessages() {
                     <button
                       key={q}
                       onClick={() => setActiveThreadId('thread-3')}
-                      className="text-[11px] px-2.5 py-1.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-colors text-left leading-tight"
+                      className="text-[11px] px-2.5 py-1.5 rounded-full bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)] hover:bg-[var(--alo-brand-pale)] transition-colors text-left leading-tight"
                     >
                       {q}
                     </button>
@@ -443,7 +443,7 @@ export default function StudentMessages() {
                   'text-[11px] px-2.5 py-1 rounded-full transition-colors font-medium',
                   activeFilter === opt.value
                     ? 'bg-[var(--alo-brand)] text-white'
-                    : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200'
+                    : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]'
                 )}
               >
                 {opt.label}
@@ -461,7 +461,7 @@ export default function StudentMessages() {
                    would tell a student no one has messaged them when we simply
                    could not check. */
                 <div className="flex flex-col items-center justify-center px-4 py-10 text-center">
-                  <AlertTriangle className="size-8 text-amber-500 mb-3" />
+                  <AlertTriangle className="size-8 text-crm-warning-text mb-3" />
                   <p className="text-sm font-semibold text-[var(--alo-text)]">
                     Messages could not be loaded
                   </p>
@@ -517,7 +517,7 @@ export default function StudentMessages() {
                         className={cn(
                           'text-xs font-semibold',
                           conv.type === 'ai'
-                            ? 'bg-purple-100 text-purple-700'
+                            ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                             : conv.type === 'application'
                               ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'
                               : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
@@ -531,7 +531,7 @@ export default function StudentMessages() {
                       </AvatarFallback>
                     </Avatar>
                     {conv.isOnline && (
-                      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" />
+                      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[var(--alo-success)] rounded-full border-2 border-white" />
                     )}
                   </div>
 
@@ -555,7 +555,7 @@ export default function StudentMessages() {
                         'text-[11px] px-1 py-0 mb-1',
                         conv.type === 'counselor' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
                         conv.type === 'application' && 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-                        conv.type === 'ai' && 'bg-purple-50 text-purple-600'
+                        conv.type === 'ai' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                       )}
                     >
                       {conv.role}
@@ -602,7 +602,7 @@ export default function StudentMessages() {
                     className={cn(
                       'text-xs font-semibold',
                       activeThread.type === 'ai'
-                        ? 'bg-purple-100 text-purple-700'
+                        ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                         : activeThread.type === 'application'
                           ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'
                           : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
@@ -627,15 +627,15 @@ export default function StudentMessages() {
                         'text-[11px] px-1.5 py-0',
                         activeThread.type === 'counselor' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
                         activeThread.type === 'application' && 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-                        activeThread.type === 'ai' && 'bg-purple-50 text-purple-600'
+                        activeThread.type === 'ai' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                       )}
                     >
                       {activeThread.role}
                     </Badge>
                     {activeThread.isOnline && (
                       <span className="flex items-center gap-1">
-                        <span className="w-2 h-2 bg-emerald-500 rounded-full" />
-                        <span className="text-[11px] text-emerald-600 font-medium">Online</span>
+                        <span className="w-2 h-2 bg-[var(--alo-success)] rounded-full" />
+                        <span className="text-[11px] text-crm-success-text font-medium">Online</span>
                       </span>
                     )}
                   </div>

@@ -89,7 +89,7 @@ export default function DiagramStudio() {
       <textarea aria-label="Funnel data" className="mt-2 block w-full rounded border p-2" value={counts} onChange={e => setCounts(e.target.value)} rows={4} maxLength={1500} />
       {!validFunnel && <span role="alert">Enter 2–12 labels with non-negative numeric counts. No demo metrics are prefilled.</span>}
     </label>}
-    {editable && <div className="space-y-3 rounded-xl border bg-slate-50 p-4">
+    {editable && <div className="space-y-3 rounded-xl border bg-[var(--alo-page)] p-4">
       <label className="block text-sm font-medium">Diagram title<input className="mt-1 block w-full rounded border bg-white p-2" maxLength={100} value={title} onChange={e => setTitle(e.target.value)} /></label>
       <label className="block text-sm font-medium">Diagram rows<textarea className="mt-1 block w-full rounded border bg-white p-2 font-mono" rows={6} maxLength={8000} value={rows} onChange={e => setRows(e.target.value)} /></label>
       <p className="text-xs">One row per line: label | group | value | end. Bar: label and value. Gantt: value is start and end uses the same units. Matrix: group is column, value is 1 for allowed or 0 for denied. Org chart: group is the parent label; use a root group for the top item. Kanban and swimlane: group is lane. Sequence: each message goes from its group to the next row’s group; the final message goes to the next participant.</p>

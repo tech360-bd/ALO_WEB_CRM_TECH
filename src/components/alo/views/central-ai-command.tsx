@@ -96,32 +96,32 @@ interface AiAgentPatchResponse {
 // =============================================================================
 
 const STATUS_META: Record<string, { label: string; color: string; dot: string }> = {
-  ACTIVE: { label: "Active", color: "bg-emerald-100 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
-  IDLE: { label: "Idle", color: "bg-amber-100 text-amber-700 border-amber-200", dot: "bg-amber-500" },
-  PAUSED: { label: "Paused", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]", dot: "bg-slate-400" },
-  ERROR: { label: "Error", color: "bg-rose-100 text-rose-700 border-rose-200", dot: "bg-rose-500" },
+  ACTIVE: { label: "Active", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border", dot: "bg-[var(--alo-success)]" },
+  IDLE: { label: "Idle", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border", dot: "bg-[var(--alo-warning)]" },
+  PAUSED: { label: "Paused", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]", dot: "bg-[var(--alo-text-muted)]" },
+  ERROR: { label: "Error", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border", dot: "bg-crm-warning-bg0" },
 };
 
 const AGENT_TYPE_META: Record<string, { label: string; icon: string; color: string }> = {
   ADMISSIONS: { label: "Admissions", icon: "FileCheck", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
   VISA: { label: "Visa", icon: "Plane", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
-  COURSE_RECOMMENDATION: { label: "Course Rec.", icon: "Compass", color: "bg-violet-100 text-violet-700 border-violet-200" },
-  SCHOLARSHIP: { label: "Scholarship", icon: "Award", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
-  UNIVERSITY_MATCHING: { label: "University Match", icon: "Building2", color: "bg-cyan-100 text-cyan-700 border-cyan-200" },
+  COURSE_RECOMMENDATION: { label: "Course Rec.", icon: "Compass", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  SCHOLARSHIP: { label: "Scholarship", icon: "Award", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border" },
+  UNIVERSITY_MATCHING: { label: "University Match", icon: "Building2", color: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] border-[var(--alo-info-border)]" },
   LEAD_QUALIFICATION: { label: "Lead Qualification", icon: "Filter", color: "bg-teal-100 text-teal-700 border-teal-200" },
-  CRM_ASSISTANT: { label: "CRM Assistant", icon: "LayoutDashboard", color: "bg-purple-100 text-purple-700 border-purple-200" },
-  MARKETING: { label: "Marketing", icon: "Megaphone", color: "bg-pink-100 text-pink-700 border-pink-200" },
-  CONTENT: { label: "Content", icon: "PenLine", color: "bg-indigo-100 text-indigo-700 border-indigo-200" },
-  SEO: { label: "SEO", icon: "Search", color: "bg-amber-100 text-amber-700 border-amber-200" },
-  TRANSLATION: { label: "Translation", icon: "Languages", color: "bg-rose-100 text-rose-700 border-rose-200" },
+  CRM_ASSISTANT: { label: "CRM Assistant", icon: "LayoutDashboard", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  MARKETING: { label: "Marketing", icon: "Megaphone", color: "bg-crm-danger-bg text-crm-danger-text border-crm-danger-border" },
+  CONTENT: { label: "Content", icon: "PenLine", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  SEO: { label: "SEO", icon: "Search", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+  TRANSLATION: { label: "Translation", icon: "Languages", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
   DOCUMENT_OCR: { label: "Document OCR", icon: "ScanText", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]" },
   EMAIL: { label: "Email", icon: "Mail", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
-  WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
-  ANALYTICS: { label: "Analytics", icon: "BarChart3", color: "bg-violet-100 text-violet-700 border-violet-200" },
-  REPORTING: { label: "Reporting", icon: "FileBarChart", color: "bg-cyan-100 text-cyan-700 border-cyan-200" },
+  WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border" },
+  ANALYTICS: { label: "Analytics", icon: "BarChart3", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  REPORTING: { label: "Reporting", icon: "FileBarChart", color: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] border-[var(--alo-info-border)]" },
   INTERVIEW_COACH: { label: "Interview Coach", icon: "Mic", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   TRAINING: { label: "Training", icon: "GraduationCap", color: "bg-teal-100 text-teal-700 border-teal-200" },
-  KNOWLEDGE_SEARCH: { label: "Knowledge Search", icon: "Sparkles", color: "bg-purple-100 text-purple-700 border-purple-200" },
+  KNOWLEDGE_SEARCH: { label: "Knowledge Search", icon: "Sparkles", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
 };
 
 const AI_SAFETY_MUST_NOT = [
@@ -152,7 +152,7 @@ function fmtNum(n: number): string {
 }
 
 function statusMeta(s: string) {
-  return STATUS_META[s] || { label: s, color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]", dot: "bg-slate-400" };
+  return STATUS_META[s] || { label: s, color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]", dot: "bg-[var(--alo-text-muted)]" };
 }
 
 function agentTypeMeta(t: string) {
@@ -224,7 +224,7 @@ function ArchitectureBox({
 }) {
   const accentMap: Record<string, string> = {
     blue: "border-[var(--alo-brand)] bg-[var(--alo-info-bg)] text-[var(--alo-brand)]",
-    violet: "border-violet-300 bg-violet-50 text-violet-700",
+    violet: "border-[var(--alo-brand)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
     orange: "border-[var(--alo-cta-hover)] bg-[var(--alo-cta-soft)] text-[var(--alo-cta-hover)]",
   };
   return (
@@ -626,8 +626,8 @@ export function CentralAiCommand() {
                           className={cn(
                             "h-8",
                             a.status === "ACTIVE"
-                              ? "border-amber-200 text-amber-700 hover:bg-amber-50"
-                              : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                              ? "border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
+                              : "border-crm-success-border text-crm-success-text hover:bg-crm-success-bg"
                           )}
                         >
                           {toggling === a.id ? (
@@ -684,30 +684,30 @@ export function CentralAiCommand() {
 
         <SectionCard title="AI Safety Rules" icon="ShieldAlert">
           <div className="space-y-3">
-            <div className="rounded-2xl border border-rose-200 bg-rose-50/60 p-3">
-              <p className="card-title flex items-center gap-1.5 text-rose-700">
+            <div className="rounded-2xl border border-crm-warning-border bg-crm-warning-bg/60 p-3">
+              <p className="card-title flex items-center gap-1.5 text-crm-warning-text">
                 <Icon name="Ban" className="size-4" />
                 AI MUST NOT
               </p>
               <div className="mt-2 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                 {AI_SAFETY_MUST_NOT.map((r) => (
                   <div key={r.text} className="flex items-center gap-1.5 rounded-md bg-white px-2 py-1">
-                    <Icon name={r.icon} className="size-3.5 shrink-0 text-rose-600" />
+                    <Icon name={r.icon} className="size-3.5 shrink-0 text-crm-warning-text" />
                     <span className="body-text text-[var(--alo-text-secondary)]">{r.text}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-3">
-              <p className="card-title flex items-center gap-1.5 text-emerald-700">
+            <div className="rounded-2xl border border-crm-success-border bg-crm-success-bg/60 p-3">
+              <p className="card-title flex items-center gap-1.5 text-crm-success-text">
                 <Icon name="CheckCheck" className="size-4" />
                 AI MUST
               </p>
               <div className="mt-2 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                 {AI_SAFETY_MUST.map((r) => (
                   <div key={r.text} className="flex items-center gap-1.5 rounded-md bg-white px-2 py-1">
-                    <Icon name={r.icon} className="size-3.5 shrink-0 text-emerald-600" />
+                    <Icon name={r.icon} className="size-3.5 shrink-0 text-crm-success-text" />
                     <span className="body-text text-[var(--alo-text-secondary)]">{r.text}</span>
                   </div>
                 ))}
@@ -745,7 +745,7 @@ export function CentralAiCommand() {
                   <Badge variant="outline" className="font-mono text-[11px]">v{selected.version}</Badge>
                   <Badge variant="outline" className="font-mono text-[11px]">{selected.apiUsed}</Badge>
                   {selected.fallbackApi && (
-                    <Badge variant="outline" className="font-mono text-[11px] text-amber-700">
+                    <Badge variant="outline" className="font-mono text-[11px] text-crm-warning-text">
                       <Icon name="Shield" className="size-3" />
                       Fallback: {selected.fallbackApi}
                     </Badge>
@@ -776,7 +776,7 @@ export function CentralAiCommand() {
                   </div>
                   <div className="rounded-xl border border-[var(--alo-border)] bg-white p-2.5">
                     <p className="badge-text text-[var(--alo-text-muted)]">Error Count</p>
-                    <p className="text-lg font-bold text-rose-600">{fmtNum(selected.errorCount)}</p>
+                    <p className="text-lg font-bold text-crm-warning-text">{fmtNum(selected.errorCount)}</p>
                   </div>
                   <div className="rounded-xl border border-[var(--alo-border)] bg-white p-2.5 sm:col-span-2">
                     <p className="badge-text text-[var(--alo-text-muted)]">Success Rate</p>
@@ -831,8 +831,8 @@ export function CentralAiCommand() {
 
                 {/* Prompt template */}
                 {selected.promptTemplate && (
-                  <div className="rounded-xl border border-violet-200 bg-violet-50/40 p-3">
-                    <p className="card-title flex items-center gap-1.5 text-violet-700">
+                  <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/40 p-3">
+                    <p className="card-title flex items-center gap-1.5 text-[var(--alo-brand)]">
                       <Icon name="Terminal" className="size-4" />
                       Prompt Template (System)
                     </p>
@@ -846,7 +846,7 @@ export function CentralAiCommand() {
                 {selected.executionLog && (
                   <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
                     <p className="card-title flex items-center gap-1.5 text-[var(--alo-text)]">
-                      <Icon name="Activity" className="size-4 text-emerald-600" />
+                      <Icon name="Activity" className="size-4 text-crm-success-text" />
                       Execution Log
                     </p>
                     {(() => {
@@ -877,12 +877,12 @@ export function CentralAiCommand() {
 
                 {/* Error log */}
                 {selected.lastError && (
-                  <div className="rounded-xl border border-rose-200 bg-rose-50/50 p-3">
-                    <p className="card-title flex items-center gap-1.5 text-rose-700">
+                  <div className="rounded-xl border border-crm-warning-border bg-crm-warning-bg/50 p-3">
+                    <p className="card-title flex items-center gap-1.5 text-crm-warning-text">
                       <Icon name="AlertTriangle" className="size-4" />
                       Last Error
                     </p>
-                    <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-white p-2.5 font-mono text-xs text-rose-700">
+                    <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-white p-2.5 font-mono text-xs text-crm-warning-text">
                       {selected.lastError}
                     </pre>
                   </div>
@@ -910,7 +910,7 @@ export function CentralAiCommand() {
                   disabled={toggling === selected.id}
                   className={cn(
                     "h-10 text-white",
-                    selected.status === "ACTIVE" ? "bg-amber-600 hover:bg-amber-700" : "bg-emerald-600 hover:bg-emerald-700"
+                    selected.status === "ACTIVE" ? "bg-[var(--alo-warning)] hover:bg-[var(--alo-warning)]" : "bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)]"
                   )}
                 >
                   {toggling === selected.id ? (

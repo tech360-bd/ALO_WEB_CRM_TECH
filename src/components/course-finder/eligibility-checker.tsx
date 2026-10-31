@@ -262,7 +262,7 @@ export function EligibilityChecker() {
         <div className="mb-8">
           <div className="flex items-center justify-between relative">
             {/* Progress line */}
-            <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 -z-0">
+            <div className="absolute top-5 left-0 right-0 h-0.5 bg-[var(--alo-page)] -z-0">
               <div
                 className="h-full transition-all duration-500"
                 style={{
@@ -301,7 +301,7 @@ export function EligibilityChecker() {
                   <span
                     className={cn(
                       'text-xs font-medium text-center hidden sm:block',
-                      isActive ? 'text-[var(--alo-text)]' : isCompleted ? 'text-green-600' : 'text-[var(--alo-text-muted)]',
+                      isActive ? 'text-[var(--alo-text)]' : isCompleted ? 'text-crm-success-text' : 'text-[var(--alo-text-muted)]',
                     )}
                   >
                     {s.title}
@@ -314,9 +314,9 @@ export function EligibilityChecker() {
 
         {/* ─── Error Display ──────────────────────────────────────────────── */}
         {error && (
-          <div className="mb-6 flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
-            <p className="text-sm text-red-700">{error}</p>
+          <div className="mb-6 flex items-center gap-3 p-4 bg-crm-danger-bg border border-crm-danger-border rounded-lg">
+            <AlertCircle className="w-5 h-5 text-crm-danger-text shrink-0" />
+            <p className="text-sm text-crm-danger-text">{error}</p>
           </div>
         )}
 
@@ -579,7 +579,7 @@ export function EligibilityChecker() {
                 {/* Summary bar */}
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="text-sm text-[var(--alo-text-muted)]">{totalResults} course{totalResults !== 1 ? 's' : ''} found</span>
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100 border-green-200">
+                  <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg border-crm-success-border">
                     {likelyResults.length} Likely Match
                   </Badge>
                   <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200">
@@ -632,8 +632,8 @@ export function EligibilityChecker() {
 
                 {/* Disclaimer */}
                 {disclaimer && (
-                  <div className="rounded-lg bg-amber-50 border border-amber-200 p-4">
-                    <p className="text-xs text-amber-800 leading-relaxed">{disclaimer}</p>
+                  <div className="rounded-lg bg-crm-warning-bg border border-crm-warning-border p-4">
+                    <p className="text-xs text-crm-warning-text leading-relaxed">{disclaimer}</p>
                   </div>
                 )}
 
@@ -714,11 +714,11 @@ function ResultGroup({
 }) {
   const themeMap = {
     green: {
-      border: 'border-green-200',
-      bg: 'bg-green-50',
-      badge: 'bg-green-100 text-green-800 border-green-200',
-      icon: <CheckCircle2 className="w-5 h-5 text-green-600" />,
-      titleClass: 'text-green-800',
+      border: 'border-crm-success-border',
+      bg: 'bg-crm-success-bg',
+      badge: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
+      icon: <CheckCircle2 className="w-5 h-5 text-crm-success-text" />,
+      titleClass: 'text-crm-success-text',
     },
     yellow: {
       border: 'border-yellow-200',
@@ -802,7 +802,7 @@ function ResultCard({ result }: { result: EligibilityResult }) {
           {result.slug && (
             <a
               href={`/courses/${result.slug}`}
-              className="w-8 h-8 rounded-full bg-[var(--alo-surface-muted)] hover:bg-gray-200 flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-full bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] flex items-center justify-center transition-colors"
               title="View course details"
             >
               <ExternalLink className="w-4 h-4 text-[var(--alo-text-muted)]" />
@@ -817,7 +817,7 @@ function ResultCard({ result }: { result: EligibilityResult }) {
           <ul className="space-y-1">
             {result.reasons.map((reason, i) => (
               <li key={i} className="text-xs text-[var(--alo-text-muted)] flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-crm-success-text mt-0.5 shrink-0" />
                 {reason}
               </li>
             ))}

@@ -147,9 +147,9 @@ export default function PublicConsultationPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white border border-green-200 rounded-2xl p-10 text-center shadow-sm"
-            >
-              <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
+          className="bg-crm-success-bg border border-crm-success-border rounded-2xl p-10 text-center shadow-sm"
+        >
+          <CheckCircle2 className="h-16 w-16 text-crm-success-text mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Booking Received!</h2>
               <p className="text-[var(--alo-body)] mb-6">
                 Thank you, {form.name}. A confirmation email is on its way to {form.email || 'your inbox'} and our team
@@ -285,7 +285,7 @@ export default function PublicConsultationPage() {
                     </div>
                   </div>
 
-                  <label className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 text-sm text-emerald-900">
+                  <label className="flex items-start gap-3 rounded-xl border border-crm-success-border bg-crm-success-bg/60 p-3 text-sm text-crm-success-text">
                     <input
                       type="checkbox"
                       checked={form.whatsappOptIn}
@@ -342,7 +342,7 @@ export default function PublicConsultationPage() {
                   </div>
 
                   {submitError && (
-                    <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{submitError}</p>
+                    <p className="rounded-xl border border-crm-danger-border bg-crm-danger-bg px-4 py-3 text-sm text-crm-danger-text">{submitError}</p>
                   )}
 
                   <Button
@@ -398,9 +398,9 @@ export default function PublicConsultationPage() {
                 </div>
 
                 {ALO_CONTACT.hasWhatsApp && (
-                  <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
-                    <h3 className="text-base font-bold text-green-900 mb-2">WhatsApp Us</h3>
-                    <p className="text-sm text-green-800 mb-3">Quick response on WhatsApp</p>
+                  <div className="bg-crm-success-bg border border-crm-success-border rounded-2xl p-6">
+                    <h3 className="text-base font-bold text-crm-success-text mb-2">WhatsApp Us</h3>
+                    <p className="text-sm text-crm-success-text mb-3">Quick response on WhatsApp</p>
                     <Button asChild className="w-full bg-[var(--alo-whatsapp)] text-white hover:brightness-110">
                       <a href={`${ALO_CONTACT.whatsappHref}?text=I%20want%20to%20book%20a%20consultation`} target="_blank" rel="noopener noreferrer">
                         Chat on WhatsApp

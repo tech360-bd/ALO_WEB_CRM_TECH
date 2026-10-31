@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Calendar, Plus, Search, Clock, User, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
-const typeColors: Record<string, string> = { counseling: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', 'application_review': 'bg-green-100 text-green-700', 'visa_prep': 'bg-amber-100 text-amber-700', 'document_review': 'bg-purple-100 text-purple-700', 'internal_meeting': 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
-const statusBadge: Record<string, string> = { scheduled: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]', completed: 'bg-green-50 text-green-700 border-green-200', cancelled: 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]', 'no_show': 'bg-red-50 text-red-700 border-red-200' };
+const typeColors: Record<string, string> = { counseling: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', 'application_review': 'bg-crm-success-bg text-crm-success-text', 'visa_prep': 'bg-crm-warning-bg text-crm-warning-text', 'document_review': 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', 'internal_meeting': 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
+const statusBadge: Record<string, string> = { scheduled: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]', completed: 'bg-crm-success-bg text-crm-success-text border-crm-success-border', cancelled: 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]', 'no_show': 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' };
 
 interface Appointment {
   id: string;
@@ -103,8 +103,8 @@ export default function CrmAppointmentsPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Calendar className="w-4 h-4 text-[var(--alo-brand)]" /><span className="text-xs text-[var(--alo-text-muted)]">Today</span></div><p className="text-2xl font-bold">{stats.today}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Clock className="w-4 h-4 text-amber-500" /><span className="text-xs text-[var(--alo-text-muted)]">Upcoming</span></div><p className="text-2xl font-bold">{stats.upcoming}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><CheckCircle className="w-4 h-4 text-green-500" /><span className="text-xs text-[var(--alo-text-muted)]">Completed</span></div><p className="text-2xl font-bold">{stats.completed}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><Clock className="w-4 h-4 text-crm-warning-text" /><span className="text-xs text-[var(--alo-text-muted)]">Upcoming</span></div><p className="text-2xl font-bold">{stats.upcoming}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><CheckCircle className="w-4 h-4 text-crm-success-text" /><span className="text-xs text-[var(--alo-text-muted)]">Completed</span></div><p className="text-2xl font-bold">{stats.completed}</p></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-2 mb-1"><User className="w-4 h-4 text-[var(--alo-text-muted)]" /><span className="text-xs text-[var(--alo-text-muted)]">Total</span></div><p className="text-2xl font-bold">{stats.total}</p></CardContent></Card>
       </div>
 
@@ -150,7 +150,7 @@ export default function CrmAppointmentsPage() {
               </div>
               {selectedApt === apt.id && (
                 <div className="flex gap-2 mt-3 pt-3 border-t">
-                  {(apt.status || '') !== 'completed' && <Button size="sm" onClick={() => updateStatus(apt.id, 'completed')} className="text-green-600"><CheckCircle className="w-4 h-4 mr-1" />Complete</Button>}
+                  {(apt.status || '') !== 'completed' && <Button size="sm" onClick={() => updateStatus(apt.id, 'completed')} className="text-crm-success-text"><CheckCircle className="w-4 h-4 mr-1" />Complete</Button>}
                   {(apt.status || '') !== 'cancelled' && <Button size="sm" onClick={() => updateStatus(apt.id, 'cancelled')} variant="ghost" className="text-[var(--alo-text-muted)]"><XCircle className="w-4 h-4 mr-1" />Cancel</Button>}
                 </div>
               )}

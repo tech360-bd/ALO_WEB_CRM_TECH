@@ -366,7 +366,7 @@ export function SuperAdminWebsiteCmsHub() {
         </div>
         <div className="flex gap-2">
           <input placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchItems()} className="border rounded-lg px-3 py-2 text-sm w-48" />
-          <button onClick={fetchItems} className="px-4 py-2 bg-[var(--alo-surface-muted)] hover:bg-slate-200 rounded-lg text-sm font-medium">🔍 Search</button>
+          <button onClick={fetchItems} className="px-4 py-2 bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] rounded-lg text-sm font-medium">🔍 Search</button>
           <button onClick={handleCreate} className="px-4 py-2 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-lg text-sm font-semibold">+ New</button>
         </div>
       </div>
@@ -381,13 +381,13 @@ export function SuperAdminWebsiteCmsHub() {
       </div>
 
       {/* Country sub-types */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+      <div className="bg-crm-warning-bg border border-crm-warning-border rounded-xl p-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-amber-800">Country Details:</span>
+          <span className="text-xs font-semibold text-crm-warning-text">Country Details:</span>
           {COUNTRY_SUB_TYPES.map(t=>(
-            <button key={t.key} onClick={()=>setActiveType(t.key)} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border ${activeType===t.key ? "bg-amber-600 text-white border-amber-600" : "bg-white border-amber-200 text-amber-800 hover:bg-amber-100"}`}>{t.label}</button>
+            <button key={t.key} onClick={()=>setActiveType(t.key)} className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border ${activeType===t.key ? "bg-[var(--alo-warning)] text-white border-crm-warning-border" : "bg-white border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"}`}>{t.label}</button>
           ))}
-          <select value={selectedCountryId} onChange={e=>setSelectedCountryId(e.target.value)} className="ml-2 border border-amber-300 rounded-lg px-2 py-1.5 text-xs bg-white">
+          <select value={selectedCountryId} onChange={e=>setSelectedCountryId(e.target.value)} className="ml-2 border border-crm-warning-border rounded-lg px-2 py-1.5 text-xs bg-white">
             <option value="">All Countries / Select for sub-data</option>
             {countries.map(c=><option key={c.id} value={c.id}>{c.flag} {c.name}</option>)}
           </select>
@@ -420,11 +420,11 @@ export function SuperAdminWebsiteCmsHub() {
                   <td className="px-4 py-2.5">
                     <div className="text-xs text-[var(--alo-body)] truncate max-w-[320px]">{item.subtitle || item.description || item.testimonial || item.answer || item.overview || item.heroTitle || item.countryId || item.factValue || item.cityName || item.heading || ""}</div>
                   </td>
-                  <td className="px-4 py-2.5"><span className={`text-xs px-2 py-1 rounded-full ${item.status==="active"||item.status==="published"||item.status==="verified" ? "bg-green-100 text-green-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{item.status||"—"}</span></td>
+                  <td className="px-4 py-2.5"><span className={`text-xs px-2 py-1 rounded-full ${item.status==="active"||item.status==="published"||item.status==="verified" ? "bg-crm-success-bg text-crm-success-text" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{item.status||"—"}</span></td>
                   <td className="px-4 py-2.5 text-right space-x-1">
                     <button onClick={()=>handleEdit(item)} className="px-2.5 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-lg text-xs font-medium">Edit</button>
                     <button onClick={()=>handleHistory(item)} className="px-2.5 py-1 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-lg text-xs font-medium">🕘 History</button>
-                    <button onClick={()=>handleDelete(item.id)} className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium">Delete</button>
+                    <button onClick={()=>handleDelete(item.id)} className="px-2.5 py-1 bg-crm-danger-bg hover:bg-crm-danger-bg text-crm-danger-text rounded-lg text-xs font-medium">Delete</button>
                   </td>
                 </tr>
               ))}
@@ -436,7 +436,7 @@ export function SuperAdminWebsiteCmsHub() {
 
       {/* Form modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[var(--alo-navy)]/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-5 border-b flex items-center justify-between">
               <h3 className="font-bold text-[var(--alo-text)]">{editing ? "Edit" : "Create"} {activeType}</h3>
@@ -447,7 +447,7 @@ export function SuperAdminWebsiteCmsHub() {
             </div>
             <div className="p-4 border-t bg-[var(--alo-page)] flex justify-end gap-2">
               <button onClick={()=>setShowForm(false)} className="px-4 py-2 bg-white border rounded-xl text-sm">Cancel</button>
-              <button onClick={handleSaveDraft} disabled={revisionBusy} className="px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-xl text-sm font-semibold">Save as Draft</button>
+              <button onClick={handleSaveDraft} disabled={revisionBusy} className="px-4 py-2 bg-[var(--alo-warning)] hover:bg-[var(--alo-warning)] disabled:opacity-50 text-white rounded-xl text-sm font-semibold">Save as Draft</button>
               <button onClick={handleSave} className="px-5 py-2 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-xl text-sm font-semibold">Save</button>
             </div>
           </div>
@@ -456,7 +456,7 @@ export function SuperAdminWebsiteCmsHub() {
 
       {/* Revision history drawer (Virtual Editor) */}
       {historyFor && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[var(--alo-navy)]/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
             <div className="p-5 border-b flex items-center justify-between">
               <div>
@@ -473,7 +473,7 @@ export function SuperAdminWebsiteCmsHub() {
                 <div key={rev.id} className="border rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${rev.kind === "DRAFT" ? "bg-amber-100 text-amber-700" : rev.kind === "PUBLISHED" ? "bg-green-100 text-green-700" : rev.kind === "ROLLBACK" ? "bg-purple-100 text-purple-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{rev.kind}</span>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${rev.kind === "DRAFT" ? "bg-crm-warning-bg text-crm-warning-text" : rev.kind === "PUBLISHED" ? "bg-crm-success-bg text-crm-success-text" : rev.kind === "ROLLBACK" ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{rev.kind}</span>
                       <span className="text-sm font-medium text-[var(--alo-text)] truncate">{rev.label || "—"}</span>
                     </div>
                     <div className="text-xs text-[var(--alo-text-muted)] mt-1">
@@ -484,7 +484,7 @@ export function SuperAdminWebsiteCmsHub() {
                   <div className="flex gap-2">
                     <button onClick={()=>handlePreviewRevision(rev.id)} className="px-3 py-1.5 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] border rounded-lg text-xs font-medium">Preview</button>
                     {rev.kind === "DRAFT" && (
-                      <button onClick={()=>handlePublishDraft(rev.id)} disabled={revisionBusy} className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-lg text-xs font-semibold">Publish</button>
+                      <button onClick={()=>handlePublishDraft(rev.id)} disabled={revisionBusy} className="px-3 py-1.5 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] disabled:opacity-50 text-white rounded-lg text-xs font-semibold">Publish</button>
                     )}
                     <button onClick={()=>handleRollback(rev.id)} disabled={revisionBusy} className="px-3 py-1.5 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] disabled:opacity-50 text-[var(--alo-brand)] rounded-lg text-xs font-semibold">Rollback here</button>
                   </div>

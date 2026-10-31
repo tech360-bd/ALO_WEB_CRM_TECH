@@ -68,7 +68,7 @@ export default function ResourcesHubPage() {
             <div className="flex gap-2 mt-4">
               <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">10 Categories</Badge>
               <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">Database-driven</Badge>
-              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">Verified where time-sensitive</Badge>
+              <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]">Verified where time-sensitive</Badge>
             </div>
           </div>
 

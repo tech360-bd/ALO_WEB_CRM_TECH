@@ -48,9 +48,9 @@ function statusBadge(status: TaskStatus) {
 
 function priorityBadge(priority: TaskPriority) {
   const styles: Record<TaskPriority, string> = {
-    high: 'bg-red-100 text-red-700 border-red-200',
-    medium: 'bg-amber-100 text-amber-700 border-amber-200',
-    low: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    high: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+    medium: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+    low: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
   };
   const icons: Record<TaskPriority, React.ElementType> = { high: Flag, medium: Flag, low: Flag };
   const Icon = icons[priority];
@@ -219,7 +219,7 @@ export default function EmployeeTasksPage() {
         </CardContent>
       </Card>
 
-      {loadError && <Card role="alert" className="border-red-200"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-red-700"><span>{loadError}</span><Button variant="outline" size="sm" onClick={() => void loadTasks()}>Retry</Button></CardContent></Card>}
+      {loadError && <Card role="alert" className="border-crm-danger-border"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-crm-danger-text"><span>{loadError}</span><Button variant="outline" size="sm" onClick={() => void loadTasks()}>Retry</Button></CardContent></Card>}
       <div className="space-y-3">
         {!loadError && filtered.length === 0 && (
           <Card className="bg-white rounded-xl border border-alo-border">
@@ -238,9 +238,9 @@ export default function EmployeeTasksPage() {
                   {updatingStatus === task.id ? (
                     <Loader2 className="w-5 h-5 animate-spin text-alo-brand" />
                   ) : task.status === 'Completed' ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                    <CheckCircle2 className="w-5 h-5 text-crm-success-text" />
                   ) : task.status === 'Overdue' ? (
-                    <XCircle className="w-5 h-5 text-red-500" />
+                    <XCircle className="w-5 h-5 text-crm-danger-text" />
                   ) : task.status === 'In Progress' ? (
                     <Clock className="w-5 h-5 text-alo-brand" />
                   ) : (
@@ -292,7 +292,7 @@ export default function EmployeeTasksPage() {
                     <button key={p} onClick={() => setNewTask({ ...newTask, priority: p })}
                       className={cn('flex-1 py-2 text-xs font-medium rounded-lg border capitalize transition-colors',
                         newTask.priority === p
-                          ? p === 'high' ? 'bg-red-100 text-red-700 border-red-300' : p === 'medium' ? 'bg-amber-100 text-amber-700 border-amber-300' : 'bg-emerald-100 text-emerald-700 border-emerald-300'
+                          ? p === 'high' ? 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' : p === 'medium' ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' : 'bg-crm-success-bg text-crm-success-text border-crm-success-border'
                           : 'bg-alo-page text-alo-text-muted border-alo-border hover:bg-alo-page/80')}>
                       {p}
                     </button>

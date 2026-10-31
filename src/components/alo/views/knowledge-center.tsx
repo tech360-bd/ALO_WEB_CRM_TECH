@@ -148,18 +148,18 @@ interface EnterpriseSearchResponse {
 // =============================================================================
 
 const FILE_TYPE_META: Record<string, { label: string; icon: string; color: string }> = {
-  PDF: { label: "PDF", icon: "FileText", color: "bg-rose-100 text-rose-700 border-rose-200" },
+  PDF: { label: "PDF", icon: "FileText", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
   DOCX: { label: "DOCX", icon: "FileType", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
   DOC: { label: "DOC", icon: "FileType", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
   PPT: { label: "PPT", icon: "Presentation", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   PPTX: { label: "PPTX", icon: "Presentation", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
-  XLSX: { label: "XLSX", icon: "Sheet", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
-  XLS: { label: "XLS", icon: "Sheet", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
-  IMAGE: { label: "IMG", icon: "Image", color: "bg-violet-100 text-violet-700 border-violet-200" },
-  ZIP: { label: "ZIP", icon: "FileArchive", color: "bg-amber-100 text-amber-700 border-amber-200" },
-  VIDEO: { label: "VIDEO", icon: "PlayCircle", color: "bg-purple-100 text-purple-700 border-purple-200" },
-  AUDIO: { label: "AUDIO", icon: "Music", color: "bg-pink-100 text-pink-700 border-pink-200" },
-  LINK: { label: "LINK", icon: "Link2", color: "bg-cyan-100 text-cyan-700 border-cyan-200" },
+  XLSX: { label: "XLSX", icon: "Sheet", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border" },
+  XLS: { label: "XLS", icon: "Sheet", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border" },
+  IMAGE: { label: "IMG", icon: "Image", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  ZIP: { label: "ZIP", icon: "FileArchive", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+  VIDEO: { label: "VIDEO", icon: "PlayCircle", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  AUDIO: { label: "AUDIO", icon: "Music", color: "bg-crm-danger-bg text-crm-danger-text border-crm-danger-border" },
+  LINK: { label: "LINK", icon: "Link2", color: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] border-[var(--alo-info-border)]" },
 };
 
 const NEWS_CATEGORIES = [
@@ -194,30 +194,30 @@ const NEWS_CATEGORY_LABEL: Record<string, string> = {
 
 const NEWS_CATEGORY_COLORS: Record<string, string> = {
   OFFICE_ANNOUNCEMENT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
-  UNIVERSITY_UPDATE: "bg-violet-100 text-violet-700 border-violet-200",
-  SCHOLARSHIP_UPDATE: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  COUNTRY_UPDATE: "bg-cyan-100 text-cyan-700 border-cyan-200",
+  UNIVERSITY_UPDATE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
+  SCHOLARSHIP_UPDATE: "bg-crm-success-bg text-crm-success-text border-crm-success-border",
+  COUNTRY_UPDATE: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] border-[var(--alo-info-border)]",
   IMMIGRATION_UPDATE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25",
-  TRAINING_NEWS: "bg-amber-100 text-amber-700 border-amber-200",
+  TRAINING_NEWS: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
   MEETING_NOTES: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]",
-  POLICY_UPDATE: "bg-rose-100 text-rose-700 border-rose-200",
-  HR_NOTICE: "bg-pink-100 text-pink-700 border-pink-200",
-  MARKETING_NOTICE: "bg-purple-100 text-purple-700 border-purple-200",
+  POLICY_UPDATE: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
+  HR_NOTICE: "bg-crm-danger-bg text-crm-danger-text border-crm-danger-border",
+  MARKETING_NOTICE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
   SALES_NOTICE: "bg-teal-100 text-teal-700 border-teal-200",
-  VISA_NOTICE: "bg-indigo-100 text-indigo-700 border-indigo-200",
+  VISA_NOTICE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
 };
 
 const TRAINING_TYPE_META: Record<string, { label: string; icon: string; color: string }> = {
   RECORDED_TRAINING: { label: "Recorded Training", icon: "Video", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
-  LIVE_TRAINING: { label: "Live Training", icon: "Radio", color: "bg-rose-100 text-rose-700 border-rose-200" },
-  QUIZ: { label: "Quiz", icon: "HelpCircle", color: "bg-amber-100 text-amber-700 border-amber-200" },
-  CERTIFICATE: { label: "Certificate", icon: "Award", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
-  HANDBOOK: { label: "Handbook", icon: "BookOpen", color: "bg-violet-100 text-violet-700 border-violet-200" },
+  LIVE_TRAINING: { label: "Live Training", icon: "Radio", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+  QUIZ: { label: "Quiz", icon: "HelpCircle", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+  CERTIFICATE: { label: "Certificate", icon: "Award", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border" },
+  HANDBOOK: { label: "Handbook", icon: "BookOpen", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
   SALES_TRAINING: { label: "Sales Training", icon: "TrendingUp", color: "bg-teal-100 text-teal-700 border-teal-200" },
-  COUNSELING_TRAINING: { label: "Counseling Training", icon: "Users", color: "bg-cyan-100 text-cyan-700 border-cyan-200" },
+  COUNSELING_TRAINING: { label: "Counseling Training", icon: "Users", color: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] border-[var(--alo-info-border)]" },
   VISA_TRAINING: { label: "Visa Training", icon: "Plane", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
-  CRM_TRAINING: { label: "CRM Training", icon: "LayoutDashboard", color: "bg-purple-100 text-purple-700 border-purple-200" },
-  AI_TRAINING: { label: "AI Training", icon: "BrainCircuit", color: "bg-pink-100 text-pink-700 border-pink-200" },
+  CRM_TRAINING: { label: "CRM Training", icon: "LayoutDashboard", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+  AI_TRAINING: { label: "AI Training", icon: "BrainCircuit", color: "bg-crm-danger-bg text-crm-danger-text border-crm-danger-border" },
 };
 
 const VISIBILITY_OPTIONS = [
@@ -301,7 +301,7 @@ function FileTypeBadge({ ft }: { ft: string }) {
 function CountryBadge({ country }: { country?: string | null }) {
   if (!country) return null;
   return (
-    <span className="inline-flex items-center gap-1 rounded-md border border-cyan-200 bg-cyan-50 px-1.5 py-0.5 text-[11px] font-semibold text-cyan-700">
+    <span className="inline-flex items-center gap-1 rounded-md border border-[var(--alo-info-border)] bg-[var(--alo-info-bg)] px-1.5 py-0.5 text-[11px] font-semibold text-[var(--alo-info-text)]">
       <Icon name="Globe" className="size-3" />
       {country}
     </span>
@@ -666,7 +666,7 @@ export function KnowledgeCenter() {
                     "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                     docCategoryFilter === "all"
                       ? "bg-[var(--alo-brand)] text-white"
-                      : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
+                      : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
                   )}
                 >
                   All
@@ -679,7 +679,7 @@ export function KnowledgeCenter() {
                       "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-colors",
                       docCategoryFilter === c.id
                         ? "bg-[var(--alo-brand)] text-white"
-                        : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
+                        : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
                     )}
                   >
                     {c.icon && <Icon name={c.icon} className="size-3" />}
@@ -696,7 +696,7 @@ export function KnowledgeCenter() {
                     "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                     docFileTypeFilter === "all"
                       ? "bg-[var(--alo-brand)] text-white"
-                      : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
+                      : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
                   )}
                 >
                   All
@@ -709,7 +709,7 @@ export function KnowledgeCenter() {
                       "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                       docFileTypeFilter === ft
                         ? "bg-[var(--alo-brand)] text-white"
-                        : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
+                        : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
                     )}
                   >
                     {ft}
@@ -771,8 +771,8 @@ export function KnowledgeCenter() {
                         </div>
 
                         {doc.aiSummary && (
-                          <div className="rounded-lg border border-violet-100 bg-violet-50/60 p-2">
-                            <p className="badge-text flex items-center gap-1 text-violet-700">
+                          <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/60 p-2">
+                            <p className="badge-text flex items-center gap-1 text-[var(--alo-brand)]">
                               <Icon name="Sparkles" className="size-3" />
                               AI Summary
                             </p>
@@ -834,7 +834,7 @@ export function KnowledgeCenter() {
                   "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                   newsCategoryFilter === "all"
                     ? "bg-[var(--alo-brand)] text-white"
-                    : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
+                    : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
                 )}
               >
                 All
@@ -847,7 +847,7 @@ export function KnowledgeCenter() {
                     "rounded-full px-3 py-1 text-xs font-medium transition-colors",
                     newsCategoryFilter === c
                       ? "bg-[var(--alo-brand)] text-white"
-                      : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200"
+                      : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"
                   )}
                 >
                   {newsCategoryLabel(c)}
@@ -935,7 +935,7 @@ export function KnowledgeCenter() {
                             {m.label}
                           </span>
                           {t.certificateEnabled && (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold text-emerald-700">
+                            <span className="inline-flex items-center gap-1 rounded-md border border-crm-success-border bg-crm-success-bg px-1.5 py-0.5 text-[11px] font-bold text-crm-success-text">
                               <Icon name="Award" className="size-3" />
                               Certificate
                             </span>
@@ -1052,9 +1052,9 @@ export function KnowledgeCenter() {
 
             {/* AI answer */}
             {aiSearching && (
-              <div className="mt-4 space-y-3 rounded-2xl border border-violet-200 bg-violet-50/40 p-4">
+              <div className="mt-4 space-y-3 rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/40 p-4">
                 <div className="flex items-center gap-2">
-                  <Icon name="Loader2" className="size-4 animate-spin text-violet-600" />
+                  <Icon name="Loader2" className="size-4 animate-spin text-[var(--alo-brand)]" />
                   <span className="card-title text-[var(--alo-text)]">AI is searching the knowledge base…</span>
                 </div>
                 <Skeleton className="h-4 w-full" />
@@ -1065,9 +1065,9 @@ export function KnowledgeCenter() {
 
             {!aiSearching && aiAnswer && (
               <div className="mt-4 space-y-4">
-                <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50/60 to-white p-4">
+                <div className="rounded-2xl border border-[var(--alo-border)] bg-gradient-to-br from-violet-50/60 to-white p-4">
                   <div className="flex items-center gap-2">
-                    <div className="flex size-8 items-center justify-center rounded-lg bg-violet-100 text-violet-700">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                       <Icon name="Sparkles" className="size-4" />
                     </div>
                     <div>
@@ -1123,7 +1123,7 @@ export function KnowledgeCenter() {
                 {aiAnswer.news.length > 0 && (
                   <div>
                     <p className="card-title flex items-center gap-1.5 text-[var(--alo-text)]">
-                      <Icon name="Newspaper" className="size-4 text-violet-600" />
+                      <Icon name="Newspaper" className="size-4 text-[var(--alo-brand)]" />
                       Matching News
                     </p>
                     <div className="mt-2 space-y-2">
@@ -1194,11 +1194,11 @@ export function KnowledgeCenter() {
                   </div>
                   <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
                     <p className="badge-text text-[var(--alo-text-muted)]">News</p>
-                    <p className="text-xl font-bold text-violet-600">{esResults.results.news}</p>
+                    <p className="text-xl font-bold text-[var(--alo-brand)]">{esResults.results.news}</p>
                   </div>
                   <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
                     <p className="badge-text text-[var(--alo-text-muted)]">Training</p>
-                    <p className="text-xl font-bold text-emerald-600">{esResults.results.trainings}</p>
+                    <p className="text-xl font-bold text-crm-success-text">{esResults.results.trainings}</p>
                   </div>
                 </div>
 
@@ -1296,9 +1296,9 @@ export function KnowledgeCenter() {
       {/* RBAC + AI notes */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <SectionCard title="Access Control" icon="ShieldCheck">
-          <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3">
+          <div className="rounded-xl border border-crm-warning-border bg-crm-warning-bg/60 p-3">
             <div className="flex items-start gap-2.5">
-              <Icon name="ShieldAlert" className="mt-0.5 size-5 shrink-0 text-amber-600" />
+              <Icon name="ShieldAlert" className="mt-0.5 size-5 shrink-0 text-crm-warning-text" />
               <div>
                 <p className="card-title text-[var(--alo-text)]">Employees Only</p>
                 <p className="mt-1 body-text text-[var(--alo-text-secondary)]">
@@ -1317,9 +1317,9 @@ export function KnowledgeCenter() {
         </SectionCard>
 
         <SectionCard title="AI Auto-Processing" icon="BrainCircuit">
-          <div className="rounded-xl border border-violet-200 bg-violet-50/60 p-3">
+          <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/60 p-3">
             <div className="flex items-start gap-2.5">
-              <Icon name="Sparkles" className="mt-0.5 size-5 shrink-0 text-violet-600" />
+              <Icon name="Sparkles" className="mt-0.5 size-5 shrink-0 text-[var(--alo-brand)]" />
               <div>
                 <p className="card-title text-[var(--alo-text)]">AI Indexing Pipeline</p>
                 <p className="mt-1 body-text text-[var(--alo-text-secondary)]">
@@ -1332,8 +1332,8 @@ export function KnowledgeCenter() {
                     { icon: "FileText", label: "Summarize" },
                     { icon: "Search", label: "Index" },
                   ].map((s) => (
-                    <div key={s.label} className="flex items-center gap-1.5 rounded-md border border-violet-100 bg-white px-2 py-1">
-                      <Icon name={s.icon} className="size-3.5 text-violet-600" />
+                    <div key={s.label} className="flex items-center gap-1.5 rounded-md border border-[var(--alo-border)] bg-white px-2 py-1">
+                      <Icon name={s.icon} className="size-3.5 text-[var(--alo-brand)]" />
                       <span className="badge-text text-[var(--alo-text-secondary)]">{s.label}</span>
                     </div>
                   ))}

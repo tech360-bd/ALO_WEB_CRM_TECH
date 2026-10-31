@@ -329,7 +329,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
                 </Card>
               ) : (
                 <Card className="p-6 bg-white border border-[var(--alo-brand)]/20 shadow-lg rounded-3xl">
-                  <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-bold mb-3">RECOMMENDED</Badge>
+                  <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px] font-bold mb-3">RECOMMENDED</Badge>
                   <h3 className="text-xl font-extrabold text-[var(--alo-text)]">{recommended.primary?.name}</h3>
                   <p className="text-xs text-[var(--alo-brand)] font-semibold mt-1">{recommended.primary?.provider}</p>
                   <p className="text-sm text-[var(--alo-body)] mt-3 leading-relaxed">{recommended.reason}</p>
@@ -395,8 +395,8 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
                   <p className="text-xs text-[var(--alo-body)] leading-relaxed">Visa or immigration requirements vary by country and route. Never assume one test covers all visa routes. Check official immigration guidance.</p>
                 </div>
               </div>
-              <p className="text-[11px] text-[var(--alo-text-muted)] mt-4 p-3 rounded-xl bg-amber-50 border border-amber-100 flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <p className="text-[11px] text-[var(--alo-text-muted)] mt-4 p-3 rounded-xl bg-crm-warning-bg border border-crm-warning-border flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-crm-warning-text shrink-0 mt-0.5" />
                 <span>Requirements vary by country, visa route, university and course. ALO helps you understand test selection, target score, preparation strategy and documentation — always verify via official provider and university course page.</span>
               </p>
             </div>
@@ -414,7 +414,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
                     'Documentation and verification via source URL and last verified date',
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-2.5 text-xs">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-4 h-4 text-crm-success-text shrink-0 mt-0.5" />
                       <span className="text-[var(--alo-body)] leading-relaxed">{item}</span>
                     </div>
                   ))}
@@ -443,8 +443,8 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
               <Card key={i} className="p-6 bg-white border border-[var(--alo-border)] shadow-sm hover:shadow-md hover:border-[var(--alo-brand)]/20 transition-all rounded-3xl group">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${
                   card.color === 'blue' ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' :
-                  card.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
-                  card.color === 'orange' ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]' : 'bg-purple-50 text-purple-600'
+                  card.color === 'emerald' ? 'bg-crm-success-bg text-crm-success-text' :
+                  card.color === 'orange' ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
                 }`}>
                   <card.icon className="w-5 h-5" />
                 </div>
@@ -496,7 +496,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
             <div>
               <h2 className="text-3xl font-extrabold text-[var(--alo-text)]">English language and academic tests</h2>
               <p className="text-sm text-[var(--alo-body)] mt-2">Explore all 14 requested test families, plus the existing Oxford ELLT and MOI guidance. Academic tests such as GRE, GMAT, SAT and ACT do not replace English-language evidence.</p>
-              <p className="text-[11px] text-amber-700 mt-2 p-2 rounded-lg bg-amber-50 border border-amber-100 inline-flex items-center gap-1.5">
+              <p className="text-[11px] text-crm-warning-text mt-2 p-2 rounded-lg bg-crm-warning-bg border border-crm-warning-border inline-flex items-center gap-1.5">
                 <AlertCircle className="w-3.5 h-3.5" /> MOI is a possible language waiver route, not an English test. University acceptance and visa evidence are assessed separately.
               </p>
             </div>
@@ -574,7 +574,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
               <h3 className="font-bold text-base text-[var(--alo-text)] flex items-center gap-2">
                 <Globe className="w-5 h-5 text-[var(--alo-brand)]" /> {countries.find(c => c.slug === selectedCountry)?.flag} {countries.find(c => c.slug === selectedCountry)?.name} — Relevant Tests
               </h3>
-              <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-[11px]">Acceptance varies</Badge>
+              <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]">Acceptance varies</Badge>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -590,7 +590,7 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
               ))}
             </div>
 
-            <p className="text-[11px] text-[var(--alo-text-muted)] mt-6 p-3 rounded-xl bg-amber-50 border border-amber-100">
+            <p className="text-[11px] text-[var(--alo-text-muted)] mt-6 p-3 rounded-xl bg-crm-warning-bg border border-crm-warning-border">
               Acceptance varies by university, course and visa route. For UK, check SELT requirements. For Australia/Canada, check DHA/IRCC guidance. Always check the official source for the latest information. MOI is a guidance resource, not an English test.
             </p>
           </Card>
@@ -642,13 +642,13 @@ export default function PremiumLanguagePrepLandingView({ initialTests = [], stor
                   <p className="text-xs text-[var(--alo-text-muted)] mt-2">Enter country, university, course and study level to retrieve requirement with source verification.</p>
                 </Card>
               ) : scoreResult.isEmpty ? (
-                <Card className="p-8 bg-amber-50 border border-amber-200 rounded-3xl">
+                <Card className="p-8 bg-crm-warning-bg border border-crm-warning-border rounded-3xl">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-crm-warning-text shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-bold text-amber-900">Requirement not available in database. Check university course page.</p>
-                      <p className="text-xs text-amber-800 mt-2">Requirements change often. Check the official course page for the current English test and minimum scores.</p>
-                      <p className="text-[11px] text-amber-700 mt-3">Acceptance varies by university, course and visa route. Source verification required.</p>
+                      <p className="text-sm font-bold text-crm-warning-text">Requirement not available in database. Check university course page.</p>
+                      <p className="text-xs text-crm-warning-text mt-2">Requirements change often. Check the official course page for the current English test and minimum scores.</p>
+                      <p className="text-[11px] text-crm-warning-text mt-3">Acceptance varies by university, course and visa route. Source verification required.</p>
                     </div>
                   </div>
                 </Card>

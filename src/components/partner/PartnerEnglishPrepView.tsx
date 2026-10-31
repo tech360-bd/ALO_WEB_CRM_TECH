@@ -54,9 +54,9 @@ export default function PartnerEnglishPrepView() {
         </div>
       )}
 
-      <Card className="p-5 bg-amber-50 border-amber-200 rounded-2xl">
-        <h4 className="font-bold text-xs text-amber-900">Partner Read-Only Notice</h4>
-        <p className="text-[11px] text-amber-800 mt-1.5 leading-relaxed">Partners can view English test guides, acceptance, requirements, visa relevance — but cannot edit. Acceptance varies by university, course and visa route. Check official provider information where not verified. No fake pricing, result time, acceptance.</p>
+      <Card className="p-5 bg-crm-warning-bg border-crm-warning-border rounded-2xl">
+        <h4 className="font-bold text-xs text-crm-warning-text">Partner Read-Only Notice</h4>
+        <p className="text-[11px] text-crm-warning-text mt-1.5 leading-relaxed">Partners can view English test guides, acceptance, requirements, visa relevance — but cannot edit. Acceptance varies by university, course and visa route. Check official provider information where not verified. No fake pricing, result time, acceptance.</p>
       </Card>
     </div>
   );

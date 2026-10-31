@@ -64,7 +64,7 @@ export default function ReplyBox({
           </SelectContent>
         </Select>
         <Button size="sm" variant="outline" className="h-7 " onClick={() => setShowTemplates(!showTemplates)}><FileText className="w-3.5 h-3.5 mr-1" /> Templates</Button>
-        <Button size="sm" variant="outline" className="h-7 bg-purple-50 text-purple-700 border-purple-200" onClick={handleAiDraft}><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Draft</Button>
+        <Button size="sm" variant="outline" className="h-7 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" onClick={handleAiDraft}><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Draft</Button>
       </div>
       {showTemplates && <TemplateSelector onSelect={(t, rendered) => setBody(rendered)} />}
       <Textarea value={body} onChange={e => setBody(e.target.value)} placeholder={`Write message linked to ${entityType} #${entityId} — will be saved to timeline with visibility ${visibility}...`} className="min-h-[80px] text-xs bg-white" />

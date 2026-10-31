@@ -87,7 +87,7 @@ export default function HrmProfilePage() {
     <div className="min-h-screen bg-white p-4 sm:p-6 space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div><h1 className="text-xl font-bold text-[var(--alo-text)]">Employee Private Profile</h1><p className="text-xs text-[var(--alo-text-muted)]">Access and fields are enforced by server-side HR permissions. Reads and changes are audited.</p></div>
-        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">Private</Badge>
+        <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-xs">Private</Badge>
       </div>
       <Tabs defaultValue="personal">
         <TabsList className="bg-[var(--alo-surface-muted)] h-9 flex-wrap">

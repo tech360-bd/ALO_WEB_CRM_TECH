@@ -34,8 +34,8 @@ export default function CreateB2BApplicationPage() {
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen">
       <div className="max-w-3xl mx-auto space-y-4">
-        <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-rose-600 flex items-center justify-center"><Lock className="w-5 h-5 text-white" /></div><div><h1 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">Create B2B Application <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[11px]">CONFIDENTIAL</Badge></h1><p className="text-sm text-[var(--alo-text-muted)]">B2B provider details encrypted, never in normal response, 403 for unauthorized</p></div></div>
-        {msg && <div className={`p-3 rounded-xl border text-sm ${msg.type==='success'?'bg-emerald-50 border-emerald-200 text-emerald-700':'bg-red-50 border-red-200 text-red-700'}`}>{msg.text}</div>}
+        <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-[var(--alo-error)] flex items-center justify-center"><Lock className="w-5 h-5 text-white" /></div><div><h1 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">Create B2B Application <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]">CONFIDENTIAL</Badge></h1><p className="text-sm text-[var(--alo-text-muted)]">B2B provider details encrypted, never in normal response, 403 for unauthorized</p></div></div>
+        {msg && <div className={`p-3 rounded-xl border text-sm ${msg.type==='success'?'bg-crm-success-bg border-crm-success-border text-crm-success-text':'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text'}`}>{msg.text}</div>}
         <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl">
           <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm">B2B Application — Confidential Fields Backend Secured</CardTitle></CardHeader>
           <CardContent className="p-4">
@@ -49,7 +49,7 @@ export default function CreateB2BApplicationPage() {
                 <div className="col-span-6"><label className="text-xs font-medium">Commission Amount</label><Input type="number" value={form.b2bCommissionAmount} onChange={e=>setForm({...form, b2bCommissionAmount: parseFloat(e.target.value)||0})} className="bg-white border-[var(--alo-border)]" /></div>
                 <div className="col-span-12"><label className="text-xs font-medium">Internal Note — Confidential (never to student)</label><textarea value={form.b2bInternalNote} onChange={e=>setForm({...form, b2bInternalNote:e.target.value})} className="w-full bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2 text-sm min-h-[80px]" placeholder="Internal B2B notes, payment conditions, claim stage — backend filtered" /></div>
               </div>
-              <Button type="submit" disabled={loading} className="bg-rose-600 hover:bg-rose-700 text-white w-full md:w-auto min-h-[48px]">{loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Creating...</> : 'Create B2B Application — Confidential'}</Button>
+              <Button type="submit" disabled={loading} className="bg-[var(--alo-error)] hover:bg-[var(--alo-error)] text-white w-full md:w-auto min-h-[48px]">{loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Creating...</> : 'Create B2B Application — Confidential'}</Button>
             </form>
           </CardContent>
         </Card>

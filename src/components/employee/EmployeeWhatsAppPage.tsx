@@ -53,9 +53,9 @@ interface LoadState {
 }
 
 const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
-  high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
-  urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
-  medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
+  high: { label: 'High', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  urgent: { label: 'Urgent', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  medium: { label: 'Medium', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
   low: { label: 'Low', cls: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
   normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
@@ -230,8 +230,8 @@ export default function EmployeeWhatsAppPage() {
       </div>
 
       {actionError && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <p className="font-medium">{actionError}</p>
           </CardContent>
@@ -361,7 +361,7 @@ export default function EmployeeWhatsAppPage() {
                     Status: {selectedThread.status || 'unknown'}
                   </Badge>
                   {selectedThread.isAiHandled ? (
-                    <Badge variant="outline" className="bg-violet-100 text-violet-700 text-[11px]">
+                    <Badge variant="outline" className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-[11px]">
                       AI was handling
                     </Badge>
                   ) : (

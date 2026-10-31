@@ -52,7 +52,7 @@ export default function EmployeeDashboardPage() {
   }, [router]);
 
   if (error) {
-    return <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-800">{error}</div>;
+    return <div role="alert" className="rounded-xl border border-crm-danger-border bg-crm-danger-bg p-5 text-sm text-crm-danger-text">{error}</div>;
   }
   if (!role) return <div className="p-6 text-sm text-[var(--alo-text-muted)]" aria-live="polite">Loading authorized employee dashboard…</div>;
   return <UnifiedEmployeeDashboard forcedRole={role} />;

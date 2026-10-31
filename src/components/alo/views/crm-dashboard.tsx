@@ -123,11 +123,11 @@ interface Stats {
 
 // ---------- Color maps ----------
 const LEAD_STATUS_COLORS: Record<string, string> = {
-  NEW: "bg-amber-100 text-amber-700",
+  NEW: "bg-crm-warning-bg text-crm-warning-text",
   CONTACTED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  QUALIFIED: "bg-violet-100 text-violet-700",
-  CONVERTED: "bg-emerald-100 text-emerald-700",
-  LOST: "bg-rose-100 text-rose-700",
+  QUALIFIED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  CONVERTED: "bg-crm-success-bg text-crm-success-text",
+  LOST: "bg-crm-warning-bg text-crm-warning-text",
   DUPLICATE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
@@ -143,7 +143,7 @@ const LEAD_STATUS_LABELS: Record<string, string> = {
 const LEAD_STATUSES = ["NEW", "CONTACTED", "QUALIFIED", "CONVERTED", "LOST", "DUPLICATE"];
 
 const STUDENT_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
@@ -151,8 +151,8 @@ const STUDENT_STATUS_COLORS: Record<string, string> = {
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  HIGH: "bg-amber-100 text-amber-700",
-  URGENT: "bg-rose-100 text-rose-700",
+  HIGH: "bg-crm-warning-bg text-crm-warning-text",
+  URGENT: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const DOC_STATUS_LABELS: Record<string, string> = {
@@ -933,7 +933,7 @@ function Student360Sheet({
                     <StatusBadge
                       status={student.status}
                       colorMap={{
-                        ACTIVE: "bg-emerald-100 text-emerald-700",
+                        ACTIVE: "bg-crm-success-bg text-crm-success-text",
                         INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
                         GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
                       }}

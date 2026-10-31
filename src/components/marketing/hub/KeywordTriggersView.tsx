@@ -33,17 +33,17 @@ type KeywordTrigger = {
 };
 
 const platformConfig: Record<string, { label: string; bg: string; icon: React.ElementType }> = {
-  ALL: { label: 'All platforms', bg: 'bg-gray-600', icon: Globe },
+  ALL: { label: 'All platforms', bg: 'bg-[var(--alo-page)]', icon: Globe },
   FACEBOOK: { label: 'Facebook', bg: 'bg-[var(--alo-brand)]', icon: Facebook },
   INSTAGRAM: { label: 'Instagram', bg: 'bg-gradient-to-r from-purple-600 to-pink-500', icon: Instagram },
-  MESSENGER: { label: 'Messenger', bg: 'bg-purple-600', icon: MessageCircle },
+  MESSENGER: { label: 'Messenger', bg: 'bg-[var(--alo-brand)]', icon: MessageCircle },
   LINKEDIN: { label: 'LinkedIn', bg: 'bg-[var(--alo-brand-hover)]', icon: Linkedin },
-  WHATSAPP: { label: 'WhatsApp', bg: 'bg-green-600', icon: MessageCircle },
+  WHATSAPP: { label: 'WhatsApp', bg: 'bg-[var(--alo-success-dark)]', icon: MessageCircle },
   WEBSITE: { label: 'Website', bg: 'bg-teal-600', icon: Globe },
 };
 
 function platformMeta(value: string) {
-  return platformConfig[value?.toUpperCase()] ?? { label: value || 'Unspecified', bg: 'bg-gray-500', icon: Hash };
+  return platformConfig[value?.toUpperCase()] ?? { label: value || 'Unspecified', bg: 'bg-[var(--alo-page)]', icon: Hash };
 }
 
 /** Only real, persisted behaviour flags are surfaced — never inferred metrics. */
@@ -230,14 +230,14 @@ export default function KeywordTriggersView() {
         </Card>
         <Card className="bg-white border border-[var(--alo-border)]">
           <CardContent className="p-4">
-            <div className="p-2 bg-green-100 rounded-lg w-fit"><Target className="w-4 h-4 text-green-600" /></div>
+            <div className="p-2 bg-crm-success-bg rounded-lg w-fit"><Target className="w-4 h-4 text-crm-success-text" /></div>
             <p className="text-2xl font-bold text-[var(--alo-text)] mt-2">{leadCount.toLocaleString()}</p>
             <p className="text-xs text-[var(--alo-text-muted)]">Rules creating leads</p>
           </CardContent>
         </Card>
         <Card className="bg-white border border-[var(--alo-border)]">
           <CardContent className="p-4">
-            <div className="p-2 bg-purple-100 rounded-lg w-fit"><Send className="w-4 h-4 text-purple-600" /></div>
+            <div className="p-2 bg-[var(--alo-brand-pale)] rounded-lg w-fit"><Send className="w-4 h-4 text-[var(--alo-brand)]" /></div>
             <p className="text-2xl font-bold text-[var(--alo-text)] mt-2">{triggers.filter((t) => t.autoDmText).length}</p>
             <p className="text-xs text-[var(--alo-text-muted)]">Rules sending a DM</p>
           </CardContent>
@@ -353,7 +353,7 @@ export default function KeywordTriggersView() {
                     const PlatformIcon = meta.icon;
                     const isActive = trigger.status === 'ACTIVE';
                     return (
-                      <tr key={trigger.id} className="border-b border-gray-50 hover:bg-[var(--alo-page)]/50 transition-colors">
+                      <tr key={trigger.id} className="border-b border-[var(--alo-border)] hover:bg-[var(--alo-page)]/50 transition-colors">
                         <td className="py-3">
                           <span className="text-sm font-bold text-[var(--alo-cta-active)]">{trigger.keyword}</span>
                           <Badge variant="outline" className="ml-2 text-[11px] font-normal">{trigger.keywordType}</Badge>
@@ -381,7 +381,7 @@ export default function KeywordTriggersView() {
                             <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5 line-clamp-1 max-w-[260px]">DM: {trigger.autoDmText}</p>
                           )}
                         </td>
-                        <td className="py-3 text-center text-xs font-bold text-green-600">{trigger.triggerCount}</td>
+                        <td className="py-3 text-center text-xs font-bold text-crm-success-text">{trigger.triggerCount}</td>
                         <td className="py-3 text-center text-[11px] text-[var(--alo-text-muted)]">{formatTimestamp(trigger.updatedAt)}</td>
                         <td className="py-3 text-center">
                           <span className="flex items-center justify-center gap-2">
@@ -398,7 +398,7 @@ export default function KeywordTriggersView() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
+                            className="h-7 w-7 p-0 text-crm-danger-text hover:text-crm-danger-text"
                             disabled={busyId === trigger.id}
                             onClick={() => void handleDelete(trigger)}
                             aria-label={`Delete keyword ${trigger.keyword}`}

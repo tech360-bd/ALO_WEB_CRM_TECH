@@ -91,10 +91,10 @@ interface Catalogue {
 }
 
 const STATUS_STYLE: Record<string, string> = {
-  DELIVERED: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  DELIVERED: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
   PENDING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]',
-  FAILED: 'bg-amber-100 text-amber-800 border-amber-200',
-  DEAD: 'bg-red-100 text-red-800 border-red-200',
+  FAILED: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+  DEAD: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
   SKIPPED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 
@@ -369,16 +369,16 @@ export default function WebhooksAdminPage() {
 
       {/* One-time secret reveal */}
       {revealedSecret && (
-        <Card className="rounded-2xl border-2 border-amber-300 bg-amber-50">
+        <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sm font-bold text-amber-900">
+            <CardTitle className="flex items-center gap-2 text-sm font-bold text-crm-warning-text">
               <KeyRound className="size-4" />
               Signing secret for {revealedSecret.subscription} — shown once
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-2">
-              <code className="flex-1 overflow-x-auto rounded-lg border border-amber-300 bg-white px-3 py-2 font-mono text-xs">
+              <code className="flex-1 overflow-x-auto rounded-lg border border-crm-warning-border bg-white px-3 py-2 font-mono text-xs">
                 {revealedSecret.secret}
               </code>
               <Button
@@ -393,7 +393,7 @@ export default function WebhooksAdminPage() {
                 Copy
               </Button>
             </div>
-            <p className="text-[11px] text-amber-900">
+            <p className="text-[11px] text-crm-warning-text">
               This value is stored encrypted and cannot be retrieved again. If you lose it you must
               rotate, which immediately invalidates the current secret.
             </p>
@@ -405,12 +405,12 @@ export default function WebhooksAdminPage() {
       )}
 
       {failure && (
-        <Card className="rounded-2xl border-2 border-red-200">
+        <Card className="rounded-2xl border-2 border-crm-danger-border">
           <CardContent className="flex items-start gap-3 pt-6 pb-6">
-            <AlertTriangle className="mt-0.5 size-5 shrink-0 text-red-600" />
+            <AlertTriangle className="mt-0.5 size-5 shrink-0 text-crm-danger-text" />
             <div className="flex-1">
-              <p className="text-sm font-bold text-red-800">Could not load webhooks</p>
-              <p className="mt-0.5 text-xs text-red-700">{failure}</p>
+              <p className="text-sm font-bold text-crm-danger-text">Could not load webhooks</p>
+              <p className="mt-0.5 text-xs text-crm-danger-text">{failure}</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => void loadSubscriptions()}>
               <RefreshCw className="mr-1.5 size-3.5" />
@@ -545,11 +545,11 @@ export default function WebhooksAdminPage() {
                           <p className="truncate font-mono text-[11px] text-[var(--alo-text-muted)]">{subscription.targetUrl}</p>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <Badge variant="outline" className={subscription.active ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]'}>
+                          <Badge variant="outline" className={subscription.active ? 'border-crm-success-border bg-crm-success-bg text-crm-success-text' : 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]'}>
                             {subscription.active ? 'ACTIVE' : 'PAUSED'}
                           </Badge>
                           <Badge variant="outline" className="text-[11px]">{subscription.environment}</Badge>
-                          <Badge variant="outline" className={subscription.secretConfigured ? 'text-[11px]' : 'border-red-200 bg-red-50 text-[11px] text-red-700'}>
+                          <Badge variant="outline" className={subscription.secretConfigured ? 'text-[11px]' : 'border-crm-danger-border bg-crm-danger-bg text-[11px] text-crm-danger-text'}>
                             {subscription.secretConfigured ? 'signed' : 'NO SECRET'}
                           </Badge>
                         </div>
@@ -581,7 +581,7 @@ export default function WebhooksAdminPage() {
                           Rotate secret
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => void removeSubscription(subscription)} disabled={busyId === subscription.id}>
-                          <Trash2 className="mr-1.5 size-3.5 text-red-600" />
+                          <Trash2 className="mr-1.5 size-3.5 text-crm-danger-text" />
                           Archive
                         </Button>
                         <span className="ml-auto font-mono text-[11px] text-[var(--alo-text-muted)]">
@@ -603,10 +603,10 @@ export default function WebhooksAdminPage() {
           {stats && (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {[
-                { label: 'Delivered', value: stats.delivered, className: 'border-emerald-200 bg-emerald-50 text-emerald-800' },
+                { label: 'Delivered', value: stats.delivered, className: 'border-crm-success-border bg-crm-success-bg text-crm-success-text' },
                 { label: 'Pending', value: stats.pending, className: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]' },
-                { label: 'Failed', value: stats.failed, className: 'border-amber-200 bg-amber-50 text-amber-800' },
-                { label: 'Dead-lettered', value: stats.dead, className: 'border-red-200 bg-red-50 text-red-800' },
+                { label: 'Failed', value: stats.failed, className: 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text' },
+                { label: 'Dead-lettered', value: stats.dead, className: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text' },
                 { label: 'Total (7d)', value: stats.total, className: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text)]' },
               ].map((item) => (
                 <Card key={item.label} className={`rounded-2xl border-2 ${item.className}`}>
@@ -672,7 +672,7 @@ export default function WebhooksAdminPage() {
                           <td className="p-2 font-mono">{delivery.responseStatus ?? '—'}</td>
                           <td className="p-2 font-mono">{delivery.attempts}</td>
                           <td className="p-2 font-mono">{delivery.durationMs != null ? `${delivery.durationMs}ms` : '—'}</td>
-                          <td className="max-w-[220px] truncate p-2 text-red-700" title={delivery.errorMessage ?? ''}>
+                          <td className="max-w-[220px] truncate p-2 text-crm-danger-text" title={delivery.errorMessage ?? ''}>
                             {delivery.errorMessage || '—'}
                           </td>
                           <td className="whitespace-nowrap p-2">

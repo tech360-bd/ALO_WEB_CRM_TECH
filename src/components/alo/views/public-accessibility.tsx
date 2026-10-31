@@ -95,7 +95,7 @@ export function PublicAccessibility({ onNavigate }: PublicAccessibilityProps) {
           <ul className="mt-3 space-y-2">
             {FEATURES.map((f, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-[var(--alo-text)]">
-                <Icon name="Check" className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                <Icon name="Check" className="mt-0.5 size-4 shrink-0 text-crm-success-text" />
                 <span>{f}</span>
               </li>
             ))}
@@ -110,7 +110,7 @@ export function PublicAccessibility({ onNavigate }: PublicAccessibilityProps) {
           <ul className="mt-3 space-y-2">
             {KNOWN_LIMITATIONS.map((l, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-[var(--alo-text-muted)]">
-                <Icon name="Info" className="mt-0.5 size-4 shrink-0 text-amber-600" />
+                <Icon name="Info" className="mt-0.5 size-4 shrink-0 text-crm-warning-text" />
                 <span>{l}</span>
               </li>
             ))}

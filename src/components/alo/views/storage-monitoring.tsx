@@ -15,23 +15,23 @@ import { timeAgo, fmtDate } from "@/lib/alo-types";
 const POOL_COLORS: Record<string, { border: string; bg: string; text: string; bar: string }> = {
   STUDENT_PARTNER: { border: "border-[var(--alo-border)]", bg: "bg-[var(--alo-brand-pale)]/50", text: "text-[var(--alo-brand)]", bar: "#0057B8" },
   OFFICIAL: { border: "border-[var(--alo-cta)]/25", bg: "bg-[var(--alo-cta-soft)]/50", text: "text-[var(--alo-cta-active)]", bar: "#E8501A" },
-  OPERATIONAL: { border: "border-violet-200", bg: "bg-violet-50/50", text: "text-violet-700", bar: "#0284C7" },
+  OPERATIONAL: { border: "border-[var(--alo-border)]", bg: "bg-[var(--alo-brand-pale)]/50", text: "text-[var(--alo-brand)]", bar: "#0284C7" },
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  HEALTHY: "bg-emerald-100 text-emerald-700",
-  WARNING: "bg-amber-100 text-amber-700",
+  HEALTHY: "bg-crm-success-bg text-crm-success-text",
+  WARNING: "bg-crm-warning-bg text-crm-warning-text",
   HIGH: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  CRITICAL: "bg-rose-100 text-rose-700",
+  CRITICAL: "bg-crm-warning-bg text-crm-warning-text",
   OFFLINE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
 
 const EVENT_COLORS: Record<string, string> = {
-  UPLOAD: "text-emerald-600",
+  UPLOAD: "text-crm-success-text",
   DOWNLOAD: "text-[var(--alo-brand)]",
-  DELETE: "text-rose-600",
+  DELETE: "text-crm-warning-text",
   VIEW: "text-[var(--alo-body)]",
-  FAILED_UPLOAD: "text-rose-600",
+  FAILED_UPLOAD: "text-crm-warning-text",
   QUARANTINE: "text-[var(--alo-cta-active)]",
 };
 
@@ -80,14 +80,14 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
 
       {/* Overall Status Banner */}
       <Card className={`rounded-2xl border-2 p-5 ${
-        data.overallStatus === "HEALTHY" ? "border-emerald-200 bg-emerald-50/50" :
-        data.overallStatus === "WARNING" ? "border-amber-200 bg-amber-50/50" :
+        data.overallStatus === "HEALTHY" ? "border-crm-success-border bg-crm-success-bg/50" :
+        data.overallStatus === "WARNING" ? "border-crm-warning-border bg-crm-warning-bg/50" :
         data.overallStatus === "HIGH" ? "border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]/50" :
-        "border-rose-200 bg-rose-50/50"
+        "border-crm-warning-border bg-crm-warning-bg/50"
       }`}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className={`h-3 w-3 rounded-full ${data.overallStatus === "HEALTHY" ? "bg-emerald-500" : data.overallStatus === "WARNING" ? "bg-amber-500" : data.overallStatus === "HIGH" ? "bg-[var(--alo-cta)]" : "bg-rose-500"}`} />
+            <div className={`h-3 w-3 rounded-full ${data.overallStatus === "HEALTHY" ? "bg-[var(--alo-success)]" : data.overallStatus === "WARNING" ? "bg-[var(--alo-warning)]" : data.overallStatus === "HIGH" ? "bg-[var(--alo-cta)]" : "bg-crm-warning-bg0"}`} />
             <div>
               <div className="text-sm font-semibold text-[var(--alo-text)]">Overall Storage Status: {data.overallStatus}</div>
               <div className="text-xs text-[var(--alo-body)]">
@@ -101,7 +101,7 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
               <div className="text-[var(--alo-text-muted)]">Active Files</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-rose-600">{data.summary.deletedFiles}</div>
+              <div className="font-bold text-crm-warning-text">{data.summary.deletedFiles}</div>
               <div className="text-[var(--alo-text-muted)]">Soft-deleted</div>
             </div>
             <div className="text-center">
@@ -138,7 +138,7 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
               {/* Usage bar */}
               <div className="h-3 rounded-full bg-white overflow-hidden border border-[var(--alo-border)]">
                 <div
-                  className={`h-full transition-all ${percentage >= pool.criticalThreshold ? "bg-rose-500" : percentage >= pool.highThreshold ? "bg-[var(--alo-cta)]" : percentage >= pool.warningThreshold ? "bg-amber-500" : "bg-emerald-500"}`}
+                  className={`h-full transition-all ${percentage >= pool.criticalThreshold ? "bg-crm-warning-bg0" : percentage >= pool.highThreshold ? "bg-[var(--alo-cta)]" : percentage >= pool.warningThreshold ? "bg-[var(--alo-warning)]" : "bg-[var(--alo-success)]"}`}
                   style={{ width: `${Math.min(percentage, 100)}%` }}
                 />
               </div>
@@ -191,7 +191,7 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
                       <span className="text-[var(--alo-body)] truncate">{m.mimeType}</span>
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-[var(--alo-text-muted)]">{formatBytes(m.sizeBytes)}</span>
-                        <Badge className="bg-violet-50 text-violet-700">{m.count}</Badge>
+                        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{m.count}</Badge>
                       </div>
                     </div>
                   ))
@@ -205,8 +205,8 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
           {/* Storage Rules */}
           <SectionCard title="Storage Architecture — Non-Negotiable Rules" icon="ShieldCheck">
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/50 p-4">
-                <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-emerald-700">
+              <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/50 p-4">
+                <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-crm-success-text">
                   <Icon name="Check" className="h-4 w-4" /> Every Upload MUST
                 </div>
                 <ul className="space-y-1.5 text-xs text-[var(--alo-body)]">
@@ -220,8 +220,8 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
                   <li>• Have the physical file verified after write</li>
                 </ul>
               </div>
-              <div className="rounded-xl border-2 border-rose-200 bg-rose-50/50 p-4">
-                <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-rose-700">
+              <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/50 p-4">
+                <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-crm-warning-text">
                   <Icon name="X" className="h-4 w-4" /> NEVER
                 </div>
                 <ul className="space-y-1.5 text-xs text-[var(--alo-body)]">
@@ -275,7 +275,7 @@ export function StorageMonitoring({ onNavigate }: { onNavigate: (v: any, slug?: 
                           <TableCell className="text-xs"><Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-body)]">{e.pool || "—"}</Badge></TableCell>
                           <TableCell className="text-xs text-[var(--alo-text-muted)]">{e.performedBy || "system"}</TableCell>
                           <TableCell className="text-xs">
-                            <Badge className={e.result === "SUCCESS" ? "bg-emerald-50 text-emerald-700" : e.result === "DENIED" ? "bg-rose-50 text-rose-700" : "bg-amber-50 text-amber-700"}>{e.result}</Badge>
+                            <Badge className={e.result === "SUCCESS" ? "bg-crm-success-bg text-crm-success-text" : e.result === "DENIED" ? "bg-crm-warning-bg text-crm-warning-text" : "bg-crm-warning-bg text-crm-warning-text"}>{e.result}</Badge>
                           </TableCell>
                           <TableCell className="text-xs text-[var(--alo-text-muted)]">{timeAgo(e.performedAt)}</TableCell>
                         </TableRow>

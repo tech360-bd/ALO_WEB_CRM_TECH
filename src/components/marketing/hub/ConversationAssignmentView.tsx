@@ -432,11 +432,11 @@ const MOCK_RULES: AutoAssignRule[] = [
 
 const CHANNEL_ICON = (ch: string) => {
   switch (ch) {
-    case 'whatsapp': return { icon: MessageCircle, className: 'text-green-600', bg: 'bg-green-100' };
+    case 'whatsapp': return { icon: MessageCircle, className: 'text-crm-success-text', bg: 'bg-crm-success-bg' };
     case 'email': return { icon: Mail, className: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' };
-    case 'phone': return { icon: Phone, className: 'text-purple-600', bg: 'bg-purple-100' };
+    case 'phone': return { icon: Phone, className: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' };
     case 'live_chat': return { icon: Globe, className: 'text-teal-600', bg: 'bg-teal-100' };
-    case 'instagram': return { icon: MessageSquare, className: 'text-pink-600', bg: 'bg-pink-100' };
+    case 'instagram': return { icon: MessageSquare, className: 'text-crm-danger-text', bg: 'bg-crm-danger-bg' };
     case 'sms': return { icon: Volume2, className: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)]' };
     default: return { icon: MessageSquare, className: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-surface-muted)]' };
   }
@@ -446,11 +446,11 @@ const STATUS_CONFIG: Record<
   ConversationStatus,
   { label: string; variant: 'default' | 'secondary' | 'destructive' | 'success' | 'warning' | 'outline' | 'muted'; dotClass: string }
 > = {
-  active: { label: 'Active', variant: 'success', dotClass: 'bg-emerald-500' },
-  waiting: { label: 'Waiting', variant: 'warning', dotClass: 'bg-amber-500' },
-  resolved: { label: 'Resolved', variant: 'muted', dotClass: 'bg-gray-400' },
-  overdue: { label: 'Overdue', variant: 'destructive', dotClass: 'bg-rose-500' },
-  escalated: { label: 'Escalated', variant: 'destructive', dotClass: 'bg-red-600' },
+  active: { label: 'Active', variant: 'success', dotClass: 'bg-[var(--alo-success)]' },
+  waiting: { label: 'Waiting', variant: 'warning', dotClass: 'bg-[var(--alo-warning)]' },
+  resolved: { label: 'Resolved', variant: 'muted', dotClass: 'bg-[var(--alo-page)]' },
+  overdue: { label: 'Overdue', variant: 'destructive', dotClass: 'bg-[var(--alo-error)]' },
+  escalated: { label: 'Escalated', variant: 'destructive', dotClass: 'bg-[var(--alo-error)]' },
 };
 
 const TASK_STATUS_CONFIG: Record<TaskStatus, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'success' | 'warning' | 'outline' }> = {
@@ -480,7 +480,7 @@ function SLACountdown({ minutesLeft, total }: { minutesLeft: number; total: numb
           <div
             className={cn(
               'h-full rounded-full transition-all',
-              isOverdue ? 'bg-rose-500' : isUrgent ? 'bg-amber-500' : 'bg-emerald-500'
+              isOverdue ? 'bg-[var(--alo-error)]' : isUrgent ? 'bg-[var(--alo-warning)]' : 'bg-[var(--alo-success)]'
             )}
             style={{
               width: isOverdue ? '100%' : `${Math.min(100, ((total - minutesLeft) / total) * 100)}%`,
@@ -491,7 +491,7 @@ function SLACountdown({ minutesLeft, total }: { minutesLeft: number; total: numb
       <span
         className={cn(
           'text-xs font-medium whitespace-nowrap',
-          isOverdue ? 'text-rose-600 font-bold' : isUrgent ? 'text-amber-600' : 'text-muted-foreground'
+          isOverdue ? 'text-crm-warning-text font-bold' : isUrgent ? 'text-crm-warning-text' : 'text-muted-foreground'
         )}
       >
         {isOverdue && <AlertTriangle className="inline h-3 w-3 mr-0.5" />}
@@ -535,7 +535,7 @@ function AutoAssignPanel({
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0 ml-3">
-            <span className={cn('text-xs', rule.enabled ? 'text-emerald-600' : 'text-muted-foreground')}>
+            <span className={cn('text-xs', rule.enabled ? 'text-crm-success-text' : 'text-muted-foreground')}>
               {rule.enabled ? 'ON' : 'OFF'}
             </span>
             <Button
@@ -821,37 +821,37 @@ export default function ConversationAssignmentView() {
         <Card className="py-0 gap-0">
           <CardContent className="p-3">
             <div className="flex items-center gap-2 mb-1">
-              <UserMinus className="h-4 w-4 text-rose-500" />
+              <UserMinus className="h-4 w-4 text-crm-warning-text" />
               <span className="text-xs text-muted-foreground">Unassigned</span>
             </div>
-            <p className="text-xl font-bold text-rose-600">{unassignedCount}</p>
+            <p className="text-xl font-bold text-crm-warning-text">{unassignedCount}</p>
           </CardContent>
         </Card>
         <Card className="py-0 gap-0">
           <CardContent className="p-3">
             <div className="flex items-center gap-2 mb-1">
-              <AlertTriangle className="h-4 w-4 text-amber-500" />
+              <AlertTriangle className="h-4 w-4 text-crm-warning-text" />
               <span className="text-xs text-muted-foreground">Overdue</span>
             </div>
-            <p className="text-xl font-bold text-amber-600">{overdueCount}</p>
+            <p className="text-xl font-bold text-crm-warning-text">{overdueCount}</p>
           </CardContent>
         </Card>
         <Card className="py-0 gap-0">
           <CardContent className="p-3">
             <div className="flex items-center gap-2 mb-1">
-              <AlertCircle className="h-4 w-4 text-rose-600" />
+              <AlertCircle className="h-4 w-4 text-crm-warning-text" />
               <span className="text-xs text-muted-foreground">Escalated</span>
             </div>
-            <p className="text-xl font-bold text-rose-600">{escalatedCount}</p>
+            <p className="text-xl font-bold text-crm-warning-text">{escalatedCount}</p>
           </CardContent>
         </Card>
         <Card className="py-0 gap-0">
           <CardContent className="p-3">
             <div className="flex items-center gap-2 mb-1">
-              <Clock className="h-4 w-4 text-rose-500" />
+              <Clock className="h-4 w-4 text-crm-warning-text" />
               <span className="text-xs text-muted-foreground">Overdue Tasks</span>
             </div>
-            <p className="text-xl font-bold text-rose-600">{overdueTasks}</p>
+            <p className="text-xl font-bold text-crm-warning-text">{overdueTasks}</p>
           </CardContent>
         </Card>
       </div>
@@ -972,7 +972,7 @@ export default function ConversationAssignmentView() {
                     <TableRow
                       key={conv.id}
                       className={cn(
-                        isUnassigned && conv.status !== 'resolved' && 'bg-rose-50/50',
+                        isUnassigned && conv.status !== 'resolved' && 'bg-crm-warning-bg/50',
                         selectedConversations.includes(conv.id) && 'bg-primary/5'
                       )}
                     >
@@ -1114,7 +1114,7 @@ export default function ConversationAssignmentView() {
                   <UserPlus className="h-4 w-4 mr-1" />
                   Bulk Assign
                 </Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="text-rose-600">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="text-crm-warning-text">
                   <XCircle className="h-4 w-4 mr-1" />
                   Mark Resolved
                 </Button>
@@ -1142,7 +1142,7 @@ export default function ConversationAssignmentView() {
                   key={task.id}
                   className={cn(
                     'flex items-center justify-between p-3 rounded-lg border transition-colors',
-                    isOverdue && 'bg-rose-50/50 border-rose-200'
+                    isOverdue && 'bg-crm-warning-bg/50 border-crm-warning-border'
                   )}
                 >
                   <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -1150,18 +1150,18 @@ export default function ConversationAssignmentView() {
                       className={cn(
                         'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border',
                         isOverdue
-                          ? 'bg-rose-100 border-rose-300'
+                          ? 'bg-crm-warning-bg border-crm-warning-border'
                           : task.status === 'completed'
-                          ? 'bg-emerald-100 border-emerald-300'
+                          ? 'bg-crm-success-bg border-crm-success-border'
                           : task.status === 'in_progress'
-                          ? 'bg-amber-100 border-amber-300'
+                          ? 'bg-crm-warning-bg border-crm-warning-border'
                           : 'bg-muted'
                       )}
                     >
                       {task.status === 'completed' ? (
-                        <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                        <CheckCircle2 className="h-3 w-3 text-crm-success-text" />
                       ) : isOverdue ? (
-                        <AlertTriangle className="h-3 w-3 text-rose-600" />
+                        <AlertTriangle className="h-3 w-3 text-crm-warning-text" />
                       ) : (
                         <Clock className="h-3 w-3 text-muted-foreground" />
                       )}

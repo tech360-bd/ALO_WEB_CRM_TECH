@@ -140,7 +140,7 @@ export function StudentOffers() {
                           "flex size-12 items-center justify-center rounded-xl",
                           isConditional
                             ? "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
-                            : "bg-emerald-100 text-emerald-700"
+                            : "bg-crm-success-bg text-crm-success-text"
                         )}
                       >
                         <Icon name="Award" className="size-6" />
@@ -157,7 +157,7 @@ export function StudentOffers() {
                       className={cn(
                         isConditional
                           ? "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
-                          : "bg-emerald-100 text-emerald-700"
+                          : "bg-crm-success-bg text-crm-success-text"
                       )}
                     >
                       {isConditional ? "Conditional" : "Unconditional"}
@@ -169,7 +169,7 @@ export function StudentOffers() {
                       className={cn(
                         "mt-4 flex items-center gap-2 rounded-lg px-3 py-2 text-sm",
                         daysLeft !== null && daysLeft < 7
-                          ? "bg-rose-50 text-rose-700"
+                          ? "bg-crm-warning-bg text-crm-warning-text"
                           : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                       )}
                     >

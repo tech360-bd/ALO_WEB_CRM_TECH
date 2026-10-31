@@ -75,7 +75,7 @@ export default function CrmScholarshipsPage() {
             <div><dt className="text-[var(--alo-text-muted)]">Eligible countries</dt><dd>{record.eligibleCountries && record.eligibleCountries !== '[]' ? record.eligibleCountries : 'Not recorded'}</dd></div>
             <div><dt className="text-[var(--alo-text-muted)]">Eligible study levels</dt><dd>{record.eligibleLevels && record.eligibleLevels !== '[]' ? record.eligibleLevels : 'Not recorded'}</dd></div>
           </dl>
-          {source ? <a href={source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-[var(--alo-brand)] underline">Recorded official source<ExternalLink className="h-4 w-4" /></a> : <p className="text-sm text-amber-700">Official HTTPS source not recorded.</p>}
+          {source ? <a href={source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-[var(--alo-brand)] underline">Recorded official source<ExternalLink className="h-4 w-4" /></a> : <p className="text-sm text-crm-warning-text">Official HTTPS source not recorded.</p>}
         </CardContent></Card>;
       })}</div>
       <nav aria-label="Scholarship pagination" className="flex items-center justify-between gap-3"><Button variant="outline" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</Button><p className="text-sm">Page {page} of {Math.max(1, pages)}</p><Button variant="outline" disabled={page >= pages} onClick={() => setPage((value) => value + 1)}>Next</Button></nav>

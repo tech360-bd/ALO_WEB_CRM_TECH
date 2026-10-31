@@ -195,20 +195,20 @@ const SERVICE_LABELS: Record<string, string> = {
 function costTierBadge(tier: CostTier) {
   if (tier === 'FREE') {
     return (
-      <Badge className="border-emerald-300 bg-emerald-50 text-emerald-800">
+      <Badge className="border-crm-success-border bg-crm-success-bg text-crm-success-text">
         <Banknote className="mr-1 size-3" /> FREE — no billing account
       </Badge>
     );
   }
   if (tier === 'FREE_TIER') {
     return (
-      <Badge className="border-amber-300 bg-amber-50 text-amber-900">
+      <Badge className="border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">
         <Banknote className="mr-1 size-3" /> FREE TIER — billing account required
       </Badge>
     );
   }
   return (
-    <Badge className="border-red-300 bg-red-50 text-red-800">
+    <Badge className="border-crm-danger-border bg-crm-danger-bg text-crm-danger-text">
       <Banknote className="mr-1 size-3" /> PAID — billed usage
     </Badge>
   );
@@ -216,11 +216,11 @@ function costTierBadge(tier: CostTier) {
 
 function verdictBadge(verdict: Verdict) {
   const styles: Record<Verdict, string> = {
-    PASS: 'border-emerald-300 bg-emerald-50 text-emerald-800',
+    PASS: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
     PARTIAL: 'border-sky-300 bg-sky-50 text-sky-900',
     NOT_CONFIGURED: 'border-[var(--alo-border-strong)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-    NOT_VERIFIED: 'border-amber-300 bg-amber-50 text-amber-900',
-    BLOCKED: 'border-red-300 bg-red-50 text-red-800',
+    NOT_VERIFIED: 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text',
+    BLOCKED: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text',
   };
   const icons: Record<Verdict, typeof CheckCircle2> = {
     PASS: CheckCircle2,
@@ -408,8 +408,8 @@ export default function GoogleStackAdminPage() {
       </div>
 
       {statusError ? (
-        <Card className="border-red-300">
-          <CardContent className="pt-6 text-sm text-red-700" role="alert">
+        <Card className="border-crm-danger-border">
+          <CardContent className="pt-6 text-sm text-crm-danger-text" role="alert">
             {statusError}
           </CardContent>
         </Card>
@@ -448,14 +448,14 @@ export default function GoogleStackAdminPage() {
               {status.tagLoader.reason}
             </p>
             {status.costSummary.paidServicesInUse.length > 0 ? (
-              <p className="rounded-lg border border-red-300 bg-red-50 p-3 text-xs text-red-900">
+              <p className="rounded-lg border border-crm-danger-border bg-crm-danger-bg p-3 text-xs text-crm-danger-text">
                 <AlertTriangle className="mr-1 inline size-3" />
                 A PAID Google service is configured:{' '}
                 {status.costSummary.paidServicesInUse.join(', ')}. It requires a Cloud billing
                 account, restricted API keys and a budget alert. See docs/GOOGLE-FREE-STACK.md.
               </p>
             ) : (
-              <p className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900">
+              <p className="rounded-lg border border-crm-success-border bg-crm-success-bg p-3 text-xs text-crm-success-text">
                 <CheckCircle2 className="mr-1 inline size-3" />
                 No paid Google service is in use. Configured: {status.costSummary.free.join(', ') || 'none'}.
               </p>
@@ -529,9 +529,9 @@ export default function GoogleStackAdminPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            {performanceError ? <p className="text-red-700" role="alert">{performanceError}</p> : null}
+            {performanceError ? <p className="text-crm-danger-text" role="alert">{performanceError}</p> : null}
             {performance.status !== 'READY' ? (
-              <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+              <p className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-xs text-crm-warning-text">
                 <AlertTriangle className="mr-1 inline size-3" />
                 No data is displayed because Google did not return any. This is not a zero-traffic
                 result — it is a connection state, and the two must not look the same.
@@ -603,9 +603,9 @@ export default function GoogleStackAdminPage() {
                   Expected sitemap:{' '}
                   <code className="rounded bg-[var(--alo-surface-muted)] px-1">{sitemaps.expectedSitemapUrl}</code>{' '}
                   {sitemaps.expectedSitemapSubmitted ? (
-                    <Badge className="border-emerald-300 bg-emerald-50 text-emerald-800">submitted to Google</Badge>
+                    <Badge className="border-crm-success-border bg-crm-success-bg text-crm-success-text">submitted to Google</Badge>
                   ) : (
-                    <Badge className="border-amber-300 bg-amber-50 text-amber-900">NOT submitted</Badge>
+                    <Badge className="border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">NOT submitted</Badge>
                   )}
                 </p>
                 <ul className="space-y-1 text-xs">
@@ -625,7 +625,7 @@ export default function GoogleStackAdminPage() {
                 </p>
               </>
             ) : (
-              <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+              <p className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-xs text-crm-warning-text">
                 <AlertTriangle className="mr-1 inline size-3" />
                 Sitemap status could not be read from Google. The sitemap itself is still served at{' '}
                 <code>{sitemaps.expectedSitemapUrl}</code>; only the Search Console view of it is
@@ -673,7 +673,7 @@ export default function GoogleStackAdminPage() {
                 ))}
               </div>
             ) : profile.status === 'READY' ? (
-              <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+              <p className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-xs text-crm-warning-text">
                 <AlertTriangle className="mr-1 inline size-3" />
                 The credential is connected but no location is readable. ALO must not create a
                 location programmatically — create the real office listing in Google Business
@@ -729,7 +729,7 @@ export default function GoogleStackAdminPage() {
             </Button>
           </div>
 
-          {funnelError ? <p className="text-red-700" role="alert">{funnelError}</p> : null}
+          {funnelError ? <p className="text-crm-danger-text" role="alert">{funnelError}</p> : null}
 
           {funnel ? (
             <>

@@ -175,21 +175,21 @@ const ENGINE_TYPE_META: Record<string, EngineTypeMeta> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text border-crm-success-border",
   IDLE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]",
-  MAINTENANCE: "bg-amber-100 text-amber-700 border-amber-200",
+  MAINTENANCE: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
 };
 
 const HEALTH_COLORS: Record<string, string> = {
-  HEALTHY: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  DEGRADED: "bg-amber-100 text-amber-700 border-amber-200",
-  CRITICAL: "bg-rose-100 text-rose-700 border-rose-200",
+  HEALTHY: "bg-crm-success-bg text-crm-success-text border-crm-success-border",
+  DEGRADED: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
+  CRITICAL: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
 };
 
 const HEALTH_DOT: Record<string, string> = {
-  HEALTHY: "bg-emerald-500",
-  DEGRADED: "bg-amber-500",
-  CRITICAL: "bg-rose-500",
+  HEALTHY: "bg-[var(--alo-success)]",
+  DEGRADED: "bg-[var(--alo-warning)]",
+  CRITICAL: "bg-crm-warning-bg0",
 };
 
 // DCC criteria thresholds (for color coding)
@@ -232,17 +232,17 @@ const RULE_CATEGORIES = ["SAFETY", "PRIVACY", "FAIRNESS", "TRANSPARENCY", "ACCOU
 const RULE_ENFORCEMENTS = ["BLOCK", "WARN", "LOG", "ESCALATE"];
 
 const RULE_CATEGORY_COLORS: Record<string, string> = {
-  SAFETY: "bg-rose-100 text-rose-700 border-rose-200",
-  PRIVACY: "bg-violet-100 text-violet-700 border-violet-200",
-  FAIRNESS: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  SAFETY: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
+  PRIVACY: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
+  FAIRNESS: "bg-crm-success-bg text-crm-success-text border-crm-success-border",
   TRANSPARENCY: "bg-sky-100 text-sky-700 border-sky-200",
-  ACCOUNTABILITY: "bg-amber-100 text-amber-700 border-amber-200",
+  ACCOUNTABILITY: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
   COMPLIANCE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
 };
 
 const ENFORCEMENT_COLORS: Record<string, string> = {
-  BLOCK: "bg-rose-100 text-rose-700 border-rose-200",
-  WARN: "bg-amber-100 text-amber-700 border-amber-200",
+  BLOCK: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
+  WARN: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
   LOG: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
   ESCALATE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25",
 };
@@ -311,17 +311,17 @@ function fmt(n: number): string {
 
 function pctColor(value: number, threshold: { pass: number; warn: number; mode: "ge" | "le" | "eq" }): string {
   if (threshold.mode === "eq") {
-    return value === threshold.pass ? "text-emerald-600" : "text-rose-600";
+    return value === threshold.pass ? "text-crm-success-text" : "text-crm-warning-text";
   }
   if (threshold.mode === "le") {
-    if (value <= threshold.pass) return "text-emerald-600";
-    if (value <= threshold.warn) return "text-amber-600";
-    return "text-rose-600";
+    if (value <= threshold.pass) return "text-crm-success-text";
+    if (value <= threshold.warn) return "text-crm-warning-text";
+    return "text-crm-warning-text";
   }
   // ge
-  if (value >= threshold.pass) return "text-emerald-600";
-  if (value >= threshold.warn) return "text-amber-600";
-  return "text-rose-600";
+  if (value >= threshold.pass) return "text-crm-success-text";
+  if (value >= threshold.warn) return "text-crm-warning-text";
+  return "text-crm-warning-text";
 }
 
 function pctBarColor(value: number, threshold: { pass: number; warn: number; mode: "ge" | "le" | "eq" }): string {
@@ -353,7 +353,7 @@ function StatusPill({ status }: { status: string }) {
 function HealthPill({ health }: { health: string }) {
   return (
     <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold", HEALTH_COLORS[health] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]")}>
-      <span className={cn("size-1.5 rounded-full", HEALTH_DOT[health] || "bg-slate-400")} />
+      <span className={cn("size-1.5 rounded-full", HEALTH_DOT[health] || "bg-[var(--alo-page)]")} />
       {health}
     </span>
   );
@@ -571,12 +571,12 @@ export function EnterpriseAiCommand() {
         icon="BrainCircuit"
         action={
           <div className="hidden md:flex items-center gap-2">
-            <div className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5">
+            <div className="flex items-center gap-1.5 rounded-full border border-crm-success-border bg-crm-success-bg px-3 py-1.5">
               <span className="relative flex size-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--alo-success)] opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-[var(--alo-success)]" />
               </span>
-              <span className="text-xs font-semibold text-emerald-700">
+              <span className="text-xs font-semibold text-crm-success-text">
                 {summary.healthyEngines}/{summary.totalEngines} Engines Healthy
               </span>
             </div>
@@ -650,7 +650,7 @@ export function EnterpriseAiCommand() {
             description="Departments certified to create new AI agents"
             icon="BadgeCheck"
             action={
-              <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+              <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
                 {summary.dccCertified}/{summary.totalDepartments} Certified
               </Badge>
             }
@@ -666,8 +666,8 @@ export function EnterpriseAiCommand() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-emerald-600">{summary.dccCertified} Certified</p>
-                  <p className="text-sm font-semibold text-amber-600">{summary.totalDepartments - summary.dccCertified} Pending</p>
+                  <p className="text-sm font-semibold text-crm-success-text">{summary.dccCertified} Certified</p>
+                  <p className="text-sm font-semibold text-crm-warning-text">{summary.totalDepartments - summary.dccCertified} Pending</p>
                 </div>
               </div>
               <Progress
@@ -765,10 +765,10 @@ export function EnterpriseAiCommand() {
                       className={cn(
                         "rounded-xl border-2 p-3 transition-colors",
                         eng.healthStatus === "HEALTHY"
-                          ? "border-emerald-200 bg-emerald-50/40 hover:border-emerald-400"
+                          ? "border-crm-success-border bg-crm-success-bg/40 hover:border-[var(--alo-success)]"
                           : eng.healthStatus === "DEGRADED"
-                            ? "border-amber-200 bg-amber-50/40 hover:border-amber-400"
-                            : "border-rose-200 bg-rose-50/40 hover:border-rose-400",
+                            ? "border-crm-warning-border bg-crm-warning-bg/40 hover:border-crm-warning-border"
+                            : "border-crm-warning-border bg-crm-warning-bg/40 hover:border-crm-warning-border",
                       )}
                     >
                       <div className="flex items-start justify-between gap-2">
@@ -814,14 +814,14 @@ export function EnterpriseAiCommand() {
               icon="BadgeCheck"
             >
               <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/40 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-emerald-700">Certified</p>
-                  <p className="mt-1 text-3xl font-bold text-emerald-700 tabular-nums">{summary.dccCertified}</p>
+                <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/40 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-crm-success-text">Certified</p>
+                  <p className="mt-1 text-3xl font-bold text-crm-success-text tabular-nums">{summary.dccCertified}</p>
                   <p className="text-xs text-muted-foreground">of {summary.totalDepartments} departments</p>
                 </div>
-                <div className="rounded-xl border-2 border-amber-200 bg-amber-50/40 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-amber-700">Pending</p>
-                  <p className="mt-1 text-3xl font-bold text-amber-700 tabular-nums">
+                <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/40 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-crm-warning-text">Pending</p>
+                  <p className="mt-1 text-3xl font-bold text-crm-warning-text tabular-nums">
                     {summary.totalDepartments - summary.dccCertified}
                   </p>
                   <p className="text-xs text-muted-foreground">must pass all 9 criteria</p>
@@ -963,11 +963,11 @@ export function EnterpriseAiCommand() {
                         <TableCell><CoverageCell value={d.humanEscalationRate} threshold={DCC_THRESHOLDS.humanEscalationRate} /></TableCell>
                         <TableCell className="text-center">
                           {d.dccCertified ? (
-                            <span className="inline-flex size-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700" title="DCC Certified">
+                            <span className="inline-flex size-6 items-center justify-center rounded-full bg-crm-success-bg text-crm-success-text" title="DCC Certified">
                               <Icon name="Check" className="size-4" />
                             </span>
                           ) : (
-                            <span className="inline-flex size-6 items-center justify-center rounded-full bg-rose-100 text-rose-700" title="Not DCC Certified">
+                            <span className="inline-flex size-6 items-center justify-center rounded-full bg-crm-warning-bg text-crm-warning-text" title="Not DCC Certified">
                               <Icon name="X" className="size-4" />
                             </span>
                           )}
@@ -1021,7 +1021,7 @@ export function EnterpriseAiCommand() {
                       </div>
                     ))}
                   </div>
-                  <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/60 p-3 text-xs text-emerald-900">
+                  <p className="mt-3 rounded-lg border border-crm-success-border bg-crm-success-bg/60 p-3 text-xs text-crm-success-text">
                     <Icon name="Sparkles" className="mr-1 inline size-3.5" />
                     When a department meets these criteria, it means the department can not only work independently but also
                     has the capability to <span className="font-semibold">create, train, manage, and improve</span> thousands of
@@ -1053,10 +1053,10 @@ export function EnterpriseAiCommand() {
                       className={cn(
                         "rounded-2xl border-2 transition-colors",
                         eng.healthStatus === "HEALTHY"
-                          ? "border-emerald-200 hover:border-emerald-400"
+                          ? "border-crm-success-border hover:border-[var(--alo-success)]"
                           : eng.healthStatus === "DEGRADED"
-                            ? "border-amber-200 hover:border-amber-400"
-                            : "border-rose-200 hover:border-rose-400",
+                            ? "border-crm-warning-border hover:border-crm-warning-border"
+                            : "border-crm-warning-border hover:border-crm-warning-border",
                       )}
                     >
                       <CardContent className="pt-5">
@@ -1071,7 +1071,7 @@ export function EnterpriseAiCommand() {
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-1">
-                            <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">{meta.label}</Badge>
+                            <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">{meta.label}</Badge>
                           </div>
                         </div>
 
@@ -1087,9 +1087,9 @@ export function EnterpriseAiCommand() {
                         {m && (
                           <div className="mt-3 grid grid-cols-2 gap-1.5">
                             <MetricChip icon="Activity" label="Requests" value={fmt(m.requests)} />
-                            <MetricChip icon="AlertTriangle" label="Errors" value={fmt(m.errors)} color={m.errors > 0 ? "text-amber-600" : "text-emerald-600"} />
+                            <MetricChip icon="AlertTriangle" label="Errors" value={fmt(m.errors)} color={m.errors > 0 ? "text-crm-warning-text" : "text-crm-success-text"} />
                             <MetricChip icon="Timer" label="Latency" value={`${m.latency}ms`} />
-                            <MetricChip icon="TrendingUp" label="Uptime" value={`${m.uptime.toFixed(2)}%`} color={m.uptime >= 99 ? "text-emerald-600" : "text-amber-600"} />
+                            <MetricChip icon="TrendingUp" label="Uptime" value={`${m.uptime.toFixed(2)}%`} color={m.uptime >= 99 ? "text-crm-success-text" : "text-crm-warning-text"} />
                           </div>
                         )}
 
@@ -1168,9 +1168,9 @@ export function EnterpriseAiCommand() {
               icon="Scale"
             >
               <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl border-2 border-rose-200 bg-rose-50/40 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-rose-700">Total Rules</p>
-                  <p className="mt-1 text-3xl font-bold text-rose-700 tabular-nums">{fmt(summary.totalRules)}+</p>
+                <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/40 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-crm-warning-text">Total Rules</p>
+                  <p className="mt-1 text-3xl font-bold text-crm-warning-text tabular-nums">{fmt(summary.totalRules)}+</p>
                   <p className="text-xs text-muted-foreground">across 6 categories</p>
                 </div>
                 <div className="rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/40 p-4">
@@ -1226,13 +1226,13 @@ export function EnterpriseAiCommand() {
                       <TableCell className="text-center">
                         <span className={cn(
                           "inline-flex size-6 items-center justify-center rounded-full text-[11px] font-bold",
-                          r.priority === 1 ? "bg-rose-100 text-rose-700" : r.priority === 2 ? "bg-amber-100 text-amber-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+                          r.priority === 1 ? "bg-crm-warning-bg text-crm-warning-text" : r.priority === 2 ? "bg-crm-warning-bg text-crm-warning-text" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
                         )}>
                           P{r.priority}
                         </span>
                       </TableCell>
                       <TableCell className="text-center">
-                        <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                        <span className="inline-flex items-center rounded-full bg-crm-success-bg px-2 py-0.5 text-[11px] font-semibold text-crm-success-text">
                           {r.status}
                         </span>
                       </TableCell>
@@ -1246,14 +1246,14 @@ export function EnterpriseAiCommand() {
             </p>
           </SectionCard>
 
-          <div className="rounded-2xl border-2 border-rose-200 bg-rose-50/40 p-4">
+          <div className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40 p-4">
             <div className="flex items-start gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-rose-600 text-white">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-error)] text-white">
                 <Icon name="ShieldAlert" className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-rose-900">Constitutional Rule Enforcement</p>
-                <p className="mt-1 text-xs text-rose-800">
+                <p className="text-sm font-semibold text-crm-warning-text">Constitutional Rule Enforcement</p>
+                <p className="mt-1 text-xs text-crm-warning-text">
                   {fmt(summary.totalRules)}+ constitutional rules are enforced across all 100 departments and 2,000 AI
                   employees by the Governance Engine. Every AI action is gated against this constitution — BLOCK stops the
                   action, WARN surfaces a caution, LOG records the event, and ESCALATE routes to a human reviewer.
@@ -1274,9 +1274,9 @@ export function EnterpriseAiCommand() {
               {CAPABILITIES.map((cap) => (
                 <div
                   key={cap.title}
-                  className="group flex items-start gap-3 rounded-xl border-2 border-emerald-200 bg-emerald-50/30 p-3 transition-colors hover:border-emerald-400 hover:bg-emerald-50/60"
+                  className="group flex items-start gap-3 rounded-xl border-2 border-crm-success-border bg-crm-success-bg/30 p-3 transition-colors hover:border-[var(--alo-success)] hover:bg-crm-success-bg/60"
                 >
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-crm-success-bg text-crm-success-text">
                     <Icon name="Check" className="size-5" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -1284,7 +1284,7 @@ export function EnterpriseAiCommand() {
                       <Icon name={cap.icon} className="size-3.5 text-[var(--alo-brand)]" />
                       <p className="truncate text-sm font-semibold text-foreground">{cap.title}</p>
                     </div>
-                    <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-emerald-700">{cap.engine}</p>
+                    <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-crm-success-text">{cap.engine}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{cap.description}</p>
                   </div>
                 </div>
@@ -1362,14 +1362,14 @@ export function EnterpriseAiCommand() {
               <div
                 className={cn(
                   "flex items-start gap-3 rounded-xl border-2 p-4",
-                  dccResult.allPassed ? "border-emerald-200 bg-emerald-50/60" : "border-rose-200 bg-rose-50/60",
+                  dccResult.allPassed ? "border-crm-success-border bg-crm-success-bg/60" : "border-crm-warning-border bg-crm-warning-bg/60",
                 )}
               >
-                <div className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg text-white", dccResult.allPassed ? "bg-emerald-600" : "bg-rose-600")}>
+                <div className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg text-white", dccResult.allPassed ? "bg-[var(--alo-success-dark)]" : "bg-[var(--alo-error)]")}>
                   <Icon name={dccResult.allPassed ? "CheckCheck" : "AlertTriangle"} className="size-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className={cn("text-sm font-bold", dccResult.allPassed ? "text-emerald-900" : "text-rose-900")}>
+                  <p className={cn("text-sm font-bold", dccResult.allPassed ? "text-crm-success-text" : "text-crm-warning-text")}>
                     {dccResult.allPassed ? "DCC Certified" : `DCC Check Failed — ${dccResult.checks.filter((c) => !c.passed).length} criteria not met`}
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">{dccResult.message}</p>
@@ -1382,11 +1382,11 @@ export function EnterpriseAiCommand() {
                     key={chk.name}
                     className={cn(
                       "flex items-center justify-between rounded-lg border-2 px-3 py-2",
-                      chk.passed ? "border-emerald-200 bg-emerald-50/30" : "border-rose-200 bg-rose-50/30",
+                      chk.passed ? "border-crm-success-border bg-crm-success-bg/30" : "border-crm-warning-border bg-crm-warning-bg/30",
                     )}
                   >
                     <div className="flex items-center gap-2">
-                      <span className={cn("flex size-5 items-center justify-center rounded-full text-white", chk.passed ? "bg-emerald-600" : "bg-rose-600")}>
+                      <span className={cn("flex size-5 items-center justify-center rounded-full text-white", chk.passed ? "bg-[var(--alo-success-dark)]" : "bg-[var(--alo-error)]")}>
                         <Icon name={chk.passed ? "Check" : "X"} className="size-3" />
                       </span>
                       <span className="text-sm font-medium text-foreground">{chk.name}</span>
@@ -1395,7 +1395,7 @@ export function EnterpriseAiCommand() {
                       <span className="text-xs text-muted-foreground">
                         threshold <span className="font-mono font-semibold text-foreground">{chk.threshold}{chk.name.includes("Escalation") ? "%" : chk.name.includes("Compliance") ? "%" : "%"}</span>
                       </span>
-                      <span className={cn("font-mono text-sm font-bold tabular-nums", chk.passed ? "text-emerald-600" : "text-rose-600")}>
+                      <span className={cn("font-mono text-sm font-bold tabular-nums", chk.passed ? "text-crm-success-text" : "text-crm-warning-text")}>
                         {chk.value.toFixed(chk.value < 10 ? 1 : 0)}%
                       </span>
                     </div>

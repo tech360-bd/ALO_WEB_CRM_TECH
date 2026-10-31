@@ -29,9 +29,9 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  PAID: "bg-emerald-100 text-emerald-700",
-  REFUNDED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  PAID: "bg-crm-success-bg text-crm-success-text",
+  REFUNDED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 export function StudentPayments() {

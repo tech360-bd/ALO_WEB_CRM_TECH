@@ -214,17 +214,17 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   ELIGIBLE: {
     label: 'Eligible',
     color: '#10B981',
-    bgClass: 'bg-green-100 dark:bg-green-950',
-    textClass: 'text-green-800 dark:text-green-200',
-    borderClass: 'border-green-300 dark:border-green-700',
+    bgClass: 'bg-crm-success-bg dark:bg-[var(--alo-success-dark)]',
+    textClass: 'text-crm-success-text dark:text-crm-success-text',
+    borderClass: 'border-[var(--alo-success)] dark:border-[var(--alo-success)]',
     icon: <CheckCircle2 className="h-4 w-4" />,
   },
   LIKELY_ELIGIBLE: {
     label: 'Likely Eligible',
     color: '#0057B8',
-    bgClass: 'bg-[var(--alo-brand-pale)] dark:bg-blue-950',
+    bgClass: 'bg-[var(--alo-brand-pale)] dark:bg-[var(--alo-brand-deep)]',
     textClass: 'text-[var(--alo-brand-deep)] dark:text-[var(--alo-brand-pale)]',
-    borderClass: 'border-blue-300 dark:border-blue-700',
+    borderClass: 'border-[var(--alo-brand-border)] dark:border-[var(--alo-brand-border)]',
     icon: <TrendingUp className="h-4 w-4" />,
   },
   CONDITIONALLY_ELIGIBLE: {
@@ -246,34 +246,34 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string; bgClass: s
   NOT_CURRENTLY_ELIGIBLE: {
     label: 'Not Currently Eligible',
     color: '#EF4444',
-    bgClass: 'bg-red-100 dark:bg-red-950',
-    textClass: 'text-red-800 dark:text-red-200',
-    borderClass: 'border-red-300 dark:border-red-700',
+    bgClass: 'bg-crm-danger-bg dark:bg-[var(--alo-error)]',
+    textClass: 'text-crm-danger-text dark:text-crm-danger-text',
+    borderClass: 'border-crm-danger-border dark:border-crm-danger-border',
     icon: <X className="h-4 w-4" />,
   },
   INSUFFICIENT_INFO: {
     label: 'Info Needed',
     color: '#6B7280',
-    bgClass: 'bg-[var(--alo-surface-muted)] dark:bg-gray-800',
+    bgClass: 'bg-[var(--alo-surface-muted)] dark:bg-[var(--alo-page)]',
     textClass: 'text-[var(--alo-body)] dark:text-[var(--alo-placeholder)]',
-    borderClass: 'border-[var(--alo-border-strong)] dark:border-gray-600',
+    borderClass: 'border-[var(--alo-border-strong)] dark:border-[var(--alo-border)]',
     icon: <Info className="h-4 w-4" />,
   },
   COUNSELLOR_REVIEW_REQUIRED: {
     label: 'Counsellor Review',
     color: '#0284C7',
-    bgClass: 'bg-purple-100 dark:bg-purple-950',
-    textClass: 'text-purple-800 dark:text-purple-200',
-    borderClass: 'border-purple-300 dark:border-purple-700',
+    bgClass: 'bg-[var(--alo-brand-pale)] dark:bg-[var(--alo-brand)]',
+    textClass: 'text-[var(--alo-brand)] dark:text-[var(--alo-brand)]',
+    borderClass: 'border-[var(--alo-border)] dark:border-[var(--alo-brand)]',
     icon: <Eye className="h-4 w-4" />,
   },
 };
 
 const REQ_RESULT_STYLES: Record<string, { label: string; bgClass: string; textClass: string }> = {
-  MET: { label: 'MET', bgClass: 'bg-green-100 dark:bg-green-900/40', textClass: 'text-green-700 dark:text-green-300' },
-  NOT_MET: { label: 'NOT MET', bgClass: 'bg-red-100 dark:bg-red-900/40', textClass: 'text-red-700 dark:text-red-300' },
+  MET: { label: 'MET', bgClass: 'bg-crm-success-bg dark:bg-[var(--alo-success-dark)]/40', textClass: 'text-crm-success-text dark:text-crm-success-text' },
+  NOT_MET: { label: 'NOT MET', bgClass: 'bg-crm-danger-bg dark:bg-[var(--alo-error)]/40', textClass: 'text-crm-danger-text dark:text-crm-danger-text' },
   CONDITION: { label: 'CONDITION', bgClass: 'bg-yellow-100 dark:bg-yellow-900/40', textClass: 'text-yellow-700 dark:text-yellow-300' },
-  MISSING_INFO: { label: 'MISSING', bgClass: 'bg-[var(--alo-surface-muted)] dark:bg-gray-800', textClass: 'text-[var(--alo-body)] dark:text-[var(--alo-text-muted)]' },
+  MISSING_INFO: { label: 'MISSING', bgClass: 'bg-[var(--alo-surface-muted)] dark:bg-[var(--alo-page)]', textClass: 'text-[var(--alo-body)] dark:text-[var(--alo-text-muted)]' },
 };
 
 // ─── Empty factories ──────────────────────────────────────────────────────────
@@ -815,7 +815,7 @@ export function EligibilityCheckerEnhanced() {
                 Qualification {idx + 1}{qual.qualificationType ? ` — ${qual.qualificationType}` : ''}
               </h4>
               {qualifications.length > 1 && (
-                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => removeQualification(idx)}>
+                <Button variant="ghost" size="sm" className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg" onClick={() => removeQualification(idx)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               )}
@@ -1005,7 +1005,7 @@ export function EligibilityCheckerEnhanced() {
               <div className="flex items-center justify-between">
                 <h4 className="font-semibold text-sm text-muted-foreground">Test {idx + 1}</h4>
                 {englishTests.length > 1 && (
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => removeEnglishTest(idx)}>
+                  <Button variant="ghost" size="sm" className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg" onClick={() => removeEnglishTest(idx)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 )}
@@ -1072,7 +1072,7 @@ export function EligibilityCheckerEnhanced() {
             <div key={idx} className="border rounded-xl p-4 space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-semibold text-sm text-muted-foreground">Experience {idx + 1}</h4>
-                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => removeWorkExperience(idx)}>
+                <Button variant="ghost" size="sm" className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg" onClick={() => removeWorkExperience(idx)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
@@ -1134,7 +1134,7 @@ export function EligibilityCheckerEnhanced() {
       <div className="space-y-6">
         {/* Preferred Countries (multi-select) */}
         <div>
-          <Label className="text-sm font-medium mb-3 block">Preferred Countries <span className="text-red-500">*</span></Label>
+          <Label className="text-sm font-medium mb-3 block">Preferred Countries <span className="text-crm-danger-text">*</span></Label>
           <div className="flex flex-wrap gap-2">
             {PREFERRED_COUNTRIES_LIST.map(country => (
               <button
@@ -1144,7 +1144,7 @@ export function EligibilityCheckerEnhanced() {
                   'px-3 py-1.5 rounded-full text-sm border-2 transition-all',
                   preferences.preferredCountries.includes(country)
                     ? 'text-white shadow-sm'
-                    : 'border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:border-gray-400'
+                    : 'border-[var(--alo-border-strong)] text-[var(--alo-body)] hover:border-[var(--alo-border)]'
                 )}
                 style={preferences.preferredCountries.includes(country) ? { background: ALO_BLUE, borderColor: ALO_BLUE } : {}}
               >
@@ -1255,7 +1255,7 @@ function FormField({ label, required, children, className, disabled }: {
   return (
     <div className={cn('space-y-1.5', className)}>
       <Label className={cn('text-sm', disabled && 'text-muted-foreground')}>
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+        {label}{required && <span className="text-crm-danger-text ml-0.5">*</span>}
       </Label>
       {children}
     </div>
@@ -1385,7 +1385,7 @@ function ResultCard({ result, expanded, onToggle }: {
               <ul className="space-y-1">
                 {metReqs.map((req, i) => (
                   <li key={i} className="text-sm flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 text-green-600 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 mt-0.5 text-crm-success-text shrink-0" />
                     <span><strong>{req.name}:</strong> {req.studentValue || 'Satisfied'}</span>
                   </li>
                 ))}
@@ -1450,16 +1450,16 @@ function ResultCard({ result, expanded, onToggle }: {
           {/* NOT ELIGIBLE: Explanation + Alternatives */}
           {isNotEligible && (
             <div className="space-y-4">
-              <div className="rounded-lg border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30 p-4">
-                <h4 className="text-sm font-semibold mb-2 flex items-center gap-2 text-red-800 dark:text-red-200">
+              <div className="rounded-lg border-2 border-crm-danger-border dark:border-crm-danger-border bg-crm-danger-bg dark:bg-[var(--alo-error)]/30 p-4">
+                <h4 className="text-sm font-semibold mb-2 flex items-center gap-2 text-crm-danger-text dark:text-crm-danger-text">
                   <AlertCircle className="h-4 w-4" /> This Is Why
                 </h4>
-                <p className="text-sm text-red-700 dark:text-red-300 mb-3">
+                <p className="text-sm text-crm-danger-text dark:text-crm-danger-text mb-3">
                   Your profile does not currently meet the entry requirements for this course. Below is a breakdown of the gaps and alternative routes you can consider.
                 </p>
                 {result.requirements.filter(r => r.result === 'NOT_MET').map((req, i) => (
                   <div key={i} className="flex items-start gap-2 mb-2">
-                    <X className="h-4 w-4 mt-0.5 text-red-500 shrink-0" />
+                    <X className="h-4 w-4 mt-0.5 text-crm-danger-text shrink-0" />
                     <div>
                       <span className="text-sm font-medium">{req.name}: </span>
                       <span className="text-sm text-muted-foreground">Required: {req.universityRequirement} — Your value: {req.studentValue || 'Not provided'}</span>
@@ -1477,7 +1477,7 @@ function ResultCard({ result, expanded, onToggle }: {
                       <span className="text-muted-foreground">{req.name}</span>
                       <span className="text-muted-foreground">Required: {req.universityRequirement}</span>
                     </div>
-                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-3 bg-[var(--alo-page)] dark:bg-[var(--alo-page)] rounded-full overflow-hidden">
                       <div className="h-full rounded-full bg-gradient-to-r from-red-400 to-red-600" style={{ width: '40%' }} />
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-0.5">Your value: {req.studentValue || 'Not provided'}</p>
@@ -1521,7 +1521,7 @@ function ResultCard({ result, expanded, onToggle }: {
 
           {/* INSUFFICIENT INFO */}
           {isInsufficient && (
-            <div className="rounded-lg border-2 border-[var(--alo-border-strong)] dark:border-gray-600 bg-[var(--alo-page)] dark:bg-gray-900/30 p-4">
+            <div className="rounded-lg border-2 border-[var(--alo-border-strong)] dark:border-[var(--alo-border)] bg-[var(--alo-page)] dark:bg-[var(--alo-page)]/30 p-4">
               <h4 className="text-sm font-semibold mb-2 flex items-center gap-2 text-[var(--alo-body)] dark:text-[var(--alo-placeholder)]">
                 <Info className="h-4 w-4" /> Missing Information
               </h4>
@@ -1542,8 +1542,8 @@ function ResultCard({ result, expanded, onToggle }: {
 
           {/* COUNSELLOR REVIEW */}
           {isCounsellor && (
-            <div className="rounded-lg border-2 border-purple-300 dark:border-purple-700 bg-purple-50 dark:bg-purple-950/30 p-4">
-              <h4 className="text-sm font-semibold mb-2 flex items-center gap-2 text-purple-800 dark:text-purple-200">
+            <div className="rounded-lg border-2 border-[var(--alo-border)] dark:border-[var(--alo-brand)] bg-[var(--alo-brand-pale)] dark:bg-[var(--alo-brand)]/30 p-4">
+              <h4 className="text-sm font-semibold mb-2 flex items-center gap-2 text-[var(--alo-brand)] dark:text-[var(--alo-brand)]">
                 <Eye className="h-4 w-4" /> Counsellor Review Required
               </h4>
               <p className="text-sm text-muted-foreground mb-3">

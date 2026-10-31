@@ -11,8 +11,8 @@ export function AccountSuspended() {
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md text-center">
         {/* Icon */}
-        <div className="mx-auto w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-6">
-          <XCircle className="w-8 h-8 text-red-500" />
+        <div className="mx-auto w-16 h-16 rounded-full bg-crm-danger-bg flex items-center justify-center mb-6">
+          <XCircle className="w-8 h-8 text-crm-danger-text" />
         </div>
 
         {/* Heading */}
@@ -66,8 +66,8 @@ export function AccountPending() {
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md text-center">
         {/* Icon */}
-        <div className="mx-auto w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mb-6">
-          <Clock className="w-8 h-8 text-amber-500" />
+        <div className="mx-auto w-16 h-16 rounded-full bg-crm-warning-bg flex items-center justify-center mb-6">
+          <Clock className="w-8 h-8 text-crm-warning-text" />
         </div>
 
         {/* Heading */}
@@ -112,8 +112,8 @@ export function Unauthorized() {
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md text-center">
         {/* Icon */}
-        <div className="mx-auto w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-6">
-          <ShieldOff className="w-8 h-8 text-red-500" />
+        <div className="mx-auto w-16 h-16 rounded-full bg-crm-danger-bg flex items-center justify-center mb-6">
+          <ShieldOff className="w-8 h-8 text-crm-danger-text" />
         </div>
 
         {/* Heading */}

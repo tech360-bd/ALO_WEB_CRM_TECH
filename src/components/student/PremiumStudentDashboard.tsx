@@ -170,7 +170,7 @@ export default function PremiumStudentDashboard() {
     return (
       <div className="min-h-[50vh] bg-[var(--alo-page)] p-6 flex items-center justify-center">
         <Card role="alert" className="max-w-xl p-8 bg-white border-[var(--alo-border)] rounded-3xl text-center">
-          <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-4" />
+          <AlertTriangle className="w-10 h-10 text-crm-warning-text mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[var(--alo-text)]">Your student data could not be loaded</h2>
           <p className="text-sm text-[var(--alo-body)] mt-2">{error}</p>
           <Button className="mt-5 h-12 px-8" onClick={() => window.location.reload()}>Retry</Button>
@@ -185,7 +185,7 @@ export default function PremiumStudentDashboard() {
       <div className="min-h-screen bg-[var(--alo-page)] p-6 pt-24">
         <div className="max-w-4xl mx-auto space-y-6">
           <Card className="p-12 bg-white border-[var(--alo-border)] rounded-3xl shadow-sm text-center">
-            <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+            <AlertTriangle className="w-12 h-12 text-crm-warning-text mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-[var(--alo-text)]">No student profile is linked to this session</h2>
             <p className="text-sm text-[var(--alo-body)] mt-3 max-w-2xl mx-auto">Sign in to load your existing student record, or start the secure registration process. Your profile and journey will appear here after they are linked to your account.</p>
             <div className="flex flex-wrap justify-center gap-3 mt-6">
@@ -221,7 +221,7 @@ export default function PremiumStudentDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">Next: {nextAction?.text || 'No next action recorded'}</Badge>
+              <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]">Next: {nextAction?.text || 'No next action recorded'}</Badge>
               <Link href="/student/messages"><Button size="sm" variant="outline" className="border-[var(--alo-border)] "><MessageSquare className="w-4 h-4 mr-1" />Messages</Button></Link>
               <Link href="/student/notifications"><Button size="sm" variant="outline" className="border-[var(--alo-border)] ">Notifications</Button></Link>
               <Link href="/student/help"><Button size="sm" variant="outline" className="border-[var(--alo-border)]">Help</Button></Link>
@@ -260,7 +260,7 @@ export default function PremiumStudentDashboard() {
             { label: 'Practice Interview', icon: Users, href: '/student/ai-interview', color: 'bg-white border-[var(--alo-border)] text-[var(--alo-text)]' },
             { label: 'Visa Readiness', icon: ShieldCheck, href: '/student/visa/readiness', color: 'bg-white border-[var(--alo-border)] text-[var(--alo-text)]' },
             { label: 'View Timeline', icon: Clock, href: '/student/timeline', color: 'bg-white border-[var(--alo-border)] text-[var(--alo-text)]' },
-            { label: 'Refer a Friend', icon: Users, href: '/student/referrals', color: 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-600 hover:text-white' },
+            { label: 'Refer a Friend', icon: Users, href: '/student/referrals', color: 'bg-crm-success-bg border-crm-success-border text-crm-success-text hover:bg-[var(--alo-success-dark)] hover:text-white' },
           ].map((action, i) => {
             const Icon = action.icon;
             return (
@@ -313,7 +313,7 @@ export default function PremiumStudentDashboard() {
                       {documents.slice(0,4).map((doc:any)=>(
                         <div key={doc.id || doc.name} className="flex items-center justify-between bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-2.5 text-xs">
                           <span className="font-medium truncate">{doc.name || doc.category || doc.documentType}</span>
-                          <Badge className={`${doc.status==='approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : doc.status==='rejected' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{doc.status}</Badge>
+                          <Badge className={`${doc.status==='approved' ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : doc.status==='rejected' ? 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' : 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border'} text-[11px]`}>{doc.status}</Badge>
                         </div>
                       ))}
                     </div>
@@ -389,10 +389,10 @@ export default function PremiumStudentDashboard() {
                     const isCompleted = timelineEvents.length > 0 || (currentStageIndex >= 0 && i < currentStageIndex);
                     return (
                       <div key={stage} className="relative flex gap-4">
-                        <div className={`hidden md:flex w-8 h-8 rounded-full items-center justify-center text-xs font-bold shrink-0 ${isCompleted ? 'bg-emerald-500 text-white' : isCurrent ? 'bg-[var(--alo-brand)] text-white animate-pulse' : 'bg-white border border-[var(--alo-border)] text-[var(--alo-text-muted)]'}`}>{isCompleted ? '✓' : i+1}</div>
-                        <div className={`flex-1 p-4 rounded-2xl border ${isCurrent ? 'bg-[var(--alo-brand)]/5 border-[var(--alo-brand)]/20' : isCompleted ? 'bg-emerald-50/50 border-emerald-200' : 'bg-[var(--alo-page)] border-[var(--alo-border)]'} `}>
+                        <div className={`hidden md:flex w-8 h-8 rounded-full items-center justify-center text-xs font-bold shrink-0 ${isCompleted ? 'bg-[var(--alo-success)] text-white' : isCurrent ? 'bg-[var(--alo-brand)] text-white animate-pulse' : 'bg-white border border-[var(--alo-border)] text-[var(--alo-text-muted)]'}`}>{isCompleted ? '✓' : i+1}</div>
+                        <div className={`flex-1 p-4 rounded-2xl border ${isCurrent ? 'bg-[var(--alo-brand)]/5 border-[var(--alo-brand)]/20' : isCompleted ? 'bg-crm-success-bg/50 border-crm-success-border' : 'bg-[var(--alo-page)] border-[var(--alo-border)]'} `}>
                           <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-sm">{stage} {isCurrent && <Badge className="bg-[var(--alo-brand)] text-white text-[11px] ml-2">Current</Badge>} {isCompleted && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] ml-2">Completed</Badge>}</h4>
+                            <h4 className="font-bold text-sm">{stage} {isCurrent && <Badge className="bg-[var(--alo-brand)] text-white text-[11px] ml-2">Current</Badge>} {isCompleted && <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px] ml-2">Completed</Badge>}</h4>
                             <span className="text-[11px] text-[var(--alo-text-muted)]">{timelineEvents[0]?.createdAt ? new Date(timelineEvents[0].createdAt).toLocaleString() : 'Pending'}</span>
                           </div>
                           {timelineEvents.length > 0 ? (
@@ -433,7 +433,7 @@ export default function PremiumStudentDashboard() {
                   const isLocked = currentIndex >= 0 && i > currentIndex;
                   return (
                     <div key={stage} className="flex items-center gap-2">
-                      <Badge className={`${isCompleted ? 'bg-emerald-500 text-white' : isCurrent ? 'bg-[var(--alo-brand)] text-white animate-pulse' : isLocked ? 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] border-[var(--alo-border)]' : 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]'} text-[11px] px-3 py-1.5`}>{isCompleted ? '✓' : isLocked ? '🔒' : '•'} {stage} {isCurrent ? '(Current)' : isCompleted ? '(Done)' : isLocked ? '(Locked)' : ''}</Badge>
+                      <Badge className={`${isCompleted ? 'bg-[var(--alo-success)] text-white' : isCurrent ? 'bg-[var(--alo-brand)] text-white animate-pulse' : isLocked ? 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] border-[var(--alo-border)]' : 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]'} text-[11px] px-3 py-1.5`}>{isCompleted ? '✓' : isLocked ? '🔒' : '•'} {stage} {isCurrent ? '(Current)' : isCompleted ? '(Done)' : isLocked ? '(Locked)' : ''}</Badge>
                       {i < FINAL_JOURNEY_INDICATOR.length - 1 && <ArrowRight className="w-3 h-3 text-[var(--alo-placeholder)]" />}
                     </div>
                   );
@@ -456,10 +456,10 @@ export default function PremiumStudentDashboard() {
               <Link href="/student/messages" className="block mt-4"><Button className="w-full h-12">Message ALO</Button></Link>
             </Card>
 
-            <Card className="p-6 bg-emerald-50 border-emerald-200 rounded-2xl">
-              <h4 className="font-bold text-sm mb-3 text-emerald-800 flex items-center gap-2"><Users className="w-4 h-4" />Refer a Friend</h4>
-              <p className="text-xs text-emerald-700">Open your referral center to view referral status and available offers. Referral codes and rewards are shown only when issued by the referral service.</p>
-              <Link href="/student/referrals" className="block mt-4"><Button variant="outline" className="w-full border-emerald-300 text-emerald-800">View My Referrals</Button></Link>
+            <Card className="p-6 bg-crm-success-bg border-crm-success-border rounded-2xl">
+              <h4 className="font-bold text-sm mb-3 text-crm-success-text flex items-center gap-2"><Users className="w-4 h-4" />Refer a Friend</h4>
+              <p className="text-xs text-crm-success-text">Open your referral center to view referral status and available offers. Referral codes and rewards are shown only when issued by the referral service.</p>
+              <Link href="/student/referrals" className="block mt-4"><Button variant="outline" className="w-full border-crm-success-border text-crm-success-text">View My Referrals</Button></Link>
             </Card>
 
           </div>

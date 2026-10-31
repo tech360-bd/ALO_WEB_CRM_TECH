@@ -1076,12 +1076,12 @@ export function PublicContactPage() {
       </Card>
 
       {ALO_CONTACT.hasWhatsApp && (
-        <Card className="p-8 bg-green-50 border-green-200">
+        <Card className="p-8 bg-crm-success-bg border border-crm-success-border">
           <div className="flex items-start gap-4">
             <Phone className="h-8 w-8 text-[var(--alo-whatsapp)] shrink-0" />
             <div className="flex-1">
-              <h3 className="font-bold text-green-900 mb-2">WhatsApp</h3>
-              <p className="text-sm text-green-800 mb-4">Configured public WhatsApp contact: {ALO_CONTACT.whatsappDisplay}</p>
+              <h3 className="font-bold text-crm-success-text mb-2">WhatsApp</h3>
+              <p className="text-sm text-crm-success-text mb-4">Configured public WhatsApp contact: {ALO_CONTACT.whatsappDisplay}</p>
               <Button asChild className="bg-[var(--alo-whatsapp)] text-white hover:brightness-110">
                 <a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer">Chat Now</a>
               </Button>

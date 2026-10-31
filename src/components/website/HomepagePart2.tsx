@@ -201,10 +201,10 @@ const SUBJECT_MAP: Record<string, string[]> = {
 
 function levelColor(level: string): string {
   const l = (level || '').toLowerCase();
-  if (l.includes('phd') || l.includes('doctor')) return 'bg-purple-100 text-purple-700';
+  if (l.includes('phd') || l.includes('doctor')) return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]';
   if (l.includes('master') || l.includes('msc') || l.includes('ma ')) return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]';
-  if (l.includes('bachelor') || l.includes('bsc') || l.includes('ba ')) return 'bg-green-100 text-green-700';
-  if (l.includes('foundation') || l.includes('diploma') || l.includes('certificate')) return 'bg-amber-100 text-amber-700';
+  if (l.includes('bachelor') || l.includes('bsc') || l.includes('ba ')) return 'bg-crm-success-bg text-crm-success-text';
+  if (l.includes('foundation') || l.includes('diploma') || l.includes('certificate')) return 'bg-crm-warning-bg text-crm-warning-text';
   return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
 }
 

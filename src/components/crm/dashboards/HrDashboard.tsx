@@ -77,8 +77,8 @@ export default function HrDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <Icon className="w-5 h-5 text-alo-brand" />
-                  <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
-                    {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-red-600" />}{kpi.change}
+                  <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
+                    {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-crm-danger-text" />}{kpi.change}
                   </span>
                 </div>
                 <p className="text-2xl font-bold text-alo-text">{kpi.value}</p>
@@ -151,7 +151,7 @@ export default function HrDashboard() {
                     </div>
                     <div className="flex-1">
                       <div className="relative h-7 rounded-lg bg-[var(--alo-surface-muted)] overflow-hidden">
-                        <div className="h-full bg-emerald-500 rounded-l-lg" style={{ width: `${(d.present / d.headcount) * 100}%` }} />
+                        <div className="h-full bg-[var(--alo-success)] rounded-l-lg" style={{ width: `${(d.present / d.headcount) * 100}%` }} />
                         <div className="absolute inset-0 flex items-center justify-center text-[11px] font-medium text-alo-text">
                           {d.present} present / {d.onLeave} leave
                         </div>

@@ -151,10 +151,10 @@ const STATUS_CONFIG: Record<ApplicationStatus, StatusConfig> = {
     progressValue: 8,
   },
   'Document Review': {
-    color: 'bg-amber-50 text-amber-700 border-amber-200',
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-200',
-    textColor: 'text-amber-700',
+    color: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+    bgColor: 'bg-crm-warning-bg',
+    borderColor: 'border-crm-warning-border',
+    textColor: 'text-crm-warning-text',
     icon: FileText,
     progressValue: 15,
   },
@@ -175,18 +175,18 @@ const STATUS_CONFIG: Record<ApplicationStatus, StatusConfig> = {
     progressValue: 31,
   },
   'Conditional Offer': {
-    color: 'bg-amber-50 text-amber-700 border-amber-200',
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-200',
-    textColor: 'text-amber-700',
+    color: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+    bgColor: 'bg-crm-warning-bg',
+    borderColor: 'border-crm-warning-border',
+    textColor: 'text-crm-warning-text',
     icon: AlertTriangle,
     progressValue: 46,
   },
   'Unconditional Offer': {
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    bgColor: 'bg-emerald-50',
-    borderColor: 'border-emerald-200',
-    textColor: 'text-emerald-700',
+    color: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
+    bgColor: 'bg-crm-success-bg',
+    borderColor: 'border-crm-success-border',
+    textColor: 'text-crm-success-text',
     icon: CheckCircle2,
     progressValue: 54,
   },
@@ -207,10 +207,10 @@ const STATUS_CONFIG: Record<ApplicationStatus, StatusConfig> = {
     progressValue: 69,
   },
   'Visa File Preparing': {
-    color: 'bg-purple-50 text-purple-700 border-purple-200',
-    bgColor: 'bg-purple-50',
-    borderColor: 'border-purple-200',
-    textColor: 'text-purple-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: FileCheck,
     progressValue: 77,
   },
@@ -223,26 +223,26 @@ const STATUS_CONFIG: Record<ApplicationStatus, StatusConfig> = {
     progressValue: 85,
   },
   'Visa Approved': {
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    bgColor: 'bg-emerald-50',
-    borderColor: 'border-emerald-200',
-    textColor: 'text-emerald-700',
+    color: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
+    bgColor: 'bg-crm-success-bg',
+    borderColor: 'border-crm-success-border',
+    textColor: 'text-crm-success-text',
     icon: ShieldCheck,
     progressValue: 92,
   },
   Enrolled: {
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    bgColor: 'bg-emerald-50',
-    borderColor: 'border-emerald-200',
-    textColor: 'text-emerald-700',
+    color: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
+    bgColor: 'bg-crm-success-bg',
+    borderColor: 'border-crm-success-border',
+    textColor: 'text-crm-success-text',
     icon: PartyPopper,
     progressValue: 100,
   },
   Rejected: {
-    color: 'bg-red-50 text-red-700 border-red-200',
-    bgColor: 'bg-red-50',
-    borderColor: 'border-red-200',
-    textColor: 'text-red-700',
+    color: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+    bgColor: 'bg-crm-danger-bg',
+    borderColor: 'border-crm-danger-border',
+    textColor: 'text-crm-danger-text',
     icon: XCircle,
     progressValue: 0,
   },
@@ -387,9 +387,9 @@ function CountdownBadge({ deadline }: { deadline: string | null }) {
 
   const text = formatCountdown(days);
   let colorClass = 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]';
-  if (days < 0) colorClass = 'bg-red-50 text-red-600 border-red-200';
-  else if (days <= 7) colorClass = 'bg-red-50 text-red-600 border-red-200';
-  else if (days <= 14) colorClass = 'bg-amber-50 text-amber-600 border-amber-200';
+  if (days < 0) colorClass = 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border';
+  else if (days <= 7) colorClass = 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border';
+  else if (days <= 14) colorClass = 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border';
   else colorClass = 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]';
 
   return (
@@ -439,7 +439,7 @@ function StageFlowStepper({ currentStatus }: { currentStatus: ApplicationStatus 
                   <div
                     className={cn(
                       'h-0.5 w-6',
-                      isCompleted ? 'bg-emerald-400' : 'bg-gray-200'
+                      isCompleted ? 'bg-[var(--alo-success)]' : 'bg-[var(--alo-page)]'
                     )}
                   />
                 </div>
@@ -448,7 +448,7 @@ function StageFlowStepper({ currentStatus }: { currentStatus: ApplicationStatus 
                 <div
                   className={cn(
                     'flex items-center justify-center rounded-full border-2 size-8 transition-all',
-                    isCompleted && 'bg-emerald-500 border-emerald-500',
+                    isCompleted && 'bg-[var(--alo-success)] border-crm-success-border',
                     isCurrent && !isCompleted && cn('border-2', config.borderColor, config.bgColor),
                     !isCompleted && !isCurrent && 'border-[var(--alo-border)] bg-[var(--alo-page)]'
                   )}
@@ -464,7 +464,7 @@ function StageFlowStepper({ currentStatus }: { currentStatus: ApplicationStatus 
                 <span
                   className={cn(
                     'text-[11px] mt-1.5 text-center leading-tight font-medium max-w-[72px] truncate',
-                    isCompleted && 'text-emerald-600',
+                    isCompleted && 'text-crm-success-text',
                     isCurrent && config.textColor,
                     !isCompleted && !isCurrent && 'text-[var(--alo-text-muted)]'
                   )}
@@ -536,14 +536,14 @@ function ApplicationCard({
           </div>
           <Progress
             value={progress}
-            className={cn('h-2', progress === 100 && '[&>div]:bg-emerald-500')}
+            className={cn('h-2', progress === 100 && '[&>div]:bg-[var(--alo-success)]')}
           />
         </div>
 
         {/* Next Action */}
-        <div className="flex items-start gap-2 rounded-lg bg-amber-50/60 border border-amber-100 px-3 py-2">
-          <AlertTriangle className="size-4 text-amber-500 shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-800 leading-relaxed">
+        <div className="flex items-start gap-2 rounded-lg bg-crm-warning-bg/60 border border-crm-warning-border px-3 py-2">
+          <AlertTriangle className="size-4 text-crm-warning-text shrink-0 mt-0.5" />
+          <p className="text-xs text-crm-warning-text leading-relaxed">
             <span className="font-semibold">Next action: </span>
             {application.nextAction}
           </p>
@@ -689,10 +689,10 @@ function ApplicationDetailDialog({
 
   const docStatusColor = (s: string) => {
     switch (s) {
-      case 'Approved': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
+      case 'Approved': return 'text-crm-success-text bg-crm-success-bg border-crm-success-border';
       case 'Pending': return 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] border-[var(--alo-border)]';
-      case 'Rejected': return 'text-red-600 bg-red-50 border-red-200';
-      case 'Missing': return 'text-amber-600 bg-amber-50 border-amber-200';
+      case 'Rejected': return 'text-crm-danger-text bg-crm-danger-bg border-crm-danger-border';
+      case 'Missing': return 'text-crm-warning-text bg-crm-warning-bg border-crm-warning-border';
       default: return 'text-[var(--alo-body)] bg-[var(--alo-page)] border-[var(--alo-border)]';
     }
   };
@@ -754,11 +754,11 @@ function ApplicationDetailDialog({
             {/* Next Actions */}
             <div>
               <h4 className="text-sm font-semibold text-[var(--alo-text)] mb-2">Next Actions</h4>
-              <div className="flex items-start gap-2.5 rounded-lg bg-amber-50/60 border border-amber-100 px-4 py-3">
-                <AlertTriangle className="size-4 text-amber-500 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5 rounded-lg bg-crm-warning-bg/60 border border-crm-warning-border px-4 py-3">
+                <AlertTriangle className="size-4 text-crm-warning-text shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-amber-800 font-medium">Action Required</p>
-                  <p className="text-sm text-amber-700/80 mt-0.5">{application.nextAction}</p>
+                  <p className="text-sm text-crm-warning-text font-medium">Action Required</p>
+                  <p className="text-sm text-crm-warning-text/80 mt-0.5">{application.nextAction}</p>
                 </div>
               </div>
             </div>
@@ -800,7 +800,7 @@ function ApplicationDetailDialog({
                         'absolute -left-[31px] top-1 flex items-center justify-center size-7 rounded-full border-2 bg-white',
                         isLast
                           ? 'border-[var(--alo-cta-hover)] text-[var(--alo-cta-hover)]'
-                          : 'border-emerald-400 text-emerald-500'
+                          : 'border-[var(--alo-success)] text-crm-success-text'
                       )}
                     >
                       <Icon className="size-3.5" />
@@ -1191,10 +1191,10 @@ export default function StudentApplications() {
         /* A failed load must not render as "Start your first application" (s91).
            Telling a student they have no applications when the request failed
            could stop them chasing a real deadline. */
-        <Card className="border-2 border-amber-200">
+        <Card className="border-2 border-crm-warning-border">
           <CardContent className="flex flex-col items-center justify-center py-16 px-6 text-center">
-            <div className="flex items-center justify-center size-20 rounded-full bg-amber-50 mb-6">
-              <AlertTriangle className="size-10 text-amber-600" />
+            <div className="flex items-center justify-center size-20 rounded-full bg-crm-warning-bg mb-6">
+              <AlertTriangle className="size-10 text-crm-warning-text" />
             </div>
             <h3 className="text-xl font-semibold text-[var(--alo-text)] mb-2">
               Applications could not be loaded

@@ -101,9 +101,9 @@ const DESTINATION_FLAGS: Record<Destination, string> = {
 
 const INTENT_COLORS: Record<Intent, string> = {
   Informational: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
-  Commercial: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
-  Transactional: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
-  Navigational: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+  Commercial: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] dark:bg-[var(--alo-brand)]/30 dark:text-[var(--alo-brand)]',
+  Transactional: 'bg-crm-success-bg text-crm-success-text dark:bg-[var(--alo-success)]/10 dark:text-crm-success-text',
+  Navigational: 'bg-crm-warning-bg text-crm-warning-text dark:bg-[var(--alo-warning)]/30 dark:text-crm-warning-text',
 };
 
 const ACTION_STATUS_VARIANTS: Record<ActionStatus, 'default' | 'secondary' | 'outline' | 'destructive'> = {
@@ -232,27 +232,27 @@ const CANNIBALIZATION_ALERTS: CannibalizationAlert[] = [
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function getPositionColor(position: number): string {
-  if (position <= 3) return 'text-emerald-600 font-bold';
-  if (position <= 10) return 'text-amber-600 font-semibold';
+  if (position <= 3) return 'text-crm-success-text font-bold';
+  if (position <= 10) return 'text-crm-warning-text font-semibold';
   if (position <= 20) return 'text-[var(--alo-cta)] font-medium';
-  return 'text-red-500 font-medium';
+  return 'text-crm-danger-text font-medium';
 }
 
 function getPositionBg(position: number): string {
-  if (position <= 3) return 'bg-emerald-100 dark:bg-emerald-900/30';
-  if (position <= 10) return 'bg-amber-100 dark:bg-amber-900/30';
+  if (position <= 3) return 'bg-crm-success-bg dark:bg-[var(--alo-success)]/10';
+  if (position <= 10) return 'bg-crm-warning-bg dark:bg-[var(--alo-warning)]/30';
   if (position <= 20) return 'bg-[var(--alo-cta-soft)] dark:bg-orange-900/30';
-  return 'bg-red-100 dark:bg-red-900/30';
+  return 'bg-crm-danger-bg dark:bg-[var(--alo-error)]/30';
 }
 
 function ChangeIndicator({ change }: { change: number }) {
-  if (change > 0) return <span className="flex items-center gap-0.5 text-emerald-600 font-medium"><TrendingUp className="size-3.5" />+{change}</span>;
-  if (change < 0) return <span className="flex items-center gap-0.5 text-red-500 font-medium"><TrendingDown className="size-3.5" />{change}</span>;
+  if (change > 0) return <span className="flex items-center gap-0.5 text-crm-success-text font-medium"><TrendingUp className="size-3.5" />+{change}</span>;
+  if (change < 0) return <span className="flex items-center gap-0.5 text-crm-danger-text font-medium"><TrendingDown className="size-3.5" />{change}</span>;
   return <span className="flex items-center gap-0.5 text-muted-foreground"><Minus className="size-3.5" />0</span>;
 }
 
 function OpportunityBar({ score }: { score: number }) {
-  const barColor = score >= 80 ? 'bg-emerald-500' : score >= 60 ? 'bg-amber-500' : 'bg-red-400';
+  const barColor = score >= 80 ? 'bg-[var(--alo-success)]' : score >= 60 ? 'bg-[var(--alo-warning)]' : 'bg-[var(--alo-error)]';
   return (
     <div className="flex items-center gap-2">
       <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
@@ -265,8 +265,8 @@ function OpportunityBar({ score }: { score: number }) {
 
 function SeverityBadge({ severity }: { severity: 'High' | 'Medium' | 'Low' }) {
   const variants: Record<string, string> = {
-    High: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
-    Medium: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+    High: 'bg-crm-danger-bg text-crm-danger-text dark:bg-[var(--alo-error)]/30 dark:text-crm-danger-text',
+    Medium: 'bg-crm-warning-bg text-crm-warning-text dark:bg-[var(--alo-warning)]/30 dark:text-crm-warning-text',
     Low: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
   };
   return <Badge variant="outline" className={variants[severity]}>{severity}</Badge>;
@@ -402,8 +402,8 @@ function LegacyUnverifiedCrmSeoKeywordTracker() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="flex size-12 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/30">
-              <TrendingUp className="size-6 text-emerald-600" />
+            <div className="flex size-12 items-center justify-center rounded-xl bg-crm-success-bg dark:bg-[var(--alo-success)]/10">
+              <TrendingUp className="size-6 text-crm-success-text" />
             </div>
             <div>
               <p className="text-2xl font-bold">34</p>
@@ -413,8 +413,8 @@ function LegacyUnverifiedCrmSeoKeywordTracker() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="flex size-12 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30">
-              <Sparkles className="size-6 text-amber-600" />
+            <div className="flex size-12 items-center justify-center rounded-xl bg-crm-warning-bg dark:bg-[var(--alo-warning)]/30">
+              <Sparkles className="size-6 text-crm-warning-text" />
             </div>
             <div>
               <p className="text-2xl font-bold">89</p>
@@ -502,7 +502,7 @@ function LegacyUnverifiedCrmSeoKeywordTracker() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Sparkles className="size-5 text-amber-500" />
+                <Sparkles className="size-5 text-crm-warning-text" />
                 Priority Scoring Model
               </CardTitle>
               <CardDescription>How the Opportunity Score (0-100) is calculated for each keyword</CardDescription>
@@ -511,11 +511,11 @@ function LegacyUnverifiedCrmSeoKeywordTracker() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
                   { label: 'Search Console Opportunity', weight: 25, color: 'bg-primary', desc: 'Gap between current rank and impression potential' },
-                  { label: 'Verified Demand', weight: 20, color: 'bg-emerald-500', desc: 'Search volume + trend consistency + seasonal spikes' },
-                  { label: 'CRM Conversion Quality', weight: 20, color: 'bg-violet-500', desc: 'Lead-to-enrollment ratio from this keyword cohort' },
-                  { label: 'Business Value', weight: 15, color: 'bg-amber-500', desc: 'Average revenue per conversion for this destination' },
+                  { label: 'Verified Demand', weight: 20, color: 'bg-[var(--alo-success)]', desc: 'Search volume + trend consistency + seasonal spikes' },
+                  { label: 'CRM Conversion Quality', weight: 20, color: 'bg-[var(--alo-brand-pale)]0', desc: 'Lead-to-enrollment ratio from this keyword cohort' },
+                  { label: 'Business Value', weight: 15, color: 'bg-[var(--alo-warning)]', desc: 'Average revenue per conversion for this destination' },
                   { label: 'SERP Feasibility', weight: 10, color: 'bg-sky-500', desc: 'Competition analysis: DA gap, content gaps in top 10' },
-                  { label: 'Content Freshness Urgency', weight: 10, color: 'bg-rose-500', desc: 'Time since last content update vs SERP freshness signals' },
+                  { label: 'Content Freshness Urgency', weight: 10, color: 'bg-crm-warning-bg0', desc: 'Time since last content update vs SERP freshness signals' },
                 ].map((factor) => (
                   <div key={factor.label} className="flex items-start gap-3 rounded-lg border p-3">
                     <div className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md ${factor.color} text-white text-xs font-bold`}>
@@ -563,7 +563,7 @@ function LegacyUnverifiedCrmSeoKeywordTracker() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <TriangleAlert className="size-5 text-amber-500" />
+                <TriangleAlert className="size-5 text-crm-warning-text" />
                 Keyword Cannibalization Alerts
               </CardTitle>
               <CardDescription>

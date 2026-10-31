@@ -158,26 +158,26 @@ type AccessControlData = {
 
 const PROFILE_STATUS_COLORS: Record<string, string> = {
   INCOMPLETE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  SUBMITTED: "bg-amber-100 text-amber-700",
+  SUBMITTED: "bg-crm-warning-bg text-crm-warning-text",
   UNDER_REVIEW: "bg-sky-100 text-sky-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  CORRECTION_REQUIRED: "bg-rose-100 text-rose-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  CORRECTION_REQUIRED: "bg-crm-warning-bg text-crm-warning-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
-  TERMINATED: "bg-slate-200 text-[var(--alo-body)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
-  TERMINATED: "bg-slate-200 text-[var(--alo-body)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const QUOTA_REQUEST_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const QUOTA_TYPE_LABELS: Record<string, string> = {
@@ -189,9 +189,9 @@ const QUOTA_TYPE_LABELS: Record<string, string> = {
 
 const MODULE_COLORS: Record<string, string> = {
   Employee: "bg-sky-100 text-sky-700 border-sky-200",
-  Partner: "bg-violet-100 text-violet-700 border-violet-200",
+  Partner: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
   Marketing: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border-[var(--alo-cta)]/30",
-  Communication: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  Communication: "bg-crm-success-bg text-crm-success-text border-crm-success-border",
   System: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)] border-[var(--alo-brand)]/30",
 };
 
@@ -931,14 +931,14 @@ export function AccessControlCenter() {
                                   {fd.key}
                                 </code>
                                 {fd.requiresApproval && (
-                                  <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-700">
+                                  <Badge variant="outline" className="border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">
                                     <Icon name="ShieldAlert" className="mr-1 size-3" />
                                     Approval req.
                                   </Badge>
                                 )}
                                 {enabled && (
-                                  <Badge variant="outline" className="border-emerald-300 bg-emerald-50 text-emerald-700">
-                                    <span className="mr-1 inline-block size-1.5 rounded-full bg-emerald-500" />
+                                  <Badge variant="outline" className="border-crm-success-border bg-crm-success-bg text-crm-success-text">
+                                    <span className="mr-1 inline-block size-1.5 rounded-full bg-[var(--alo-success)]" />
                                     Enabled
                                   </Badge>
                                 )}
@@ -1071,7 +1071,7 @@ export function AccessControlCenter() {
                               <div className="flex justify-end gap-1.5">
                                 <Button
  size="sm"
- className=" bg-emerald-600 text-white hover:bg-emerald-600/90"
+ className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90"
  onClick={() => {
                                     setReviewReq(req);
                                     setReviewDecision("APPROVED");
@@ -1163,7 +1163,7 @@ export function AccessControlCenter() {
                         </div>
                         <div className="mt-1.5 flex items-center justify-between text-[11px] text-muted-foreground">
                           <span className="font-mono">{u.used} / {u.limit} used</span>
-                          <span className="font-semibold text-emerald-600">{u.remaining} left</span>
+                          <span className="font-semibold text-crm-success-text">{u.remaining} left</span>
                         </div>
                       </div>
                     );
@@ -1347,8 +1347,8 @@ export function AccessControlCenter() {
                     <Input id="officeId" name="officeId" placeholder="Optional office id" className="mt-1 h-11" />
                   </div>
                 </div>
-                <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5 text-xs text-foreground/80">
-                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+                <div className="mt-4 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg/60 px-3 py-2.5 text-xs text-foreground/80">
+                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
                   <p>
                     Employee cannot login until password is created via activation link. Link expires
                     in 7 days. After activation, profile status moves to <strong>INCOMPLETE</strong> and
@@ -1436,8 +1436,8 @@ export function AccessControlCenter() {
  className={cn(
  " text-white",
  reviewDecision === "APPROVED"
- ? "bg-emerald-600 hover:bg-emerald-600/90"
- : "bg-rose-600 hover:bg-rose-600/90"
+ ? "bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)]/90"
+ : "bg-[var(--alo-error)] hover:bg-[var(--alo-error)]/90"
  )}
  disabled={reviewSaving}
  onClick={handleReviewQuota}
@@ -1499,7 +1499,7 @@ function PackageCard({ pkg, onEdit }: { pkg: PartnerPackage; onEdit: () => void 
             variant="outline"
             className={cn(
               pkg.autoPublishAllowed
-                ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                ? "border-crm-success-border bg-crm-success-bg text-crm-success-text"
                 : "border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]"
             )}
           >
@@ -1510,8 +1510,8 @@ function PackageCard({ pkg, onEdit }: { pkg: PartnerPackage; onEdit: () => void 
             variant="outline"
             className={cn(
               pkg.requiresAloApproval
-                ? "border-amber-300 bg-amber-50 text-amber-700"
-                : "border-emerald-300 bg-emerald-50 text-emerald-700"
+                ? "border-crm-warning-border bg-crm-warning-bg text-crm-warning-text"
+                : "border-crm-success-border bg-crm-success-bg text-crm-success-text"
             )}
           >
             <Icon name="ShieldAlert" className="mr-1 size-3" />
@@ -1571,13 +1571,13 @@ function CreateEmployeeSuccess({
   return (
     <div className="flex max-h-[70vh] flex-col overflow-hidden">
       <ScrollArea className="flex-1 px-6 py-4">
-        <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/60 p-4">
+        <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/60 p-4">
           <div className="flex items-center gap-2">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-success-dark)] text-white">
               <Icon name="CheckCircle" className="size-5" />
             </div>
             <div>
-              <p className="font-semibold text-emerald-700">Employee account created</p>
+              <p className="font-semibold text-crm-success-text">Employee account created</p>
               <p className="text-xs text-foreground/80">
                 {result.employeeCode} · {result.companyEmail}
               </p>
@@ -1613,8 +1613,8 @@ function CreateEmployeeSuccess({
           </div>
         </div>
 
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5 text-xs text-foreground/80">
-          <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg/60 px-3 py-2.5 text-xs text-foreground/80">
+          <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
           <p>{result.message}</p>
         </div>
       </ScrollArea>

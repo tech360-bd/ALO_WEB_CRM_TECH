@@ -162,7 +162,7 @@ export default function SupervisorsPanel() {
                 </div>
                 <p className="mt-2 text-xs text-[var(--alo-body)]">{match.rationale}</p>
                 {match.mismatches.length > 0 && (
-                  <p className="mt-1 text-[11px] text-amber-700">Mismatches: {match.mismatches.join('; ')}</p>
+                  <p className="mt-1 text-[11px] text-crm-warning-text">Mismatches: {match.mismatches.join('; ')}</p>
                 )}
                 {match.missingEvidence.length > 0 && (
                   <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">
@@ -178,7 +178,7 @@ export default function SupervisorsPanel() {
           </ul>
         )}
         {matches.data?.note && <p className="mt-3 text-[11px] text-[var(--alo-text-muted)]">{matches.data.note}</p>}
-        {actionError && <p className="mt-3 text-xs text-red-700">{actionError}</p>}
+        {actionError && <p className="mt-3 text-xs text-crm-danger-text">{actionError}</p>}
       </Card>
 
       <Card

@@ -26,14 +26,14 @@ import { useToast } from "@/hooks/use-toast";
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   NORMAL: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-  HIGH: "bg-amber-100 text-amber-700",
-  URGENT: "bg-rose-100 text-rose-700",
+  HIGH: "bg-crm-warning-bg text-crm-warning-text",
+  URGENT: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   IN_PROGRESS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
   CANCELLED: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
 
@@ -316,7 +316,7 @@ export function CrmTasks() {
                   <Card
                     key={t.id}
                     className={`rounded-2xl border bg-white ${
-                      isOverdue ? "border-rose-200" : "border-[var(--alo-brand-border)]"
+                      isOverdue ? "border-crm-warning-border" : "border-[var(--alo-brand-border)]"
                     }`}
                   >
                     <CardContent className="p-5">
@@ -338,7 +338,7 @@ export function CrmTasks() {
                           </Badge>
                         )}
                         {t.dueDate && (
-                          <span className={isOverdue ? "font-semibold text-rose-600" : ""}>
+                          <span className={isOverdue ? "font-semibold text-crm-warning-text" : ""}>
                             <Icon name="CalendarClock" className="mr-1 inline size-3" />
                             {new Date(t.dueDate).toLocaleDateString("en-GB", {
                               day: "2-digit",
@@ -365,7 +365,7 @@ export function CrmTasks() {
                             )}
                             <Button
  size="sm"
- className="h-7 bg-emerald-600 px-2 text-white hover:bg-emerald-700"
+ className="h-7 bg-[var(--alo-success-dark)] px-2 text-white hover:bg-[var(--alo-success-dark)]"
  onClick={() => handleStatus(t.id, "COMPLETED")}
                             >
                               <Icon name="Check" className="size-3" />

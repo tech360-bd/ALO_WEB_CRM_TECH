@@ -30,13 +30,13 @@ function TaskStatusBadge({ status }: { status: string }) {
 
 function TypeBadge({ type }: { type: string }) {
   const colors: Record<string, string> = {
-    'Course Match': 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
-    'SOP Draft': 'bg-purple-100 text-purple-700',
-    'CV Draft': 'bg-emerald-100 text-emerald-700',
-    'Doc Check': 'bg-amber-100 text-amber-700',
-    'Visa Risk': 'bg-red-100 text-red-700',
+    'Course Match': 'bg-[var(--alo-brand-pale)] border border-[var(--alo-brand-border)]/50 text-[var(--alo-brand)]',
+    'SOP Draft': 'bg-[var(--alo-brand-pale)] border border-[var(--alo-brand-border)]/50 text-[var(--alo-brand)]',
+    'CV Draft': 'bg-[var(--alo-info-bg)] border border-[var(--alo-info-border)]/50 text-[var(--alo-info-text)]',
+    'Doc Check': 'bg-[var(--alo-warning-soft)] border border-[var(--alo-warning)]/30 text-[#92400E]',
+    'Visa Risk': 'bg-[var(--alo-error-soft)] border border-[var(--alo-error)]/30 text-[var(--alo-error)]',
   };
-  return <span className={`text-[11px] px-1.5 py-0.5 rounded font-medium ${colors[type] || 'bg-[var(--alo-surface-muted)]'}`}>{type}</span>;
+  return <span className={`text-[11px] px-1.5 py-0.5 rounded font-medium ${colors[type] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]'}`}>{type}</span>;
 }
 
 export default function AiCommandDashboard() {
@@ -95,8 +95,8 @@ export default function AiCommandDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <kpi.icon className="w-5 h-5 text-alo-brand" />
-                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-red-600" />}{kpi.change}
+              <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
+                {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-crm-danger-text" />}{kpi.change}
                 </span>
               </div>
               <p className="text-2xl font-bold text-alo-text">{kpi.value}</p>
@@ -121,7 +121,7 @@ export default function AiCommandDashboard() {
                 <m.icon className="w-5 h-5 text-alo-brand mx-auto mb-1.5" />
                 <p className="text-lg font-bold text-alo-text">{m.value}</p>
                 <p className="text-[11px] text-alo-text-muted">{m.metric}</p>
-                <span className="text-[11px] text-emerald-600 font-medium">{m.trend}</span>
+                <span className="text-[11px] text-crm-success-text font-medium">{m.trend}</span>
               </div>
             ))}
           </div>
@@ -177,7 +177,7 @@ export default function AiCommandDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" /> Pending Approvals
+                  <AlertTriangle className="w-4 h-4 text-[var(--alo-warning)]" /> Pending Approvals
                 </CardTitle>
                 <Badge variant="warning" className="text-[11px]">{pendingApprovals.length}</Badge>
               </div>
@@ -185,7 +185,7 @@ export default function AiCommandDashboard() {
             <CardContent>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {pendingApprovals.map((p) => (
-                  <div key={p.task} className={`p-2.5 rounded-lg border ${p.priority === 'high' ? 'border-amber-200 bg-amber-50' : 'border-alo-border'}`}>
+                  <div key={p.task} className={`p-2.5 rounded-lg border ${p.priority === 'high' ? 'border-crm-warning-border bg-crm-warning-bg' : 'border-alo-border'}`}>
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-xs font-medium text-alo-text truncate">{p.task}</p>
                       <Badge variant={p.priority === 'high' ? 'danger' : p.priority === 'medium' ? 'warning' : 'muted'} className="text-[11px] shrink-0 ml-1">{p.priority}</Badge>
@@ -193,8 +193,8 @@ export default function AiCommandDashboard() {
                     <div className="flex items-center justify-between mt-1.5">
                       <TypeBadge type={p.type} />
                       <div className="flex gap-1">
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[11px] h-6 px-2">Approve</Button>
-                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[11px] h-6 px-2">Reject</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="text-[11px] px-3">Approve</Button>
+                        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[11px] px-3">Reject</Button>
                       </div>
                     </div>
                   </div>
@@ -208,14 +208,14 @@ export default function AiCommandDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <Bot className="w-4 h-4 text-purple-500" /> AI Audit Logs
+                  <Bot className="w-4 h-4 text-[var(--alo-brand)]" /> AI Audit Logs
                 </CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-56 overflow-y-auto">
                 {auditLogs.map((l, i) => (
-                  <div key={i} className="p-2.5 rounded-lg border border-purple-200 bg-purple-50">
+                  <div key={i} className="p-2.5 rounded-lg border border-[var(--alo-border)] bg-white">
                     <p className="text-xs text-alo-text">{l.action}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge variant="muted" className="text-[11px]">{l.model}</Badge>

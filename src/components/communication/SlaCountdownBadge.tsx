@@ -47,10 +47,10 @@ const STATE_WORDS: Record<BadgeState, string> = {
 };
 
 const STATE_CLASSES: Record<BadgeState, string> = {
-  normal: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-  warning: 'bg-amber-50 text-amber-800 border border-amber-300',
-  overdue: 'bg-red-100 text-red-700 border border-red-400',
-  critical: 'bg-red-600 text-white border border-red-700 font-extrabold',
+  normal: 'bg-crm-success-bg text-crm-success-text border border-crm-success-border',
+  warning: 'bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border',
+  overdue: 'bg-crm-danger-bg text-crm-danger-text border border-crm-danger-border',
+  critical: 'bg-[var(--alo-error)] text-white border border-crm-danger-border font-extrabold',
   responded: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border border-[var(--alo-border-strong)]',
   none: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
 };

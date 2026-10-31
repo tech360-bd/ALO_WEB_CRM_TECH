@@ -379,7 +379,7 @@ function RepeatableCard({
  type="button"
  variant="ghost"
  size="sm"
- className="h-7 px-2 text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
+ className="h-7 px-2 text-crm-danger-text hover:bg-crm-danger-bg hover:text-crm-danger-text disabled:opacity-30"
  disabled={!canRemove}
  onClick={onRemove}
  >
@@ -827,7 +827,7 @@ export function StudentProfileForm() {
                     <div
                       className={cn(
                         "flex size-9 shrink-0 items-center justify-center rounded-lg font-bold",
-                        isCurrent ? "bg-white/20 text-white" : isComplete ? "bg-emerald-500 text-white" : isPast ? "bg-[var(--alo-brand)] text-white" : "bg-muted text-muted-foreground"
+                        isCurrent ? "bg-white/20 text-white" : isComplete ? "bg-[var(--alo-success)] text-white" : isPast ? "bg-[var(--alo-brand)] text-white" : "bg-muted text-muted-foreground"
                       )}
                     >
                       {isComplete ? <Icon name="Check" className="size-4" /> : <Icon name={s.icon as any} className="size-4" />}
@@ -1317,7 +1317,7 @@ export function StudentProfileForm() {
                   </FormGrid>
                 </div>
               ) : (
-                <div className="mt-4 flex items-center gap-3 rounded-lg bg-amber-50 p-3 text-amber-800">
+                <div className="mt-4 flex items-center gap-3 rounded-lg bg-crm-warning-bg p-3 text-crm-warning-text">
                   <Icon name="TriangleAlert" className="size-5 shrink-0" />
                   <p className="text-xs">Apply for a passport as soon as possible — most universities require a copy during application.</p>
                 </div>
@@ -1580,9 +1580,9 @@ export function StudentProfileForm() {
                     { value: "yes", label: "Yes, refused before", icon: "XCircle" },
                     { value: "no", label: "No refusals", icon: "CheckCircle2" },
                   ].map((opt) => (
-                    <label key={opt.value} className={cn("flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-all", (form.previousRefusal ? "yes" : "no") === opt.value ? (opt.value === "yes" ? "border-red-400 bg-red-50" : "border-emerald-400 bg-emerald-50") : "border-[var(--alo-brand)]/15 hover:border-[var(--alo-brand)]/40")}>
+                    <label key={opt.value} className={cn("flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-all", (form.previousRefusal ? "yes" : "no") === opt.value ? (opt.value === "yes" ? "border-crm-danger-border bg-crm-danger-bg" : "border-[var(--alo-success)] bg-crm-success-bg") : "border-[var(--alo-brand)]/15 hover:border-[var(--alo-brand)]/40")}>
                       <RadioGroupItem value={opt.value} id={`ref-${opt.value}`} />
-                      <Icon name={opt.icon as any} className={cn("size-4", opt.value === "yes" ? "text-red-500" : "text-emerald-500")} />
+                      <Icon name={opt.icon as any} className={cn("size-4", opt.value === "yes" ? "text-crm-danger-text" : "text-crm-success-text")} />
                       <span className="text-xs font-semibold">{opt.label}</span>
                     </label>
                   ))}
@@ -1753,7 +1753,7 @@ export function StudentProfileForm() {
                   key={s.id}
                   className={cn(
                     "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold",
-                    stepPct(s.id) === 100 ? "bg-emerald-100 text-emerald-700" : stepPct(s.id) > 0 ? "bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]" : "bg-muted text-muted-foreground"
+                    stepPct(s.id) === 100 ? "bg-crm-success-bg text-crm-success-text" : stepPct(s.id) > 0 ? "bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]" : "bg-muted text-muted-foreground"
                   )}
                 >
                   <span className="size-1.5 rounded-full bg-current" />

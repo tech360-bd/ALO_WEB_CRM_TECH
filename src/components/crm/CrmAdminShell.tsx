@@ -283,7 +283,7 @@ function SidebarContent() {
       <div className="p-3">
         <Button
  variant="ghost"
- className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 cursor-pointer"
+ className="w-full justify-start text-alo-text-secondary hover:text-[var(--alo-error)] hover:bg-[var(--alo-error-soft)] cursor-pointer"
  onClick={logout}
  >
           <LogOut className="w-4 h-4 mr-2" />

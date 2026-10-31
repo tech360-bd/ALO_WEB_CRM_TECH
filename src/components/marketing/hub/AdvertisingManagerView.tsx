@@ -35,7 +35,7 @@ export default function AdvertisingManagerView() {
           <h2 className="text-2xl font-bold text-[var(--alo-text)] flex items-center gap-2"><Megaphone className="w-6 h-6 text-[var(--alo-cta)]" />Advertising Manager</h2>
           <p className="text-sm text-[var(--alo-text-muted)]">Meta Ads & Google Ads - planning, audience research, ad copy, creative variations, budget allocation - server-side budget enforcement. AI proposes, human approves spend.</p>
         </div>
-        <Badge className="bg-amber-100 text-amber-800 border-amber-200"><ShieldCheck className="w-3 h-3 mr-1" />Budget Guard: Human Approval Required</Badge>
+        <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border"><ShieldCheck className="w-3 h-3 mr-1" />Budget Guard: Human Approval Required</Badge>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-6">
@@ -48,7 +48,7 @@ export default function AdvertisingManagerView() {
                 <div><label className="text-xs font-semibold">Budget (BDT)</label><Input type="number" value={budget} onChange={e=>setBudget(parseInt(e.target.value)||0)} className="mt-1 h-9" /></div>
                 <div className="flex items-end"><Button onClick={handlePropose} className="w-full bg-[var(--alo-cta)] text-white "><BarChart3 className="w-4 h-4 mr-2" />Propose Structure</Button></div>
               </div>
-              {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg p-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" />{error}</p>}
+              {error && <p className="text-xs text-crm-danger-text bg-crm-danger-bg border border-crm-danger-border rounded-lg p-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" />{error}</p>}
               {proposal && <pre className="text-xs bg-[var(--alo-page)] border rounded-xl p-3 whitespace-pre-wrap max-h-[300px] overflow-auto">{proposal}</pre>}
               <p className="text-[11px] text-[var(--alo-text-muted)]">AI may prepare proposals & recommend budgets. AI must NOT independently spend, increase budgets, purchase subscriptions, or modify financial permissions. Server enforces <code>budget ≤ approvedBudget</code> per MarketingCampaign.budget + audit (approver, timestamp). Requires explicit human approval for financial commitments.</p>
             </CardContent>
@@ -70,10 +70,10 @@ export default function AdvertisingManagerView() {
         </div>
         <div className="lg:col-span-5 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><DollarSign className="w-4 h-4 text-emerald-600" />Performance & Cost</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><DollarSign className="w-4 h-4 text-crm-success-text" />Performance & Cost</CardTitle></CardHeader>
             <CardContent className="space-y-3 text-xs">
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Cost per Lead</p><p className="text-lg font-bold text-emerald-600 mt-1">৳ -</p><p className="text-[11px] text-[var(--alo-text-muted)]">Real: MarketingCampaignSource.cost / leads</p></div>
+                <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Cost per Lead</p><p className="text-lg font-bold text-crm-success-text mt-1">৳ -</p><p className="text-[11px] text-[var(--alo-text-muted)]">Real: MarketingCampaignSource.cost / leads</p></div>
                 <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Conversion Rate</p><p className="text-lg font-bold text-[var(--alo-brand)] mt-1">- %</p><p className="text-[11px] text-[var(--alo-text-muted)]">Leads → Qualified → Converted</p></div>
                 <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Spend vs Approved</p><p className="text-xs text-[var(--alo-body)] mt-1">Enforced server-side: createAuditLog {`budget, approver, timestamp`}. Duplicate prevention: idempotency key.</p></div>
                 <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Optimization</p><p className="text-xs text-[var(--alo-body)] mt-1 flex items-center gap-1"><TrendingUp className="w-3 h-3 text-[var(--alo-cta)]" />AI recommends pausing low-CTR creatives.</p></div>
@@ -81,10 +81,10 @@ export default function AdvertisingManagerView() {
               <p className="text-[11px] text-[var(--alo-text-muted)]">Data source: MarketingCampaignSource + MarketingLead.attribution. Reporting period selectable. Estimates clearly labeled vs actuals.</p>
             </CardContent>
           </Card>
-          <Card className="bg-amber-50 border-amber-200">
+          <Card className="bg-crm-warning-bg border-crm-warning-border">
             <CardContent className="p-4 text-xs">
-              <p className="font-bold text-amber-800 flex items-center gap-2"><ShieldCheck className="w-4 h-4" />Financial Authorization Rule</p>
-              <p className="text-amber-700 mt-2">AI proposes; human approves. Backend rejects `POST /api/marketing/campaigns` if `budget &gt; approvedBudget` without `MarketingApproval.status=approved`. Audit: MarketingAuditLog {'{action: campaign.budget.approve}'}.</p>
+              <p className="font-bold text-crm-warning-text flex items-center gap-2"><ShieldCheck className="w-4 h-4" />Financial Authorization Rule</p>
+              <p className="text-crm-warning-text mt-2">AI proposes; human approves. Backend rejects `POST /api/marketing/campaigns` if `budget &gt; approvedBudget` without `MarketingApproval.status=approved`. Audit: MarketingAuditLog {'{action: campaign.budget.approve}'}.</p>
             </CardContent>
           </Card>
         </div>

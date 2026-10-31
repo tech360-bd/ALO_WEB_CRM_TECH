@@ -91,7 +91,7 @@ export default function UniversitiesListing({
           <div className="flex gap-2 mt-4">
 
 
-            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">{total ? `${total} Universities` : 'Live Directory'}</Badge>
+            <Badge variant="success" className="text-[11px]">{total ? `${total} Universities` : 'Live Directory'}</Badge>
           </div>
         </div>
 
@@ -103,14 +103,14 @@ export default function UniversitiesListing({
                 placeholder="Search university, city, or country…"
                 value={search}
                 onChange={event => changeSearch(event.target.value)}
-                className="pl-9 bg-white border-[var(--alo-border)] h-11"
+                className="pl-9 bg-white border-[var(--alo-border)] h-12"
                 aria-label="Search universities"
               />
             </div>
             <select
               value={countryFilter}
               onChange={event => changeCountry(event.target.value)}
-              className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-11"
+              className="bg-white border border-[var(--alo-border)] rounded-xl px-3 py-2.5 text-sm h-12"
               aria-label="Filter universities by country"
             >
               <option value="">All countries</option>
@@ -124,10 +124,10 @@ export default function UniversitiesListing({
             {[...Array(6)].map((_, index) => <div key={index} className="h-48 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl animate-pulse" />)}
           </div>
         ) : error ? (
-          <Card className="p-10 bg-red-50 border-red-200 rounded-2xl text-center" role="alert">
-            <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" />
-            <p className="font-semibold text-red-900">University data could not be loaded.</p>
-            <p className="text-sm text-red-800 mt-1">{error}</p>
+          <Card className="p-10 bg-crm-danger-bg border border-crm-danger-border rounded-2xl text-center" role="alert">
+            <AlertTriangle className="w-10 h-10 text-crm-danger-text mx-auto mb-3" />
+            <p className="font-semibold text-crm-danger-text">University data could not be loaded.</p>
+            <p className="text-sm text-crm-danger-text mt-1">{error}</p>
           </Card>
         ) : universities.length === 0 ? (
           <Card className="p-12 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center">

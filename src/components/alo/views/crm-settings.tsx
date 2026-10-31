@@ -243,12 +243,12 @@ export function CrmSettings() {
               <Badge variant="outline">{officeHours.timeZone}</Badge>
             </div>
             {officeHours.scheduleConflict && (
-              <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+              <p className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-xs text-crm-warning-text">
                 Stored weekday rows conflict. Automatic after-hours acknowledgements remain disabled until an authorized administrator reviews and saves the schedule. Saving updates existing weekday rows in place; no schedule records are deleted.
               </p>
             )}
             {officeHours.legacyReview && (
-              <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">
+              <p className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-xs text-crm-warning-text">
                 The saved schedule matches the previous 10:00–19:00 default. It has not been changed automatically; review the intended hours and save to adopt the current 09:00–18:00 fallback.
               </p>
             )}
@@ -359,7 +359,7 @@ export function CrmSettings() {
               </div>
               <div>
                 <p className="text-xs text-[var(--alo-text-muted)]">Urgent Threshold</p>
-                <Badge className="mt-1 bg-rose-600 text-white">≥ {scoring.urgentTier}</Badge>
+                <Badge className="mt-1 bg-[var(--alo-error)] text-white">≥ {scoring.urgentTier}</Badge>
               </div>
             </div>
           </div>
@@ -496,7 +496,7 @@ export function CrmSettings() {
               </div>
             ))}
           </div>
-          <div className="mt-3 rounded-lg bg-violet-50 p-3 text-xs text-violet-700">
+          <div className="mt-3 rounded-lg bg-[var(--alo-brand-pale)] p-3 text-xs text-[var(--alo-brand)]">
             <Icon name="Sparkles" className="mr-1 inline size-3.5" />
             AI-assisted replies use the ALO AI model and require human approval by default.
           </div>

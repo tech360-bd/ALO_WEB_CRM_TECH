@@ -11,7 +11,7 @@ export function SuperAdminMasterCommandCenter() {
   const [activeTab, setActiveTab] = useState<Tab>("website");
 
   return (
-    <div className="min-h-screen bg-[var(--alo-page)] dark:bg-slate-950">
+    <div className="min-h-screen bg-[var(--alo-page)] dark:bg-[var(--alo-page)]">
       {/* Top banner */}
       <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white px-6 py-4">
         <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
@@ -20,7 +20,7 @@ export function SuperAdminMasterCommandCenter() {
             <p className="text-sm text-[var(--alo-brand-pale)] mt-1">Edit any part of website & CRM directly • Perform any agent task • Live data • Audit logged • RBAC protected</p>
           </div>
           <div className="flex gap-2 text-xs">
-            <span className="bg-green-500/20 border border-green-400/30 px-3 py-1.5 rounded-full">✓ Live Operations</span>
+            <span className="bg-[var(--alo-success)]/20 border border-[var(--alo-success)]/30 px-3 py-1.5 rounded-full">✓ Live Operations</span>
             <span className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-full">✓ Audit logged</span>
             <span className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-full">📱 PWA Mobile App</span>
           </div>
@@ -69,7 +69,7 @@ export function SuperAdminMasterCommandCenter() {
                     <div key={card.role} className="border rounded-xl p-4 bg-[var(--alo-page)] hover:bg-white hover:shadow-sm transition-all">
                       <div className="flex items-center gap-2 font-semibold text-sm"><NamedIcon name={card.icon} className="size-5" />{card.role}</div>
                       <ul className="mt-3 space-y-1.5">
-                        {card.tasks.map(t=><li key={t} className="text-xs text-[var(--alo-body)] flex gap-1.5"><span className="text-green-600">✓</span><span>{t}</span></li>)}
+                        {card.tasks.map(t=><li key={t} className="text-xs text-[var(--alo-body)] flex gap-1.5"><span className="text-crm-success-text">✓</span><span>{t}</span></li>)}
                       </ul>
                       <div className="mt-3 text-[11px] text-[var(--alo-text-muted)]">Live data, audit logged</div>
                     </div>
@@ -77,9 +77,9 @@ export function SuperAdminMasterCommandCenter() {
                 </div>
               </div>
 
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
-                <h3 className="font-semibold text-amber-900 text-sm">Why Nothing Overlooked — System Design for Paid-App Quality</h3>
-                <div className="grid md:grid-cols-3 gap-4 mt-3 text-xs text-amber-800">
+              <div className="bg-crm-warning-bg border border-crm-warning-border rounded-xl p-5">
+                <h3 className="font-semibold text-crm-warning-text text-sm">Why Nothing Overlooked — System Design for Paid-App Quality</h3>
+                <div className="grid md:grid-cols-3 gap-4 mt-3 text-xs text-crm-warning-text">
                   <div><b>1. Knowledge-aware:</b> Every task checks — country visa rules, work rights, English tests, entry requirements, university rankings, course fees, intake deadlines. No hardcoding.</div>
                   <div><b>2. Skill-aware:</b> Document verification uses classification, checklist, audit. Visa uses funding/study gap/refusal review. Finance uses payroll calculation with PF/tax. HR uses attendance logic with holiday calendar.</div>
                   <div><b>3. SLA & Escalation:</b> Communication SLA rules, SlaEvent, EscalationEvent ensure timely response. Missed response triggers warning → supervisor → manager. Dashboard shows breaches.</div>
@@ -124,7 +124,7 @@ export function SuperAdminMasterCommandCenter() {
                         ["Communications", "Real CommunicationThread/Message/SLA", "Super Admin view threads, SLA breaches", "✓ Real"],
                         ["Agent Tasks", "Real CounselorTask/VisaTask/AiTask", "Super Admin perform any agent task via POST /api/admin/crm/command-center", "✓ Real"],
                         ["PWA Mobile", "No manifest, no SW, no install", "manifest.json + sw.js + offline page + PwaRegister component + layout meta + icons", "✓ Real"],
-                      ].map(row=><tr key={row[0]} className="border-t"><td className="px-3 py-2 font-medium">{row[0]}</td><td className="px-3 py-2 text-[var(--alo-text-muted)]">{row[1]}</td><td className="px-3 py-2 text-green-700">{row[2]}</td><td className="px-3 py-2">{row[3]}</td></tr>)}
+                      ].map(row=><tr key={row[0]} className="border-t"><td className="px-3 py-2 font-medium">{row[0]}</td><td className="px-3 py-2 text-[var(--alo-text-muted)]">{row[1]}</td><td className="px-3 py-2 text-crm-success-text">{row[2]}</td><td className="px-3 py-2">{row[3]}</td></tr>)}
                     </tbody>
                   </table>
                 </div>
@@ -163,7 +163,7 @@ export function SuperAdminMasterCommandCenter() {
                         { check: "Push Ready", detail: "Push event listener, notificationclick handler, badge icon", done: true },
                         { check: "Background Sync", detail: "Sync tags alo-sync-leads, alo-sync-messages for offline actions", done: true },
                         { check: "Shortcuts", detail: "Manifest shortcuts to Student, CRM, Knowledge, International dashboards", done: true },
-                      ].map(item=><div key={item.check} className="flex gap-2 text-xs"><span className={item.done ? "text-green-600" : "text-amber-600"}>{item.done ? "✓" : "○"}</span><div><span className="font-medium">{item.check}:</span> <span className="text-[var(--alo-body)]">{item.detail}</span></div></div>)}
+                      ].map(item=><div key={item.check} className="flex gap-2 text-xs"><span className={item.done ? "text-crm-success-text" : "text-crm-warning-text"}>{item.done ? "✓" : "○"}</span><div><span className="font-medium">{item.check}:</span> <span className="text-[var(--alo-body)]">{item.detail}</span></div></div>)}
                     </div>
                     <div className="mt-6 p-3 bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-xl text-xs text-[var(--alo-brand-deep)]">
                       <b>How to test on mobile:</b> Open site on Android Chrome → Menu → Add to Home Screen → App installs with ALO icon, opens standalone without URL bar, works offline, shows install banner. On iOS Safari → Share → Add to Home Screen. PWA score Lighthouse &gt;90.

@@ -34,10 +34,10 @@ interface LoadState {
 // platform has not emitted falls through to a neutral bell.
 const TYPE_ICONS: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
   task: { icon: CheckCircle, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
-  message: { icon: Mail, color: 'text-emerald-600', bg: 'bg-emerald-100' },
-  application: { icon: FileText, color: 'text-purple-600', bg: 'bg-purple-100' },
-  deadline: { icon: Clock, color: 'text-red-600', bg: 'bg-red-100' },
-  system: { icon: Shield, color: 'text-amber-600', bg: 'bg-amber-100' },
+  message: { icon: Mail, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
+  application: { icon: FileText, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
+  deadline: { icon: Clock, color: 'text-crm-danger-text', bg: 'bg-crm-danger-bg' },
+  system: { icon: Shield, color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg' },
   info: { icon: Bell, color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-surface-muted)]' },
 };
 
@@ -198,8 +198,8 @@ export default function EmployeeNotificationsPage() {
       </div>
 
       {state.error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
               <p className="font-medium">{state.error}</p>

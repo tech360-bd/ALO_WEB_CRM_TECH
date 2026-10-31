@@ -82,8 +82,8 @@ export default function AIContentStudioView() {
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px]"><Eye className="w-3 h-3 mr-1" />Preview</Button>
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px]"><Edit className="w-3 h-3 mr-1" />Edit</Button>
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px]"><RefreshCw className="w-3 h-3 mr-1" />Regenerate</Button>
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className=" text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white"><Check className="w-3 h-3 mr-1" />Approve</Button>
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px] border-red-200 text-red-600"><X className="w-3 h-3 mr-1" />Reject</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className=" text-[11px] bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"><Check className="w-3 h-3 mr-1" />Approve</Button>
+                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px] border-crm-danger-border text-crm-danger-text"><X className="w-3 h-3 mr-1" />Reject</Button>
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className=" text-[11px]"><Calendar className="w-3 h-3 mr-1" />Schedule</Button>
                 </div>
                 <div className="flex gap-2 mt-2">

@@ -132,9 +132,9 @@ function chipFor(status?: string): { tone: ChipTone; label: string } {
 }
 
 function chipClass(tone: ChipTone) {
-  if (tone === 'verified') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-  if (tone === 'rejected') return 'bg-red-50 text-red-700 border-red-200';
-  if (tone === 'pending') return 'bg-amber-50 text-amber-700 border-amber-200';
+  if (tone === 'verified') return 'bg-crm-success-bg text-crm-success-text border-crm-success-border';
+  if (tone === 'rejected') return 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border';
+  if (tone === 'pending') return 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border';
   return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]';
 }
 
@@ -275,23 +275,23 @@ export default function FormBDocumentsSection({
       </div>
 
       {error && (
-        <p className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+        <p className="flex items-center gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2 text-xs text-crm-warning-text">
           <AlertTriangle className="size-4" /> {error}
         </p>
       )}
 
       <div className="grid gap-3 sm:grid-cols-4">
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-          <p className="text-[11px] font-semibold uppercase text-emerald-700">Verified</p>
-          <p className="text-xl font-bold text-emerald-800">{summary.verified}</p>
+        <div className="rounded-xl border border-crm-success-border bg-crm-success-bg p-3">
+          <p className="text-[11px] font-semibold uppercase text-crm-success-text">Verified</p>
+          <p className="text-xl font-bold text-crm-success-text">{summary.verified}</p>
         </div>
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-          <p className="text-[11px] font-semibold uppercase text-amber-700">Pending</p>
-          <p className="text-xl font-bold text-amber-800">{summary.pending}</p>
+        <div className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-3">
+          <p className="text-[11px] font-semibold uppercase text-crm-warning-text">Pending</p>
+          <p className="text-xl font-bold text-crm-warning-text">{summary.pending}</p>
         </div>
-        <div className="rounded-xl border border-red-200 bg-red-50 p-3">
-          <p className="text-[11px] font-semibold uppercase text-red-700">Rejected</p>
-          <p className="text-xl font-bold text-red-800">{summary.rejected}</p>
+        <div className="rounded-xl border border-crm-danger-border bg-crm-danger-bg p-3">
+          <p className="text-[11px] font-semibold uppercase text-crm-danger-text">Rejected</p>
+          <p className="text-xl font-bold text-crm-danger-text">{summary.rejected}</p>
         </div>
         <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-3">
           <p className="text-[11px] font-semibold uppercase text-[var(--alo-body)]">Not uploaded</p>
@@ -340,7 +340,7 @@ export default function FormBDocumentsSection({
                   </div>
 
                   {comment && (
-                    <p className={`mt-2 rounded-lg border px-3 py-2 text-xs ${chip.tone === 'rejected' ? 'border-red-200 bg-red-50 text-red-800' : 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]'}`}>
+                    <p className={`mt-2 rounded-lg border px-3 py-2 text-xs ${chip.tone === 'rejected' ? 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text' : 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]'}`}>
                       <strong>Counselor comment:</strong> {comment}
                     </p>
                   )}
@@ -370,7 +370,7 @@ export default function FormBDocumentsSection({
                     )}
                   </div>
                   {uploadError?.category === required.category && (
-                    <p className="mt-2 text-xs text-red-700">{uploadError.message}</p>
+                    <p className="mt-2 text-xs text-crm-danger-text">{uploadError.message}</p>
                   )}
                 </div>
               );

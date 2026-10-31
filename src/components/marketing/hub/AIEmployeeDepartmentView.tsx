@@ -55,7 +55,7 @@ export default function AIEmployeeDepartmentView() {
               <div className="flex items-center justify-between pt-2">
                 <span className="flex items-center gap-1 text-[var(--alo-text-muted)]"><Clock className="w-3 h-3" />{e.schedule} • {e.tz}</span>
                 <div className="flex gap-1">
-                  <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]"><Zap className="w-3 h-3 mr-1" />Active</Badge>
+                  <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]"><Zap className="w-3 h-3 mr-1" />Active</Badge>
                   <Badge variant="outline" className="text-[11px]"><ShieldCheck className="w-3 h-3 mr-1" />Least privilege</Badge>
                 </div>
               </div>

@@ -58,9 +58,9 @@ interface LoadState {
 }
 
 const STATUS_META: Record<string, { label: string; cls: string }> = {
-  pending: { label: 'Awaiting review', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
-  approved: { label: 'Approved', cls: 'bg-green-50 text-green-700 border-green-200' },
-  rejected: { label: 'Rejected', cls: 'bg-red-50 text-red-700 border-red-200' },
+  pending: { label: 'Awaiting review', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  approved: { label: 'Approved', cls: 'bg-crm-success-bg text-crm-success-text border-crm-success-border' },
+  rejected: { label: 'Rejected', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
 };
 
 function statusBadge(status: string) {
@@ -256,8 +256,8 @@ export default function ApprovalQueueView() {
                 <p className="text-2xl font-bold">{counts[status] ?? 0}</p>
               </div>
               {status === 'pending' && <Clock className="text-muted-foreground h-5 w-5" />}
-              {status === 'approved' && <CheckSquare className="h-5 w-5 text-green-600" />}
-              {status === 'rejected' && <XCircle className="h-5 w-5 text-red-600" />}
+              {status === 'approved' && <CheckSquare className="h-5 w-5 text-crm-success-text" />}
+              {status === 'rejected' && <XCircle className="h-5 w-5 text-crm-danger-text" />}
             </CardContent>
           </Card>
         ))}
@@ -303,7 +303,7 @@ export default function ApprovalQueueView() {
             )}
 
             {bulkSummary && (
-              <p className="text-sm text-emerald-700">{bulkSummary}</p>
+              <p className="text-sm text-crm-success-text">{bulkSummary}</p>
             )}
 
             {state.error && (

@@ -25,10 +25,10 @@ interface AuthRegisterProps {
 type Role = "STUDENT" | "PARTNER";
 
 const PASSWORD_STRENGTH = [
-  { label: "Weak", color: "bg-red-500", min: 0 },
-  { label: "Fair", color: "bg-amber-500", min: 8 },
+  { label: "Weak", color: "bg-[var(--alo-error)]", min: 0 },
+  { label: "Fair", color: "bg-[var(--alo-warning)]", min: 8 },
   { label: "Good", color: "bg-sky-500", min: 10 },
-  { label: "Strong", color: "bg-emerald-500", min: 12 },
+  { label: "Strong", color: "bg-[var(--alo-success)]", min: 12 },
 ];
 
 function scorePassword(pw: string): number {
@@ -197,7 +197,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
 
               {/* Partner notice */}
               {role === "PARTNER" && (
-                <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
+                <div className="flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2.5 text-xs text-crm-warning-text">
                   <Icon name="Info" className="mt-0.5 size-3.5 shrink-0" />
                   <span>
                     Partner accounts require ALO Education approval before activation. You will
@@ -345,7 +345,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
                   />
                 </div>
                 {confirmPassword && confirmPassword !== password && (
-                  <p className="text-xs text-red-600">Passwords do not match.</p>
+                  <p className="text-xs text-crm-danger-text">Passwords do not match.</p>
                 )}
               </div>
 
@@ -382,7 +382,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
               {error && (
                 <div
                   role="alert"
-                  className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+                  className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-sm text-crm-danger-text"
                 >
                   <Icon name="AlertCircle" className="mt-0.5 size-4 shrink-0" />
                   <span>{error}</span>
@@ -431,7 +431,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
             </div>
 
             {/* What happens next */}
-            <div className="mt-3 flex items-start gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+            <div className="mt-3 flex items-start gap-2 rounded-lg bg-crm-success-bg px-3 py-2 text-xs text-crm-success-text">
               <Icon name="MailCheck" className="mt-0.5 size-3.5 shrink-0" />
               <span>
                 After registration, you will receive a 6-digit OTP at your email. Enter it on the

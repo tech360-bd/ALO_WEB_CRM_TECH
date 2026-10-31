@@ -38,8 +38,8 @@ export default function CommentsPage() {
           <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm">Recent Comments ({comments.length})</CardTitle></CardHeader>
           <CardContent className="p-4 space-y-2">
             {comments.length===0 ? <p className="text-sm text-[var(--alo-text-muted)] py-6 text-center">No comments found. Nothing here yet.</p> : comments.map((c:any, i:number)=>(
-              <div key={i} className={`border rounded-xl p-3 ${c.isB2bConfidential ? 'bg-rose-50 border-rose-200' : 'bg-[var(--alo-page)] border-[var(--alo-border)]'}`}>
-                <div className="flex items-center justify-between"><span className="text-xs font-medium">{c.applicationCode || c.applicationId?.substring(0,8)} — {c.role}</span><Badge className={`${c.isB2bConfidential ? 'bg-rose-100 text-rose-700 border-rose-200' : 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]'} text-[11px]`}>{c.isB2bConfidential && <Lock className="w-2.5 h-2.5 mr-1" />}{c.visibility} • {c.commentType}</Badge></div>
+              <div key={i} className={`border rounded-xl p-3 ${c.isB2bConfidential ? 'bg-crm-warning-bg border-crm-warning-border' : 'bg-[var(--alo-page)] border-[var(--alo-border)]'}`}>
+                <div className="flex items-center justify-between"><span className="text-xs font-medium">{c.applicationCode || c.applicationId?.substring(0,8)} — {c.role}</span><Badge className={`${c.isB2bConfidential ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' : 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]'} text-[11px]`}>{c.isB2bConfidential && <Lock className="w-2.5 h-2.5 mr-1" />}{c.visibility} • {c.commentType}</Badge></div>
                 <p className="text-xs mt-2 text-[var(--alo-text)]">{c.commentText}</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{new Date(c.createdAt).toLocaleString()}</p>
               </div>
             ))}

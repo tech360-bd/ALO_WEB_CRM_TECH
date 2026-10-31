@@ -71,22 +71,22 @@ interface AuditLog {
 // -----------------------------------------------------------------------------
 
 const AUDIT_ACTION_COLORS: Record<string, string> = {
-  LOGIN: "bg-emerald-100 text-emerald-700",
-  FAILED_LOGIN: "bg-red-100 text-red-700",
+  LOGIN: "bg-crm-success-bg text-crm-success-text",
+  FAILED_LOGIN: "bg-crm-danger-bg text-crm-danger-text",
   LOGOUT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   DOC_UPLOAD: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  DOC_APPROVE: "bg-emerald-100 text-emerald-700",
-  DOC_REJECT: "bg-red-100 text-red-700",
+  DOC_APPROVE: "bg-crm-success-bg text-crm-success-text",
+  DOC_REJECT: "bg-crm-danger-bg text-crm-danger-text",
   APP_STATUS_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   VISA_STATUS_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  AI_ACTION: "bg-violet-100 text-violet-700",
+  AI_ACTION: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   PROFILE_UPDATE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   MESSAGE_ACTION: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  DATA_IMPORT: "bg-amber-100 text-amber-700",
-  ROLE_CHANGE: "bg-violet-100 text-violet-700",
-  PERMISSION_CHANGE: "bg-violet-100 text-violet-700",
-  SALARY_ACCESS: "bg-amber-100 text-amber-700",
-  COMMISSION_APPROVE: "bg-emerald-100 text-emerald-700",
+  DATA_IMPORT: "bg-crm-warning-bg text-crm-warning-text",
+  ROLE_CHANGE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  PERMISSION_CHANGE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  SALARY_ACCESS: "bg-crm-warning-bg text-crm-warning-text",
+  COMMISSION_APPROVE: "bg-crm-success-bg text-crm-success-text",
   MOCK_CREDIT_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
@@ -135,10 +135,10 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const ROLE_BADGE_COLORS: Record<string, string> = {
-  SUPER_ADMIN: "bg-violet-100 text-violet-700",
+  SUPER_ADMIN: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   ADMIN: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
   STUDENT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  COUNSELOR: "bg-emerald-100 text-emerald-700",
+  COUNSELOR: "bg-crm-success-bg text-crm-success-text",
 };
 
 const SECURITY_POINTS = [

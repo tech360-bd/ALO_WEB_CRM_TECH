@@ -60,11 +60,11 @@ const TYPE_CONFIG: Record<
   { icon: React.ElementType; color: string; bg: string }
 > = {
   application: { icon: FileText, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
-  document: { icon: FileUp, color: 'text-amber-600', bg: 'bg-amber-50' },
-  visa: { icon: Shield, color: 'text-purple-600', bg: 'bg-purple-50' },
-  message: { icon: MessageSquare, color: 'text-green-600', bg: 'bg-green-50' },
-  deadline: { icon: Clock, color: 'text-red-600', bg: 'bg-red-50' },
-  scholarship: { icon: Award, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  document: { icon: FileUp, color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg' },
+  visa: { icon: Shield, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
+  message: { icon: MessageSquare, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
+  deadline: { icon: Clock, color: 'text-crm-danger-text', bg: 'bg-crm-danger-bg' },
+  scholarship: { icon: Award, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
   payment: { icon: CreditCard, color: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)]' },
   system: { icon: Settings, color: 'text-[var(--alo-text-muted)]', bg: 'bg-[var(--alo-page)]' },
 };
@@ -116,7 +116,7 @@ function NotificationCard({
         {/* Unread dot */}
         {!notification.isRead && (
           <span className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden sm:block">
-            <span className="block size-2.5 rounded-full bg-blue-500" />
+            <span className="block size-2.5 rounded-full bg-[var(--alo-brand)]" />
           </span>
         )}
 
@@ -359,9 +359,9 @@ export function StudentNotifications() {
                "You're all caught up" here would tell a student they have no
                offers, deadlines or document alerts when we simply could not
                check. */
-            <Card className="border-2 border-amber-200">
+            <Card className="border-2 border-crm-warning-border">
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <AlertTriangle className="size-12 text-amber-500 mb-3" />
+                <AlertTriangle className="size-12 text-crm-warning-text mb-3" />
                 <p className="text-sm font-medium text-[var(--alo-text)]">
                   Notifications could not be loaded
                 </p>

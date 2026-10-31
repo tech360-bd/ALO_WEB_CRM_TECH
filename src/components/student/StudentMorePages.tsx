@@ -107,12 +107,12 @@ interface ReferralRow {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  PENDING: 'bg-amber-50 text-amber-700',
+  PENDING: 'bg-crm-warning-bg text-crm-warning-text',
   QUALIFIED: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   CONSULTATION_DONE: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
-  APPLICATION_SUBMITTED: 'bg-indigo-50 text-indigo-700',
-  ENROLLED: 'bg-emerald-50 text-emerald-700',
-  REWARDED: 'bg-emerald-50 text-emerald-700',
+  APPLICATION_SUBMITTED: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  ENROLLED: 'bg-crm-success-bg text-crm-success-text',
+  REWARDED: 'bg-crm-success-bg text-crm-success-text',
 };
 
 function formatDate(value: string): string {
@@ -211,7 +211,7 @@ export function StudentReferrals() {
             <Button
               variant="outline"
               disabled={!referralCode}
-              className="flex-1 border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800"
+              className="flex-1 border-crm-success-border text-crm-success-text hover:bg-crm-success-bg hover:text-crm-success-text"
               onClick={handleShareWhatsApp}
             >
               <svg viewBox="0 0 24 24" className="size-4 mr-2 fill-current">
@@ -251,7 +251,7 @@ export function StudentReferrals() {
                 ).length,
               ),
             icon: CheckCircle2,
-            color: 'text-emerald-600',
+            color: 'text-crm-success-text',
           },
           {
             label: 'Rewards awarded',
@@ -279,7 +279,7 @@ export function StudentReferrals() {
         </CardHeader>
         <CardContent>
           {loadError && (
-            <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">{loadError}</p>
+            <p className="mb-3 rounded-lg bg-crm-danger-bg p-3 text-sm text-crm-danger-text">{loadError}</p>
           )}
           {loading ? (
             <p className="py-8 text-center text-sm text-[var(--alo-text-muted)]">Loading referrals…</p>
@@ -399,12 +399,12 @@ export function StudentReferrals() {
 
 const HELP_CATEGORIES = [
   { icon: FileText, title: 'Application Help', count: 12, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
-  { icon: Upload, title: 'Document Guide', count: 8, color: 'text-amber-600', bg: 'bg-amber-50' },
-  { icon: Shield, title: 'Visa Information', count: 15, color: 'text-purple-600', bg: 'bg-purple-50' },
+  { icon: Upload, title: 'Document Guide', count: 8, color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg' },
+  { icon: Shield, title: 'Visa Information', count: 15, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
   { icon: CreditCard, title: 'Payment & Finance', count: 10, color: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)]' },
-  { icon: Search, title: 'Course Finder', count: 6, color: 'text-green-600', bg: 'bg-green-50' },
-  { icon: GraduationCap, title: 'English Tests', count: 9, color: 'text-cyan-600', bg: 'bg-cyan-50' },
-  { icon: Award, title: 'Scholarship Guide', count: 11, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { icon: Search, title: 'Course Finder', count: 6, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
+  { icon: GraduationCap, title: 'English Tests', count: 9, color: 'text-[var(--alo-info-text)]', bg: 'bg-[var(--alo-info-bg)]' },
+  { icon: Award, title: 'Scholarship Guide', count: 11, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
   { icon: Headphones, title: 'Technical Support', count: 7, color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-page)]' },
 ];
 
@@ -684,9 +684,9 @@ export function StudentSettings() {
       </Card>
 
       {/* Danger Zone */}
-      <Card className="border-red-200">
+      <Card className="border-crm-danger-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold text-red-700">Danger Zone</CardTitle>
+          <CardTitle className="text-base font-semibold text-crm-danger-text">Danger Zone</CardTitle>
           <CardDescription>Irreversible and destructive actions</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -710,7 +710,7 @@ export function StudentSettings() {
             </div>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="destructive" size="sm" className="shrink-0 bg-red-600 hover:bg-red-700 text-white">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="destructive" size="sm" className="shrink-0 bg-[var(--alo-error)] hover:bg-[var(--alo-error)] text-white">
                   <Trash2 className="size-3.5 mr-1.5" />
                   Deactivate Account
                 </Button>
@@ -726,7 +726,7 @@ export function StudentSettings() {
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
-                    className="bg-red-600 hover:bg-red-700 text-white"
+                    className="bg-[var(--alo-error)] hover:bg-[var(--alo-error)] text-white"
                     onClick={() => toast.error('Account deactivation is disabled in demo mode.')}
                   >
                     Yes, deactivate my account
@@ -873,7 +873,7 @@ export function StudentAIAdvisor() {
                       'text-white text-xs',
                       msg.role === 'ai'
                         ? 'bg-gradient-to-br from-blue-500 to-purple-600'
-                        : 'bg-slate-700'
+                        : 'bg-[var(--alo-page)]'
                     )}
                   >
                     {msg.role === 'ai' ? <Bot className="size-3.5" /> : <UserIcon className="size-3.5" />}
@@ -994,8 +994,8 @@ export function StudentRecommendations() {
       </div>
 
       {loadError && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-4 text-sm text-red-700">{loadError}</CardContent>
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="p-4 text-sm text-crm-danger-text">{loadError}</CardContent>
         </Card>
       )}
 

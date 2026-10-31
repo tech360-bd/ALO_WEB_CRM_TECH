@@ -133,8 +133,8 @@ const TILES_BY_TYPE: Record<ReportType, Tile[]> = {
 const REPORT_STATUS_COLORS: Record<string, string> = {
   GENERATED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   SENT: "bg-sky-100 text-sky-700",
-  VIEWED: "bg-emerald-100 text-emerald-700",
-  DRAFT: "bg-amber-100 text-amber-700",
+  VIEWED: "bg-crm-success-bg text-crm-success-text",
+  DRAFT: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 // -----------------------------------------------------------------------------
@@ -151,10 +151,10 @@ function MetricTile({
   const accentMap: Record<string, string> = {
     blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
     orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
-    emerald: "bg-emerald-50 text-emerald-600",
-    amber: "bg-amber-50 text-amber-600",
-    violet: "bg-violet-50 text-violet-600",
-    rose: "bg-rose-50 text-rose-600",
+    emerald: "bg-crm-success-bg text-crm-success-text",
+    amber: "bg-crm-warning-bg text-crm-warning-text",
+    violet: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+    rose: "bg-crm-warning-bg text-crm-warning-text",
   };
   const isEmpty = value === undefined || value === null || value === "";
 
@@ -224,18 +224,18 @@ function ReportCard({ report }: { report: WeeklyReport }) {
 
         {/* AI insights */}
         {report.insights && (
-          <div className="flex items-start gap-3 rounded-xl border-2 border-violet-200 bg-violet-50/60 p-4">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white">
+          <div className="flex items-start gap-3 rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/60 p-4">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand)] text-white">
               <Icon name="Bot" className="size-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="flex items-center gap-2 text-sm font-semibold text-violet-900">
+              <p className="flex items-center gap-2 text-sm font-semibold text-[var(--alo-brand)]">
                 AI Insights
-                <Badge className="bg-violet-100 text-violet-700" variant="outline">
+                <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" variant="outline">
                   Auto-generated
                 </Badge>
               </p>
-              <p className="mt-1 text-sm leading-relaxed text-violet-900/80">
+              <p className="mt-1 text-sm leading-relaxed text-[var(--alo-brand)]/80">
                 {report.insights}
               </p>
             </div>

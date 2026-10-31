@@ -309,9 +309,9 @@ export default function IntegrationsView() {
                 key={i.id}
                 className={
                   isConnected
-                    ? 'border-emerald-200 bg-emerald-50/30'
+                    ? 'border-crm-success-border bg-crm-success-bg/30'
                     : isPending
-                      ? 'border-amber-200 bg-amber-50/30'
+                      ? 'border-crm-warning-border bg-crm-warning-bg/30'
                       : 'border-[var(--alo-border)]'
                 }
               >
@@ -320,7 +320,7 @@ export default function IntegrationsView() {
                     {i.id === 'facebook' || i.id === 'instagram' ? (
                       <Globe className="w-4 h-4 text-[var(--alo-brand)]" />
                     ) : i.id === 'whatsapp' ? (
-                      <MessageSquare className="w-4 h-4 text-emerald-600" />
+                      <MessageSquare className="w-4 h-4 text-crm-success-text" />
                     ) : i.id === 'email' ? (
                       <Mail className="w-4 h-4 text-[var(--alo-brand)]" />
                     ) : i.id === 'opensms' ? (
@@ -333,9 +333,9 @@ export default function IntegrationsView() {
                   <Badge
                     className={
                       isConnected
-                        ? 'bg-emerald-100 text-emerald-700 border-emerald-200 w-fit mt-1'
+                        ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border w-fit mt-1'
                         : isPending
-                          ? 'bg-amber-100 text-amber-700 border-amber-200 w-fit mt-1'
+                          ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border w-fit mt-1'
                           : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)] w-fit mt-1'
                     }
                   >
@@ -393,7 +393,7 @@ export default function IntegrationsView() {
                     ) : null}
                   </div>
                   <p className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                    <ShieldCheck className="w-3 h-3 text-crm-success-text" />
                     AES-256-GCM encrypted tokens, HMAC OAuth state, rate-limited.
                   </p>
                 </CardContent>

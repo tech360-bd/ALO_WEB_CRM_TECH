@@ -103,7 +103,7 @@ export default function EmployeeStudentsPage() {
       {loading && <div className="space-y-3" aria-live="polite">{Array.from({ length: 5 }).map((_, index) => <Skeleton key={index} className="h-20 rounded-xl" />)}</div>}
 
       {!loading && error && (
-        <Card role="alert" className="border-red-200 bg-red-50"><CardContent className="p-5 flex items-center justify-between gap-3 text-sm text-red-800"><span>{error}</span><Button variant="outline" onClick={() => void loadStudents()}>Retry</Button></CardContent></Card>
+        <Card role="alert" className="border-crm-danger-border bg-crm-danger-bg"><CardContent className="p-5 flex items-center justify-between gap-3 text-sm text-crm-danger-text"><span>{error}</span><Button variant="outline" onClick={() => void loadStudents()}>Retry</Button></CardContent></Card>
       )}
 
       {!loading && !error && students.length === 0 && (

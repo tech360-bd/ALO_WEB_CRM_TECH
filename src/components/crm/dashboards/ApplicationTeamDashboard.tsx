@@ -89,7 +89,7 @@ export default function ApplicationTeamDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <Icon className="w-5 h-5 text-alo-brand" />
-                  <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
+                  <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
                     {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}{kpi.change}
                   </span>
                 </div>
@@ -151,7 +151,7 @@ export default function ApplicationTeamDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-500" /> Missing Documents
+                  <AlertTriangle className="w-4 h-4 text-crm-danger-text" /> Missing Documents
                 </CardTitle>
                 <Badge variant="danger" className="text-[11px]">{missingDocs.length}</Badge>
               </div>
@@ -159,7 +159,7 @@ export default function ApplicationTeamDashboard() {
             <CardContent>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {missingDocs.map((d) => (
-                  <div key={d.student + d.doc} className={`p-2.5 rounded-lg border ${d.severity === 'high' ? 'border-red-200 bg-red-50' : d.severity === 'medium' ? 'border-amber-200 bg-amber-50' : 'border-alo-border'}`}>
+                  <div key={d.student + d.doc} className={`p-2.5 rounded-lg border ${d.severity === 'high' ? 'border-crm-danger-border bg-crm-danger-bg' : d.severity === 'medium' ? 'border-crm-warning-border bg-crm-warning-bg' : 'border-alo-border'}`}>
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text truncate">{d.student}</p>
                       <Badge variant={d.severity === 'high' ? 'danger' : d.severity === 'medium' ? 'warning' : 'muted'} className="text-[11px] shrink-0 ml-1">By {d.deadline}</Badge>
@@ -195,13 +195,13 @@ export default function ApplicationTeamDashboard() {
           <Card className="bg-white rounded-xl border border-alo-border">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-amber-500" /> Deadline Alerts
+                <Calendar className="w-4 h-4 text-crm-warning-text" /> Deadline Alerts
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {deadlineAlerts.map((d, i) => (
-                  <div key={i} className="p-2.5 rounded-lg border border-amber-200 bg-amber-50">
+                  <div key={i} className="p-2.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium text-alo-text truncate">{d.university}</p>
                       <Badge variant="warning" className="text-[11px] shrink-0 ml-1">{d.daysLeft}d left</Badge>

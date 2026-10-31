@@ -132,9 +132,9 @@ export default function StudentCas() {
                   )}
 
                   {entry.record.conditionNote && (
-                    <div className="border-t border-amber-200 bg-amber-50 px-5 py-3">
-                      <p className="text-[12px] font-semibold text-amber-800">Conditions on this document</p>
-                      <p className="mt-0.5 text-[13px] leading-relaxed text-amber-900">{entry.record.conditionNote}</p>
+                    <div className="border-t border-crm-warning-border bg-crm-warning-bg px-5 py-3">
+                      <p className="text-[12px] font-semibold text-crm-warning-text">Conditions on this document</p>
+                      <p className="mt-0.5 text-[13px] leading-relaxed text-crm-warning-text">{entry.record.conditionNote}</p>
                     </div>
                   )}
 

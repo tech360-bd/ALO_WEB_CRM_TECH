@@ -738,7 +738,7 @@ function UnknownCallersTable({
                 "h-7 border-[var(--alo-border)] px-2 text-[11px]",
                 meta.accent === "blue" && "hover:border-[var(--alo-blue)] hover:bg-[var(--alo-blue-soft)] hover:text-[var(--alo-blue-strong)]",
                 meta.accent === "emerald" && "hover:border-[var(--alo-success)] hover:bg-[var(--alo-success-soft)] hover:text-[var(--alo-success-strong)]",
-                meta.accent === "violet" && "hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700",
+                meta.accent === "violet" && "hover:border-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-brand)]",
                 meta.accent === "rose" && "hover:border-[var(--alo-danger)] hover:bg-[var(--alo-danger-soft)] hover:text-[var(--alo-danger-strong)]",
               )}
             >

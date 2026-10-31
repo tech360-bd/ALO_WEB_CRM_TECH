@@ -19,7 +19,7 @@ export function StudentCas() {
           <div className="rounded-xl border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4"><p className="text-xs font-bold uppercase text-[var(--alo-text-muted)]">Deposit Status</p><p className="mt-1 font-semibold text-[var(--alo-text)]">Not Paid</p></div>
           <div className="rounded-xl border border-[var(--alo-brand-border)] bg-[var(--alo-page)] p-4"><p className="text-xs font-bold uppercase text-[var(--alo-text-muted)]">Conditions</p><p className="mt-1 font-semibold text-[var(--alo-text)]">2 remaining</p></div>
         </div>
-        <div className="mt-6 rounded-xl border-2 border-amber-200 bg-amber-50 p-4"><div className="flex items-start gap-3"><Icon name="AlertTriangle" className="mt-0.5 size-5 text-amber-600" /><div><p className="font-semibold text-amber-900">Next Steps for CAS</p><p className="text-sm text-amber-800 mt-1">1. Pay deposit<br/>2. Complete CAS questionnaire<br/>3. Prepare for credibility interview</p></div></div></div>
+        <div className="mt-6 rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg p-4"><div className="flex items-start gap-3"><Icon name="AlertTriangle" className="mt-0.5 size-5 text-crm-warning-text" /><div><p className="font-semibold text-crm-warning-text">Next Steps for CAS</p><p className="text-sm text-crm-warning-text mt-1">1. Pay deposit<br/>2. Complete CAS questionnaire<br/>3. Prepare for credibility interview</p></div></div></div>
         <Button className="mt-4 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)]" onClick={() => toast({ title: "Coming soon", description: "CAS questionnaire available after deposit." })}>Start CAS Questionnaire</Button>
       </CardContent></Card>
     </div>

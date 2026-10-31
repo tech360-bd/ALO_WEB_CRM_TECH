@@ -64,7 +64,7 @@ export function TestPreparationMiniCard({
             Test Preparation
           </span>
         </div>
-        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-bold">
+        <Badge variant="success" className="text-[11px] font-bold">
           Verified Guides
         </Badge>
       </div>

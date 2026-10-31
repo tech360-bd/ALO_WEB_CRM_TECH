@@ -70,7 +70,7 @@ export default function HrmPayrollPage() {
                   <td className="p-2 text-center flex gap-1 justify-center">
                     <Button size="sm" variant="outline" className="h-7 " onClick={()=> viewSlip(p.employeeId)}>Slip</Button>
                     <Button size="sm" variant="outline" className="h-7 " onClick={()=> patch(p.id, 'approve')}>Approve</Button>
-                    <Button size="sm" className="h-7 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={()=> patch(p.id, 'pay')}>Pay</Button>
+                    <Button size="sm" className="h-7 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white" onClick={()=> patch(p.id, 'pay')}>Pay</Button>
                   </td>
                 </tr>
               )) : <tr><td colSpan={6} className="p-6 text-center text-[var(--alo-text-muted)]">No payroll for {month} — click Generate</td></tr>}
@@ -87,12 +87,12 @@ export default function HrmPayrollPage() {
               <div className="p-3 bg-[var(--alo-page)] rounded-xl border"><p className="text-xs text-[var(--alo-text-muted)]">Status</p><p className="font-bold text-sm">{slip.status}</p></div>
               <div className="p-3 bg-[var(--alo-page)] rounded-xl border"><p className="text-xs text-[var(--alo-text-muted)]">Gross</p><p className="font-bold text-sm">৳{Number(slip.totalEarnings||slip.grossSalary||0).toLocaleString()}</p></div>
               <div className="p-3 bg-[var(--alo-page)] rounded-xl border"><p className="text-xs text-[var(--alo-text-muted)]">Deductions</p><p className="font-bold text-sm">৳{Number(slip.totalDeductions||0).toLocaleString()}</p></div>
-              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200"><p className="text-xs text-emerald-700">Net Pay</p><p className="font-bold text-sm text-emerald-700">৳{Number(slip.netPay||slip.netSalary||0).toLocaleString()}</p></div>
+              <div className="p-3 bg-crm-success-bg rounded-xl border border-crm-success-border"><p className="text-xs text-crm-success-text">Net Pay</p><p className="font-bold text-sm text-crm-success-text">৳{Number(slip.netPay||slip.netSalary||0).toLocaleString()}</p></div>
             </div>
             {slip.items?.length ? (
               <div className="overflow-auto border rounded-xl">
                 <table className="w-full text-xs"><thead className="bg-[var(--alo-page)]"><tr><th className="p-2 text-left">Label</th><th className="p-2">Type</th><th className="p-2 text-right">Amount</th></tr></thead>
-                <tbody>{slip.items.map((it:any,idx:number)=> <tr key={idx} className="border-t"><td className="p-2">{it.label}</td><td className="p-2 text-center capitalize">{it.itemType}</td><td className={`p-2 text-right ${Number(it.amount)<0? 'text-red-600' : 'text-emerald-700'}`}>{Number(it.amount).toLocaleString()}</td></tr>)}</tbody></table>
+                <tbody>{slip.items.map((it:any,idx:number)=> <tr key={idx} className="border-t"><td className="p-2">{it.label}</td><td className="p-2 text-center capitalize">{it.itemType}</td><td className={`p-2 text-right ${Number(it.amount)<0? 'text-crm-danger-text' : 'text-crm-success-text'}`}>{Number(it.amount).toLocaleString()}</td></tr>)}</tbody></table>
               </div>
             ) : slip.note ? <p className="text-xs text-[var(--alo-text-muted)]">{slip.note}</p> : null}
             <p className="text-xs text-[var(--alo-text-muted)]">Payroll Report & Bank Sheet available via export — HR/Finance only details.</p>

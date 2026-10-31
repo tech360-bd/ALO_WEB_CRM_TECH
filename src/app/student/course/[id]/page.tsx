@@ -35,7 +35,7 @@ export default function StudentCourseDetailPage() {
   }, [id]);
 
   if (loading) return <div className="p-12 text-center"><div className="h-64 bg-white border border-[var(--alo-border)] rounded-2xl animate-pulse max-w-4xl mx-auto" /></div>;
-  if (!course) return <div className="p-8 max-w-4xl mx-auto"><Card className="p-8 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Course not found.</p><Link href="/student/course-finder"><Button className="mt-4 bg-[var(--alo-brand)] text-white ">Back to Course Finder</Button></Link></Card></div>;
+  if (!course) return <div className="p-8 max-w-4xl mx-auto"><Card className="p-8 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-crm-warning-text mx-auto mb-2" /><p className="text-sm">Course not found.</p><Link href="/student/course-finder"><Button className="mt-4 bg-[var(--alo-brand)] text-white ">Back to Course Finder</Button></Link></Card></div>;
 
   return (
     <div className="min-h-screen bg-[var(--alo-page)] pt-20 pb-16">
@@ -48,7 +48,7 @@ export default function StudentCourseDetailPage() {
               <div className="flex flex-wrap gap-2 mb-4">
                 <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-xs">{course.studyLevel}</Badge>
                 <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-xs">{course.subjectArea}</Badge>
-                {eligibility && <Badge className={`${eligibility.label === 'Eligible' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-xs`}>{eligibility.label} — {eligibility.score}%</Badge>}
+                {eligibility && <Badge className={`${eligibility.label === 'Eligible' ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border'} text-xs`}>{eligibility.label} — {eligibility.score}%</Badge>}
                 <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-xs">Match {matchScore}%</Badge>
               </div>
               <h1 className="text-3xl font-bold text-[var(--alo-text)] mb-2">{course.courseTitle}</h1>
@@ -62,7 +62,7 @@ export default function StudentCourseDetailPage() {
                 <div className="grid sm:grid-cols-2 gap-4 text-xs">
                   <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-4"><p className="text-[var(--alo-text-muted)]">Eligibility Score</p><p className="text-2xl font-bold text-[var(--alo-brand)]">{eligibility.score}% — {eligibility.label}</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-2">{eligibility.reasons.join(' • ')}</p></div>
                   <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-4"><p className="text-[var(--alo-text-muted)]">AI Match Score</p><p className="text-2xl font-bold text-[var(--alo-text)]">{matchScore}%</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Based on budget, country, subject, intake preference — never guarantee admission/visa</p></div>
-                  <div className="bg-amber-50 border-amber-200 rounded-xl p-4"><p className="text-amber-800 font-semibold">Missing Requirements</p><p className="text-amber-700 mt-1">{eligibility.missing.length > 0 ? eligibility.missing.join(', ') : 'All requirements met — check with counselor'}</p></div>
+                  <div className="bg-crm-warning-bg border-crm-warning-border rounded-xl p-4"><p className="text-crm-warning-text font-semibold">Missing Requirements</p><p className="text-crm-warning-text mt-1">{eligibility.missing.length > 0 ? eligibility.missing.join(', ') : 'All requirements met — check with counselor'}</p></div>
                   <div className="bg-[var(--alo-brand-pale)] border-[var(--alo-border)] rounded-xl p-4"><p className="text-[var(--alo-brand)] font-semibold">Scholarship Match + Profile Match Reasons + Visa Readiness Warning</p><p className="text-[var(--alo-body)] mt-1">Scholarship: {course.scholarships?.length ? `${course.scholarships.length} scholarships — check eligibility` : 'No verified scholarship listed for this course'} • Visa readiness: Check financial evidence, study gap explanation — human review required</p></div>
                 </div>
               </Card>

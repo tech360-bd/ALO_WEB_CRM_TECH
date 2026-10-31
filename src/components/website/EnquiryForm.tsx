@@ -124,15 +124,15 @@ export default function EnquiryForm({
 
   if (state === 'sent') {
     return (
-      <section className={`rounded-2xl border border-emerald-200 bg-emerald-50 p-6 ${className}`} aria-live="polite">
-        <h3 className="flex items-center gap-2 text-base font-bold text-emerald-900">
+      <section className={`rounded-2xl border border-crm-success-border bg-crm-success-bg p-6 ${className}`} aria-live="polite">
+        <h3 className="flex items-center gap-2 text-base font-bold text-crm-success-text">
           <CheckCircle2 className="h-5 w-5" /> {copy.heading} sent
         </h3>
-        <p className="mt-2 text-sm text-emerald-900">
+        <p className="mt-2 text-sm text-crm-success-text">
           Thank you, {form.name}. A confirmation email is on its way to {form.email}, and a counselor will reply within
           24 hours{form.whatsappOptIn ? ' — first on WhatsApp' : ''}.
         </p>
-        <p className="mt-3 text-xs text-emerald-800">
+        <p className="mt-3 text-xs text-crm-success-text">
           Want to move faster?{' '}
           <Link href="/book-consultation" className="font-semibold underline underline-offset-2">Book a counseling session</Link>{' '}
           or{' '}
@@ -231,7 +231,7 @@ export default function EnquiryForm({
         </label>
       </div>
 
-      <label className="mt-3 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 text-xs text-emerald-900">
+      <label className="mt-3 flex items-start gap-3 rounded-xl border border-crm-success-border bg-crm-success-bg/60 p-3 text-xs text-[var(--crm-success-text)]">
         <input
           type="checkbox"
           checked={form.whatsappOptIn}
@@ -242,7 +242,7 @@ export default function EnquiryForm({
       </label>
 
       {state === 'error' && (
-        <p className="mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <p className="mt-3 flex items-center gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-xs text-crm-danger-text">
           <AlertTriangle className="h-4 w-4" /> {error}
         </p>
       )}

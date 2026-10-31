@@ -603,7 +603,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                 <Button
                   onClick={handleWhatsApp}
                   variant="outline"
-                  className="h-12 border-emerald-500 px-4 text-emerald-600 hover:bg-emerald-50"
+                  className="h-12 border-crm-success-border px-4 text-crm-success-text hover:bg-crm-success-bg"
                 >
                   <Icon name="MessageCircle" className="size-4" />
                   {ALO_CONTACT.hasWhatsApp ? `WhatsApp ${ALO_CONTACT.whatsappDisplay}` : "Contact ALO Education"}
@@ -640,7 +640,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                         aria-label={`Switch to ${s.country?.name || s.countrySlug}`}
                         className={cn(
                           "h-2.5 rounded-full transition-all",
-                          i === safeIndex ? "w-7 bg-[var(--alo-brand)]" : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                          i === safeIndex ? "w-7 bg-[var(--alo-brand)]" : "w-2.5 bg-[var(--alo-page)] hover:bg-[var(--alo-page)]"
                         )}
                       />
                     ))}
@@ -1162,7 +1162,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                           <p className="text-xs text-muted-foreground">Capital: {slide.country?.capital || "—"}</p>
                         </div>
                       </div>
-                      <Badge variant="outline" className={cn("text-[11px]", verified ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-amber-300 bg-amber-50 text-amber-700")}>
+                      <Badge variant="outline" className={cn("text-[11px]", verified ? "border-crm-success-border bg-crm-success-bg text-crm-success-text" : "border-crm-warning-border bg-crm-warning-bg text-crm-warning-text")}>
                         {verified ? "Verified" : "Needs review"}
                       </Badge>
                     </div>
@@ -1610,10 +1610,10 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
           </div>
 
           {/* Disclaimer */}
-          <Card className="mt-8 rounded-2xl border-2 border-amber-300 bg-amber-50/60">
+          <Card className="mt-8 rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/60">
             <CardContent className="flex items-start gap-3 p-5">
-              <Icon name="ShieldAlert" className="mt-0.5 size-5 text-amber-600" />
-              <p className="text-xs leading-relaxed text-amber-800">
+              <Icon name="ShieldAlert" className="mt-0.5 size-5 text-crm-warning-text" />
+              <p className="text-xs leading-relaxed text-crm-warning-text">
                 <span className="font-bold">Disclaimer:</span> Visa and work rules may change. The final checklist must be verified by ALO staff before you submit your application. AI guidance is preparation-only and cannot guarantee a visa decision.
               </p>
             </CardContent>
@@ -1764,7 +1764,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
             {AI_TOOLS.map((t) => (
               <Card key={t.title} className="h-full rounded-2xl border-2 border-[var(--alo-border)] bg-white transition-shadow hover:shadow-md">
                 <CardContent className="flex h-full flex-col p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                     <Icon name={t.icon} className="size-5" />
                   </div>
                   <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">{t.title}</p>
@@ -1772,7 +1772,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                   <Button
                     onClick={() => toast({ title: t.title, description: "AI tool is loading — your counselor will validate the output." })}
                     variant="ghost"
-                    className="mt-3 h-9 justify-start px-0 text-violet-600 hover:bg-transparent hover:underline"
+                    className="mt-3 h-9 justify-start px-0 text-[var(--alo-brand)] hover:bg-transparent hover:underline"
                   >
                     Try it now
                     <Icon name="ArrowRight" className="size-3.5" />
@@ -1878,14 +1878,14 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                         <p><span className="font-semibold text-muted-foreground">Course:</span> <span className="font-semibold text-[var(--alo-text)]">{s.courseName}</span></p>
                       )}
                       {s.outcome && (
-                        <p><span className="font-semibold text-muted-foreground">Outcome:</span> <span className="font-semibold text-emerald-600">{s.outcome}</span></p>
+                        <p><span className="font-semibold text-muted-foreground">Outcome:</span> <span className="font-semibold text-crm-success-text">{s.outcome}</span></p>
                       )}
                     </div>
 
                     <p className="mt-3 flex-1 text-xs italic leading-relaxed text-muted-foreground">"{s.testimonial}"</p>
 
                     {s.consentStatus && (
-                      <p className="mt-3 flex items-center gap-1 text-[11px] text-emerald-600">
+                      <p className="mt-3 flex items-center gap-1 text-[11px] text-crm-success-text">
                         <Icon name="ShieldCheck" className="size-3" />
                         Consent: {s.consentStatus}
                       </p>
@@ -2040,7 +2040,7 @@ export function PublicHome({ onNavigate }: PublicHomeProps) {
                     <Icon name="ClipboardCheck" className="size-4" />
                     Check Eligibility
                   </Button>
-                  <Button onClick={handleWhatsApp} variant="outline" className="h-12 border-emerald-300 bg-transparent text-emerald-200 hover:bg-emerald-500/10">
+                  <Button onClick={handleWhatsApp} variant="outline" className="h-12 border-crm-success-border bg-transparent text-crm-success-text hover:bg-[var(--alo-success)]/10">
                     <Icon name="MessageCircle" className="size-4" />
                     {ALO_CONTACT.hasWhatsApp ? `WhatsApp ${ALO_CONTACT.whatsappDisplay}` : "Contact ALO Education"}
                   </Button>

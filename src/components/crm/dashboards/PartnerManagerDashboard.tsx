@@ -77,8 +77,8 @@ export default function PartnerManagerDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <Icon className="w-5 h-5 text-alo-brand" />
-                  <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
-                    {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-red-600" />}{kpi.change}
+                  <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
+                    {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-crm-danger-text" />}{kpi.change}
                   </span>
                 </div>
                 <p className="text-2xl font-bold text-alo-text">{kpi.value}</p>
@@ -171,7 +171,7 @@ export default function PartnerManagerDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-amber-500" /> Pending Approvals
+                  <Clock className="w-4 h-4 text-crm-warning-text" /> Pending Approvals
                 </CardTitle>
                 <Badge variant="warning" className="text-[11px]">{pendingApprovals.length}</Badge>
               </div>
@@ -179,7 +179,7 @@ export default function PartnerManagerDashboard() {
             <CardContent>
               <div className="space-y-2">
                 {pendingApprovals.map((p) => (
-                  <div key={p.name} className="p-2.5 rounded-lg border border-amber-200 bg-amber-50">
+                  <div key={p.name} className="p-2.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text">{p.name}</p>
                       <Badge variant={p.documents === 'Complete' ? 'success' : p.documents === 'Incomplete' ? 'danger' : 'warning'} className="text-[11px]">{p.documents}</Badge>
@@ -208,7 +208,7 @@ export default function PartnerManagerDashboard() {
             <CardContent>
               <div className="space-y-2">
                 {complianceStatus.map((c) => (
-                  <div key={c.partner} className={`p-2.5 rounded-lg border ${c.severity === 'high' ? 'border-red-200 bg-red-50' : c.severity === 'medium' ? 'border-amber-200 bg-amber-50' : 'border-alo-border'}`}>
+                  <div key={c.partner} className={`p-2.5 rounded-lg border ${c.severity === 'high' ? 'border-crm-danger-border bg-crm-danger-bg' : c.severity === 'medium' ? 'border-crm-warning-border bg-crm-warning-bg' : 'border-alo-border'}`}>
                     <p className="text-sm font-medium text-alo-text">{c.partner}</p>
                     <p className="text-[11px] text-alo-text-muted">{c.issue}</p>
                     <p className="text-[11px] text-alo-brand mt-0.5">Due: {c.due}</p>

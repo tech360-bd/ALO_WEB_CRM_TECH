@@ -304,7 +304,7 @@ export default function SopPanel() {
             Create statement
           </Button>
         </div>
-        {actionError && <p className="mt-3 text-xs text-red-700">{actionError}</p>}
+        {actionError && <p className="mt-3 text-xs text-crm-danger-text">{actionError}</p>}
         {notice && <p className="mt-3 text-[11px] text-[var(--alo-body)]">{notice}</p>}
       </Card>
 
@@ -462,9 +462,9 @@ export default function SopPanel() {
                         <span
                           className={
                             check.severity === 'ERROR'
-                              ? 'font-semibold text-red-700'
+                              ? 'font-semibold text-crm-danger-text'
                               : check.severity === 'WARNING'
-                                ? 'font-semibold text-amber-700'
+                                ? 'font-semibold text-crm-warning-text'
                                 : 'text-[var(--alo-text-muted)]'
                           }
                         >

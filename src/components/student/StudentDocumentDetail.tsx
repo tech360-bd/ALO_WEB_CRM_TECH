@@ -132,10 +132,10 @@ export default function StudentDocumentDetail() {
                   className={cn(
                     'flex h-12 w-12 shrink-0 items-center justify-center rounded-button',
                     document.status === 'approved' || document.status === 'verified'
-                      ? 'bg-emerald-50 text-emerald-600'
+                      ? 'bg-crm-success-bg text-crm-success-text'
                       : document.status === 'rejected' || document.status === 'needs_resubmission'
-                        ? 'bg-red-50 text-red-600'
-                        : 'bg-amber-50 text-amber-600',
+                        ? 'bg-crm-danger-bg text-crm-danger-text'
+                        : 'bg-crm-warning-bg text-crm-warning-text',
                   )}
                 >
                   <Icon className="h-6 w-6" aria-hidden="true" />
@@ -177,12 +177,12 @@ export default function StudentDocumentDetail() {
               </div>
 
               {document.rejectionReason && (
-                <div className="border-t border-red-200 bg-red-50 px-5 py-3">
-                  <p className="flex items-center gap-2 text-[12px] font-semibold text-red-800">
+                <div className="border-t border-crm-danger-border bg-crm-danger-bg px-5 py-3">
+                  <p className="flex items-center gap-2 text-[12px] font-semibold text-crm-danger-text">
                     <XCircle className="h-4 w-4" aria-hidden="true" />
                     Why this was rejected
                   </p>
-                  <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-red-900">
+                  <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-crm-danger-text">
                     {document.rejectionReason}
                   </p>
                   <Button asChild className="mt-3 rounded-button bg-alo-cta px-4 text-[13px] font-semibold text-white hover:bg-[var(--alo-cta)]">
@@ -192,9 +192,9 @@ export default function StudentDocumentDetail() {
               )}
 
               {document.reviewerNote && (
-                <div className="border-t border-amber-200 bg-amber-50 px-5 py-3">
-                  <p className="text-[12px] font-semibold text-amber-800">Reviewer note</p>
-                  <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-amber-900">
+                <div className="border-t border-crm-warning-border bg-crm-warning-bg px-5 py-3">
+                  <p className="text-[12px] font-semibold text-crm-warning-text">Reviewer note</p>
+                  <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-crm-warning-text">
                     {document.reviewerNote}
                   </p>
                 </div>

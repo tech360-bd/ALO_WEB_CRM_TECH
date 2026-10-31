@@ -242,40 +242,40 @@ const PROVIDER_TYPE_LABELS: Record<string, string> = {
 };
 
 const PROVIDER_TYPE_COLORS: Record<string, string> = {
-  GLOBAL_B2B: "bg-rose-100 text-rose-700",
-  COUNTRY_SPECIFIC: "bg-violet-100 text-violet-700",
+  GLOBAL_B2B: "bg-crm-warning-bg text-crm-warning-text",
+  COUNTRY_SPECIFIC: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   UNIVERSITY_REPRESENTATIVE: "bg-sky-100 text-sky-700",
-  PATHWAY_PROVIDER: "bg-amber-100 text-amber-700",
+  PATHWAY_PROVIDER: "bg-crm-warning-bg text-crm-warning-text",
   AGGREGATOR: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  SUB_AGENT: "bg-emerald-100 text-emerald-700",
+  SUB_AGENT: "bg-crm-success-bg text-crm-success-text",
   DIRECT_UNIVERSITY: "bg-teal-100 text-teal-700",
 };
 
 const B2B_STATUS_META: Record<string, { label: string; cls: string }> = {
   SUBMITTED: { label: "Submitted", cls: "bg-sky-100 text-sky-700" },
-  ACKNOWLEDGED: { label: "Acknowledged", cls: "bg-indigo-100 text-indigo-700" },
-  IN_REVIEW: { label: "In Review", cls: "bg-violet-100 text-violet-700" },
-  DECISION_PENDING: { label: "Decision Pending", cls: "bg-amber-100 text-amber-700" },
-  OFFERED: { label: "Offered", cls: "bg-emerald-100 text-emerald-700" },
-  REJECTED: { label: "Rejected", cls: "bg-rose-100 text-rose-700" },
+  ACKNOWLEDGED: { label: "Acknowledged", cls: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  IN_REVIEW: { label: "In Review", cls: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  DECISION_PENDING: { label: "Decision Pending", cls: "bg-crm-warning-bg text-crm-warning-text" },
+  OFFERED: { label: "Offered", cls: "bg-crm-success-bg text-crm-success-text" },
+  REJECTED: { label: "Rejected", cls: "bg-crm-warning-bg text-crm-warning-text" },
   COMMISSION_DUE: { label: "Commission Due", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   COMMISSION_PAID: { label: "Commission Paid", cls: "bg-teal-100 text-teal-700" },
 };
 
 const B2B_TYPE_META: Record<string, { label: string; cls: string; icon: string }> = {
-  INBOUND: { label: "INBOUND", cls: "bg-emerald-100 text-emerald-700", icon: "ArrowDownToLine" },
+  INBOUND: { label: "INBOUND", cls: "bg-crm-success-bg text-crm-success-text", icon: "ArrowDownToLine" },
   OUTBOUND: { label: "OUTBOUND", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]", icon: "ArrowUpFromLine" },
 };
 
 const SOURCE_META: Record<string, { label: string; cls: string; icon: string }> = {
   DIRECT: { label: "Direct", cls: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]", icon: "FileText" },
-  PARTNER: { label: "Partner", cls: "bg-violet-100 text-violet-700", icon: "Handshake" },
-  B2B_INBOUND: { label: "B2B Inbound", cls: "bg-emerald-100 text-emerald-700", icon: "ArrowDownToLine" },
+  PARTNER: { label: "Partner", cls: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]", icon: "Handshake" },
+  B2B_INBOUND: { label: "B2B Inbound", cls: "bg-crm-success-bg text-crm-success-text", icon: "ArrowDownToLine" },
   B2B_OUTBOUND: { label: "B2B Outbound", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]", icon: "ArrowUpFromLine" },
 };
 
 const PRIORITY_META: Record<string, { label: string; cls: string }> = {
-  URGENT: { label: "Urgent", cls: "bg-rose-100 text-rose-700" },
+  URGENT: { label: "Urgent", cls: "bg-crm-warning-bg text-crm-warning-text" },
   HIGH: { label: "High", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   NORMAL: { label: "Normal", cls: "bg-sky-100 text-sky-700" },
   LOW: { label: "Low", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
@@ -293,31 +293,31 @@ const COMMENT_CHANNELS = [
 ];
 
 const COMMENT_CHANNEL_CLS: Record<string, string> = {
-  STUDENT_VISIBLE: "bg-emerald-100 text-emerald-700",
-  PARTNER_VISIBLE: "bg-violet-100 text-violet-700",
+  STUDENT_VISIBLE: "bg-crm-success-bg text-crm-success-text",
+  PARTNER_VISIBLE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   COUNSELOR_VISIBLE: "bg-sky-100 text-sky-700",
-  INTERNAL: "bg-slate-200 text-[var(--alo-body)]",
-  B2B_CONFIDENTIAL: "bg-rose-100 text-rose-700",
+  INTERNAL: "bg-[var(--alo-page)] text-[var(--alo-body)]",
+  B2B_CONFIDENTIAL: "bg-crm-warning-bg text-crm-warning-text",
   UNIVERSITY: "bg-teal-100 text-teal-700",
-  FINANCE: "bg-amber-100 text-amber-700",
+  FINANCE: "bg-crm-warning-bg text-crm-warning-text",
   VISA_HANDOVER: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const DEADLINE_TYPE_META: Record<string, { label: string; cls: string }> = {
   APPLICATION: { label: "Application", cls: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]" },
-  DOCUMENT: { label: "Document", cls: "bg-amber-100 text-amber-700" },
-  OFFER_CONDITION: { label: "Offer Condition", cls: "bg-violet-100 text-violet-700" },
+  DOCUMENT: { label: "Document", cls: "bg-crm-warning-bg text-crm-warning-text" },
+  OFFER_CONDITION: { label: "Offer Condition", cls: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   DEPOSIT: { label: "Deposit", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   CAS_I20_COE: { label: "CAS / I-20 / COE", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
-  B2B_FOLLOWUP: { label: "B2B Follow-up", cls: "bg-rose-100 text-rose-700" },
+  B2B_FOLLOWUP: { label: "B2B Follow-up", cls: "bg-crm-warning-bg text-crm-warning-text" },
   UNIVERSITY_FOLLOWUP: { label: "University Follow-up", cls: "bg-sky-100 text-sky-700" },
 };
 
 const TASK_STATUS_META: Record<string, { label: string; cls: string }> = {
-  PENDING: { label: "Pending", cls: "bg-amber-100 text-amber-700" },
+  PENDING: { label: "Pending", cls: "bg-crm-warning-bg text-crm-warning-text" },
   IN_PROGRESS: { label: "In Progress", cls: "bg-sky-100 text-sky-700" },
-  BLOCKED: { label: "Blocked", cls: "bg-rose-100 text-rose-700" },
-  DONE: { label: "Done", cls: "bg-emerald-100 text-emerald-700" },
+  BLOCKED: { label: "Blocked", cls: "bg-crm-warning-bg text-crm-warning-text" },
+  DONE: { label: "Done", cls: "bg-crm-success-bg text-crm-success-text" },
   CANCELLED: { label: "Cancelled", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
 };
 
@@ -356,11 +356,11 @@ function daysUntil(dateStr?: string | null): number | null {
 function daysRemainingBadge(dateStr?: string | null): React.ReactNode {
   const d = daysUntil(dateStr);
   if (d === null) return <span className="text-xs text-muted-foreground">—</span>;
-  if (d < 0) return <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">{Math.abs(d)}d overdue</Badge>;
-  if (d === 0) return <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">Today</Badge>;
-  if (d < 3) return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{d}d left</Badge>;
+  if (d < 0) return <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">{Math.abs(d)}d overdue</Badge>;
+  if (d === 0) return <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">Today</Badge>;
+  if (d < 3) return <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">{d}d left</Badge>;
   if (d < 7) return <Badge className="bg-sky-100 text-sky-700 hover:bg-sky-100">{d}d left</Badge>;
-  return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">{d}d left</Badge>;
+  return <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">{d}d left</Badge>;
 }
 
 function formatCurrency(amount?: number | null, currency = "USD"): string {
@@ -392,9 +392,9 @@ function docStatusSummary(docs: ApplicationDocument[]): { label: string; cls: st
   if (docs.length === 0) return { label: "No docs", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", missing: 0, total: 0 };
   const missing = docs.filter((d) => d.status === "MISSING" || d.status === "REQUEST_AGAIN").length;
   const pending = docs.filter((d) => d.status === "UNDER_REVIEW").length;
-  if (missing > 0) return { label: `${missing} missing`, cls: "bg-rose-100 text-rose-700", missing, total: docs.length };
-  if (pending > 0) return { label: `${pending} in review`, cls: "bg-amber-100 text-amber-700", missing, total: docs.length };
-  return { label: `${docs.length} ok`, cls: "bg-emerald-100 text-emerald-700", missing, total: docs.length };
+  if (missing > 0) return { label: `${missing} missing`, cls: "bg-crm-warning-bg text-crm-warning-text", missing, total: docs.length };
+  if (pending > 0) return { label: `${pending} in review`, cls: "bg-crm-warning-bg text-crm-warning-text", missing, total: docs.length };
+  return { label: `${docs.length} ok`, cls: "bg-crm-success-bg text-crm-success-text", missing, total: docs.length };
 }
 
 // ============================================================
@@ -526,7 +526,7 @@ export function ApplicationManagerPortal() {
       <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40">
         <CardContent className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${canViewB2B ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"}`}>
+            <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${canViewB2B ? "bg-crm-success-bg text-crm-success-text" : "bg-crm-warning-bg text-crm-warning-text"}`}>
               <Icon name={canViewB2B ? "ShieldCheck" : "ShieldAlert"} className="size-5" />
             </div>
             <div>
@@ -543,7 +543,7 @@ export function ApplicationManagerPortal() {
           <div className="flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-wide">
             <span className="rounded-md bg-white px-2 py-1 text-[var(--alo-brand)] shadow-sm">{viewerRole.replace(/_/g, " ")}</span>
             {canViewB2B && (
-              <span className="rounded-md bg-rose-100 px-2 py-1 text-rose-700 shadow-sm">B2B Confidential</span>
+              <span className="rounded-md bg-crm-warning-bg px-2 py-1 text-crm-warning-text shadow-sm">B2B Confidential</span>
             )}
           </div>
         </CardContent>
@@ -575,7 +575,7 @@ export function ApplicationManagerPortal() {
                   accent={k.accent}
                 />
                 {k.badge && (
-                  <span className="absolute right-2 top-2 rounded-full bg-rose-500 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white shadow-sm">
+                  <span className="absolute right-2 top-2 rounded-full bg-crm-warning-bg0 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white shadow-sm">
                     {k.badge}
                   </span>
                 )}
@@ -684,15 +684,15 @@ export function ApplicationManagerPortal() {
 
           {/* Security & safe status notes */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+            <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
               <CardContent className="pt-5">
                 <div className="flex items-start gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-crm-warning-bg text-crm-warning-text">
                     <Icon name="ShieldAlert" className="size-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-rose-700">B2B Security</p>
-                    <p className="mt-1 text-xs leading-relaxed text-rose-900/80">
+                    <p className="text-sm font-bold text-crm-warning-text">B2B Security</p>
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--alo-error)]/80">
                       B2B provider name, contact, commission, portal credentials, and internal notes are hidden from students, partners, counselors, and general staff. Only Application Team, Application Manager, and Super Admin can view B2B details. All B2B views and edits are audit-logged.
                     </p>
                   </div>
@@ -837,14 +837,14 @@ function DashboardTab({
             ) : (
               recentLogs.map((log) => (
                 <div key={log.id} className="flex items-start gap-2.5 rounded-xl border border-border/60 bg-white p-2.5">
-                  <div className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg ${log.visibility === "B2B_CONFIDENTIAL" ? "bg-rose-100 text-rose-600" : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"}`}>
+                  <div className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg ${log.visibility === "B2B_CONFIDENTIAL" ? "bg-crm-warning-bg text-crm-warning-text" : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"}`}>
                     <Icon name={log.visibility === "B2B_CONFIDENTIAL" ? "Lock" : "GitCommit"} className="size-3.5" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-xs font-semibold text-foreground">{log.safeStatus || log.newStatus}</span>
                       {log.visibility === "B2B_CONFIDENTIAL" && (
-                        <Badge variant="outline" className="h-4 border-rose-300 px-1 text-[11px] font-bold text-rose-700">B2B</Badge>
+                        <Badge variant="outline" className="h-4 border-crm-warning-border px-1 text-[11px] font-bold text-crm-warning-text">B2B</Badge>
                       )}
                     </div>
                     <p className="text-[11px] text-muted-foreground">{log.applicationId}</p>
@@ -864,7 +864,7 @@ function DashboardTab({
           title="B2B Confidential Alerts"
           description="Confidential — visible only to Application Team, Application Manager & Super Admin"
           icon="ShieldAlert"
-          action={<Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">CONFIDENTIAL</Badge>}
+          action={<Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">CONFIDENTIAL</Badge>}
         >
           {b2bApplications.length === 0 ? (
             <EmptyState
@@ -879,24 +879,24 @@ function DashboardTab({
                 const next = daysUntil(b.nextFollowupAt as unknown as string);
                 const overdue = next !== null && next < 0;
                 return (
-                  <div key={b.id} className="rounded-2xl border-2 border-rose-200 bg-rose-50/40 p-4">
+                  <div key={b.id} className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40 p-4">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-rose-900">{b.b2bProvider?.name || "Unknown provider"}</p>
+                        <p className="truncate text-sm font-bold text-crm-warning-text">{b.b2bProvider?.name || "Unknown provider"}</p>
                         <p className="text-[11px] text-muted-foreground">{b.applicationId}</p>
                       </div>
                       <Badge className={meta.cls}>{meta.label}</Badge>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
-                      <Badge variant="outline" className="border-rose-300 text-rose-700">{b.b2bType}</Badge>
+                      <Badge variant="outline" className="border-crm-warning-border text-crm-warning-text">{b.b2bType}</Badge>
                       <span className="text-muted-foreground">Ref: {b.b2bReference || "—"}</span>
                     </div>
-                    <div className="mt-3 flex items-center justify-between border-t border-rose-200 pt-2 text-[11px]">
+                    <div className="mt-3 flex items-center justify-between border-t border-crm-warning-border pt-2 text-[11px]">
                       <span className="text-muted-foreground">
-                        Commission: <span className="font-mono font-semibold text-rose-700">{formatCurrency(b.b2bCommissionAmount)}</span>
+                        Commission: <span className="font-mono font-semibold text-crm-warning-text">{formatCurrency(b.b2bCommissionAmount)}</span>
                       </span>
                       {next !== null && (
-                        <Badge className={overdue ? "bg-rose-100 text-rose-700" : next < 3 ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}>
+                        <Badge className={overdue ? "bg-crm-warning-bg text-crm-warning-text" : next < 3 ? "bg-crm-warning-bg text-crm-warning-text" : "bg-crm-success-bg text-crm-success-text"}>
                           {overdue ? `${Math.abs(next)}d overdue` : next === 0 ? "Today" : `${next}d left`}
                         </Badge>
                       )}
@@ -1169,7 +1169,7 @@ function AllApplicationsTab({
                           {b2b ? (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">
+                                <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                                   <Icon name="Lock" className="mr-1 size-3" />
                                   {b2b.b2bType}
                                 </Badge>
@@ -1208,7 +1208,7 @@ function AllApplicationsTab({
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button size="icon" variant="ghost" className="size-8" onClick={() => toast({ title: "Update Status", description: `Opening status workflow for ${a.applicationId}. A safe-status update will be visible to student; exact internal status visible to Application Team.` })}>
-                                <Icon name="GitCommit" className="size-4 text-emerald-600" />
+                                <Icon name="GitCommit" className="size-4 text-crm-success-text" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>Update Status</TooltipContent>
@@ -1216,7 +1216,7 @@ function AllApplicationsTab({
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button size="icon" variant="ghost" className="size-8" onClick={() => toast({ title: "Request Documents", description: `Document request will be sent to student ${a.student?.fullName || ""} via WhatsApp + portal.` })}>
-                                <Icon name="FileUp" className="size-4 text-amber-600" />
+                                <Icon name="FileUp" className="size-4 text-crm-warning-text" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>Request Documents</TooltipContent>
@@ -1330,7 +1330,7 @@ function B2BApplicationsTab({
 
   if (!canViewB2B) {
     return (
-      <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+      <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
         <CardContent className="py-12">
           <EmptyState
             icon="Lock"
@@ -1344,14 +1344,14 @@ function B2BApplicationsTab({
 
   return (
     <div className="space-y-4">
-      <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+      <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
         <CardContent className="flex items-start gap-3 py-4">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-crm-warning-bg text-crm-warning-text">
             <Icon name="ShieldAlert" className="size-5" />
           </div>
           <div>
-            <p className="text-sm font-bold text-rose-700">Confidentiality Warning</p>
-            <p className="mt-1 text-xs text-rose-900/80">
+            <p className="text-sm font-bold text-crm-warning-text">Confidentiality Warning</p>
+            <p className="mt-1 text-xs text-[var(--alo-error)]/80">
               This tab contains B2B confidential information. Only Application Team, Application Manager, and Super Admin can access this data.
               All views and edits are audit-logged. Do not share commission amounts, internal notes, or B2B references with students, partners, counselors, or general staff.
             </p>
@@ -1407,7 +1407,7 @@ function B2BApplicationsTab({
                       <TableCell className="font-mono text-xs">{b.b2bReference || "—"}</TableCell>
                       <TableCell><Badge className={meta.cls}>{meta.label}</Badge></TableCell>
                       <TableCell>
-                        <span className="font-mono text-xs font-semibold text-rose-700">{formatCurrency(b.b2bCommissionAmount)}</span>
+                        <span className="font-mono text-xs font-semibold text-crm-warning-text">{formatCurrency(b.b2bCommissionAmount)}</span>
                       </TableCell>
                       <TableCell className="text-xs">{b.b2bClaimStage?.replace(/_/g, " ") || "—"}</TableCell>
                       <TableCell className="text-xs">{b.lastFollowupAt ? fmtDate(b.lastFollowupAt) : "—"}</TableCell>
@@ -1448,8 +1448,8 @@ function B2BApplicationsTab({
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
-              <Icon name="Lock" className="size-5 text-rose-600" /> Create B2B Application
-              <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">CONFIDENTIAL</Badge>
+              <Icon name="Lock" className="size-5 text-crm-warning-text" /> Create B2B Application
+              <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">CONFIDENTIAL</Badge>
             </DialogTitle>
             <DialogDescription>
               Link an existing application to a B2B provider. This entry will be hidden from students, partners, and counselors.
@@ -1621,7 +1621,7 @@ function B2BProvidersTab({
 
   if (!canViewB2B) {
     return (
-      <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+      <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
         <CardContent className="py-12">
           <EmptyState
             icon="Lock"
@@ -1711,7 +1711,7 @@ function B2BProvidersTab({
 
                     <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3">
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className={p.status === "ACTIVE" ? "border-emerald-300 text-emerald-700" : "border-rose-300 text-rose-700"}>
+                        <Badge variant="outline" className={p.status === "ACTIVE" ? "border-crm-success-border text-crm-success-text" : "border-crm-warning-border text-crm-warning-text"}>
                           {p.status}
                         </Badge>
                         <span className="text-[11px] text-muted-foreground">
@@ -1734,7 +1734,7 @@ function B2BProvidersTab({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="Building2" className="size-5" /> Add B2B Provider
-              <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">CONFIDENTIAL</Badge>
+              <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">CONFIDENTIAL</Badge>
             </DialogTitle>
             <DialogDescription>
               Add a new B2B provider to the confidential directory. Portal login credentials will be encrypted — only Application Team & Super Admin can reveal them.
@@ -1913,17 +1913,17 @@ function CommentsTab({
         }
       >
         {/* Visibility note */}
-        <div className="mb-3 flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50/50 p-3">
-          <Icon name="Info" className="size-4 shrink-0 text-amber-600" />
-          <p className="text-xs text-amber-900/80">
+        <div className="mb-3 flex items-start gap-2.5 rounded-xl border border-crm-warning-border bg-crm-warning-bg/50 p-3">
+          <Icon name="Info" className="size-4 shrink-0 text-crm-warning-text" />
+          <p className="text-xs text-crm-warning-text/80">
             Student-visible comments appear in Student Portal. B2B confidential comments are never visible to students, partners, or counselors.
           </p>
         </div>
 
         {commentMeta && commentMeta.hidden > 0 && (
-          <div className="mb-3 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50/40 px-3 py-2">
-            <Icon name="Lock" className="size-4 text-rose-600" />
-            <span className="text-xs text-rose-900/80">
+          <div className="mb-3 flex items-center gap-2 rounded-xl border border-crm-warning-border bg-crm-warning-bg/40 px-3 py-2">
+            <Icon name="Lock" className="size-4 text-crm-warning-text" />
+            <span className="text-xs text-[var(--alo-error)]/80">
               {commentMeta.hidden} comment(s) hidden from your role ({viewerRole.replace(/_/g, " ")}). Total: {commentMeta.total}.
             </span>
           </div>
@@ -1954,7 +1954,7 @@ function CommentsTab({
                       <p className="text-xs font-semibold">{ch.label}</p>
                       <p className="hidden text-[11px] text-muted-foreground lg:block">{ch.desc}</p>
                     </div>
-                    {isRestricted && <Icon name="Lock" className="ml-auto size-3 text-rose-600" />}
+                    {isRestricted && <Icon name="Lock" className="ml-auto size-3 text-crm-warning-text" />}
                   </button>
                 );
               })}
@@ -1978,7 +1978,7 @@ function CommentsTab({
                 channelComments.map((c) => {
                   const cls = COMMENT_CHANNEL_CLS[c.commentType] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
                   return (
-                    <div key={c.id} className={`rounded-xl border p-3 ${c.isB2bConfidential ? "border-rose-200 bg-rose-50/40" : "border-border bg-white"}`}>
+                    <div key={c.id} className={`rounded-xl border p-3 ${c.isB2bConfidential ? "border-crm-warning-border bg-crm-warning-bg/40" : "border-border bg-white"}`}>
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <div className="flex size-7 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
@@ -1992,7 +1992,7 @@ function CommentsTab({
                         <div className="flex items-center gap-1.5">
                           <Badge className={cls}>{COMMENT_CHANNELS.find((ch) => ch.value === c.commentType)?.label || c.commentType}</Badge>
                           {c.isB2bConfidential && (
-                            <Badge className="bg-rose-500 text-white hover:bg-rose-500">
+                            <Badge className="bg-crm-warning-bg0 text-white hover:bg-crm-warning-bg0">
                               <Icon name="Lock" className="mr-1 size-3" /> CONFIDENTIAL
                             </Badge>
                           )}
@@ -2030,9 +2030,9 @@ function CommentsTab({
                   </SelectContent>
                 </Select>
                 {canViewB2B && (
-                  <label className="flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50/40 px-2 py-1.5 cursor-pointer">
+                  <label className="flex items-center gap-1.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg/40 px-2 py-1.5 cursor-pointer">
                     <Checkbox checked={isB2bConfidential} onCheckedChange={(v) => setIsB2bConfidential(!!v)} />
-                    <span className="text-[11px] font-semibold text-rose-700">Mark B2B Confidential</span>
+                    <span className="text-[11px] font-semibold text-crm-warning-text">Mark B2B Confidential</span>
                   </label>
                 )}
                 <Button
@@ -2079,16 +2079,16 @@ function DeadlinesTab({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+        <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
           <CardContent className="pt-4">
-            <p className="text-xs font-semibold uppercase text-rose-700">Overdue</p>
-            <p className="text-2xl font-bold text-rose-700">{overdue}</p>
+            <p className="text-xs font-semibold uppercase text-crm-warning-text">Overdue</p>
+            <p className="text-2xl font-bold text-crm-warning-text">{overdue}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl border-2 border-amber-200 bg-amber-50/40">
+        <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
           <CardContent className="pt-4">
-            <p className="text-xs font-semibold uppercase text-amber-700">≤ 3 days</p>
-            <p className="text-2xl font-bold text-amber-700">{upcoming}</p>
+            <p className="text-xs font-semibold uppercase text-crm-warning-text">≤ 3 days</p>
+            <p className="text-2xl font-bold text-crm-warning-text">{upcoming}</p>
           </CardContent>
         </Card>
         <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40">
@@ -2097,10 +2097,10 @@ function DeadlinesTab({
             <p className="text-2xl font-bold text-[var(--alo-brand)]">{filtered.length}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl border-2 border-emerald-200 bg-emerald-50/40">
+        <Card className="rounded-2xl border-2 border-crm-success-border bg-crm-success-bg/40">
           <CardContent className="pt-4">
-            <p className="text-xs font-semibold uppercase text-emerald-700">Types</p>
-            <p className="text-2xl font-bold text-emerald-700">{types.length}</p>
+            <p className="text-xs font-semibold uppercase text-crm-success-text">Types</p>
+            <p className="text-2xl font-bold text-crm-success-text">{types.length}</p>
           </CardContent>
         </Card>
       </div>
@@ -2152,7 +2152,7 @@ function DeadlinesTab({
                       <TableCell className="text-xs">{fmtDate(d.deadlineDate)}</TableCell>
                       <TableCell>{daysRemainingBadge(d.deadlineDate)}</TableCell>
                       <TableCell>
-                        <Badge variant="outline" className={d.status === "PENDING" ? "border-amber-300 text-amber-700" : "border-emerald-300 text-emerald-700"}>
+                        <Badge variant="outline" className={d.status === "PENDING" ? "border-crm-warning-border text-crm-warning-text" : "border-crm-success-border text-crm-success-text"}>
                           {d.status}
                         </Badge>
                       </TableCell>

@@ -75,7 +75,7 @@ export default function CounselorLoginPage() {
 
         <CardContent className="pt-4">
           {error && (
-            <div className="mb-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700" role="alert">
+            <div className="mb-4 flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg p-3 text-xs text-crm-danger-text" role="alert">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>{error}</span>
             </div>

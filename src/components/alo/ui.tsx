@@ -52,7 +52,7 @@ export const ACCENT_CLASSES: Record<AccentColor, { bg: string; text: string; bor
   orange:  { bg: "bg-[var(--alo-orange-soft)]",  text: "text-[var(--alo-orange-strong)]", border: "border-[var(--alo-orange)]",  dot: "bg-[var(--alo-orange)]" },
   emerald: { bg: "bg-[var(--alo-success-soft)]", text: "text-[var(--alo-success-strong)]",border: "border-[var(--alo-success)]", dot: "bg-[var(--alo-success)]" },
   amber:   { bg: "bg-[var(--alo-warning-soft)]", text: "text-[var(--alo-warning-strong)]",border: "border-[var(--alo-warning)]", dot: "bg-[var(--alo-warning)]" },
-  violet:  { bg: "bg-violet-50",                 text: "text-violet-700",                  border: "border-violet-200",            dot: "bg-violet-500" },
+  violet:  { bg: "bg-[var(--alo-brand-pale)]",                 text: "text-[var(--alo-brand)]",                  border: "border-[var(--alo-border)]",            dot: "bg-[var(--alo-brand-pale)]0" },
   rose:    { bg: "bg-[var(--alo-danger-soft)]",  text: "text-[var(--alo-danger-strong)]", border: "border-[var(--alo-danger)]",  dot: "bg-[var(--alo-danger)]" },
   sky:     { bg: "bg-[var(--alo-info-soft)]",    text: "text-[var(--alo-info-strong)]",   border: "border-[var(--alo-info)]",    dot: "bg-[var(--alo-info)]" },
   slate:   { bg: "bg-[var(--alo-surface-muted)]",text: "text-[var(--alo-text-secondary)]",border: "border-[var(--alo-border)]",  dot: "bg-[var(--alo-muted)]" },
@@ -964,7 +964,7 @@ export function Notification({
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss"
-          className={cn("shrink-0 rounded-md p-1 hover:bg-black/5", a.text)}
+          className={cn("shrink-0 rounded-md p-1 hover:bg-[var(--alo-navy)]/5", a.text)}
         >
           <Icon name="X" className="size-4" />
         </button>

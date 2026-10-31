@@ -270,18 +270,18 @@ interface HrAnalyticsResponse {
 // ============================================================
 
 const LEAVE_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-red-100 text-red-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-danger-bg text-crm-danger-text",
   CANCELLED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const LEAVE_TYPE_COLORS: Record<string, string> = {
   CASUAL: "bg-sky-100 text-sky-700",
   ANNUAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  MEDICAL: "bg-rose-100 text-rose-700",
-  MATERNITY: "bg-violet-100 text-violet-700",
-  PATERNITY: "bg-violet-100 text-violet-700",
+  MEDICAL: "bg-crm-warning-bg text-crm-warning-text",
+  MATERNITY: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  PATERNITY: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   WITHOUT_PAY: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   COMPENSATORY: "bg-teal-100 text-teal-700",
 };
@@ -289,39 +289,39 @@ const LEAVE_TYPE_COLORS: Record<string, string> = {
 const PAYROLL_STATUS_COLORS: Record<string, string> = {
   DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   APPROVED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  PAID: "bg-emerald-100 text-emerald-700",
+  PAID: "bg-crm-success-bg text-crm-success-text",
 };
 
 const DEVICE_STATUS_COLORS: Record<string, string> = {
-  ASSIGNED: "bg-emerald-100 text-emerald-700",
+  ASSIGNED: "bg-crm-success-bg text-crm-success-text",
   RETURNED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  LOST: "bg-red-100 text-red-700",
-  DAMAGED: "bg-amber-100 text-amber-700",
+  LOST: "bg-crm-danger-bg text-crm-danger-text",
+  DAMAGED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const SESSION_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
   LOGGED_OUT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  EXPIRED: "bg-amber-100 text-amber-700",
+  EXPIRED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const CLEARANCE_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   IN_PROGRESS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
 };
 
 const NOTICE_TYPE_COLORS: Record<string, string> = {
-  RESIGNATION: "bg-amber-100 text-amber-700",
-  TERMINATION: "bg-red-100 text-red-700",
-  ABSCONDING: "bg-rose-100 text-rose-700",
+  RESIGNATION: "bg-crm-warning-bg text-crm-warning-text",
+  TERMINATION: "bg-crm-danger-bg text-crm-danger-text",
+  ABSCONDING: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const EMPLOYMENT_TYPE_COLORS: Record<string, string> = {
-  FULL_TIME: "bg-emerald-100 text-emerald-700",
+  FULL_TIME: "bg-crm-success-bg text-crm-success-text",
   PART_TIME: "bg-sky-100 text-sky-700",
-  CONTRACT: "bg-violet-100 text-violet-700",
-  PROBATION: "bg-amber-100 text-amber-700",
+  CONTRACT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  PROBATION: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const LEAVE_TYPES = [
@@ -401,7 +401,7 @@ function PrivateAmount({
       </button>
       {showPin && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--alo-navy)]/40 p-4"
           onClick={() => {
             setShowPin(false);
             setPin("");
@@ -1130,7 +1130,7 @@ export function EnterpriseHrDashboard() {
   const canViewLoginSecurity = data?.permissions.canViewLoginSecurity === true;
 
   if (!loading && !data) {
-    return <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">HR dashboard data is unavailable for this account or scope. No company metrics are displayed.</div>;
+    return <div role="alert" className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-5 text-sm text-crm-warning-text">HR dashboard data is unavailable for this account or scope. No company metrics are displayed.</div>;
   }
 
   return (
@@ -1302,10 +1302,10 @@ export function EnterpriseHrDashboard() {
                           <Badge
                             className={
                               b.days <= 3
-                                ? "bg-rose-100 text-rose-700"
+                                ? "bg-crm-warning-bg text-crm-warning-text"
                                 : b.days <= 7
-                                ? "bg-amber-100 text-amber-700"
-                                : "bg-emerald-100 text-emerald-700"
+                                ? "bg-crm-warning-bg text-crm-warning-text"
+                                : "bg-crm-success-bg text-crm-success-text"
                             }
                           >
                             {b.days === 0
@@ -1327,25 +1327,25 @@ export function EnterpriseHrDashboard() {
                   description={fmtDate(new Date())}
                 >
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
+                    <div className="rounded-xl border border-crm-success-border bg-crm-success-bg p-3">
                       <div className="flex items-center gap-2">
-                        <Icon name="Check" className="size-4 text-emerald-600" />
-                        <span className="text-xs font-medium text-emerald-700">
+                        <Icon name="Check" className="size-4 text-crm-success-text" />
+                        <span className="text-xs font-medium text-crm-success-text">
                           Present
                         </span>
                       </div>
-                      <p className="mt-1 text-2xl font-bold text-emerald-700 tabular-nums">
+                      <p className="mt-1 text-2xl font-bold text-crm-success-text tabular-nums">
                         {attendance.filter((a) => a.status === "PRESENT").length}
                       </p>
                     </div>
-                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
+                    <div className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-3">
                       <div className="flex items-center gap-2">
-                        <Icon name="Clock" className="size-4 text-amber-600" />
-                        <span className="text-xs font-medium text-amber-700">
+                        <Icon name="Clock" className="size-4 text-crm-warning-text" />
+                        <span className="text-xs font-medium text-crm-warning-text">
                           Late
                         </span>
                       </div>
-                      <p className="mt-1 text-2xl font-bold text-amber-700 tabular-nums">
+                      <p className="mt-1 text-2xl font-bold text-crm-warning-text tabular-nums">
                         {attendance.filter((a) => a.status === "LATE").length}
                       </p>
                     </div>
@@ -1360,14 +1360,14 @@ export function EnterpriseHrDashboard() {
                         {attendance.filter((a) => a.status === "LEAVE").length}
                       </p>
                     </div>
-                    <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
+                    <div className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-3">
                       <div className="flex items-center gap-2">
-                        <Icon name="UserX" className="size-4 text-rose-600" />
-                        <span className="text-xs font-medium text-rose-700">
+                        <Icon name="UserX" className="size-4 text-crm-warning-text" />
+                        <span className="text-xs font-medium text-crm-warning-text">
                           Absent
                         </span>
                       </div>
-                      <p className="mt-1 text-2xl font-bold text-rose-700 tabular-nums">
+                      <p className="mt-1 text-2xl font-bold text-crm-warning-text tabular-nums">
                         {attendance.filter((a) => a.status === "ABSENT").length}
                       </p>
                     </div>
@@ -1684,7 +1684,7 @@ export function EnterpriseHrDashboard() {
                                   <div className="flex items-center justify-end gap-1.5">
                                     <Button
  size="sm"
- className=" bg-emerald-600 text-white hover:bg-emerald-700"
+ className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]"
  onClick={() =>
                                         handleApproveLeave(l, "APPROVED")
                                       }
@@ -1695,7 +1695,7 @@ export function EnterpriseHrDashboard() {
                                     <Button
  size="sm"
  variant="outline"
- className=" border-red-300 text-red-600 hover:bg-red-50"
+ className=" border-crm-danger-border text-crm-danger-text hover:bg-crm-danger-bg"
  onClick={() =>
                                         handleApproveLeave(l, "REJECTED")
                                       }
@@ -1888,7 +1888,7 @@ export function EnterpriseHrDashboard() {
                                   ) : p.status === "APPROVED" ? (
                                     <Button
  size="sm"
- className=" bg-emerald-600 text-white hover:bg-emerald-700"
+ className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]"
  onClick={() =>
                                         handleApprovePayroll(p, "PAID")
                                       }
@@ -2175,11 +2175,11 @@ export function EnterpriseHrDashboard() {
                                 </TableCell>
                                 <TableCell>
                                   {s.failedAttempts > 0 ? (
-                                    <Badge className="bg-amber-100 text-amber-700">
+                                    <Badge className="bg-crm-warning-bg text-crm-warning-text">
                                       {s.failedAttempts}
                                     </Badge>
                                   ) : (
-                                    <span className="text-xs text-emerald-600">
+                                    <span className="text-xs text-crm-success-text">
                                       0
                                     </span>
                                   )}
@@ -2266,11 +2266,11 @@ export function EnterpriseHrDashboard() {
                                 </p>
                               </div>
                             </div>
-                            <div className="mt-3 flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                              <span className="text-xs font-medium text-amber-700">
+                            <div className="mt-3 flex items-center justify-between rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2">
+                              <span className="text-xs font-medium text-crm-warning-text">
                                 Remaining Days
                               </span>
-                              <span className="text-lg font-bold text-amber-700 tabular-nums">
+                              <span className="text-lg font-bold text-crm-warning-text tabular-nums">
                                 {n.remainingDays}
                               </span>
                             </div>
@@ -2375,8 +2375,8 @@ export function EnterpriseHrDashboard() {
                               <Badge
                                 className={
                                   e.status === "COMPLETED"
-                                    ? "bg-emerald-100 text-emerald-700"
-                                    : "bg-amber-100 text-amber-700"
+                                    ? "bg-crm-success-bg text-crm-success-text"
+                                    : "bg-crm-warning-bg text-crm-warning-text"
                                 }
                               >
                                 {labelOf(e.status)}
@@ -2388,7 +2388,7 @@ export function EnterpriseHrDashboard() {
                                   name={e.experienceLetterPath ? "Check" : "X"}
                                   className={
                                     e.experienceLetterPath
-                                      ? "size-3 text-emerald-500"
+                                      ? "size-3 text-crm-success-text"
                                       : "size-3 text-muted-foreground"
                                   }
                                 />
@@ -2399,7 +2399,7 @@ export function EnterpriseHrDashboard() {
                                   name={e.relievingLetterPath ? "Check" : "X"}
                                   className={
                                     e.relievingLetterPath
-                                      ? "size-3 text-emerald-500"
+                                      ? "size-3 text-crm-success-text"
                                       : "size-3 text-muted-foreground"
                                   }
                                 />
@@ -2542,7 +2542,7 @@ export function EnterpriseHrDashboard() {
             </div>
           </div>
           <div className="flex items-start gap-2.5 rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-crm-success-bg text-crm-success-text">
               <Icon name="History" className="size-4" />
             </div>
             <div>
@@ -2556,7 +2556,7 @@ export function EnterpriseHrDashboard() {
             </div>
           </div>
         </div>
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-xs text-crm-danger-text">
           <Icon name="ShieldAlert" className="mt-0.5 size-3.5 shrink-0" />
           <p>
             Employee personal data is private. Only the employee, HR, and Super
@@ -2592,10 +2592,10 @@ export function EnterpriseHrDashboard() {
 // ============================================================
 
 const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  SUSPENDED: "bg-amber-100 text-amber-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  TERMINATED: "bg-red-100 text-red-700",
+  TERMINATED: "bg-crm-danger-bg text-crm-danger-text",
   PROBATION: "bg-sky-100 text-sky-700",
 };
 

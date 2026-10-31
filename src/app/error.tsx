@@ -12,7 +12,7 @@ export default function Error({
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--alo-page)] p-4">
       <div className="max-w-md text-center">
-        <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
+        <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-crm-warning-bg text-crm-warning-text">
           <Icon name="AlertTriangle" className="size-8" />
         </div>
         <h1 className="mt-6 text-2xl font-bold text-[var(--alo-text)]">Something went wrong</h1>

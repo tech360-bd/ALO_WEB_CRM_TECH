@@ -129,7 +129,7 @@ export default function DocumentsPanel() {
           <Button type="submit" disabled={busy || !file || !projectId}>
             {busy ? 'Uploading…' : 'Upload document'}
           </Button>
-          {actionError && <p className="text-xs text-red-700">{actionError}</p>}
+          {actionError && <p className="text-xs text-crm-danger-text">{actionError}</p>}
           <p className="text-[11px] text-[var(--alo-text-muted)]">
             Removing a document is a soft delete with a retention window; the audit trail is kept.
           </p>
@@ -162,7 +162,7 @@ export default function DocumentsPanel() {
                   <a href={`/api/phd/documents/${document.id}`} className="font-semibold text-[var(--alo-brand)] underline">
                     Download
                   </a>
-                  <button type="button" onClick={() => remove(document.id)} className="text-[11px] font-semibold text-red-700 underline">
+                  <button type="button" onClick={() => remove(document.id)} className="text-[11px] font-semibold text-crm-danger-text underline">
                     Remove
                   </button>
                 </div>

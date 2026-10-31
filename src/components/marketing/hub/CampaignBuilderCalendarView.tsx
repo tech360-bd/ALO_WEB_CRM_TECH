@@ -71,30 +71,30 @@ interface BuilderForm {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  active: { label: 'Active', color: 'bg-green-100 text-green-700 border-green-200' },
+  active: { label: 'Active', color: 'bg-crm-success-bg text-crm-success-text border-crm-success-border' },
   paused: { label: 'Paused', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
   draft: { label: 'Draft', color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
   completed: { label: 'Completed', color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
-  archived: { label: 'Archived', color: 'bg-gray-200 text-[var(--alo-text-muted)] border-[var(--alo-border-strong)]' },
+  archived: { label: 'Archived', color: 'bg-[var(--alo-page)] text-[var(--alo-text-muted)] border-[var(--alo-border-strong)]' },
 };
 
 const PLATFORM_COLORS: Record<string, string> = {
-  Facebook: 'bg-blue-500',
-  Instagram: 'bg-pink-500',
+  Facebook: 'bg-[var(--alo-brand)]',
+  Instagram: 'bg-[var(--alo-error)]',
   LinkedIn: 'bg-sky-600',
-  TikTok: 'bg-gray-800',
-  YouTube: 'bg-red-600',
-  WhatsApp: 'bg-green-600',
+  TikTok: 'bg-[var(--alo-page)]',
+  YouTube: 'bg-[var(--alo-error)]',
+  WhatsApp: 'bg-[var(--alo-success-dark)]',
   Website: 'bg-[var(--alo-cta)]',
 };
 
 const PLATFORM_DOT_COLORS: Record<string, string> = {
-  Facebook: 'bg-blue-500',
-  Instagram: 'bg-pink-500',
+  Facebook: 'bg-[var(--alo-brand)]',
+  Instagram: 'bg-[var(--alo-error)]',
   LinkedIn: 'bg-sky-600',
-  TikTok: 'bg-gray-800',
-  YouTube: 'bg-red-600',
-  WhatsApp: 'bg-green-600',
+  TikTok: 'bg-[var(--alo-page)]',
+  YouTube: 'bg-[var(--alo-error)]',
+  WhatsApp: 'bg-[var(--alo-success-dark)]',
   Website: 'bg-[var(--alo-cta)]',
 };
 
@@ -210,14 +210,14 @@ function KpiCards({ campaigns }: { campaigns: CampaignRow[] }) {
       value: formatBDT(totalSpend),
       icon: DollarSign,
       change: 'Budget: ৳3,00,000',
-      color: 'text-emerald-600 bg-emerald-50',
+      color: 'text-crm-success-text bg-crm-success-bg',
     },
     {
       label: 'Avg. ROI',
       value: `${avgROI.toFixed(1)}x`,
       icon: TrendingUp,
       change: '+0.4x improvement',
-      color: 'text-purple-600 bg-purple-50',
+      color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]',
     },
     {
       label: 'Avg. Conversion',
@@ -231,7 +231,7 @@ function KpiCards({ campaigns }: { campaigns: CampaignRow[] }) {
       value: totalLeads > 0 ? formatBDT(Math.round(totalSpend / totalLeads)) : '৳0',
       icon: BarChart3,
       change: '-৳15 per lead',
-      color: 'text-amber-600 bg-amber-50',
+      color: 'text-crm-warning-text bg-crm-warning-bg',
     },
   ];
 
@@ -247,7 +247,7 @@ function KpiCards({ campaigns }: { campaigns: CampaignRow[] }) {
             </div>
             <p className="text-lg font-bold text-[var(--alo-text)]">{card.value}</p>
             <p className="text-[11px] text-[var(--alo-text-muted)] font-medium">{card.label}</p>
-            <p className="text-[11px] text-emerald-600 mt-1">{card.change}</p>
+            <p className="text-[11px] text-crm-success-text mt-1">{card.change}</p>
           </CardContent>
         </Card>
       ))}
@@ -293,7 +293,7 @@ function CampaignTable({ campaigns }: { campaigns: CampaignRow[] }) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${PLATFORM_DOT_COLORS[c.platform] || 'bg-gray-400'}`} />
+                    <span className={`w-2 h-2 rounded-full ${PLATFORM_DOT_COLORS[c.platform] || 'bg-[var(--alo-page)]'}`} />
                     <span className="text-xs text-[var(--alo-body)]">{c.platform}</span>
                   </div>
                 </TableCell>
@@ -309,7 +309,7 @@ function CampaignTable({ campaigns }: { campaigns: CampaignRow[] }) {
                   <span className="text-sm text-[var(--alo-body)]">{formatBDT(c.cost)}</span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <span className={`text-sm font-semibold ${c.roi >= 3 ? 'text-emerald-600' : c.roi >= 2 ? 'text-amber-600' : 'text-[var(--alo-text-muted)]'}`}>
+                  <span className={`text-sm font-semibold ${c.roi >= 3 ? 'text-crm-success-text' : c.roi >= 2 ? 'text-crm-warning-text' : 'text-[var(--alo-text-muted)]'}`}>
                     {c.roi > 0 ? `${c.roi}x` : '—'}
                   </span>
                 </TableCell>
@@ -335,14 +335,14 @@ function CampaignTable({ campaigns }: { campaigns: CampaignRow[] }) {
                       </Button>
                     )}
                     {c.status === 'paused' && (
-                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-green-600">
+                      <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-crm-success-text">
                         <Play className="w-3.5 h-3.5" />
                       </Button>
                     )}
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]">
                       <Copy className="w-3.5 h-3.5" />
                     </Button>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-red-500">
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-crm-danger-text">
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>
                   </div>
@@ -519,7 +519,7 @@ function CalendarView({ events }: { events: CalendarEvent[] }) {
         <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-[var(--alo-text)]">
-              <Zap className="w-4 h-4 inline mr-1 text-amber-500" />
+              <Zap className="w-4 h-4 inline mr-1 text-crm-warning-text" />
               Upcoming Events
             </CardTitle>
           </CardHeader>
@@ -726,7 +726,7 @@ function CampaignBuilder() {
         <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-emerald-500" />
+              <DollarSign className="w-4 h-4 text-crm-success-text" />
               Budget & Schedule
             </CardTitle>
           </CardHeader>
@@ -771,7 +771,7 @@ function CampaignBuilder() {
         <Card className="border border-[var(--alo-border)] shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold text-[var(--alo-text)] flex items-center gap-2">
-              <Zap className="w-4 h-4 text-purple-500" />
+              <Zap className="w-4 h-4 text-[var(--alo-brand)]" />
               Content Requirements
             </CardTitle>
           </CardHeader>
@@ -847,7 +847,7 @@ function CampaignBuilder() {
             <div className="space-y-2">
               {MOCK_CAMPAIGNS.slice(0, 4).map((c) => (
                 <div key={c.id} className="flex items-center gap-2 py-1">
-                  <span className={`w-2 h-2 rounded-full ${STATUS_CONFIG[c.status]?.color.split(' ')[0] || 'bg-gray-300'}`} />
+                  <span className={`w-2 h-2 rounded-full ${STATUS_CONFIG[c.status]?.color.split(' ')[0] || 'bg-[var(--alo-page)]'}`} />
                   <div className="flex-1 min-w-0">
                     <p className="text-[11px] font-medium text-[var(--alo-body)] truncate">{c.name}</p>
                     <p className="text-[11px] text-[var(--alo-text-muted)]">{c.platform} · {c.leads} leads</p>

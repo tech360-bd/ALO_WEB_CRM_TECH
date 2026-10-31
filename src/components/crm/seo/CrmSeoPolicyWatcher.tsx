@@ -152,10 +152,10 @@ function LegacyUnverifiedCrmSeoPolicyWatcher() {
             key={a.message}
             className={
               a.severity === 'critical'
-                ? 'border-red-300 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200'
+                ? 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text dark:border-crm-danger-border dark:bg-[var(--alo-error)]/10 dark:text-crm-danger-text'
                 : a.severity === 'warning'
-                ? 'border-amber-300 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200'
-                : 'border-emerald-300 bg-emerald-50 text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200'
+                ? 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text dark:border-crm-warning-border dark:bg-[var(--alo-warning)]/10 dark:text-crm-warning-text'
+                : 'border-crm-success-border bg-crm-success-bg text-crm-success-text dark:border-crm-success-border dark:bg-[var(--alo-success)]/10 dark:text-crm-success-text'
             }
           >
             {a.severity === 'critical' && <AlertCircle className="size-4" />}
@@ -202,7 +202,7 @@ function LegacyUnverifiedCrmSeoPolicyWatcher() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Confidence</span>
-                  <span className={`font-semibold ${p.confidence >= 90 ? 'text-emerald-600' : p.confidence >= 80 ? 'text-amber-600' : 'text-red-600'}`}>{p.confidence}%</span>
+                  <span className={`font-semibold ${p.confidence >= 90 ? 'text-crm-success-text' : p.confidence >= 80 ? 'text-crm-warning-text' : 'text-crm-danger-text'}`}>{p.confidence}%</span>
                 </div>
                 <Separator />
                 <div className="flex items-center justify-between text-foreground">
@@ -307,9 +307,9 @@ function LegacyUnverifiedCrmSeoPolicyWatcher() {
                   <CardDescription>15-item current-risk checklist for immigration content compliance</CardDescription>
                 </div>
                 <div className="flex items-center gap-3 text-xs">
-                  <span className="text-emerald-600 font-semibold">{riskChecklist.filter(r => r.status === 'Verified').length} Verified</span>
-                  <span className="text-amber-600 font-semibold">{riskChecklist.filter(r => r.status === 'Unverified').length} Unverified</span>
-                  <span className="text-red-600 font-semibold">{riskChecklist.filter(r => r.status === 'Action Required').length} Action</span>
+                  <span className="text-crm-success-text font-semibold">{riskChecklist.filter(r => r.status === 'Verified').length} Verified</span>
+                  <span className="text-crm-warning-text font-semibold">{riskChecklist.filter(r => r.status === 'Unverified').length} Unverified</span>
+                  <span className="text-crm-danger-text font-semibold">{riskChecklist.filter(r => r.status === 'Action Required').length} Action</span>
                 </div>
               </div>
             </CardHeader>
@@ -396,7 +396,7 @@ function LegacyUnverifiedCrmSeoPolicyWatcher() {
                   'Financial figures (fees, living costs) must match latest official data',
                 ].map((rule, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm">
-                    <CheckCircle2 className="size-4 mt-0.5 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="size-4 mt-0.5 text-crm-success-text shrink-0" />
                     <span>{rule}</span>
                   </div>
                 ))}
@@ -410,11 +410,11 @@ function LegacyUnverifiedCrmSeoPolicyWatcher() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-end gap-3">
-                    <span className="text-4xl font-bold text-emerald-600">94</span>
+                    <span className="text-4xl font-bold text-crm-success-text">94</span>
                     <span className="text-muted-foreground text-sm pb-1">/ 100</span>
                   </div>
                   <div className="mt-3 w-full h-2 rounded-full bg-muted overflow-hidden">
-                    <div className="h-full w-[94%] bg-emerald-500 rounded-full" />
+                    <div className="h-full w-[94%] bg-[var(--alo-success)] rounded-full" />
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">2 items need immediate attention · 1 source degraded</p>
                 </CardContent>
@@ -434,7 +434,7 @@ function LegacyUnverifiedCrmSeoPolicyWatcher() {
                       <div className="flex items-center gap-3 text-xs">
                         <span className="text-muted-foreground">{c.pages} pages generated</span>
                         <span>·</span>
-                        <span className={c.humanReviewed === c.pages ? 'text-emerald-600 font-semibold' : 'text-amber-600'}>{c.humanReviewed}/{c.pages} reviewed</span>
+                        <span className={c.humanReviewed === c.pages ? 'text-crm-success-text font-semibold' : 'text-crm-warning-text'}>{c.humanReviewed}/{c.pages} reviewed</span>
                         {c.humanReviewed < c.pages && (
                           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="h-6 px-2 ">Review {c.pages - c.humanReviewed} left</Button>
                         )}

@@ -102,7 +102,7 @@ interface AppTeamResponse {
 
 // ---------- Maps ----------
 const PRIORITY_META: Record<string, { label: string; cls: string }> = {
-  URGENT: { label: "Urgent", cls: "bg-red-100 text-red-700" },
+  URGENT: { label: "Urgent", cls: "bg-crm-danger-bg text-crm-danger-text" },
   HIGH: { label: "High", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   NORMAL: { label: "Normal", cls: "bg-sky-100 text-sky-700" },
   LOW: { label: "Low", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
@@ -332,7 +332,7 @@ export function ApplicationTeamDashboard() {
                   <span className="truncate max-w-[140px]">{STAGE_LABELS[stage]}</span>
                   <span
                     className={`ml-1 inline-flex min-w-[20px] items-center justify-center rounded-full px-1.5 text-[11px] font-bold ${
-                      active ? "bg-white/70 text-current" : "bg-slate-200 text-[var(--alo-text-muted)]"
+                      active ? "bg-white/70 text-current" : "bg-[var(--alo-page)] text-[var(--alo-text-muted)]"
                     }`}
                   >
                     {count}
@@ -462,14 +462,14 @@ export function ApplicationTeamDashboard() {
                               {daysLeft !== null && daysLeft >= 0 && (
                                 <span
                                   className={`text-[11px] font-semibold ${
-                                    daysLeft <= 7 ? "text-red-600" : daysLeft <= 14 ? "text-amber-600" : "text-muted-foreground"
+                                    daysLeft <= 7 ? "text-crm-danger-text" : daysLeft <= 14 ? "text-crm-warning-text" : "text-muted-foreground"
                                   }`}
                                 >
                                   {daysLeft}d left
                                 </span>
                               )}
                               {daysLeft !== null && daysLeft < 0 && (
-                                <span className="text-[11px] font-semibold text-red-600">Overdue</span>
+                                <span className="text-[11px] font-semibold text-crm-danger-text">Overdue</span>
                               )}
                             </div>
                           </TableCell>
@@ -584,7 +584,7 @@ export function ApplicationTeamDashboard() {
                             <Button
                               size="sm"
                               onClick={() => handleApproveDoc(doc)}
-                              className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90"
+                              className="h-8 bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90"
                             >
                               <Icon name="Check" className="size-3.5" />
                               <span className="hidden md:inline">Approve</span>
@@ -593,7 +593,7 @@ export function ApplicationTeamDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => openReject(doc)}
-                              className="h-8 border-red-300 text-red-600 hover:bg-red-50"
+                              className="h-8 border-crm-danger-border text-crm-danger-text hover:bg-crm-danger-bg"
                             >
                               <Icon name="X" className="size-3.5" />
                               <span className="hidden md:inline">Reject</span>
@@ -611,7 +611,7 @@ export function ApplicationTeamDashboard() {
           {/* Partner emails tab */}
           <TabsContent value="partner-emails" className="p-4 pt-4 sm:px-6">
             {!loading && (
-              <div className="mb-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-700">
+              <div className="mb-3 flex items-start gap-2 rounded-xl border border-crm-warning-border bg-crm-warning-bg px-3 py-2.5 text-xs text-crm-warning-text">
                 <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0" />
                 <p>
                   Application team can see the <strong>submission channel</strong> (direct, partner, provider).{" "}
@@ -650,9 +650,9 @@ export function ApplicationTeamDashboard() {
                         <StatusBadge
                           status={email.status}
                           colorMap={{
-                            PENDING: "bg-amber-100 text-amber-700",
+                            PENDING: "bg-crm-warning-bg text-crm-warning-text",
                             REVIEWED: "bg-sky-100 text-sky-700",
-                            SENT_TO_STUDENT: "bg-emerald-100 text-emerald-700",
+                            SENT_TO_STUDENT: "bg-crm-success-bg text-crm-success-text",
                             ARCHIVED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
                           }}
                         />
@@ -733,7 +733,7 @@ export function ApplicationTeamDashboard() {
             </div>
           ))}
         </div>
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2 text-xs text-crm-warning-text">
           <Icon name="Info" className="mt-0.5 size-3.5 shrink-0" />
           <p>
             <strong>Commission expected</strong> from partner submissions is visible only to users with Finance permission. Application team can see
@@ -764,7 +764,7 @@ export function ApplicationTeamDashboard() {
                 className="resize-none border-[var(--alo-brand)]/20"
               />
             </div>
-            <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+            <div className="flex items-center gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2 text-xs text-crm-warning-text">
               <Icon name="History" className="size-3.5 shrink-0" />
               This rejection will be audit-logged and the student will be notified to re-upload.
             </div>
@@ -779,7 +779,7 @@ export function ApplicationTeamDashboard() {
             </Button>
             <Button
  onClick={submitReject}
- className=" bg-red-600 text-white hover:bg-red-600/90"
+ className=" bg-[var(--alo-error)] text-white hover:bg-[var(--alo-error)]/90"
  >
               <Icon name="X" className="size-4" />
               Reject document

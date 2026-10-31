@@ -244,7 +244,7 @@ export default function SuperAdminCommandCenter() {
         </div>
       </aside>
 
-      {mobileNav && <div className="fixed inset-0 z-20 bg-black/50 lg:hidden" onClick={() => setMobileNav(false)} />}
+      {mobileNav && <div className="fixed inset-0 z-20 bg-[var(--alo-navy)]/50 lg:hidden" onClick={() => setMobileNav(false)} />}
 
       {/* Main */}
       <main className="flex-1 min-w-0">

@@ -40,18 +40,18 @@ interface LoadState {
 }
 
 const TYPE_CONFIG: Record<string, { color: string; bg: string; border: string; dot: string }> = {
-  counseling: { color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', border: 'border-[var(--alo-border)]', dot: 'bg-blue-500' },
-  follow_up: { color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200', dot: 'bg-amber-500' },
-  interview: { color: 'text-purple-700', bg: 'bg-purple-50', border: 'border-purple-200', dot: 'bg-purple-500' },
-  meeting: { color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200', dot: 'bg-emerald-500' },
-  visa_interview: { color: 'text-purple-700', bg: 'bg-purple-50', border: 'border-purple-200', dot: 'bg-purple-500' },
+  counseling: { color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', border: 'border-[var(--alo-border)]', dot: 'bg-[var(--alo-brand)]' },
+  follow_up: { color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg', border: 'border-crm-warning-border', dot: 'bg-[var(--alo-warning)]' },
+  interview: { color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', border: 'border-[var(--alo-border)]', dot: 'bg-[var(--alo-brand)]' },
+  meeting: { color: 'text-crm-success-text', bg: 'bg-crm-success-bg', border: 'border-crm-success-border', dot: 'bg-[var(--alo-success)]' },
+  visa_interview: { color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', border: 'border-[var(--alo-border)]', dot: 'bg-[var(--alo-brand)]' },
 };
 
 const DEFAULT_STYLE = {
   color: 'text-[var(--alo-body)]',
   bg: 'bg-[var(--alo-page)]',
   border: 'border-[var(--alo-border)]',
-  dot: 'bg-slate-500',
+  dot: 'bg-[var(--alo-page)]',
 };
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -282,8 +282,8 @@ export default function EmployeeCalendarPage() {
       </div>
 
       {state.error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
               <p className="font-medium">{state.error}</p>

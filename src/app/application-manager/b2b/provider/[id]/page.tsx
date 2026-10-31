@@ -60,13 +60,13 @@ export default function B2BProviderDetailPage() {
   };
 
   if (loading) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[var(--alo-brand)]" /></div>;
-  if (error) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl p-6 text-center max-w-md"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">{error}</p></div></div>;
+  if (error) return <div className="p-8 bg-white min-h-screen flex items-center justify-center"><div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl p-6 text-center max-w-md"><AlertTriangle className="w-8 h-8 text-crm-warning-text mx-auto mb-2" /><p className="text-sm">{error}</p></div></div>;
   if (!provider) return <div className="p-8 bg-white min-h-screen text-center">Provider not found</div>;
 
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen space-y-4">
-      <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-rose-600 flex items-center justify-center"><Building2 className="w-5 h-5 text-white" /></div><div><h1 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">{provider.name} <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[11px]"><Lock className="w-3 h-3 mr-1" />CONFIDENTIAL</Badge></h1><p className="text-sm text-[var(--alo-text-muted)]">{provider.providerCode} • {provider.providerType} • {provider.status}</p></div></div>
-      {msg && <div className={`p-3 rounded-xl border text-sm ${msg.type==='success'?'bg-emerald-50 border-emerald-200 text-emerald-700':'bg-red-50 border-red-200 text-red-700'}`}>{msg.text}</div>}
+      <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-[var(--alo-error)] flex items-center justify-center"><Building2 className="w-5 h-5 text-white" /></div><div><h1 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">{provider.name} <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]"><Lock className="w-3 h-3 mr-1" />CONFIDENTIAL</Badge></h1><p className="text-sm text-[var(--alo-text-muted)]">{provider.providerCode} • {provider.providerType} • {provider.status}</p></div></div>
+      {msg && <div className={`p-3 rounded-xl border text-sm ${msg.type==='success'?'bg-crm-success-bg border-crm-success-border text-crm-success-text':'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text'}`}>{msg.text}</div>}
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-12 lg:col-span-8">
           <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl">
@@ -95,7 +95,7 @@ export default function B2BProviderDetailPage() {
             <CardContent className="p-4 space-y-3 text-xs">
               <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="font-semibold">Created By</p><p className="text-[var(--alo-body)]">{provider.createdBy?.substring(0,8) || 'System'}</p></div>
               <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="font-semibold">Last Reviewed</p><p className="text-[var(--alo-body)]">{provider.lastReviewedAt ? new Date(provider.lastReviewedAt).toLocaleString() : 'Never'}</p></div>
-              <div className="bg-rose-50 border border-rose-200 rounded-xl p-3"><p className="font-semibold text-rose-800">Confidential Fields</p><p className="text-rose-600 mt-1">email, phone, portalUrl, loginNote, commissionRule, paymentCondition, internalNote — stripped for unauthorized roles. Backend 403 enforced.</p></div>
+              <div className="bg-crm-warning-bg border border-crm-warning-border rounded-xl p-3"><p className="font-semibold text-crm-warning-text">Confidential Fields</p><p className="text-crm-warning-text mt-1">email, phone, portalUrl, loginNote, commissionRule, paymentCondition, internalNote — stripped for unauthorized roles. Backend 403 enforced.</p></div>
               <div className="bg-white border border-[var(--alo-border)] rounded-xl p-3"><p className="font-semibold">B2B Applications</p><p className="text-2xl font-bold text-[var(--alo-text)]">{provider.b2bApplications?.length || provider._count?.b2bApplications || 0}</p></div>
             </CardContent>
           </Card>

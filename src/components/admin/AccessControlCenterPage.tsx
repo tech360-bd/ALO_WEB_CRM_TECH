@@ -69,7 +69,7 @@ export default function AccessControlCenterPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-xl border border-[var(--alo-border)] shadow-xs">
         <div>
           <h1 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-indigo-600" />
+            <ShieldCheck className="w-5 h-5 text-[var(--alo-brand)]" />
             Super Admin Master Access Control Center
           </h1>
           <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
@@ -78,7 +78,7 @@ export default function AccessControlCenterPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge className="bg-indigo-100 text-indigo-800 border-indigo-200 text-xs">SUPER_ADMIN ONLY</Badge>
+          <Badge variant="neutral" className="text-xs">SUPER_ADMIN ONLY</Badge>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ export default function AccessControlCenterPage() {
               ].map((role) => (
                 <div key={role} className="p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-lg flex items-center justify-between">
                   <span className="font-semibold text-[var(--alo-text)]">{role}</span>
-                  <Badge variant="outline" className="text-[11px] bg-indigo-50 text-indigo-700">Active</Badge>
+                  <Badge variant="success" className="text-[11px]">Active</Badge>
                 </div>
               ))}
             </div>
@@ -161,9 +161,9 @@ export default function AccessControlCenterPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border-indigo-200 shadow-xs">
+          <Card className="bg-white border-[var(--alo-border)] shadow-xs">
             <CardHeader className="pb-2">
-              <Badge className="w-max text-[11px] bg-indigo-100 text-indigo-800">GROWTH PARTNER</Badge>
+              <Badge variant="neutral" className="w-max text-[11px]">GROWTH PARTNER</Badge>
               <CardTitle className="text-base font-bold text-[var(--alo-text)] mt-1">Growth Package</CardTitle>
               <CardDescription className="text-xs">Expanded capacity</CardDescription>
             </CardHeader>
@@ -175,9 +175,9 @@ export default function AccessControlCenterPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border-purple-200 shadow-xs">
+          <Card className="bg-white border-[var(--alo-border)] shadow-xs">
             <CardHeader className="pb-2">
-              <Badge className="w-max text-[11px] bg-purple-100 text-purple-800">PREMIUM PARTNER</Badge>
+              <Badge variant="neutral" className="w-max text-[11px]">PREMIUM PARTNER</Badge>
               <CardTitle className="text-base font-bold text-[var(--alo-text)] mt-1">Premium Package</CardTitle>
               <CardDescription className="text-xs">Enterprise tier</CardDescription>
             </CardHeader>
@@ -225,13 +225,13 @@ export default function AccessControlCenterPage() {
                       <TableCell className="text-xs text-[var(--alo-body)]">{req.currentLimit} &rarr; {req.requestedLimit}</TableCell>
                       <TableCell className="text-xs text-[var(--alo-text-muted)]">{req.reason || 'Team expansion'}</TableCell>
                       <TableCell>
-                        <Badge className={`text-[11px] ${req.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                        <Badge variant={req.status === 'approved' ? 'success' : 'warning'} className="text-[11px]">
                           {req.status.toUpperCase()}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         {req.status === 'pending' && (
-                          <Button size="sm" className="h-7 bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => handleApproveQuotaRequest(req.id)}>
+                          <Button size="sm" variant="brand" onClick={() => handleApproveQuotaRequest(req.id)}>
                             Approve Request
                           </Button>
                         )}
@@ -254,11 +254,11 @@ export default function AccessControlCenterPage() {
           <CardContent className="p-4 space-y-3 text-xs text-[var(--alo-body)]">
             <div className="p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-lg flex items-center justify-between">
               <span>Salary &amp; HR document view attempts automatically logged to audit trail.</span>
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <ShieldCheck className="w-4 h-4 text-[var(--alo-success)]" />
             </div>
             <div className="p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-lg flex items-center justify-between">
               <span>B2B application routing restricts partner visibility to own students only.</span>
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <ShieldCheck className="w-4 h-4 text-[var(--alo-success)]" />
             </div>
           </CardContent>
         </Card>

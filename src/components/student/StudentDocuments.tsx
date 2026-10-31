@@ -152,9 +152,9 @@ function getDocStatusConfig(status: DocumentStatus) {
   switch (status) {
     case 'Approved':
       return {
-        color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        color: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
         icon: CheckCircle2,
-        iconColor: 'text-emerald-500',
+        iconColor: 'text-crm-success-text',
       };
     case 'Pending':
       return {
@@ -164,15 +164,15 @@ function getDocStatusConfig(status: DocumentStatus) {
       };
     case 'Rejected':
       return {
-        color: 'bg-red-50 text-red-700 border-red-200',
+        color: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
         icon: XCircle,
-        iconColor: 'text-red-500',
+        iconColor: 'text-crm-danger-text',
       };
     case 'Expired':
       return {
-        color: 'bg-amber-50 text-amber-700 border-amber-200',
+        color: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
         icon: AlertTriangle,
-        iconColor: 'text-amber-500',
+        iconColor: 'text-crm-warning-text',
       };
     case 'Needs Review':
       return {
@@ -316,7 +316,7 @@ function UploadDialog({
                 isDragging
                   ? 'border-[var(--alo-cta-hover)] bg-[var(--alo-cta-soft)]/50'
                   : file
-                    ? 'border-emerald-300 bg-emerald-50/30'
+                    ? 'border-crm-success-border bg-crm-success-bg/30'
                     : 'border-[var(--alo-text)]/15 bg-[var(--alo-page)]/[0.01] hover:border-[var(--alo-text)]/30 hover:bg-[var(--alo-page)]/[0.02]'
               )}
             >
@@ -329,10 +329,10 @@ function UploadDialog({
               />
               {file ? (
                 <>
-                  <CheckCircle2 className="size-10 text-emerald-500" />
+                  <CheckCircle2 className="size-10 text-crm-success-text" />
                   <div className="text-center">
-                    <p className="text-sm font-medium text-emerald-700">{file.name}</p>
-                    <p className="text-xs text-emerald-600/70 mt-0.5">Click or drag to replace the file</p>
+                    <p className="text-sm font-medium text-crm-success-text">{file.name}</p>
+                    <p className="text-xs text-crm-success-text/70 mt-0.5">Click or drag to replace the file</p>
                   </div>
                 </>
               ) : (
@@ -349,7 +349,7 @@ function UploadDialog({
             </div>
           </div>
 
-          {error && <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+          {error && <p role="alert" className="rounded-md bg-crm-danger-bg px-3 py-2 text-sm text-crm-danger-text">{error}</p>}
 
           {/* File type validation note */}
           <div className="flex items-start gap-2 rounded-lg bg-[var(--alo-brand-pale)]/50 border border-[var(--alo-border)] px-3 py-2.5">
@@ -441,7 +441,7 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
         {/* Reviewed by */}
         {doc.reviewedBy && (
           <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text)]/50">
-            <CheckCircle2 className="size-3 text-emerald-500" />
+            <CheckCircle2 className="size-3 text-crm-success-text" />
             <span>Reviewed by {doc.reviewedBy} • {doc.reviewedDate}</span>
           </div>
         )}
@@ -449,14 +449,14 @@ function DocumentCard({ doc }: { doc: StudentDocument }) {
         {/* Rejection Reason */}
         {doc.rejectionReason && (
           <Collapsible open={showRejection} onOpenChange={setShowRejection}>
-            <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-red-600 hover:text-red-700 font-medium transition-colors">
+            <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-crm-danger-text hover:text-crm-danger-text font-medium transition-colors">
               {showRejection ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
               {showRejection ? 'Hide' : 'Show'} rejection reason
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="mt-2 flex items-start gap-2 rounded-lg bg-red-50 border border-red-100 px-3 py-2.5">
-                <XCircle className="size-4 text-red-500 shrink-0 mt-0.5" />
-                <p className="text-xs text-red-700 leading-relaxed">{doc.rejectionReason}</p>
+              <div className="mt-2 flex items-start gap-2 rounded-lg bg-crm-danger-bg border border-crm-danger-border px-3 py-2.5">
+                <XCircle className="size-4 text-crm-danger-text shrink-0 mt-0.5" />
+                <p className="text-xs text-crm-danger-text leading-relaxed">{doc.rejectionReason}</p>
               </div>
             </CollapsibleContent>
           </Collapsible>
@@ -624,9 +624,9 @@ export default function StudentDocuments() {
       </div>
 
       {loadError && (
-        <Card role="alert" className="border-red-200 bg-red-50/70">
+        <Card role="alert" className="border-crm-danger-border bg-crm-danger-bg/70">
           <CardContent className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4">
-            <p className="text-sm text-red-700">{loadError}</p>
+            <p className="text-sm text-crm-danger-text">{loadError}</p>
             <Button variant="outline" size="sm" onClick={() => { void loadDocs(); }}>Retry</Button>
           </CardContent>
         </Card>
@@ -637,10 +637,10 @@ export default function StudentDocuments() {
         <CardContent className="p-5">
           <p className="text-sm font-semibold text-[var(--alo-text)]">{uploadedCount} documents in your vault</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs">
-            <span className="inline-flex items-center gap-1.5 text-[var(--alo-text)]/70"><CheckCircle2 className="size-3 text-emerald-500" />{approvedCount} approved</span>
+            <span className="inline-flex items-center gap-1.5 text-[var(--alo-text)]/70"><CheckCircle2 className="size-3 text-crm-success-text" />{approvedCount} approved</span>
             <span className="inline-flex items-center gap-1.5 text-[var(--alo-text)]/70"><Clock className="size-3 text-[var(--alo-text-muted)]" />{pendingCount} pending</span>
-            <span className="inline-flex items-center gap-1.5 text-red-600"><XCircle className="size-3 text-crm-danger-text" />{rejectedCount} rejected</span>
-            {needsReviewCount > 0 && <span className="inline-flex items-center gap-1.5 text-amber-600"><AlertTriangle className="size-3 text-crm-warning-text" />{needsReviewCount} needs review</span>}
+            <span className="inline-flex items-center gap-1.5 text-crm-danger-text"><XCircle className="size-3 text-crm-danger-text" />{rejectedCount} rejected</span>
+            {needsReviewCount > 0 && <span className="inline-flex items-center gap-1.5 text-crm-warning-text"><AlertTriangle className="size-3 text-crm-warning-text" />{needsReviewCount} needs review</span>}
           </div>
         </CardContent>
       </Card>
@@ -808,7 +808,7 @@ export default function StudentDocuments() {
                       <span className="text-xs text-[var(--alo-text)]/50">
                         {doc.reviewedBy ? (
                           <span className="inline-flex items-center gap-1">
-                            <CheckCircle2 className="size-3 text-emerald-500" />
+                            <CheckCircle2 className="size-3 text-crm-success-text" />
                             {doc.reviewedBy}
                           </span>
                         ) : (

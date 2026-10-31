@@ -204,7 +204,7 @@ function StoryList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
                     "{story.testimonial}"
                   </p>
                   {story.outcome && (
-                    <div className="mt-3 inline-flex items-center gap-1 self-start rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                    <div className="mt-3 inline-flex items-center gap-1 self-start rounded-full bg-crm-success-bg px-2.5 py-1 text-xs font-semibold text-crm-success-text">
                       <Icon name="Check" className="size-3" />
                       {story.outcome}
                     </div>
@@ -344,7 +344,7 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
                   </Badge>
                 )}
                 {story.outcome && (
-                  <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                  <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
                     <Icon name="Check" className="mr-1 size-3" />
                     {story.outcome}
                   </Badge>
@@ -393,11 +393,11 @@ function StoryDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
         </div>
 
         {/* Consent */}
-        <div className="mt-8 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-          <Icon name="ShieldCheck" className="mt-0.5 size-5 shrink-0 text-emerald-600" />
+        <div className="mt-8 flex items-start gap-3 rounded-xl border border-crm-success-border bg-crm-success-bg p-4">
+          <Icon name="ShieldCheck" className="mt-0.5 size-5 shrink-0 text-crm-success-text" />
           <div>
-            <p className="text-sm font-bold text-emerald-900">Published with explicit student consent</p>
-            <p className="mt-1 text-xs text-emerald-800">
+            <p className="text-sm font-bold text-crm-success-text">Published with explicit student consent</p>
+            <p className="mt-1 text-xs text-crm-success-text">
               This testimonial was shared with the explicit written consent of {story.studentName}. ALO Education
               never fabricates testimonials or modifies a student's words.
             </p>

@@ -24,11 +24,11 @@ interface Partner {
 }
 
 const statusColors: Record<string, string> = {
-  active: 'bg-emerald-100 text-emerald-700',
-  approved: 'bg-emerald-100 text-emerald-700',
+  active: 'bg-crm-success-bg text-crm-success-text',
+  approved: 'bg-crm-success-bg text-crm-success-text',
   pending: 'bg-yellow-100 text-yellow-700',
   suspended: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-  terminated: 'bg-red-100 text-red-700',
+  terminated: 'bg-crm-danger-bg text-crm-danger-text',
 };
 
 export default function CrmPartnersPage() {
@@ -94,7 +94,7 @@ export default function CrmPartnersPage() {
           <div className="text-xs text-alo-text-muted">Total Partners</div>
         </Card>
         <Card className="bg-white rounded-xl border border-alo-border p-4">
-          <Users className="h-5 w-5 mb-2 text-emerald-600" />
+          <Users className="h-5 w-5 mb-2 text-crm-success-text" />
           <div className="text-xl font-bold text-alo-text">{totalStudents}</div>
           <div className="text-xs text-alo-text-muted">Total Students Referred</div>
         </Card>
@@ -150,7 +150,7 @@ export default function CrmPartnersPage() {
                           <div className="flex justify-end gap-1">
                             <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
                             <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>
-                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-red-500"><Trash2 className="h-4 w-4" /></Button>
+                            <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="text-crm-danger-text"><Trash2 className="h-4 w-4" /></Button>
                           </div>
                         </td>
                       </tr>

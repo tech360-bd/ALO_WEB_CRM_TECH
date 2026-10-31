@@ -163,10 +163,10 @@ export default function AICommandingCenter() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" className=" bg-slate-800 text-[var(--alo-placeholder)] border-slate-700 hover:bg-slate-700 hover:text-white" onClick={fetchHealth}>
+          <Button variant="outline" size="sm" className=" bg-[var(--alo-page)] text-[var(--alo-placeholder)] border-[var(--alo-border)] hover:bg-[var(--alo-page)] hover:text-white" onClick={fetchHealth}>
             <RefreshCw className="w-3.5 h-3.5 mr-1" /> Reload Core
           </Button>
-          <Button variant="outline" size="sm" className=" bg-slate-800 text-[var(--alo-text-muted)] border-slate-700 font-semibold" disabled title="Disabled: restore from a verified backup following the runbook" onClick={handleRollback}>
+          <Button variant="outline" size="sm" className=" bg-[var(--alo-page)] text-[var(--alo-text-muted)] border-[var(--alo-border)] font-semibold" disabled title="Disabled: restore from a verified backup following the runbook" onClick={handleRollback}>
             <Undo className="w-3.5 h-3.5 mr-1" /> Revert Database (disabled)
           </Button>
         </div>
@@ -267,7 +267,7 @@ export default function AICommandingCenter() {
           <Card className="bg-white border-[var(--alo-border)] shadow-2xs flex-1 flex flex-col">
             <CardHeader className="p-4 pb-2 border-b border-[var(--alo-border)]">
               <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-indigo-500" /> Proposed Plan
+                <Layers className="w-4 h-4 text-[var(--alo-brand)]" /> Proposed Plan
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 flex-1 flex flex-col justify-between">
@@ -299,7 +299,7 @@ export default function AICommandingCenter() {
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <div className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase">SECURITY</div>
-                        <Badge className={`text-[11px] uppercase ${currentPlan.securityImpact === 'HIGH' ? 'bg-red-500' : 'bg-slate-500'}`}>{currentPlan.securityImpact}</Badge>
+                        <Badge className={`text-[11px] uppercase ${currentPlan.securityImpact === 'HIGH' ? 'bg-[var(--alo-error)]' : 'bg-[var(--alo-page)]0'}`}>{currentPlan.securityImpact}</Badge>
                       </div>
                       <div>
                         <div className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase">TESTS REQUIRED</div>
@@ -307,8 +307,8 @@ export default function AICommandingCenter() {
                       </div>
                     </div>
                     {currentPlan.isDestructive && (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-2 flex items-start gap-1.5 text-[11px] text-red-800">
-                        <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
+                      <div className="bg-crm-danger-bg border border-crm-danger-border rounded-lg p-2 flex items-start gap-1.5 text-[11px] text-crm-danger-text">
+                        <AlertTriangle className="w-3.5 h-3.5 text-crm-danger-text flex-shrink-0" />
                         <span><strong>Destructive Operation:</strong> Always verify and backups schema before approving.</span>
                       </div>
                     )}
@@ -316,7 +316,7 @@ export default function AICommandingCenter() {
 
                   <div className="space-y-2 pt-4 border-t border-[var(--alo-border)]">
                     <p className="text-[11px] text-[var(--alo-text-muted)]">{SCHEMA_APPLY_DISABLED_MSG}</p>
-                    <Button onClick={() => handleApprovePlan(currentPlan.planId)} disabled className="w-full h-8 text-xs bg-slate-300 text-[var(--alo-body)] font-bold" title={SCHEMA_APPLY_DISABLED_MSG}>
+                    <Button onClick={() => handleApprovePlan(currentPlan.planId)} disabled className="w-full h-8 text-xs bg-[var(--alo-page)] text-[var(--alo-body)] font-bold" title={SCHEMA_APPLY_DISABLED_MSG}>
                       <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Apply disabled (preview only)
                     </Button>
                     <Button onClick={handleRejectPlan} disabled={isExecuting} variant="outline" className="w-full border-[var(--alo-border)] text-[var(--alo-body)]">
@@ -339,7 +339,7 @@ export default function AICommandingCenter() {
             <CardHeader className="p-4 pb-2">
               <CardTitle className="text-xs font-bold text-[var(--alo-text-muted)] uppercase tracking-wider flex items-center justify-between">
                 <span>Developer Settings</span>
-                <Badge variant="outline" className="text-[11px] bg-[var(--alo-page)] text-indigo-600 border-indigo-200">Gates Active</Badge>
+                <Badge variant="outline" className="text-[11px] bg-[var(--alo-page)] text-[var(--alo-brand)] border-[var(--alo-border)]">Gates Active</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-1 space-y-3">
@@ -381,20 +381,20 @@ export default function AICommandingCenter() {
           
           {/* Badge Quality Indicators */}
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className="bg-indigo-600 text-white font-mono text-[11px] flex items-center gap-1">
+            <Badge variant="success" className="font-mono text-[11px] flex items-center gap-1">
               <ShieldCheck className="w-3 h-3" /> tsc: OK
             </Badge>
-            <Badge className="bg-emerald-600 text-white font-mono text-[11px] flex items-center gap-1">
+            <Badge variant="success" className="font-mono text-[11px] flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" /> tests: 82/82
             </Badge>
-            <Badge className="bg-slate-800 text-[var(--alo-placeholder)] border border-slate-700 font-mono text-[11px] flex items-center gap-1">
+            <Badge className="bg-[var(--alo-page)] text-[var(--alo-placeholder)] border border-[var(--alo-border)] font-mono text-[11px] flex items-center gap-1">
               <HardDrive className="w-3 h-3" /> SQLite: 47 Tables
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="p-4 font-mono text-xs">
-          <ScrollArea className="h-32 bg-black/60 rounded-xl p-3 border border-slate-900">
-            <pre className="whitespace-pre overflow-x-auto text-[11px] text-emerald-400">
+          <ScrollArea className="h-32 bg-white rounded-xl p-3 border border-[var(--alo-border)] shadow-sm">
+            <pre className="whitespace-pre overflow-x-auto text-[11px] text-[var(--alo-body)]">
               {terminalLogs}
             </pre>
             <div ref={terminalEndRef} />
@@ -411,7 +411,7 @@ function ExplorerItem({ name, isDir, active, onClick }: { name: string; isDir?: 
   return (
     <button
       onClick={() => onClick(name)}
-      className={`w-full text-left p-1 rounded-sm flex items-center gap-1.5 truncate ${active ? 'bg-slate-200 text-[var(--alo-text)] font-bold' : 'text-[var(--alo-text-muted)] hover:bg-[var(--alo-surface-muted)]'}`}
+      className={`w-full text-left p-1 rounded-sm flex items-center gap-1.5 truncate ${active ? 'bg-[var(--alo-page)] text-[var(--alo-text)] font-bold' : 'text-[var(--alo-text-muted)] hover:bg-[var(--alo-surface-muted)]'}`}
     >
       {isDir ? (
         <Layers className={`w-3.5 h-3.5 ${active ? 'text-[var(--alo-text)]' : 'text-[var(--alo-text-muted)]'}`} />

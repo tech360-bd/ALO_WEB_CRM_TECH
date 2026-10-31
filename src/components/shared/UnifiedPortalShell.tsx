@@ -159,7 +159,7 @@ export default function UnifiedPortalShell({ role, title, subtitle, primaryActio
               {primaryAction.icon && <primaryAction.icon className="w-4 h-4 mr-1" />}{primaryAction.label}
             </Button>
           )}
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="size-12 relative"><Bell className="w-4 h-4" /><span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" /></Button>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="size-12 relative"><Bell className="w-4 h-4" /><span className="absolute -top-1 -right-1 w-2 h-2 bg-[var(--alo-error)] rounded-full" /></Button>
           <Avatar className="w-8 h-8 hidden sm:flex"><AvatarFallback>{user?.name?.[0] || 'U'}</AvatarFallback></Avatar>
         </div>
       </header>

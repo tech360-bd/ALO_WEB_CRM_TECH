@@ -27,7 +27,7 @@ export default function PartnerApplyPage() {
           <h1 className="text-2xl font-bold text-[var(--alo-text)]">Apply for Student {studentId} — Course {courseId}</h1>
           <p className="text-sm text-[var(--alo-body)] mt-2">Partner can apply for own students only — other partner students blocked at backend via partnerId. Creates application draft with student_id/course_id/university_id/intake_id linked, document checklist, timeline, counselor notification. Commission: own permitted only.</p>
           <Button onClick={handleApply} disabled={applying} className="w-full mt-6 bg-[var(--alo-cta)] text-white h-12 font-bold">{applying ? 'Applying...' : 'Apply — Creates Draft + Checklist + Timeline'}</Button>
-          {result && <div className={`mt-4 p-4 rounded-xl border text-xs ${result.success ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>{result.success ? `Application created: ${result.data?.applicationCode || result.data?.id}` : result.error}<Link href="/partner/dashboard" className="block mt-3"><Button className="bg-[var(--alo-brand)] text-white w-full">View Applications</Button></Link></div>}
+          {result && <div className={`mt-4 p-4 rounded-xl border text-xs ${result.success ? 'bg-crm-success-bg border-crm-success-border text-crm-success-text' : 'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text'}`}>{result.success ? `Application created: ${result.data?.applicationCode || result.data?.id}` : result.error}<Link href="/partner/dashboard" className="block mt-3"><Button className="bg-[var(--alo-brand)] text-white w-full">View Applications</Button></Link></div>}
         </Card>
       </div>
     </div>

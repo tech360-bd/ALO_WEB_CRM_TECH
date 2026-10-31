@@ -119,10 +119,10 @@ const ENTRY_LABELS: Record<string, string> = {
 
 // ── Status colors for AI results ──
 const STATUS_COLORS: Record<string, string> = {
-  ELIGIBLE: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  ELIGIBLE: "bg-crm-success-bg text-crm-success-text border-crm-success-border",
   POSSIBLY_ELIGIBLE: "bg-sky-100 text-sky-700 border-sky-200",
-  NEEDS_COUNSELOR_REVIEW: "bg-amber-100 text-amber-700 border-amber-200",
-  NOT_READY_YET: "bg-rose-100 text-rose-700 border-rose-200",
+  NEEDS_COUNSELOR_REVIEW: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
+  NOT_READY_YET: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
 };
 
 const ALO_SUPPORT_STEPS = [
@@ -331,7 +331,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                 <Button
                   onClick={handleWhatsApp}
                   variant="outline"
-                  className="border-emerald-500 text-emerald-700 hover:bg-emerald-50 h-12"
+                  className="border-crm-success-border text-crm-success-text hover:bg-crm-success-bg h-12"
                 >
                   <Icon name="Whatsapp" className="mr-2 size-4" />
                   WhatsApp Counselor
@@ -368,7 +368,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                     label="Last verified"
                     value={
                       <span className="inline-flex items-center gap-1">
-                        <Icon name="ShieldCheck" className="size-3 text-emerald-600" />
+                        <Icon name="ShieldCheck" className="size-3 text-crm-success-text" />
                         {fmtDate(country.lastVerifiedAt)}
                       </span>
                     }
@@ -546,7 +546,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                             </p>
                           </div>
                           {uFacts.scholarship && (
-                            <Badge variant="outline" className="border-amber-200 bg-amber-50 text-[11px] text-amber-700">
+                            <Badge variant="outline" className="border-crm-warning-border bg-crm-warning-bg text-[11px] text-crm-warning-text">
                               <Icon name="Award" className="mr-1 size-3" />
                               Scholarship
                             </Badge>
@@ -702,7 +702,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   onClick={() => onNavigate("ai-interview")}
                   variant="outline"
                   size="sm"
-                  className="border-emerald-500 text-emerald-700 hover:bg-emerald-50"
+                  className="border-crm-success-border text-crm-success-text hover:bg-crm-success-bg"
                 >
                   <Icon name="Mic" className="mr-1.5 size-3.5" />
                   Practice AI Speaking
@@ -736,7 +736,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                           <td className="hidden px-3 py-2.5 text-muted-foreground md:table-cell">{d.category}</td>
                           <td className="px-3 py-2.5">
                             {d.required ? (
-                              <Badge variant="outline" className="border-rose-200 bg-rose-50 text-rose-700">Required</Badge>
+                              <Badge variant="outline" className="border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">Required</Badge>
                             ) : (
                               <Badge variant="outline" className="border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]">Optional</Badge>
                             )}
@@ -887,10 +887,10 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
               {scholarships.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {scholarships.map((s, i) => (
-                    <div key={i} className="rounded-2xl border-2 border-amber-200 bg-amber-50/40 p-5">
+                    <div key={i} className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40 p-5">
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-bold text-[var(--alo-brand)]">{s.name}</p>
-                        <Badge variant="outline" className="border-amber-300 bg-amber-100 text-amber-800">{s.amount}</Badge>
+                        <Badge variant="outline" className="border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">{s.amount}</Badge>
                       </div>
                       <p className="mt-2 text-sm text-muted-foreground">
                         <span className="font-semibold text-foreground">Eligibility:</span> {s.eligibility}
@@ -943,9 +943,9 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                           variant="outline"
                           className={cn(
                             "text-[11px]",
-                            city.costLevel === "High" && "border-rose-200 bg-rose-50 text-rose-700",
-                            city.costLevel === "Medium" && "border-amber-200 bg-amber-50 text-amber-700",
-                            (city.costLevel === "Low" || city.costLevel === "Low-Medium") && "border-emerald-200 bg-emerald-50 text-emerald-700",
+                            city.costLevel === "High" && "border-crm-warning-border bg-crm-warning-bg text-crm-warning-text",
+                            city.costLevel === "Medium" && "border-crm-warning-border bg-crm-warning-bg text-crm-warning-text",
+                            (city.costLevel === "Low" || city.costLevel === "Low-Medium") && "border-crm-success-border bg-crm-success-bg text-crm-success-text",
                           )}
                         >
                           {city.costLevel} cost
@@ -995,7 +995,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   <Icon name="Send" className="mr-2 size-4" />
                   Start Your Application
                 </Button>
-                <Button onClick={handleWhatsApp} variant="outline" className="border-emerald-500 text-emerald-700 hover:bg-emerald-50">
+                <Button onClick={handleWhatsApp} variant="outline" className="border-crm-success-border text-crm-success-text hover:bg-crm-success-bg">
                   <Icon name="Whatsapp" className="mr-2 size-4" />
                   Talk to Counselor
                 </Button>
@@ -1056,7 +1056,7 @@ export function PublicCountry({ slug, onNavigate }: PublicCountryProps) {
                   <Icon name="Search" className="mr-2 size-4" />
                   Find Courses
                 </Button>
-                <Button onClick={handleWhatsApp} variant="outline" className="border-emerald-500 text-emerald-700 hover:bg-emerald-50">
+                <Button onClick={handleWhatsApp} variant="outline" className="border-crm-success-border text-crm-success-text hover:bg-crm-success-bg">
                   <Icon name="Whatsapp" className="mr-2 size-4" />
                   WhatsApp
                 </Button>
@@ -1108,7 +1108,7 @@ function FactTile({
           className={cn(
             "flex size-7 items-center justify-center rounded-lg",
             accent === "blue" && "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-            accent === "emerald" && "bg-emerald-50 text-emerald-600",
+            accent === "emerald" && "bg-crm-success-bg text-crm-success-text",
           )}
         >
           <Icon name={icon} className="size-4" />
@@ -1392,12 +1392,12 @@ function EligibilityResultCard({ result }: { result: EligibilityResult }) {
       )}
       <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         {Array.isArray(result.strengths) && result.strengths.length > 0 && (
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">Strengths</p>
+          <div className="rounded-xl border border-crm-success-border bg-crm-success-bg p-4">
+            <p className="text-xs font-bold uppercase tracking-wide text-crm-success-text">Strengths</p>
             <ul className="mt-2 space-y-1.5">
               {result.strengths.map((s, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-emerald-900">
-                  <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                <li key={i} className="flex items-start gap-2 text-sm text-crm-success-text">
+                  <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
                   {s}
                 </li>
               ))}
@@ -1405,12 +1405,12 @@ function EligibilityResultCard({ result }: { result: EligibilityResult }) {
           </div>
         )}
         {Array.isArray(result.concerns) && result.concerns.length > 0 && (
-          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-amber-700">Concerns</p>
+          <div className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-4">
+            <p className="text-xs font-bold uppercase tracking-wide text-crm-warning-text">Concerns</p>
             <ul className="mt-2 space-y-1.5">
               {result.concerns.map((c, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-amber-900">
-                  <Icon name="AlertTriangle" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+                <li key={i} className="flex items-start gap-2 text-sm text-crm-warning-text">
+                  <Icon name="AlertTriangle" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
                   {c}
                 </li>
               ))}
@@ -1443,8 +1443,8 @@ function EligibilityResultCard({ result }: { result: EligibilityResult }) {
         </div>
       )}
       {result.visaRiskNote && (
-        <div className="mt-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
-          <p className="text-xs font-bold uppercase tracking-wide text-rose-700">Visa risk note</p>
+        <div className="mt-2 rounded-xl border border-crm-warning-border bg-crm-warning-bg p-3 text-sm text-crm-warning-text">
+          <p className="text-xs font-bold uppercase tracking-wide text-crm-warning-text">Visa risk note</p>
           <p className="mt-1">{result.visaRiskNote}</p>
         </div>
       )}

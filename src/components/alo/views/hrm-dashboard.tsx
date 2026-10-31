@@ -144,26 +144,26 @@ interface HrmResponse {
 
 // ---------- Maps ----------
 const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  ON_LEAVE: "bg-amber-100 text-amber-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  ON_LEAVE: "bg-crm-warning-bg text-crm-warning-text",
   RESIGNED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  TERMINATED: "bg-red-100 text-red-700",
+  TERMINATED: "bg-crm-danger-bg text-crm-danger-text",
   PROBATION: "bg-sky-100 text-sky-700",
 };
 
 const ATTENDANCE_STATUS_COLORS: Record<string, string> = {
-  PRESENT: "bg-emerald-100 text-emerald-700",
-  LATE: "bg-amber-100 text-amber-700",
+  PRESENT: "bg-crm-success-bg text-crm-success-text",
+  LATE: "bg-crm-warning-bg text-crm-warning-text",
   LEAVE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  ABSENT: "bg-red-100 text-red-700",
-  HALF_DAY: "bg-violet-100 text-violet-700",
+  ABSENT: "bg-crm-danger-bg text-crm-danger-text",
+  HALF_DAY: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   HOLIDAY: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const COMMISSION_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   APPROVED: "bg-sky-100 text-sky-700",
-  PAID: "bg-emerald-100 text-emerald-700",
+  PAID: "bg-crm-success-bg text-crm-success-text",
 };
 
 function formatBDT(amount: number) {
@@ -216,7 +216,7 @@ function PrivateAmount({
       </span>
       {showPin && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--alo-navy)]/40 p-4"
           onClick={() => {
             setShowPin(false);
             setPin("");
@@ -585,10 +585,10 @@ export function HrmDashboard() {
                                 className={cn(
                                   "text-xs font-bold tabular-nums",
                                   emp.performanceScore >= 80
-                                    ? "text-emerald-600"
+                                    ? "text-crm-success-text"
                                     : emp.performanceScore >= 50
-                                    ? "text-amber-600"
-                                    : "text-red-600"
+                                    ? "text-crm-warning-text"
+                                    : "text-crm-danger-text"
                                 )}
                               >
                                 {emp.performanceScore}%
@@ -870,8 +870,8 @@ export function HrmDashboard() {
                               className={cn(
                                 "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold",
                                 positive
-                                  ? "bg-emerald-100 text-emerald-700"
-                                  : "bg-red-100 text-red-700"
+                                  ? "bg-crm-success-bg text-crm-success-text"
+                                  : "bg-crm-danger-bg text-crm-danger-text"
                               )}
                             >
                               <Icon name={positive ? "ArrowUp" : "ArrowDown"} className="size-2.5" />
@@ -975,7 +975,7 @@ export function HrmDashboard() {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-1.5">
-                              <Icon name="Star" className="size-3 text-amber-500" />
+                              <Icon name="Star" className="size-3 text-crm-warning-text" />
                               <span className="text-xs font-semibold text-foreground tabular-nums">
                                 {p.satisfactionScore}
                               </span>
@@ -1034,7 +1034,7 @@ export function HrmDashboard() {
             </div>
           </div>
         </div>
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-xs text-crm-danger-text">
           <Icon name="ShieldAlert" className="mt-0.5 size-3.5 shrink-0" />
           <p>
             Revealing sensitive HR data triggers an audit log entry flagged <code className="font-mono">sensitive_data_revealed</code>.

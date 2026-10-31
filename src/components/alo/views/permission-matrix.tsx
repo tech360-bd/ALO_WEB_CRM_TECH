@@ -55,17 +55,17 @@ const MODULE_COLORS: Record<string, { badge: string; chip: string; dot: string }
   Student: {
     badge: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
     chip: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-    dot: "bg-blue-500",
+    dot: "bg-[var(--alo-brand-light)]0",
   },
   Documents: {
-    badge: "bg-violet-100 text-violet-700 border-violet-200",
-    chip: "bg-violet-50 text-violet-700",
-    dot: "bg-violet-500",
+    badge: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]",
+    chip: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+    dot: "bg-[var(--alo-brand-pale)]0",
   },
   Communication: {
-    badge: "bg-emerald-100 text-emerald-700 border-emerald-200",
-    chip: "bg-emerald-50 text-emerald-700",
-    dot: "bg-emerald-500",
+    badge: "bg-crm-success-bg text-crm-success-text border-crm-success-border",
+    chip: "bg-crm-success-bg text-crm-success-text",
+    dot: "bg-[var(--alo-success)]",
   },
   Application: {
     badge: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25",
@@ -73,34 +73,34 @@ const MODULE_COLORS: Record<string, { badge: string; chip: string; dot: string }
     dot: "bg-[var(--alo-cta)]",
   },
   Visa: {
-    badge: "bg-rose-100 text-rose-700 border-rose-200",
-    chip: "bg-rose-50 text-rose-700",
-    dot: "bg-rose-500",
+    badge: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
+    chip: "bg-crm-warning-bg text-crm-warning-text",
+    dot: "bg-crm-warning-bg0",
   },
   Marketing: {
-    badge: "bg-pink-100 text-pink-700 border-pink-200",
-    chip: "bg-pink-50 text-pink-700",
-    dot: "bg-pink-500",
+    badge: "bg-crm-danger-bg text-crm-danger-text border-crm-danger-border",
+    chip: "bg-crm-danger-bg text-crm-danger-text",
+    dot: "bg-[var(--alo-error)]",
   },
   "HR Self": {
-    badge: "bg-amber-100 text-amber-700 border-amber-200",
-    chip: "bg-amber-50 text-amber-700",
-    dot: "bg-amber-500",
+    badge: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border",
+    chip: "bg-crm-warning-bg text-crm-warning-text",
+    dot: "bg-[var(--alo-warning)]",
   },
   "Private HR": {
-    badge: "bg-red-100 text-red-700 border-red-200",
-    chip: "bg-red-50 text-red-700",
-    dot: "bg-red-500",
+    badge: "bg-crm-danger-bg text-crm-danger-text border-crm-danger-border",
+    chip: "bg-crm-danger-bg text-crm-danger-text",
+    dot: "bg-[var(--alo-error)]",
   },
 };
 
 const ACTION_STYLES: Record<string, string> = {
   view: "bg-sky-100 text-sky-700",
-  create: "bg-emerald-100 text-emerald-700",
-  update: "bg-amber-100 text-amber-700",
-  approve: "bg-violet-100 text-violet-700",
-  export: "bg-slate-200 text-[var(--alo-body)]",
-  download: "bg-slate-200 text-[var(--alo-body)]",
+  create: "bg-crm-success-bg text-crm-success-text",
+  update: "bg-crm-warning-bg text-crm-warning-text",
+  approve: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  export: "bg-[var(--alo-page)] text-[var(--alo-body)]",
+  download: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const SCOPE_LABELS: Record<string, string> = {
@@ -404,9 +404,9 @@ export function PermissionMatrix() {
               </p>
             </div>
             <div className="flex items-start gap-2.5 rounded-xl bg-white/70 p-3">
-              <Icon name="Server" className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+              <Icon name="Server" className="mt-0.5 size-4 shrink-0 text-crm-success-text" />
               <p className="text-xs text-foreground">
-                <span className="font-semibold text-emerald-700">Backend permission check</span>{" "}
+                <span className="font-semibold text-crm-success-text">Backend permission check</span>{" "}
                 is the final authority on every API call.
               </p>
             </div>
@@ -608,7 +608,7 @@ export function PermissionMatrix() {
                                   className={cn(
                                     "size-5 rounded-md border-2 transition-colors",
                                     granted
-                                      ? "border-emerald-600 bg-emerald-600 text-white"
+                                      ? "border-crm-success-border bg-[var(--alo-success-dark)] text-white"
                                       : "border-[var(--alo-border-strong)]"
                                   )}
                                 />
@@ -689,7 +689,7 @@ export function PermissionMatrix() {
                                 className={cn(
                                   "size-5 rounded-md border-2 transition-colors",
                                   granted
-                                    ? "border-emerald-600 bg-emerald-600 text-white"
+                                    ? "border-crm-success-border bg-[var(--alo-success-dark)] text-white"
                                     : "border-[var(--alo-border-strong)]"
                                 )}
                               />

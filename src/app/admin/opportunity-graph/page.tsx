@@ -75,21 +75,21 @@ type GraphState = 'idle' | 'loading' | 'ready' | 'not_configured' | 'denied' | '
 
 const NODE_STYLE: Record<string, string> = {
   STUDENT: 'bg-[var(--alo-brand)] text-white',
-  UNIVERSITY: 'bg-indigo-100 text-indigo-800',
-  COURSE: 'bg-violet-100 text-violet-800',
-  COUNTRY: 'bg-emerald-100 text-emerald-800',
-  SCHOLARSHIP: 'bg-amber-100 text-amber-800',
+  UNIVERSITY: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  COURSE: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  COUNTRY: 'bg-crm-success-bg text-crm-success-text',
+  SCHOLARSHIP: 'bg-crm-warning-bg text-crm-warning-text',
   APPLICATION: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
-  VISA: 'bg-cyan-100 text-cyan-800',
+  VISA: 'bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]',
   PARTNER: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-  COUNSELOR: 'bg-slate-200 text-[var(--alo-body)]',
+  COUNSELOR: 'bg-[var(--alo-page)] text-[var(--alo-body)]',
   COMMISSION: 'bg-teal-100 text-teal-800',
 };
 
 function weightTone(weight: number): string {
-  if (weight >= 0.9) return 'text-emerald-700';
+  if (weight >= 0.9) return 'text-crm-success-text';
   if (weight >= 0.6) return 'text-[var(--alo-body)]';
-  return 'text-amber-700';
+  return 'text-crm-warning-text';
 }
 
 export default function OpportunityGraphPage() {
@@ -356,7 +356,7 @@ export default function OpportunityGraphPage() {
               </p>
 
               {edge.label && /NEEDS_REVIEW|UNVERIFIED|NOT_VERIFIED/i.test(edge.label) && (
-                <p className="mt-1.5 flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 p-2 text-[11px] text-amber-900">
+                <p className="mt-1.5 flex items-start gap-1.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg p-2 text-[11px] text-crm-warning-text">
                   <ShieldAlert className="mt-0.5 size-3 shrink-0" />
                   Unverified data — weighted at {edge.weight.toFixed(2)} rather than 1.00. Confirm against
                   the official source before advising the student.
@@ -400,10 +400,10 @@ export default function OpportunityGraphPage() {
                         variant="outline"
                         className={
                           item.verificationStatus.toUpperCase() === 'VERIFIED'
-                            ? 'border-emerald-200 bg-emerald-50 text-[11px] text-emerald-800'
+                            ? 'border-crm-success-border bg-crm-success-bg text-[11px] text-crm-success-text'
                             : item.verificationStatus === 'NOT_FOUND'
                               ? 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[11px] text-[var(--alo-body)]'
-                              : 'border-amber-200 bg-amber-50 text-[11px] text-amber-800'
+                              : 'border-crm-warning-border bg-crm-warning-bg text-[11px] text-crm-warning-text'
                         }
                       >
                         {item.verificationStatus}
@@ -430,7 +430,7 @@ export default function OpportunityGraphPage() {
                   )}
 
                   {unverified && (
-                    <p className="mt-2 flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 p-2 text-[11px] text-amber-900">
+                    <p className="mt-2 flex items-start gap-1.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg p-2 text-[11px] text-crm-warning-text">
                       <ShieldAlert className="mt-0.5 size-3 shrink-0" />
                       Not verified against an official source. Confirm before advising the student —
                       this is a lead to check, not a fact to quote.

@@ -52,9 +52,9 @@ export default function MarketingDashboard() {
 
   const typeMap: Record<string, string> = {
     event: 'bg-alo-brand text-white',
-    webinar: 'bg-purple-500 text-white',
-    session: 'bg-emerald-500 text-white',
-    seminar: 'bg-amber-500 text-white',
+    webinar: 'bg-[var(--alo-brand-pale)]0 text-white',
+    session: 'bg-[var(--alo-success)] text-white',
+    seminar: 'bg-[var(--alo-warning)] text-white',
   };
 
   return (
@@ -81,7 +81,7 @@ export default function MarketingDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <kpi.icon className="w-5 h-5 text-alo-brand" />
-                <span className="inline-flex items-center text-[11px] font-medium text-emerald-600">
+                <span className="inline-flex items-center text-[11px] font-medium text-crm-success-text">
                   <ArrowUpRight className="w-3 h-3" />{kpi.change}
                 </span>
               </div>
@@ -103,12 +103,12 @@ export default function MarketingDashboard() {
         <CardContent className="pt-4">
           <div className="flex items-end gap-2 h-32">
             {[
-              { label: 'Facebook', value: 234, max: 234, color: 'bg-blue-500' },
-              { label: 'WhatsApp', value: 178, max: 234, color: 'bg-emerald-500' },
+              { label: 'Facebook', value: 234, max: 234, color: 'bg-[var(--alo-brand)]' },
+              { label: 'WhatsApp', value: 178, max: 234, color: 'bg-[var(--alo-success)]' },
               { label: 'Website', value: 156, max: 234, color: 'bg-alo-brand' },
-              { label: 'Referral', value: 120, max: 234, color: 'bg-purple-500' },
-              { label: 'Instagram', value: 89, max: 234, color: 'bg-pink-500' },
-              { label: 'Google', value: 52, max: 234, color: 'bg-amber-500' },
+              { label: 'Referral', value: 120, max: 234, color: 'bg-[var(--alo-brand-pale)]0' },
+              { label: 'Instagram', value: 89, max: 234, color: 'bg-[var(--alo-error)]' },
+              { label: 'Google', value: 52, max: 234, color: 'bg-[var(--alo-warning)]' },
             ].map((s) => (
               <div key={s.label} className="flex-1 flex flex-col items-center gap-1">
                 <span className="text-xs font-semibold text-alo-text">{s.value}</span>
@@ -157,7 +157,7 @@ export default function MarketingDashboard() {
                         <TableCell className="text-sm text-alo-text-secondary text-right">{c.spend}</TableCell>
                         <TableCell className="text-sm text-alo-text-secondary text-right">{c.leads}</TableCell>
                         <TableCell className="text-sm text-alo-text-secondary text-right">{c.conversions}</TableCell>
-                        <TableCell className="text-sm font-semibold text-emerald-600 text-right">{c.roi}</TableCell>
+                        <TableCell className="text-sm font-semibold text-crm-success-text text-right">{c.roi}</TableCell>
                         <TableCell className="text-right"><Badge variant={c.status === 'active' ? 'success' : 'muted'} className="text-[11px]">{c.status}</Badge></TableCell>
                       </TableRow>
                     ))}
@@ -196,13 +196,13 @@ export default function MarketingDashboard() {
           <Card className="bg-white rounded-xl border border-alo-border">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-500" /> AI Content Queue
+                <Sparkles className="w-4 h-4 text-[var(--alo-brand)]" /> AI Content Queue
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-56 overflow-y-auto">
                 {aiContentQueue.map((c, i) => (
-                  <div key={i} className="p-2.5 rounded-lg border border-purple-200 bg-purple-50">
+                  <div key={i} className="p-2.5 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]">
                     <div className="flex items-center justify-between mb-0.5">
                       <Badge variant="muted" className="text-[11px]">{c.type}</Badge>
                       <Badge variant={c.status === 'approved' ? 'success' : c.status === 'ready' ? 'warning' : 'muted'} className="text-[11px]">{c.status}</Badge>

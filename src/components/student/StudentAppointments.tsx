@@ -131,11 +131,11 @@ function getTypeIcon(type: string) {
 function getTypeColor(type: string) {
   switch (type) {
     case 'Free Consultation': return 'bg-alo-brand/10 text-alo-brand border-alo-brand/20';
-    case 'Document Review': return 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800/30';
+    case 'Document Review': return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] dark:bg-[var(--alo-brand)]/20 dark:text-[var(--alo-brand)] dark:border-[var(--alo-brand-deep)]/30';
     case 'SOP/CV Review': case 'sop_cv_review': return 'bg-alo-cta/10 text-alo-cta border-alo-cta/20';
     case 'Visa Interview Practice': case 'visa_interview': return 'bg-crm-success-bg text-crm-success-text border-crm-success/20';
     case 'Application Review': case 'application_review': return 'bg-sky-100 text-sky-700 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800/30';
-    case 'English Test Discussion': case 'english_test': return 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/30';
+    case 'English Test Discussion': case 'english_test': return 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border dark:bg-[var(--alo-warning)]/20 dark:text-crm-warning-text dark:border-crm-warning-border/30';
     case 'Financial Guidance': return 'bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-400 dark:border-teal-800/30';
     default: return 'bg-muted text-alo-text-muted border-alo-border/50';
   }

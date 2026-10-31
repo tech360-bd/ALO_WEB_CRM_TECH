@@ -175,7 +175,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                   const accentColors = {
                     blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
                     orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
-                    emerald: "bg-emerald-50 text-emerald-600",
+                    emerald: "bg-crm-success-bg text-crm-success-text",
                   };
                   return (
                     <div
@@ -264,13 +264,13 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
           {/* RIGHT — Contact form */}
           <div>
             {submitted ? (
-              <Card className="rounded-2xl border-2 border-emerald-300 bg-emerald-50">
+              <Card className="rounded-2xl border-2 border-crm-success-border bg-crm-success-bg">
                 <CardContent className="p-8 text-center">
-                  <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-500 text-white">
+                  <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[var(--alo-success)] text-white">
                     <Icon name="Check" className="size-8" />
                   </div>
-                  <p className="mt-5 text-xl font-black text-emerald-900">Message received!</p>
-                  <p className="mt-2 text-sm leading-relaxed text-emerald-800">
+                  <p className="mt-5 text-xl font-black text-crm-success-text">Message received!</p>
+                  <p className="mt-2 text-sm leading-relaxed text-crm-success-text">
                     Thank you for contacting ALO Education. Your enquiry has been received. Our team will respond according to current service hours and availability. For urgent matters, use <a className="font-semibold underline" href={ALO_PUBLIC_CONTACT_CTA.href}>{ALO_PUBLIC_CONTACT_CTA.label}</a>.
                   </p>
                   <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
@@ -287,7 +287,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                         setForm({ fullName: "", phone: "", email: "", subject: "Counseling Request", message: "", consent: false });
                       }}
                       variant="outline"
-                      className="h-11 border-emerald-400 text-emerald-700 hover:bg-emerald-100"
+                      className="h-11 border-[var(--alo-success)] text-crm-success-text hover:bg-crm-success-bg"
                     >
                       Send another message
                     </Button>

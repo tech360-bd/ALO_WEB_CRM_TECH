@@ -97,7 +97,7 @@ export function CrmFollowups() {
                 className={
                   filter === f.k
                     ? f.k === "OVERDUE"
-                      ? "bg-rose-600 text-white hover:bg-rose-700"
+                      ? "bg-[var(--alo-error)] text-white hover:bg-[var(--alo-error)]"
                       : "bg-[var(--alo-brand)] text-white"
                     : "border-[var(--alo-brand-border)] text-[var(--alo-text-muted)]"
                 }
@@ -124,7 +124,7 @@ export function CrmFollowups() {
                   <Card
                     key={l.id}
                     className={`rounded-2xl border bg-white ${
-                      isOverdue ? "border-rose-200" : "border-[var(--alo-brand-border)]"
+                      isOverdue ? "border-crm-warning-border" : "border-[var(--alo-brand-border)]"
                     }`}
                   >
                     <CardContent className="p-5">
@@ -136,7 +136,7 @@ export function CrmFollowups() {
                         <Badge
                           className={
                             isOverdue
-                              ? "bg-rose-100 text-rose-700"
+                              ? "bg-crm-warning-bg text-crm-warning-text"
                               : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
                           }
                         >

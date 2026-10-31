@@ -69,13 +69,13 @@ const TEST_TYPES: {
   accent: string;
 }[] = [
   { slug: "ielts", name: "IELTS", modules: "Listening · Reading · Writing · Speaking", freeInfo: "3 free for ALO students, 1 for guests", icon: "BookOpen", accent: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]" },
-  { slug: "pte", name: "PTE Academic", modules: "Speaking & Writing · Reading · Listening", freeInfo: "3 free for ALO students, 1 for guests", icon: "Mic", accent: "bg-violet-50 text-violet-600" },
-  { slug: "toefl", name: "TOEFL", modules: "Reading · Listening · Speaking · Writing", freeInfo: "3 free for ALO students, 1 for guests", icon: "Headphones", accent: "bg-emerald-50 text-emerald-600" },
-  { slug: "duolingo", name: "Duolingo (DET)", modules: "Literacy · Comprehension · Conversation · Production", freeInfo: "3 free for ALO students, 1 for guests", icon: "Sparkles", accent: "bg-amber-50 text-amber-600" },
-  { slug: "ellt", name: "ELLT / OIETC", modules: "Reading · Listening · Writing · Speaking", freeInfo: "3 free for ALO students, 1 for guests", icon: "Languages", accent: "bg-rose-50 text-rose-600" },
+  { slug: "pte", name: "PTE Academic", modules: "Speaking & Writing · Reading · Listening", freeInfo: "3 free for ALO students, 1 for guests", icon: "Mic", accent: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  { slug: "toefl", name: "TOEFL", modules: "Reading · Listening · Speaking · Writing", freeInfo: "3 free for ALO students, 1 for guests", icon: "Headphones", accent: "bg-crm-success-bg text-crm-success-text" },
+  { slug: "duolingo", name: "Duolingo (DET)", modules: "Literacy · Comprehension · Conversation · Production", freeInfo: "3 free for ALO students, 1 for guests", icon: "Sparkles", accent: "bg-crm-warning-bg text-crm-warning-text" },
+  { slug: "ellt", name: "ELLT / OIETC", modules: "Reading · Listening · Writing · Speaking", freeInfo: "3 free for ALO students, 1 for guests", icon: "Languages", accent: "bg-crm-warning-bg text-crm-warning-text" },
   { slug: "gre", name: "GRE", modules: "Verbal · Quantitative · Analytical Writing", freeInfo: "3 free for ALO students, 1 for guests", icon: "Calculator", accent: "bg-sky-50 text-sky-600" },
   { slug: "gmat", name: "GMAT", modules: "Quantitative · Verbal · Integrated Reasoning · Writing", freeInfo: "3 free for ALO students, 1 for guests", icon: "Network", accent: "bg-teal-50 text-teal-600" },
-  { slug: "sat", name: "SAT", modules: "Reading & Writing · Math (digital, adaptive)", freeInfo: "3 free for ALO students, 1 for guests", icon: "PenLine", accent: "bg-indigo-50 text-indigo-600" },
+  { slug: "sat", name: "SAT", modules: "Reading & Writing · Math (digital, adaptive)", freeInfo: "3 free for ALO students, 1 for guests", icon: "PenLine", accent: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   { slug: "act", name: "ACT", modules: "English · Math · Reading · Science · Writing (optional)", freeInfo: "3 free for ALO students, 1 for guests", icon: "FlaskConical", accent: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   { slug: "placement-test", name: "Placement Test", modules: "Reading · Listening · Writing · Speaking (diagnostic)", freeInfo: "1 free for all students", icon: "Compass", accent: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]" },
 ];
@@ -136,21 +136,21 @@ const TEST_TYPE_INFO: Record<string, { countries: string; requirement: string; d
 const TEST_BADGE_COLORS: Record<string, string> = {
   IELTS: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
   "IELTS UKVI": "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-  PTE: "bg-violet-100 text-violet-700",
-  TOEFL: "bg-emerald-100 text-emerald-700",
-  "DET / Duolingo": "bg-amber-100 text-amber-700",
-  "OIETC / ELLT": "bg-rose-100 text-rose-700",
+  PTE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  TOEFL: "bg-crm-success-bg text-crm-success-text",
+  "DET / Duolingo": "bg-crm-warning-bg text-crm-warning-text",
+  "OIETC / ELLT": "bg-crm-warning-bg text-crm-warning-text",
   GRE: "bg-sky-100 text-sky-700",
   GMAT: "bg-teal-100 text-teal-700",
-  SAT: "bg-indigo-100 text-indigo-700",
+  SAT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   ACT: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   "Placement Test": "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   IN_PROGRESS: "bg-sky-100 text-sky-700",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
 };
 
 // ---------------------------------------------------------------------------
@@ -159,9 +159,9 @@ const STATUS_COLORS: Record<string, string> = {
 
 function scoreColor(score?: number | null): string {
   if (score == null) return "text-muted-foreground";
-  if (score >= 7) return "text-emerald-600";
-  if (score >= 6) return "text-amber-600";
-  return "text-rose-600";
+  if (score >= 7) return "text-crm-success-text";
+  if (score >= 6) return "text-crm-warning-text";
+  return "text-crm-warning-text";
 }
 
 function parseWeakAreas(raw: string | null): string[] {
@@ -545,7 +545,7 @@ export function EnglishTestDashboard() {
                                 <span className="text-xs text-muted-foreground">—</span>
                               ) : (
                                 areas.slice(0, 3).map((a) => (
-                                  <Badge key={a} variant="outline" className="border-rose-200 text-rose-700 text-[11px]">
+                                  <Badge key={a} variant="outline" className="border-crm-warning-border text-crm-warning-text text-[11px]">
                                     {a}
                                   </Badge>
                                 ))
@@ -672,7 +672,7 @@ export function EnglishTestDashboard() {
                   {weakAreaCounts.map(([area, count]) => (
                     <div key={area} className="grid grid-cols-1 gap-2 sm:grid-cols-[180px_1fr_40px] sm:items-center">
                       <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                        <Icon name="AlertTriangle" className="size-3.5 text-rose-500" />
+                        <Icon name="AlertTriangle" className="size-3.5 text-crm-warning-text" />
                         <span className="truncate">{area}</span>
                       </div>
                       <MiniBar value={count} max={maxWeakCount} color="#E8501A" />
@@ -741,7 +741,7 @@ export function EnglishTestDashboard() {
                           key={item.id}
                           className={cn(
                             "flex items-start gap-3 rounded-xl border px-4 py-3 transition-colors",
-                            done ? "border-emerald-200 bg-emerald-50/50" : "border-border/80 bg-card",
+                            done ? "border-crm-success-border bg-crm-success-bg/50" : "border-border/80 bg-card",
                           )}
                         >
                           <Checkbox
@@ -755,7 +755,7 @@ export function EnglishTestDashboard() {
                               <span className={cn("text-sm font-semibold", done ? "text-muted-foreground line-through" : "text-foreground")}>
                                 {item.area}
                               </span>
-                              <Badge variant="outline" className="border-rose-200 text-rose-700 text-[11px]">
+                              <Badge variant="outline" className="border-crm-warning-border text-crm-warning-text text-[11px]">
                                 {item.count}× flagged
                               </Badge>
                             </div>

@@ -199,7 +199,7 @@ const subNavGroups: SubNavGroup[] = [
     items: [
       { icon: Share2, label: '6. Social Media Manager', view: 'social-media', badge: '12', badgeColor: 'bg-[var(--alo-brand)]' },
       { icon: Target, label: '7. Advertising Manager', view: 'advertising', badge: 'NEW', badgeColor: 'bg-[var(--alo-cta)]' },
-      { icon: MessageCircle, label: '8. WhatsApp Marketing', view: 'whatsapp-marketing', badge: '8', badgeColor: 'bg-emerald-500' },
+      { icon: MessageCircle, label: '8. WhatsApp Marketing', view: 'whatsapp-marketing', badge: '8', badgeColor: 'bg-[var(--alo-success)]' },
       { icon: MessageCircle, label: '9. SMS Marketing', view: 'sms-marketing' },
       { icon: MessageCircle, label: '10. Email Marketing', view: 'email-marketing' },
     ],
@@ -217,7 +217,7 @@ const subNavGroups: SubNavGroup[] = [
     items: [
       { icon: Bot, label: '14. AI Employee Department', view: 'ai-employees', badge: '20', badgeColor: 'bg-[var(--alo-cta)]' },
       { icon: Calendar, label: '15. Marketing Calendar', view: 'marketing-calendar' },
-      { icon: CheckSquare, label: '16. Approval Center', view: 'approval-center', badge: '7', badgeColor: 'bg-purple-500' },
+      { icon: CheckSquare, label: '16. Approval Center', view: 'approval-center', badge: '7', badgeColor: 'bg-[var(--alo-brand)]' },
     ],
   },
   {
@@ -266,7 +266,7 @@ function SubSidebarNavItem({
           <span className="flex-1 text-left truncate">{item.label}</span>
           {item.badge && !isActive && (
             <span
-              className={`text-[11px] leading-none font-medium px-1.5 py-0.5 rounded-full text-white shrink-0 ${item.badgeColor || 'bg-gray-400'}`}
+              className={`text-[11px] leading-none font-medium px-1.5 py-0.5 rounded-full text-white shrink-0 ${item.badgeColor || 'bg-[var(--alo-page)]'}`}
             >
               {item.badge}
             </span>
@@ -391,7 +391,7 @@ export default function MarketingHubShell({ children }: MarketingHubShellProps) 
               className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium transition-colors cursor-pointer ${
                 activeView === item.view
                   ? 'bg-[var(--alo-cta)] text-white'
-                  : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-gray-200'
+                  : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]'
               }`}
             >
               {item.label}

@@ -6,10 +6,10 @@ import { MessageSquare, Mail, Phone, PhoneMissed, MessageCircle, Share2, FileTex
 const VIS_BADGE: Record<string, string> = {
   public_safe: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
   student_visible: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
-  partner_visible: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  b2b_confidential: 'bg-rose-100 text-rose-800 border-rose-200',
-  internal_only: 'bg-amber-100 text-amber-900 border-amber-200',
-  super_admin_only: 'bg-red-100 text-red-900 border-red-200',
+  partner_visible: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
+  b2b_confidential: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+  internal_only: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+  super_admin_only: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
 };
 
 export default function TimelineItem({ entry }: { entry: any }) {
@@ -17,16 +17,16 @@ export default function TimelineItem({ entry }: { entry: any }) {
   const vis = VIS_BADGE[entry.visibility] || VIS_BADGE.public_safe;
   return (
     <div className="relative pl-8 py-2">
-      <div className="absolute left-0 top-2.5 w-6 h-6 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center">
-        <Icon className="w-3.5 h-3.5 text-indigo-700" />
+      <div className="absolute left-0 top-2.5 w-6 h-6 rounded-full bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] flex items-center justify-center">
+        <Icon className="w-3.5 h-3.5 text-[var(--alo-brand)]" />
       </div>
       <div className="bg-white border border-[var(--alo-border)] rounded-lg p-3 shadow-sm">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-[var(--alo-text)]">{entry.senderName}</span>
             <Badge variant="outline" className={`text-[11px] ${vis} border`}>{entry.visibility}</Badge>
-            {entry.aiDrafted && <Badge className="text-[11px] bg-purple-50 text-purple-700 border-purple-200"><Sparkles className="w-3 h-3 mr-1" />AI Draft</Badge>}
-            {entry.b2bConfidential && <Badge className="text-[11px] bg-rose-100 text-rose-800">🔒 B2B</Badge>}
+            {entry.aiDrafted && <Badge className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]"><Sparkles className="w-3 h-3 mr-1" />AI Draft</Badge>}
+            {entry.b2bConfidential && <Badge className="text-[11px] bg-crm-warning-bg text-crm-warning-text">🔒 B2B</Badge>}
           </div>
           <span className="text-[11px] text-[var(--alo-text-muted)]">{entry.createdAt}</span>
         </div>

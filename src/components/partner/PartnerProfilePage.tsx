@@ -253,11 +253,11 @@ export default function PartnerProfilePage() {
               {editing ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="companyName">Company Name <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="companyName">Company Name <span className="text-crm-danger-text">*</span></Label>
                     <Input id="companyName" value={form.companyName} onChange={(e) => setForm({ ...form, companyName: e.target.value })} placeholder="Enter company name" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="contactPerson">Contact Person <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="contactPerson">Contact Person <span className="text-crm-danger-text">*</span></Label>
                     <Input id="contactPerson" value={form.contactPerson} onChange={(e) => setForm({ ...form, contactPerson: e.target.value })} placeholder="Enter contact person" />
                   </div>
                   <div className="space-y-2">

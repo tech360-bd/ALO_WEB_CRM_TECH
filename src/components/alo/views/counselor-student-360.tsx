@@ -287,7 +287,7 @@ interface StudentDetailResponse {
 // Color & label maps
 // ============================================================
 const STUDENT_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   GRADUATED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
@@ -295,15 +295,15 @@ const STUDENT_STATUS_COLORS: Record<string, string> = {
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   NORMAL: "bg-sky-100 text-sky-700",
-  HIGH: "bg-amber-100 text-amber-700",
-  URGENT: "bg-rose-100 text-rose-700",
+  HIGH: "bg-crm-warning-bg text-crm-warning-text",
+  URGENT: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const READINESS_COLORS: Record<string, string> = {
-  ready: "bg-emerald-100 text-emerald-700",
-  needs_practice: "bg-amber-100 text-amber-700",
-  high_risk: "bg-rose-100 text-rose-700",
-  human_review_required: "bg-violet-100 text-violet-700",
+  ready: "bg-crm-success-bg text-crm-success-text",
+  needs_practice: "bg-crm-warning-bg text-crm-warning-text",
+  high_risk: "bg-crm-warning-bg text-crm-warning-text",
+  human_review_required: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 const READINESS_LABELS: Record<string, string> = {
@@ -314,9 +314,9 @@ const READINESS_LABELS: Record<string, string> = {
 };
 
 const RISK_COLORS: Record<string, string> = {
-  LOW: "bg-emerald-100 text-emerald-700",
-  MEDIUM: "bg-amber-100 text-amber-700",
-  HIGH: "bg-rose-100 text-rose-700",
+  LOW: "bg-crm-success-bg text-crm-success-text",
+  MEDIUM: "bg-crm-warning-bg text-crm-warning-text",
+  HIGH: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const INTERVIEW_TYPE_LABELS: Record<string, string> = {
@@ -328,24 +328,24 @@ const INTERVIEW_TYPE_LABELS: Record<string, string> = {
 };
 
 const INTERVIEW_STATUS_COLORS: Record<string, string> = {
-  IN_PROGRESS: "bg-amber-100 text-amber-700",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
+  IN_PROGRESS: "bg-crm-warning-bg text-crm-warning-text",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
 };
 
 const TIMELINE_META: Record<string, { icon: string; color: string }> = {
   LEAD_CREATED: { icon: "UserPlus", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   PROFILE_UPDATED: { icon: "UserCog", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
-  DOC_UPLOADED: { icon: "FileUp", color: "bg-amber-100 text-amber-700" },
-  DOC_APPROVED: { icon: "FileCheck2", color: "bg-emerald-100 text-emerald-700" },
-  DOC_REJECTED: { icon: "FileX2", color: "bg-rose-100 text-rose-700" },
+  DOC_UPLOADED: { icon: "FileUp", color: "bg-crm-warning-bg text-crm-warning-text" },
+  DOC_APPROVED: { icon: "FileCheck2", color: "bg-crm-success-bg text-crm-success-text" },
+  DOC_REJECTED: { icon: "FileX2", color: "bg-crm-warning-bg text-crm-warning-text" },
   APP_STATUS_CHANGED: { icon: "ClipboardList", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   VISA_STATUS_CHANGED: { icon: "Plane", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
-  INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-violet-100 text-violet-700" },
-  MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-violet-100 text-violet-700" },
-  AI_ACTION: { icon: "Bot", color: "bg-violet-100 text-violet-700" },
+  INTERVIEW_COMPLETED: { icon: "Mic", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  MOCK_TEST_DONE: { icon: "GraduationCap", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  AI_ACTION: { icon: "Bot", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   MESSAGE_SENT: { icon: "MessageSquare", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
-  PAYMENT: { icon: "CreditCard", color: "bg-emerald-100 text-emerald-700" },
-  NOTE: { icon: "StickyNote", color: "bg-amber-100 text-amber-700" },
+  PAYMENT: { icon: "CreditCard", color: "bg-crm-success-bg text-crm-success-text" },
+  NOTE: { icon: "StickyNote", color: "bg-crm-warning-bg text-crm-warning-text" },
 };
 
 const DOC_CATEGORY_LABELS: Record<string, string> = {
@@ -381,11 +381,11 @@ const FUNDING_LABELS: Record<string, string> = {
 };
 
 const CHANNEL_COLORS: Record<string, string> = {
-  WHATSAPP: "bg-emerald-100 text-emerald-700",
+  WHATSAPP: "bg-crm-success-bg text-crm-success-text",
   SMS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  EMAIL: "bg-violet-100 text-violet-700",
+  EMAIL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   FACEBOOK: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  INSTAGRAM: "bg-pink-100 text-pink-700",
+  INSTAGRAM: "bg-crm-danger-bg text-crm-danger-text",
   MESSENGER: "bg-sky-100 text-sky-700",
   WEBSITE_CHAT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PORTAL: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
@@ -412,10 +412,10 @@ const VISIBILITY_LABELS: Record<string, string> = {
 };
 
 const VISIBILITY_COLORS: Record<string, string> = {
-  INTERNAL_ONLY: "bg-amber-100 text-amber-700",
+  INTERNAL_ONLY: "bg-crm-warning-bg text-crm-warning-text",
   APPLICATION_TEAM_ONLY: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  VISA_TEAM_ONLY: "bg-rose-100 text-rose-700",
-  FINANCE_ONLY: "bg-emerald-100 text-emerald-700",
+  VISA_TEAM_ONLY: "bg-crm-warning-bg text-crm-warning-text",
+  FINANCE_ONLY: "bg-crm-success-bg text-crm-success-text",
   SUPER_ADMIN_ONLY: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   COUNSELOR_VISIBLE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
@@ -435,12 +435,12 @@ const COMMENT_TYPE_LABELS: Record<string, string> = {
 const COMMENT_TYPE_COLORS: Record<string, string> = {
   COUNSELOR_NOTE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   APPLICATION_TEAM_NOTE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  VISA_OFFICER_NOTE: "bg-rose-100 text-rose-700",
+  VISA_OFFICER_NOTE: "bg-crm-warning-bg text-crm-warning-text",
   PARTNER_SUBMISSION_NOTE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  FINANCE_NOTE: "bg-emerald-100 text-emerald-700",
-  RISK_NOTE: "bg-amber-100 text-amber-700",
-  FRAUD_NOTE: "bg-red-100 text-red-700",
-  REFUSAL_ANALYSIS: "bg-violet-100 text-violet-700",
+  FINANCE_NOTE: "bg-crm-success-bg text-crm-success-text",
+  RISK_NOTE: "bg-crm-warning-bg text-crm-warning-text",
+  FRAUD_NOTE: "bg-crm-danger-bg text-crm-danger-text",
+  REFUSAL_ANALYSIS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   COMMISSION_NOTE: "bg-teal-100 text-teal-700",
 };
 
@@ -458,9 +458,9 @@ const SOP_TYPE_LABELS: Record<string, string> = {
 
 const SOP_STATUS_COLORS: Record<string, string> = {
   DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  STUDENT_REVIEW: "bg-amber-100 text-amber-700",
+  STUDENT_REVIEW: "bg-crm-warning-bg text-crm-warning-text",
   COUNSELOR_REVIEW: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  APPROVED: "bg-emerald-100 text-emerald-700",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
   SENT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
@@ -718,7 +718,7 @@ function StudentDetailBody({
               <Button
                 onClick={() => onNavigate("unified-inbox")}
                 variant="outline"
-                className="h-10 rounded-xl border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                className="h-10 rounded-xl border-crm-success-border text-crm-success-text hover:bg-crm-success-bg"
               >
                 <Icon name="MessageCircle" className="mr-1.5 size-4" />
                 Send Message
@@ -988,7 +988,7 @@ function StudentDetailBody({
               </div>
             }
           >
-            <div className="mb-3 rounded-xl bg-amber-50 p-3 text-xs text-amber-800">
+            <div className="mb-3 rounded-xl bg-crm-warning-bg p-3 text-xs text-crm-warning-text">
               <Icon name="Info" className="mr-1.5 inline size-3.5" />
               Counselors cannot delete documents by default — request archive from the Application Team. Document files are stored privately and access is audit-logged.
             </div>
@@ -1017,11 +1017,11 @@ function StudentDetailBody({
                             {DOC_CATEGORY_LABELS[d.category] ?? d.category}
                           </Badge>
                         </TableCell>
-                        <TableCell>{d.required ? <Icon name="Check" className="size-4 text-emerald-600" /> : <span className="text-xs text-muted-foreground">Optional</span>}</TableCell>
+                        <TableCell>{d.required ? <Icon name="Check" className="size-4 text-crm-success-text" /> : <span className="text-xs text-muted-foreground">Optional</span>}</TableCell>
                         <TableCell><StatusBadge status={d.status} colorMap={DOC_STATUS_COLORS} labels={DOC_STATUS_LABELS} /></TableCell>
                         <TableCell className="text-sm">{d.uploadedAt ? fmtDate(d.uploadedAt) : "—"}</TableCell>
                         <TableCell className="text-sm">{d.reviewedAt ? fmtDate(d.reviewedAt) : "—"}</TableCell>
-                        <TableCell className="max-w-[200px] text-xs text-rose-600">{d.rejectionReason ?? "—"}</TableCell>
+                        <TableCell className="max-w-[200px] text-xs text-crm-warning-text">{d.rejectionReason ?? "—"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -1059,7 +1059,7 @@ function StudentDetailBody({
                       </div>
                       <div className="flex items-center gap-2">
                         {c.isAutoGenerated && (
-                          <Badge variant="outline" className="text-[11px] text-violet-600">
+                          <Badge variant="outline" className="text-[11px] text-[var(--alo-brand)]">
                             <Icon name="Bot" className="mr-1 size-3" /> AI
                           </Badge>
                         )}
@@ -1067,11 +1067,11 @@ function StudentDetailBody({
                           <Icon name="Eye" className="mr-1 size-3" /> Student can see
                         </Badge>
                         {c.readByStudent ? (
-                          <Badge variant="outline" className="text-[11px] text-emerald-600">
+                          <Badge variant="outline" className="text-[11px] text-crm-success-text">
                             <Icon name="CheckCheck" className="mr-1 size-3" /> Read
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-[11px] text-amber-600">
+                          <Badge variant="outline" className="text-[11px] text-crm-warning-text">
                             <Icon name="Clock" className="mr-1 size-3" /> Unread
                           </Badge>
                         )}
@@ -1095,10 +1095,10 @@ function StudentDetailBody({
             title="Internal Comments"
             description="Team-only notes — NOT shared with the student"
             icon="Lock"
-            className="border-2 border-amber-200"
-            action={<Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">Internal only</Badge>}
+            className="border-2 border-crm-warning-border"
+            action={<Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">Internal only</Badge>}
           >
-            <div className="mb-3 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800">
+            <div className="mb-3 flex items-start gap-2 rounded-xl border border-crm-warning-border bg-crm-warning-bg p-3 text-xs text-crm-warning-text">
               <Icon name="AlertTriangle" className="mt-0.5 size-4 shrink-0" />
               <span><strong>Internal — Student cannot see this.</strong> Internal comments are for staff coordination only. Never put student-facing communication here.</span>
             </div>
@@ -1108,10 +1108,10 @@ function StudentDetailBody({
                 <EmptyState icon="Lock" title="No internal comments" description="Add your first internal note for staff coordination." />
               ) : (
                 internalComments.map((c) => (
-                  <div key={c.id} className="rounded-xl border border-amber-100 bg-amber-50/30 p-3">
+                  <div key={c.id} className="rounded-xl border border-crm-warning-border bg-crm-warning-bg/30 p-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <div className="flex size-8 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                        <div className="flex size-8 items-center justify-center rounded-full bg-crm-warning-bg text-crm-warning-text">
                           <Icon name="UserCog" className="size-4" />
                         </div>
                         <div>
@@ -1164,7 +1164,7 @@ function StudentDetailBody({
                     <div
                       key={m.id}
                       className={`flex items-start gap-3 rounded-xl border p-3 ${
-                        inbound ? "border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/30" : "border-emerald-200 bg-emerald-50/30"
+                        inbound ? "border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/30" : "border-crm-success-border bg-crm-success-bg/30"
                       }`}
                     >
                       <div className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${CHANNEL_COLORS[m.channel] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>
@@ -1179,12 +1179,12 @@ function StudentDetailBody({
                             {inbound ? (m.fromName ?? m.fromPhone ?? m.fromEmail ?? "Inbound") : "Outbound"}
                           </span>
                           {m.aiAssisted && (
-                            <Badge variant="outline" className="text-[11px] text-violet-600">
+                            <Badge variant="outline" className="text-[11px] text-[var(--alo-brand)]">
                               <Icon name="Bot" className="mr-1 size-3" /> AI-assisted
                             </Badge>
                           )}
                           {m.humanApproved && (
-                            <Badge variant="outline" className="text-[11px] text-emerald-600">
+                            <Badge variant="outline" className="text-[11px] text-crm-success-text">
                               <Icon name="ShieldCheck" className="mr-1 size-3" /> Approved
                             </Badge>
                           )}
@@ -1228,7 +1228,7 @@ function StudentDetailBody({
                           <StatusBadge status={d.status} colorMap={SOP_STATUS_COLORS} />
                           <Badge variant="outline" className="text-[11px]">v{d.version}</Badge>
                           {d.aiGenerated && (
-                            <Badge variant="outline" className="text-[11px] text-violet-600">
+                            <Badge variant="outline" className="text-[11px] text-[var(--alo-brand)]">
                               <Icon name="Bot" className="mr-1 size-3" /> AI
                             </Badge>
                           )}
@@ -1479,7 +1479,7 @@ function CommentComposer({
   };
 
   return (
-    <div className={`mt-4 rounded-xl border-2 p-3 ${isInternal ? "border-amber-200 bg-amber-50/30" : "border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/30"}`}>
+    <div className={`mt-4 rounded-xl border-2 p-3 ${isInternal ? "border-crm-warning-border bg-crm-warning-bg/30" : "border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/30"}`}>
       <Label htmlFor={`composer-${kind}`} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         <Icon name={isInternal ? "Lock" : "MessageSquarePlus"} className="size-3.5" />
         {isInternal ? "Add internal note (staff-only)" : "Add student-visible comment"}
@@ -1527,7 +1527,7 @@ function CommentComposer({
         </div>
       )}
       <div className="mt-2 flex items-center justify-between gap-2">
-        <p className={`text-[11px] ${isInternal ? "text-amber-700" : "text-[var(--alo-brand)]"}`}>
+        <p className={`text-[11px] ${isInternal ? "text-crm-warning-text" : "text-[var(--alo-brand)]"}`}>
           {isInternal ? (
             <span className="flex items-center gap-1"><Icon name="ShieldAlert" className="size-3" /> Audit-logged. Student will NOT see this.</span>
           ) : (
@@ -1540,7 +1540,7 @@ function CommentComposer({
  onClick={handleSubmit}
  className={
  isInternal
- ? " bg-amber-600 text-white hover:bg-amber-700"
+ ? " bg-[var(--alo-warning)] text-white hover:bg-[var(--alo-warning)]"
  : " bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
  }
  >

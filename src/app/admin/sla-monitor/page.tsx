@@ -46,7 +46,7 @@ export default function SlaMonitorPage() {
         </div>
         <div className="flex gap-2">
           <Button onClick={fetchSla} variant="outline" className="border-[var(--alo-border)]"><RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />Refresh</Button>
-          <Button onClick={triggerCheck} className="bg-amber-600 hover:bg-amber-700"><Zap className="w-4 h-4 mr-2" />Trigger SLA Check</Button>
+          <Button onClick={triggerCheck} className="bg-[var(--alo-warning)] hover:bg-[var(--alo-warning)]"><Zap className="w-4 h-4 mr-2" />Trigger SLA Check</Button>
         </div>
       </div>
 
@@ -80,7 +80,7 @@ export default function SlaMonitorPage() {
         <CardContent className="grid grid-cols-3 gap-4 text-xs">
           <div className="p-3 rounded-lg bg-[var(--alo-surface-muted)] border border-crm-warning-border"><p className="font-bold text-crm-warning-text">LEVEL 1 — Counselor Overdue (30m)</p><p className="text-[var(--alo-placeholder)] mt-1">Notify employee + Branch Manager, create task, warning badge</p></div>
           <div className="p-3 rounded-lg bg-[var(--alo-cta)]/10 border border-[var(--alo-cta)]/20"><p className="font-bold text-orange-300">LEVEL 2 — Manager Overdue (+20m = 50m)</p><p className="text-[var(--alo-placeholder)] mt-1">Notify CEO/Super Admin, urgent task, urgent badge</p></div>
-          <div className="p-3 rounded-lg bg-[var(--alo-surface-muted)] border border-rose-500/20"><p className="font-bold text-crm-danger-text">LEVEL 3 — CEO Overdue (+10m = 60m)</p><p className="text-[var(--alo-placeholder)] mt-1">Global alarm, notify authorized, critical badge, browser sound optional</p></div>
+          <div className="p-3 rounded-lg bg-[var(--alo-surface-muted)] border border-[var(--alo-error)]/20"><p className="font-bold text-crm-danger-text">LEVEL 3 — CEO Overdue (+10m = 60m)</p><p className="text-[var(--alo-placeholder)] mt-1">Global alarm, notify authorized, critical badge, browser sound optional</p></div>
         </CardContent>
       </Card>
     </div>

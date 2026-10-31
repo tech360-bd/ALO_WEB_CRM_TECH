@@ -11,9 +11,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Search, Eye, DollarSign, Loader2 } from 'lucide-react';
 
 const statusColors: Record<string, string> = {
-  completed: 'bg-emerald-100 text-emerald-700',
+  completed: 'bg-crm-success-bg text-crm-success-text',
   pending: 'bg-yellow-100 text-yellow-700',
-  failed: 'bg-red-100 text-red-700',
+  failed: 'bg-crm-danger-bg text-crm-danger-text',
   refunded: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   partial: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
 };

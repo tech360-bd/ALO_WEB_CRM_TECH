@@ -101,7 +101,7 @@ export default function AICommandCenterAgent() {
             </p>
           </div>
         </div>
-        <button type="button" onClick={() => void loadReadiness()} disabled={loading} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-[var(--alo-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--alo-text)] hover:bg-slate-50 disabled:opacity-60">
+        <button type="button" onClick={() => void loadReadiness()} disabled={loading} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-[var(--alo-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--alo-text)] hover:bg-[var(--alo-page)] disabled:opacity-60">
           <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} aria-hidden="true" /> Refresh readiness
         </button>
       </div>
@@ -115,7 +115,7 @@ export default function AICommandCenterAgent() {
                 value={selectedProvider}
                 onChange={(event) => { setSelectedProvider(event.target.value); setConfirmNonConfidential(false); }}
                 disabled={loading || sending || !hasAvailableProvider}
-                className="max-w-[17rem] rounded-lg border border-[var(--alo-border)] bg-white px-3 py-2 text-sm font-normal disabled:bg-slate-100"
+                className="max-w-[17rem] rounded-lg border border-[var(--alo-border)] bg-white px-3 py-2 text-sm font-normal disabled:bg-[var(--alo-page)]"
               >
                 {!selectedProvider && <option value="">No provider ready</option>}
                 {readiness?.providers.map((provider) => (
@@ -125,13 +125,13 @@ export default function AICommandCenterAgent() {
                 ))}
               </select>
             </label>
-            <span className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${selected?.available ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-900'}`}>
-              <span className={`h-1.5 w-1.5 rounded-full ${selected?.available ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+            <span className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${selected?.available ? 'bg-crm-success-bg text-crm-success-text' : 'bg-crm-warning-bg text-crm-warning-text'}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${selected?.available ? 'bg-[var(--alo-success)]' : 'bg-[var(--alo-warning)]'}`} />
               {loading ? 'Checking configuration' : selected?.available ? 'Configured and permitted' : 'No permitted provider selected'}
             </span>
           </div>
 
-          <div className="min-h-64 space-y-3 rounded-xl border border-[var(--alo-border)] bg-slate-50/70 p-4" aria-live="polite" aria-label="Assistant conversation">
+          <div className="min-h-64 space-y-3 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)]/70 p-4" aria-live="polite" aria-label="Assistant conversation">
             {messages.length === 0 && !sending && (
               <div className="flex min-h-56 flex-col items-center justify-center px-4 text-center">
                 <Sparkles className="mb-3 h-7 w-7 text-[var(--alo-brand)]" aria-hidden="true" />
@@ -151,7 +151,7 @@ export default function AICommandCenterAgent() {
           </div>
 
           {selected?.available && selectedProvider !== 'local' && (
-            <label className="mt-3 flex cursor-pointer items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-950">
+            <label className="mt-3 flex cursor-pointer items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-xs leading-5 text-crm-warning-text">
               <input type="checkbox" checked={confirmNonConfidential} onChange={(event) => setConfirmNonConfidential(event.target.checked)} className="mt-1" />
               <span>I confirm this conversation contains no confidential student, employee, financial, credential, or other restricted information. The selected cloud provider may process the text externally; free-tier and zero-cost use are not guaranteed.</span>
             </label>
@@ -177,14 +177,14 @@ export default function AICommandCenterAgent() {
             </div>
             <div className="mt-1 flex justify-between px-1 text-[11px] text-[var(--alo-text-muted)]"><span>Enter to send · Shift+Enter for a new line</span><span>{draft.length}/4000</span></div>
           </form>
-          {error && <p role="alert" className="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{error}</p>}
+          {error && <p role="alert" className="mt-3 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2 text-sm text-crm-warning-text">{error}</p>}
           {lastReply && <p className="mt-2 text-xs text-[var(--alo-text-muted)]">Last response from {lastReply.provider} · {lastReply.latencyMs} ms. Model identifiers are not echoed to avoid exposing misconfigured credential values. This confirms a response only, not provider free-tier or billing status.</p>}
         </div>
 
         <aside className="space-y-3">
-          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-            <div className="flex items-start gap-2 text-amber-950"><ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /><h3 className="text-sm font-bold">Privacy and action boundary</h3></div>
-            <p className="mt-2 text-xs leading-5 text-amber-950">Do not enter confidential data into cloud inference. The agent cannot approve, submit, send, publish, delete, or execute changes. Review its drafts before use.</p>
+          <div className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-4">
+            <div className="flex items-start gap-2 text-crm-warning-text"><ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /><h3 className="text-sm font-bold">Privacy and action boundary</h3></div>
+            <p className="mt-2 text-xs leading-5 text-crm-warning-text">Do not enter confidential data into cloud inference. The agent cannot approve, submit, send, publish, delete, or execute changes. Review its drafts before use.</p>
           </div>
 
           <div className="rounded-xl border border-[var(--alo-border)] p-4">
@@ -192,21 +192,21 @@ export default function AICommandCenterAgent() {
             {loading && <p className="mt-2 text-xs text-[var(--alo-text-secondary)]">Reading server-side configuration…</p>}
             {!loading && readiness && <ul className="mt-3 space-y-2">
               {readiness.providers.map((provider) => (
-                <li key={provider.slug} className="flex items-start justify-between gap-2 border-t border-slate-100 pt-2 first:border-0 first:pt-0">
+                <li key={provider.slug} className="flex items-start justify-between gap-2 border-t border-[var(--alo-border)] pt-2 first:border-0 first:pt-0">
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-[var(--alo-text)]">{provider.name}</p>
                     <p className="mt-0.5 text-[11px] leading-4 text-[var(--alo-text-secondary)]">{provider.available ? 'Configured · permitted' : provider.blocker || 'Not ready'}</p>
                     {provider.slug !== 'local' && <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">Free tier: {provider.freeTierVerified ? 'verified' : 'unverified'} · no zero-cost guarantee</p>}
                   </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold ${provider.available ? 'bg-emerald-50 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>{provider.available ? 'READY' : 'BLOCKED'}</span>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold ${provider.available ? 'bg-crm-success-bg text-crm-success-text' : 'bg-[var(--alo-page)] text-[var(--alo-body)]'}`}>{provider.available ? 'READY' : 'BLOCKED'}</span>
                 </li>
               ))}
             </ul>}
-            {!loading && !readiness && <p className="mt-2 text-xs text-rose-700">Provider readiness is unavailable; inference remains disabled.</p>}
-            {readiness && !readiness.cloudInferenceApproved && <p className="mt-3 rounded-lg bg-slate-50 p-2 text-[11px] leading-4 text-[var(--alo-text-secondary)]">Cloud inference is fail-closed. A provider key alone does not enable it; owner approval and billing review are required. No billing setting was changed.</p>}
+            {!loading && !readiness && <p className="mt-2 text-xs text-crm-warning-text">Provider readiness is unavailable; inference remains disabled.</p>}
+            {readiness && !readiness.cloudInferenceApproved && <p className="mt-3 rounded-lg bg-[var(--alo-page)] p-2 text-[11px] leading-4 text-[var(--alo-text-secondary)]">Cloud inference is fail-closed. A provider key alone does not enable it; owner approval and billing review are required. No billing setting was changed.</p>}
           </div>
 
-          <div className="rounded-xl bg-slate-50 p-4">
+          <div className="rounded-xl bg-[var(--alo-page)] p-4">
             <h3 className="text-sm font-bold text-[var(--alo-text)]">Current scope</h3>
             <ul className="mt-2 list-disc space-y-1 pl-4 text-xs leading-5 text-[var(--alo-text-secondary)]">
               <li>Text drafting and reasoning only</li>

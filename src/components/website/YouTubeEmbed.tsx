@@ -112,7 +112,7 @@ export default function YouTubeEmbed({
   if (!isValidVideoId(videoId)) {
     return (
       <div
-        className={`rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 ${className}`}
+        className={`rounded-xl border border-crm-warning-border bg-crm-warning-bg p-4 text-sm text-crm-warning-text ${className}`}
         role="note"
       >
         This video is not available. The video reference is not a valid YouTube
@@ -137,7 +137,7 @@ export default function YouTubeEmbed({
     <div className={`overflow-hidden rounded-xl border border-[var(--alo-border)] bg-white ${className}`}>
       {/* The dark box is the video letterbox only — it is the media surface,
           never a page section (Master §02). */}
-      <div className="relative w-full bg-black" style={{ paddingBottom: ASPECT_PADDING[aspect] }}>
+      <div className="relative w-full bg-[var(--alo-navy)]" style={{ paddingBottom: ASPECT_PADDING[aspect] }}>
         {activated ? (
           <iframe
             src={src}

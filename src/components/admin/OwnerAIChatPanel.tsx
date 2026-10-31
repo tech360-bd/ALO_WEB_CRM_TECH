@@ -67,13 +67,13 @@ export default function OwnerAIChatPanel({ focus }: { focus: string }) {
   }
   return <Card className="min-w-0 bg-white border-[var(--alo-border)]">
     <CardHeader className="gap-3 border-b border-[var(--alo-border)]">
-      <div className="flex flex-wrap items-center justify-between gap-2"><CardTitle className="text-base">Owner AI chat</CardTitle><span className="flex items-center gap-1 text-xs text-blue-800"><ShieldCheck size={15} /> Super Admin only</span></div>
+      <div className="flex flex-wrap items-center justify-between gap-2"><CardTitle className="text-base">Owner AI chat</CardTitle><span className="flex items-center gap-1 text-xs text-[var(--alo-brand-deep)]"><ShieldCheck size={15} /> Super Admin only</span></div>
       <p className="text-xs text-[var(--alo-text-secondary)]">Planning focus: {focus.replaceAll('-', ' ')}. Replies are drafts; chat cannot execute CRM changes, commands, payments or publishing.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <label className="text-xs">Provider<select aria-label="AI provider" disabled={busy || loading} className="mt-1 w-full rounded-lg border p-2 bg-white" value={provider} onChange={e => setProvider(e.target.value as typeof provider)}><option value="local">Private local model</option><option value="unorouter">UnoRouter — free models only</option></select></label>
         <label className="text-xs">Model<select aria-label="AI model" className="mt-1 w-full rounded-lg border p-2 bg-white" disabled={busy || loading} value={model} onChange={e => { setModel(e.target.value); pending.current = null; }}><option value="">No configured model available</option>{provider === 'local' ? state?.local.model && <option value={state.local.model}>{state.local.model}</option> : freeModels.map(entry => <option key={entry.id} value={entry.id}>{entry.id}</option>)}</select></label>
       </div>
-      {provider === 'unorouter' && <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs space-y-2">
+      {provider === 'unorouter' && <div className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-xs space-y-2">
         <p>External cloud provider. Do not include employee, salary, student, identity, payment or other confidential data. No CRM records are automatically attached. Free models may be unavailable or rate limited; there is no paid fallback.</p>
         {selected?.retainsOrTrains && <p>This provider reports that prompts may be retained or used for training. Review its privacy terms before sending.</p>}
         {selected?.consentRequired && <p>Additional consent may be required in your UnoRouter account. The CRM never grants provider consent automatically.</p>}
@@ -90,12 +90,12 @@ export default function OwnerAIChatPanel({ focus }: { focus: string }) {
     </CardHeader>
     <CardContent className="p-4 space-y-4">
       {loading && <p role="status" className="animate-pulse text-sm text-[var(--alo-text-muted)]">Loading authorized chat history…</p>}
-      {error && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</div>}
-      {notice && <p role="status" className="text-sm text-blue-800">{notice}</p>}
+      {error && <div role="alert" className="rounded-lg border border-crm-danger-border bg-crm-danger-bg p-3 text-sm text-crm-danger-text">{error}</div>}
+      {notice && <p role="status" className="text-sm text-[var(--alo-brand-deep)]">{notice}</p>}
       {!loading && state && state.messages.length === 0 && <p className="rounded-xl bg-[var(--alo-page)] p-6 text-center text-sm text-[var(--alo-text-muted)]">No messages yet. Select a configured model to start.</p>}
       <div className="max-h-[480px] overflow-y-auto space-y-4" aria-live="polite">
         {state?.messages.map(turn => <div key={turn.id} className="space-y-2 text-sm">
-          <div className="ml-5 rounded-xl bg-[var(--alo-blue-soft)] p-3 whitespace-pre-wrap break-words"><span className="block text-xs font-semibold text-blue-800 mb-1">You</span>{turn.message}</div>
+          <div className="ml-5 rounded-xl bg-[var(--alo-blue-soft)] p-3 whitespace-pre-wrap break-words"><span className="block text-xs font-semibold text-[var(--alo-brand-deep)] mb-1">You</span>{turn.message}</div>
           <div className="mr-5 rounded-xl bg-[var(--alo-page)] p-3 whitespace-pre-wrap break-words"><span className="block text-xs font-semibold text-[var(--alo-text-muted)] mb-1">{turn.model} · {turn.status}</span>{turn.reply || (turn.status === 'RUNNING' ? 'Reply pending. Refresh history to check.' : `Reply unavailable${turn.error ? `: ${turn.error}` : '.'}`)}</div>
         </div>)}
       </div>

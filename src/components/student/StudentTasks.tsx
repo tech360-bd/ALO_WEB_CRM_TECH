@@ -158,7 +158,7 @@ export default function StudentTasks() {
                     <Icon
                       className={cn(
                         'mt-0.5 h-5 w-5 shrink-0',
-                        task.status === 'COMPLETED' ? 'text-emerald-600' : task.status === 'IN_PROGRESS' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text-muted)]',
+                        task.status === 'COMPLETED' ? 'text-crm-success-text' : task.status === 'IN_PROGRESS' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text-muted)]',
                       )}
                       aria-hidden="true"
                     />
@@ -182,7 +182,7 @@ export default function StudentTasks() {
                       {task.dueDate ? (
                         <span className={cn(
                           'inline-flex items-center gap-1 text-[12px] font-medium',
-                          overdue ? 'text-red-600' : 'text-[var(--alo-text-muted)]',
+                          overdue ? 'text-crm-danger-text' : 'text-[var(--alo-text-muted)]',
                         )}>
                           <CalendarClock className="h-3.5 w-3.5" aria-hidden="true" />
                           {overdue
@@ -208,7 +208,7 @@ export default function StudentTasks() {
 
 function SummaryTile({ label, value, tone }: { label: string; value: number; tone: 'neutral' | 'info' | 'success' | 'danger' }) {
   const toneClass =
-    tone === 'danger' ? 'text-red-600' : tone === 'success' ? 'text-emerald-600' : tone === 'info' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text)]';
+    tone === 'danger' ? 'text-crm-danger-text' : tone === 'success' ? 'text-crm-success-text' : tone === 'info' ? 'text-[var(--alo-brand)]' : 'text-[var(--alo-text)]';
   return (
     <div className="rounded-2xl border border-[var(--alo-border)] bg-white px-4 py-3">
       <p className={cn('text-[24px] font-bold leading-none tracking-[-0.02em]', toneClass)}>{value}</p>

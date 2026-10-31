@@ -72,12 +72,12 @@ const CHANNEL_META: Record<
   string,
   { label: string; icon: string; color: string; bg: string; text: string }
 > = {
-  WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "#10B981", bg: "bg-green-50", text: "text-green-700" },
+  WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "#10B981", bg: "bg-crm-success-bg", text: "text-crm-success-text" },
   SMS: { label: "SMS", icon: "MessageSquare", color: "#0057B8", bg: "bg-[var(--alo-brand-light)]", text: "text-[var(--alo-brand)]" },
-  EMAIL: { label: "Email", icon: "Mail", color: "#0284C7", bg: "bg-violet-50", text: "text-violet-700" },
+  EMAIL: { label: "Email", icon: "Mail", color: "#0284C7", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
   WEBSITE_CHAT: { label: "Website Chat", icon: "Globe", color: "#0057B8", bg: "bg-[var(--alo-brand-light)]", text: "text-[var(--alo-brand)]" },
   FACEBOOK: { label: "Facebook", icon: "Facebook", color: "#1877f2", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
-  INSTAGRAM: { label: "Instagram", icon: "Instagram", color: "#e1306c", bg: "bg-pink-50", text: "text-pink-700" },
+  INSTAGRAM: { label: "Instagram", icon: "Instagram", color: "#e1306c", bg: "bg-crm-danger-bg", text: "text-crm-danger-text" },
   MESSENGER: { label: "Messenger", icon: "Send", color: "#0084ff", bg: "bg-sky-50", text: "text-sky-700" },
   PORTAL: { label: "Portal", icon: "LayoutDashboard", color: "#E8501A", bg: "bg-[var(--alo-cta-soft)]", text: "text-[var(--alo-cta)]" },
 };
@@ -331,10 +331,10 @@ export function UnifiedInbox() {
               <span className="font-semibold">First response target: 30 min</span> → warning at 30 min → escalate to <span className="font-semibold">Branch Manager</span> at 40 min → escalate to <span className="font-semibold">Admin</span> at 50 min. After office hours, the AI auto-replies immediately and creates a morning task for the counselor.
             </p>
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">≤ 10 min · OK</Badge>
+              <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">≤ 10 min · OK</Badge>
               <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] hover:bg-[var(--alo-cta-soft)]">10–30 min · warning</Badge>
-              <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">30–40 min · branch manager</Badge>
-              <Badge className="bg-red-100 text-red-700 hover:bg-red-100">&gt; 50 min · admin</Badge>
+              <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">30–40 min · branch manager</Badge>
+              <Badge className="bg-crm-danger-bg text-crm-danger-text hover:bg-crm-danger-bg">&gt; 50 min · admin</Badge>
             </div>
           </div>
         </CardContent>
@@ -421,7 +421,7 @@ export function UnifiedInbox() {
                             <p className="truncate text-sm font-semibold text-foreground">
                               {c.studentName || c.fromPhone || c.fromEmail || "Unknown sender"}
                             </p>
-                            <span className={cn("shrink-0 text-[11px] font-medium", mins > 30 ? "text-rose-600" : "text-muted-foreground")}>
+                            <span className={cn("shrink-0 text-[11px] font-medium", mins > 30 ? "text-crm-warning-text" : "text-muted-foreground")}>
                               {timeAgo(c.lastMessageAt)}
                             </span>
                           </div>
@@ -433,12 +433,12 @@ export function UnifiedInbox() {
                               {meta.label}
                             </Badge>
                             {c.unread > 0 && (
-                              <span className="inline-flex items-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[11px] font-bold text-white">
+                              <span className="inline-flex items-center rounded-full bg-crm-warning-bg0 px-1.5 py-0.5 text-[11px] font-bold text-white">
                                 {c.unread} unread
                               </span>
                             )}
                             {mins > 30 && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-600">
+                              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-crm-warning-text">
                                 <Icon name="AlertTriangle" className="size-3" />
                                 {mins}m
                               </span>
@@ -499,7 +499,7 @@ export function UnifiedInbox() {
             </div>
             <div className="flex flex-col gap-3 rounded-xl border-2 border-[var(--alo-cta)]/20 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-lg bg-green-50 text-green-700">
+                <div className="flex size-10 items-center justify-center rounded-lg bg-crm-success-bg text-crm-success-text">
                   <Icon name="FileText" className="size-5" />
                 </div>
                 <div>
@@ -596,7 +596,7 @@ function ActiveConversation({
             <div
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
-                slaOver ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"
+                slaOver ? "bg-crm-warning-bg text-crm-warning-text" : "bg-crm-success-bg text-crm-success-text"
               )}
             >
               <Icon name="Timer" className="size-3.5" />

@@ -53,7 +53,7 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
 
         {/* Header Hero */}
         <div className="bg-white rounded-3xl p-8 border border-[var(--alo-border)] shadow-sm space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-crm-success-bg text-crm-success-text text-xs font-bold rounded-full border border-crm-success-border">
             <Award className="w-4 h-4" /> <span>{countryData.flag}</span> Verified Financial Aid Grants
           </div>
           <h1 className="text-3xl font-extrabold text-[var(--alo-text)]">
@@ -69,11 +69,11 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
           {scholarships.map((sch) => (
             <div
               key={sch.id}
-              className="bg-white rounded-2xl border border-[var(--alo-border)] p-6 flex flex-col justify-between hover:border-emerald-500 hover:shadow-md transition space-y-4"
+              className="bg-white rounded-2xl border border-[var(--alo-border)] p-6 flex flex-col justify-between hover:border-crm-success-border hover:shadow-md transition space-y-4"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                  <span className="text-xs font-bold px-2.5 py-1 bg-crm-success-bg text-crm-success-text rounded-full border border-crm-success-border">
                     {sch.coverageType || 'Tuition Reduction'}
                   </span>
                   <span className="text-xs text-[var(--alo-text-muted)] font-semibold">
@@ -95,7 +95,7 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
                     <span className="text-[var(--alo-text-muted)] flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" /> Deadline:
                     </span>
-                    <span className="font-bold text-amber-700">{sch.deadline ? String(sch.deadline).substring(0, 10) : 'Rolling Admission'}</span>
+                    <span className="font-bold text-crm-warning-text">{sch.deadline ? String(sch.deadline).substring(0, 10) : 'Rolling Admission'}</span>
                   </div>
                 </div>
               </div>
@@ -105,13 +105,13 @@ export default async function CountryScholarshipsPage({ params }: { params: Prom
                   href={sch.officialScholarshipUrl || countryData.canonicalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-emerald-700 font-semibold flex items-center gap-1 hover:underline"
+                  className="text-xs text-crm-success-text font-semibold flex items-center gap-1 hover:underline"
                 >
                   Official Details <ExternalLink className="w-3 h-3" />
                 </a>
                 <Link
                   href="/book-consultation"
-                  className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl flex items-center gap-1"
+                  className="text-xs bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white font-bold px-3.5 py-2 rounded-xl flex items-center gap-1"
                 >
                   Apply For Grant <ArrowRight className="w-3 h-3" />
                 </Link>

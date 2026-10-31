@@ -57,7 +57,7 @@ export default function CrmHrmHubPage() {
           <Link href="/crm/hrm/analytics"><Button variant="ghost" size="sm" className=" text-[var(--alo-cta)]">Detailed Analytics →</Button></Link>
         </CardHeader>
         <CardContent className="p-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {loading ? <div className="col-span-4 text-xs text-[var(--alo-text-muted)]">Loading analytics...</div> : analyticsError ? <p role="alert" className="col-span-4 text-sm text-amber-800">{analyticsError} Role-authorized widgets remain available above.</p> : analytics ? (
+          {loading ? <div className="col-span-4 text-xs text-[var(--alo-text-muted)]">Loading analytics...</div> : analyticsError ? <p role="alert" className="col-span-4 text-sm text-crm-warning-text">{analyticsError} Role-authorized widgets remain available above.</p> : analytics ? (
             <>
               <div className="p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><p className="text-xs text-[var(--alo-text-muted)]">Headcount</p><p className="text-xl font-bold text-[var(--alo-text)]">{analytics.headcount}</p><p className="text-xs text-[var(--alo-text-muted)]">{analytics.activeEmployees} active</p></div>
               <div className="p-3 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><p className="text-xs text-[var(--alo-text-muted)]">Attendance Rate</p><p className="text-sm font-bold text-[var(--alo-text)]">{analytics.attendanceRate == null ? 'Not calculated' : `${analytics.attendanceRate}%`}</p><p className="text-xs text-[var(--alo-text-muted)]">{analytics.attendanceNote}</p></div>

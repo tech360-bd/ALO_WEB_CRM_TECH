@@ -99,10 +99,10 @@ const STATUS_LABELS: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
   DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  STUDENT_REVIEW: "bg-amber-100 text-amber-700",
+  STUDENT_REVIEW: "bg-crm-warning-bg text-crm-warning-text",
   COUNSELOR_REVIEW: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  SENT: "bg-violet-100 text-violet-700",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  SENT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
 // ---------- Helpers ----------
@@ -126,7 +126,7 @@ function renderContentWithVerify(content: string) {
       return (
         <mark
           key={i}
-          className="rounded bg-amber-200/70 px-1 py-0.5 text-amber-900 underline decoration-amber-500 decoration-dotted underline-offset-2"
+          className="rounded bg-crm-warning-bg/70 px-1 py-0.5 text-crm-warning-text underline decoration-amber-500 decoration-dotted underline-offset-2"
           title="Counselor/student must verify this"
         >
           {p}
@@ -331,10 +331,10 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
         <CardContent className="grid gap-4 pt-5 lg:grid-cols-2">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-rose-100 text-rose-700">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-crm-warning-bg text-crm-warning-text">
                 <Icon name="Ban" className="size-4" />
               </div>
-              <p className="text-sm font-bold text-rose-700">AI MUST NOT</p>
+              <p className="text-sm font-bold text-crm-warning-text">AI MUST NOT</p>
             </div>
             <ul className="space-y-1 text-sm text-foreground/80">
               {[
@@ -345,7 +345,7 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
                 "Guarantee admission or visa approval",
               ].map((t) => (
                 <li key={t} className="flex items-start gap-2">
-                  <Icon name="X" className="mt-0.5 size-3.5 shrink-0 text-rose-600" />
+                  <Icon name="X" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
                   <span>{t}</span>
                 </li>
               ))}
@@ -353,10 +353,10 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
           </div>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-crm-success-bg text-crm-success-text">
                 <Icon name="Check" className="size-4" />
               </div>
-              <p className="text-sm font-bold text-emerald-700">AI MUST</p>
+              <p className="text-sm font-bold text-crm-success-text">AI MUST</p>
             </div>
             <ul className="space-y-1 text-sm text-foreground/80">
               {[
@@ -367,7 +367,7 @@ export function SopStudio({ onNavigate = () => {} }: { onNavigate?: (v: ViewKey,
                 "Include originality guidance with every draft",
               ].map((t) => (
                 <li key={t} className="flex items-start gap-2">
-                  <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
                   <span>{t}</span>
                 </li>
               ))}
@@ -744,7 +744,7 @@ function SopResultView({
         <CardContent className="p-0">
           <div className="flex items-center justify-between border-b border-border/60 px-4 py-2.5">
             <p className="text-xs font-semibold text-[var(--alo-brand)]">Document preview</p>
-            <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-700">
+            <Badge variant="outline" className="border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">
               <Icon name="Lightbulb" className="size-3" />
               [verify: ...] markers need student input
             </Badge>
@@ -772,7 +772,7 @@ function SopResultView({
               key={i}
               className={cn(
                 "flex cursor-pointer items-start gap-2.5 rounded-xl border-2 p-3 transition-colors",
-                checklistDone[i] ? "border-emerald-300 bg-emerald-50" : "border-border/60 hover:border-[var(--alo-brand)]/30"
+                checklistDone[i] ? "border-crm-success-border bg-crm-success-bg" : "border-border/60 hover:border-[var(--alo-brand)]/30"
               )}
             >
               <Checkbox
@@ -780,7 +780,7 @@ function SopResultView({
                 onCheckedChange={(v) => setChecklistDone((prev) => ({ ...prev, [i]: !!v }))}
                 className="mt-0.5 data-[state=checked]:bg-[var(--alo-brand)] data-[state=checked]:border-[var(--alo-brand)]"
               />
-              <span className={cn("text-sm", checklistDone[i] ? "text-emerald-800 line-through" : "text-foreground")}>
+              <span className={cn("text-sm", checklistDone[i] ? "text-crm-success-text line-through" : "text-foreground")}>
                 {item}
               </span>
             </label>
@@ -817,7 +817,7 @@ function SopResultView({
             </Button>
             <Button
               variant="outline"
-              className="h-12 border-emerald-600 text-emerald-700 hover:bg-emerald-50"
+              className="h-12 border-crm-success-border text-crm-success-text hover:bg-crm-success-bg"
               onClick={() => {
                 setStatus("APPROVED");
                 toast({ title: "Document approved", description: "Ready to send with the application." });
@@ -916,7 +916,7 @@ function CvResultView({ result, studentId }: { result: CvDraftResponse; studentI
             <Button
  size="sm"
  variant="outline"
- className=" border-emerald-600 text-emerald-700 hover:bg-emerald-50"
+ className=" border-crm-success-border text-crm-success-text hover:bg-crm-success-bg"
  onClick={() => {
                 setStatus("APPROVED");
                 toast({ title: "CV approved", description: "Ready to attach to applications." });

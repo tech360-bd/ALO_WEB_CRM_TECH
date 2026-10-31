@@ -320,11 +320,11 @@ export default function SuperAdminAccessControlCenter() {
       {/* STATS */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
         <Card className="p-3 bg-white border rounded-xl"><div className="text-[11px] font-bold text-[var(--alo-text-muted)] uppercase">Total Employees</div><div className="text-lg font-black text-[var(--alo-text)]">{analytics?.summary?.totalEmployees ?? employees.length}</div></Card>
-        <Card className="p-3 bg-emerald-50 border-emerald-200 rounded-xl"><div className="text-[11px] font-bold text-emerald-700 uppercase">Active</div><div className="text-lg font-black text-emerald-900">{analytics?.summary?.activeEmployees ?? employees.filter((e:any)=>e.status==='active').length}</div></Card>
-        <Card className="p-3 bg-amber-50 border-amber-200 rounded-xl"><div className="text-[11px] font-bold text-amber-700 uppercase">Pending Activation</div><div className="text-lg font-black text-amber-900">{analytics?.summary?.pendingActivation ?? 0}</div></Card>
+        <Card className="p-3 bg-crm-success-bg border-crm-success-border rounded-xl"><div className="text-[11px] font-bold text-crm-success-text uppercase">Active</div><div className="text-lg font-black text-crm-success-text">{analytics?.summary?.activeEmployees ?? employees.filter((e:any)=>e.status==='active').length}</div></Card>
+        <Card className="p-3 bg-crm-warning-bg border-crm-warning-border rounded-xl"><div className="text-[11px] font-bold text-crm-warning-text uppercase">Pending Activation</div><div className="text-lg font-black text-crm-warning-text">{analytics?.summary?.pendingActivation ?? 0}</div></Card>
         <Card className="p-3 bg-[var(--alo-brand-pale)] border-[var(--alo-border)] rounded-xl"><div className="text-[11px] font-bold text-[var(--alo-brand)] uppercase">Permission Requests</div><div className="text-lg font-black text-[var(--alo-brand-deep)]">{permRequests.length}</div></Card>
-        <Card className="p-3 bg-purple-50 border-purple-200 rounded-xl"><div className="text-[11px] font-bold text-purple-700 uppercase">Temporary Access</div><div className="text-lg font-black text-purple-900">{tempPerms.length}</div></Card>
-        <Card className="p-3 bg-red-50 border-red-200 rounded-xl"><div className="text-[11px] font-bold text-red-700 uppercase">Security Events</div><div className="text-lg font-black text-red-900">{securityEvents.length}</div></Card>
+        <Card className="p-3 bg-[var(--alo-brand-pale)] border-[var(--alo-border)] rounded-xl"><div className="text-[11px] font-bold text-[var(--alo-brand)] uppercase">Temporary Access</div><div className="text-lg font-black text-[var(--alo-brand)]">{tempPerms.length}</div></Card>
+        <Card className="p-3 bg-crm-danger-bg border-crm-danger-border rounded-xl"><div className="text-[11px] font-bold text-crm-danger-text uppercase">Security Events</div><div className="text-lg font-black text-crm-danger-text">{securityEvents.length}</div></Card>
         <Card className="p-3 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-xl"><div className="text-[11px] font-bold text-[var(--alo-body)] uppercase">Audit Logs</div><div className="text-lg font-black text-[var(--alo-text)]">{auditLogs.length}</div></Card>
       </div>
 
@@ -356,9 +356,9 @@ export default function SuperAdminAccessControlCenter() {
                     <td className="p-2.5"><div className="font-bold text-[var(--alo-text)]">{emp.name}</div><div className="font-mono text-[11px] text-[var(--alo-text-muted)]">{emp.employeeId || emp.employeeProfile?.employeeId} · {emp.email}</div><div className="text-[11px] text-[var(--alo-text-muted)]">Code: {emp.employeeProfile?.employeeId || '—'}</div></td>
                     <td className="p-2.5 font-semibold">{emp.designation || emp.employeeProfile?.designation || 'Counselor'}</td>
                     <td className="p-2.5 text-[var(--alo-body)]"><div>{emp.department || emp.employeeProfile?.department} · {emp.branch || emp.employeeProfile?.branch}</div><div className="text-[11px] text-[var(--alo-text-muted)]">Scope: {emp.scope || 'ASSIGNED'}</div></td>
-                    <td className="p-2.5"><Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-text)] text-[11px] uppercase mr-1">{emp.role || emp.employeeProfile?.role || 'employee'}</Badge><Badge className="bg-purple-50 text-purple-700 text-[11px]">PKG: Standard</Badge></td>
-                    <td className="p-2.5"><Badge className={emp.status==='active'?'bg-emerald-50 text-emerald-700 text-[11px] font-bold':'bg-amber-50 text-amber-700 text-[11px] font-bold'}>{emp.status?.toUpperCase()}</Badge><div className="text-[11px] text-[var(--alo-text-muted)] mt-1">INVITED→ACTIVE token hashed one-time expiry</div></td>
-                    <td className="p-2.5"><div className="flex gap-1">{emp.status==='active'?<Button size="sm" variant="outline" onClick={()=>handleStatusChange(emp.id,'suspended')} className="text-[11px] h-6 px-2 text-red-600">Suspend</Button>:<Button size="sm" variant="outline" onClick={()=>handleStatusChange(emp.id,'active')} className="text-[11px] h-6 px-2 text-emerald-600">Activate</Button>}<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[11px] h-6 px-2"><Eye className="w-3 h-3" /></Button></div><div className="text-[11px] text-[var(--alo-text-muted)] mt-1">Revoke login/sessions/tokens/WhatsApp/social/email/AI/device preserve history</div></td>
+                    <td className="p-2.5"><Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-text)] text-[11px] uppercase mr-1">{emp.role || emp.employeeProfile?.role || 'employee'}</Badge><Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-[11px]">PKG: Standard</Badge></td>
+                    <td className="p-2.5"><Badge className={emp.status==='active'?'bg-crm-success-bg text-crm-success-text text-[11px] font-bold':'bg-crm-warning-bg text-crm-warning-text text-[11px] font-bold'}>{emp.status?.toUpperCase()}</Badge><div className="text-[11px] text-[var(--alo-text-muted)] mt-1">INVITED→ACTIVE token hashed one-time expiry</div></td>
+                    <td className="p-2.5"><div className="flex gap-1">{emp.status==='active'?<Button size="sm" variant="outline" onClick={()=>handleStatusChange(emp.id,'suspended')} className="text-[11px] h-6 px-2 text-crm-danger-text">Suspend</Button>:<Button size="sm" variant="outline" onClick={()=>handleStatusChange(emp.id,'active')} className="text-[11px] h-6 px-2 text-crm-success-text">Activate</Button>}<Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[11px] h-6 px-2"><Eye className="w-3 h-3" /></Button></div><div className="text-[11px] text-[var(--alo-text-muted)] mt-1">Revoke login/sessions/tokens/WhatsApp/social/email/AI/device preserve history</div></td>
                   </tr>
                 ))}
               </tbody>
@@ -371,7 +371,7 @@ export default function SuperAdminAccessControlCenter() {
         <div className="grid md:grid-cols-3 gap-4">
           <Card className="p-4 bg-white border rounded-2xl space-y-3"><h3 className="font-bold text-xs flex items-center gap-2"><Building className="w-4 h-4 text-[var(--alo-brand)]" /> Departments ({departments.length})</h3><div className="space-y-2 max-h-96 overflow-y-auto">{departments.map((d:any)=><div key={d.id} className="p-2 bg-[var(--alo-page)] rounded-lg border text-xs"><div className="font-bold">{d.name}</div><div className="text-[11px] text-[var(--alo-text-muted)]">{d.description}</div></div>)}{departments.length===0&&<div className="text-[11px] text-[var(--alo-text-muted)] p-4 text-center border-dashed border rounded-xl">No departments — create via /api/employee-access/departments POST — GLOBAL/COUNTRY/BRANCH/OFFICE/DEPARTMENT/TEAM/ASSIGNED/OWN scopes</div>}</div></Card>
           <Card className="p-4 bg-white border rounded-2xl space-y-3"><h3 className="font-bold text-xs flex items-center gap-2"><MapPin className="w-4 h-4 text-[var(--alo-brand)]" /> Branches ({branches.length})</h3><div className="space-y-2 max-h-96 overflow-y-auto">{branches.map((b:any)=><div key={b.id} className="p-2 bg-[var(--alo-brand-pale)] rounded-lg border border-[var(--alo-border)] text-xs"><div className="font-bold">{b.name} — {b.code}</div><div className="text-[11px] text-[var(--alo-text-muted)]">{b.country} · {b.city}</div></div>)}{branches.length===0&&<div className="text-[11px] text-[var(--alo-text-muted)] p-4 text-center border-dashed border rounded-xl">No branches — create via /api/employee-access/branches</div>}</div></Card>
-          <Card className="p-4 bg-white border rounded-2xl space-y-3"><h3 className="font-bold text-xs flex items-center gap-2"><Home className="w-4 h-4 text-[var(--alo-brand)]" /> Offices ({offices.length})</h3><div className="space-y-2 max-h-96 overflow-y-auto">{offices.map((o:any)=><div key={o.id} className="p-2 bg-amber-50 rounded-lg border border-amber-100 text-xs"><div className="font-bold">{o.name} — {o.code}</div><div className="text-[11px] text-[var(--alo-text-muted)]">{o.address}</div></div>)}{offices.length===0&&<div className="text-[11px] text-[var(--alo-text-muted)] p-4 text-center border-dashed border rounded-xl">No offices — create via /api/employee-access/offices</div>}</div></Card>
+          <Card className="p-4 bg-white border rounded-2xl space-y-3"><h3 className="font-bold text-xs flex items-center gap-2"><Home className="w-4 h-4 text-[var(--alo-brand)]" /> Offices ({offices.length})</h3><div className="space-y-2 max-h-96 overflow-y-auto">{offices.map((o:any)=><div key={o.id} className="p-2 bg-crm-warning-bg rounded-lg border border-crm-warning-border text-xs"><div className="font-bold">{o.name} — {o.code}</div><div className="text-[11px] text-[var(--alo-text-muted)]">{o.address}</div></div>)}{offices.length===0&&<div className="text-[11px] text-[var(--alo-text-muted)] p-4 text-center border-dashed border rounded-xl">No offices — create via /api/employee-access/offices</div>}</div></Card>
         </div>
       )}
 
@@ -393,7 +393,7 @@ export default function SuperAdminAccessControlCenter() {
           {/* Honesty banner: an empty table is shown as empty, never filled with
               rows that do not exist in the database. */}
           {data && data.packagesSeeded === false && (
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900">
+            <div className="p-3 bg-crm-warning-bg border border-crm-warning-border rounded-xl text-[11px] text-crm-warning-text">
               <span className="font-bold">No partner packages are saved yet.</span> {data.packagesNote}
             </div>
           )}
@@ -415,15 +415,15 @@ export default function SuperAdminAccessControlCenter() {
                     </tbody>
                   </table>
                   <div className="flex flex-wrap gap-1">
-                    <Badge className={(pkg.autoPublishAllowed ?? false) ? 'bg-emerald-50 text-emerald-700 text-[11px]' : 'bg-slate-200 text-[var(--alo-body)] text-[11px]'}>
+                    <Badge className={(pkg.autoPublishAllowed ?? false) ? 'bg-crm-success-bg text-crm-success-text text-[11px]' : 'bg-[var(--alo-page)] text-[var(--alo-body)] text-[11px]'}>
                       auto-publish {(pkg.autoPublishAllowed ?? false) ? 'ALLOWED' : 'OFF'}
                     </Badge>
-                    <Badge className={(pkg.requiresAloApproval ?? true) ? 'bg-amber-50 text-amber-800 text-[11px]' : 'bg-slate-200 text-[var(--alo-body)] text-[11px]'}>
+                    <Badge className={(pkg.requiresAloApproval ?? true) ? 'bg-crm-warning-bg text-crm-warning-text text-[11px]' : 'bg-[var(--alo-page)] text-[var(--alo-body)] text-[11px]'}>
                       {(pkg.requiresAloApproval ?? true) ? 'ALO approval required' : 'no ALO review'}
                     </Badge>
                   </div>
                   {data.packagesSeeded === false && (
-                    <div className="text-[11px] text-amber-800 font-semibold">DEFAULT — not saved yet</div>
+                    <div className="text-[11px] text-crm-warning-text font-semibold">DEFAULT — not saved yet</div>
                   )}
                 </div>
               ))}
@@ -456,7 +456,7 @@ export default function SuperAdminAccessControlCenter() {
               <div key={section.key} className="p-3 bg-white border rounded-xl space-y-1">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-bold text-[12px]">{section.label}</span>
-                  <Badge className={section.backendEnforced ? 'bg-emerald-50 text-emerald-700 text-[11px]' : 'bg-amber-50 text-amber-800 text-[11px]'}>
+                  <Badge className={section.backendEnforced ? 'bg-crm-success-bg text-crm-success-text text-[11px]' : 'bg-crm-warning-bg text-crm-warning-text text-[11px]'}>
                     {section.backendEnforced ? 'BACKEND ENFORCED' : 'NOT ENFORCED'}
                   </Badge>
                 </div>
@@ -481,9 +481,9 @@ export default function SuperAdminAccessControlCenter() {
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><Sliders className="w-4 h-4 text-[var(--alo-brand)]" /> Granular Permissions — VIEW/CREATE/EDIT/SUBMIT/ACCEPT/REJECT/APPROVE/VERIFY/SEND/DOWNLOAD/UPLOAD/EXPORT/ASSIGN/REASSIGN/ARCHIVE/CONFIGURE/MANAGE/ESCALATE/GENERATE/PUBLISH/DELETE soft — Object-level + Field-level Security</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 text-[11px]">
-            {['STUDENT','APPLICATION','DOCUMENT','VISA','FINANCE','HR','MARKETING','SOCIAL','WHATSAPP','EMAIL','PHONE','AI','REPORTS','EXPORT','ADMINISTRATION','PARTNER','B2B','INTERVIEW','COMMUNICATION','PAYROLL','ATTENDANCE','LEAVE','DEVICE','AGREEMENT'].map(m=><div key={m} className="p-2 bg-white rounded-lg border flex flex-col"><span className="font-bold text-[11px]">{m}</span><div className="flex flex-wrap gap-1 mt-1">{['VIEW','CREATE','EDIT','APPROVE','SEND'].map(a=><Badge key={a} className="bg-emerald-50 text-emerald-700 text-[11px] px-1 py-0">{a}</Badge>)}</div></div>)}
+            {['STUDENT','APPLICATION','DOCUMENT','VISA','FINANCE','HR','MARKETING','SOCIAL','WHATSAPP','EMAIL','PHONE','AI','REPORTS','EXPORT','ADMINISTRATION','PARTNER','B2B','INTERVIEW','COMMUNICATION','PAYROLL','ATTENDANCE','LEAVE','DEVICE','AGREEMENT'].map(m=><div key={m} className="p-2 bg-white rounded-lg border flex flex-col"><span className="font-bold text-[11px]">{m}</span><div className="flex flex-wrap gap-1 mt-1">{['VIEW','CREATE','EDIT','APPROVE','SEND'].map(a=><Badge key={a} className="bg-crm-success-bg text-crm-success-text text-[11px] px-1 py-0">{a}</Badge>)}</div></div>)}
           </div>
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px]"><span className="font-bold">Field-level:</span> salary, personal_phone, emergency_contact, bank_info, nid, passport_number, private_notes — restricted Employee+SuperAdmin+Chairman+HR explicit — enforceFieldLevelSecurity() — <span className="font-bold">Object-level:</span> OWN vs ASSIGNED vs TEAM vs DEPARTMENT vs BRANCH vs COUNTRY vs GLOBAL where clauses — <span className="font-bold">AI:</span> READ/ANALYZE/SUMMARIZE/CLASSIFY/DRAFT/RECOMMEND/PREPARE low-risk, FINALIZE/APPROVE/SEND/PAY/DELETE/ESCALATE high-risk requires human</div>
+          <div className="p-3 bg-crm-warning-bg border border-crm-warning-border rounded-xl text-[11px]"><span className="font-bold">Field-level:</span> salary, personal_phone, emergency_contact, bank_info, nid, passport_number, private_notes — restricted Employee+SuperAdmin+Chairman+HR explicit — enforceFieldLevelSecurity() — <span className="font-bold">Object-level:</span> OWN vs ASSIGNED vs TEAM vs DEPARTMENT vs BRANCH vs COUNTRY vs GLOBAL where clauses — <span className="font-bold">AI:</span> READ/ANALYZE/SUMMARIZE/CLASSIFY/DRAFT/RECOMMEND/PREPARE low-risk, FINALIZE/APPROVE/SEND/PAY/DELETE/ESCALATE high-risk requires human</div>
         </Card>
       )}
 
@@ -499,19 +499,19 @@ export default function SuperAdminAccessControlCenter() {
           <h2 className="text-sm font-bold flex items-center gap-2"><Clock className="w-4 h-4 text-[var(--alo-brand)]" /> Temporary Access — expiry is checked on every authorization; revoke immediately</h2>
           <div className="grid md:grid-cols-2 gap-3">
             {tempPerms.map((t: any) => (
-              <div key={t.id} className="p-3 bg-purple-50 border border-purple-200 rounded-xl text-xs space-y-2">
+              <div key={t.id} className="p-3 bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-xl text-xs space-y-2">
                 <div className="font-bold">{t.featureKey} — {t.action}</div>
                 <div className="text-[11px] text-[var(--alo-body)]">Employee: {t.employeeId} · Scope: {t.scopeType}/{t.scopeId || '—'} · Granted by: {t.grantedBy}</div>
                 <div className="text-[11px]">Expires: {new Date(t.endDate).toLocaleString()} · {t.effectiveStatus === 'EXPIRED' ? 'No longer effective' : 'Expiry checked during access'}</div>
                 <div className="flex items-center justify-between gap-2">
-                  <Badge className={t.isActive ? 'bg-emerald-50 text-emerald-700 text-[11px]' : 'bg-red-50 text-red-700 text-[11px]'}>{t.effectiveStatus || (t.isActive ? 'ACTIVE' : 'EXPIRED')}</Badge>
-                  {t.isActive && revokingPermissionId !== t.id && <Button variant="outline" onClick={() => { setRevokingPermissionId(t.id); setRevokeReason(''); }} className="text-red-700">Revoke access</Button>}
+                  <Badge className={t.isActive ? 'bg-crm-success-bg text-crm-success-text text-[11px]' : 'bg-crm-danger-bg text-crm-danger-text text-[11px]'}>{t.effectiveStatus || (t.isActive ? 'ACTIVE' : 'EXPIRED')}</Badge>
+                  {t.isActive && revokingPermissionId !== t.id && <Button variant="outline" onClick={() => { setRevokingPermissionId(t.id); setRevokeReason(''); }} className="text-crm-danger-text">Revoke access</Button>}
                 </div>
                 {revokingPermissionId === t.id && (
                   <div className="space-y-2 border-t pt-2">
                     <Input value={revokeReason} onChange={(event) => setRevokeReason(event.target.value)} maxLength={500} placeholder="Reason for immediate revocation (10–500 characters)" aria-label="Temporary access revocation reason" />
                     <div className="flex gap-2">
-                      <Button disabled={savingRevocation} onClick={() => handleRevokeTemporaryPermission(t.id)} className="bg-red-700 text-white">{savingRevocation ? 'Revoking…' : 'Confirm revocation'}</Button>
+                      <Button disabled={savingRevocation} onClick={() => handleRevokeTemporaryPermission(t.id)} className="bg-[var(--alo-error)] text-white">{savingRevocation ? 'Revoking…' : 'Confirm revocation'}</Button>
                       <Button disabled={savingRevocation} variant="outline" onClick={() => { setRevokingPermissionId(''); setRevokeReason(''); }}>Cancel</Button>
                     </div>
                   </div>
@@ -525,8 +525,8 @@ export default function SuperAdminAccessControlCenter() {
 
       {activeTab==='breakglass' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
-          <h2 className="text-sm font-bold flex items-center gap-2"><ShieldAlert className="w-4 h-4 text-red-600" /> Break Glass — Reason/Approver/Expiry Audit — Every action audited, banner BREAK_GLASS_ACCESS ACTIVE</h2>
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs space-y-2"><div className="font-bold text-red-900">Emergency access requires reason + approver + expiry — all actions audited — cannot be silent</div><div className="font-mono text-[11px] bg-white p-2 rounded border">POST /api/employee-access/break-glass — body: {'{reason, scopeType, scopeId, durationHours}'} — Super Admin grants immediately with banner, others create pending request requiring approver</div></div>
+          <h2 className="text-sm font-bold flex items-center gap-2"><ShieldAlert className="w-4 h-4 text-crm-danger-text" /> Break Glass — Reason/Approver/Expiry Audit — Every action audited, banner BREAK_GLASS_ACCESS ACTIVE</h2>
+          <div className="p-3 bg-crm-danger-bg border border-crm-danger-border rounded-xl text-xs space-y-2"><div className="font-bold text-crm-danger-text">Emergency access requires reason + approver + expiry — all actions audited — cannot be silent</div><div className="font-mono text-[11px] bg-white p-2 rounded border">POST /api/employee-access/break-glass — body: {'{reason, scopeType, scopeId, durationHours}'} — Super Admin grants immediately with banner, others create pending request requiring approver</div></div>
         </Card>
       )}
 
@@ -561,21 +561,21 @@ export default function SuperAdminAccessControlCenter() {
       {activeTab==='payroll' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><Wallet className="w-4 h-4 text-[var(--alo-brand)]" /> Payroll draft→human check→approval — AI cannot finalize high-risk — AI PREPARES → HUMAN CHECK → HUMAN APPROVAL → FINAL</h2>
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs space-y-2"><div className="font-bold text-amber-900">Payroll Workflow</div><div>POST /api/employee-access/payroll — basicSalary/allowances/bonus/overtime/loanDeduction/advanceDeduction/taxDeduction/pfDeduction — gross/net calculated — items earning/deduction — isAiDraft true → status draft requires HUMAN HR/FINANCE CHECK → HUMAN APPROVAL → FINAL — AI may analyze attendance, calculate draft, detect anomalies, prepare draft, flag inconsistencies — AI CANNOT finalize high-risk salary/payment decisions</div><div className="font-mono bg-white p-2 rounded border text-[11px]">States: draft → review_pending → reviewed → approved → paid → rejected — Separation: maker cannot approve own payroll</div></div>
+          <div className="p-3 bg-crm-warning-bg border border-crm-warning-border rounded-xl text-xs space-y-2"><div className="font-bold text-crm-warning-text">Payroll Workflow</div><div>POST /api/employee-access/payroll — basicSalary/allowances/bonus/overtime/loanDeduction/advanceDeduction/taxDeduction/pfDeduction — gross/net calculated — items earning/deduction — isAiDraft true → status draft requires HUMAN HR/FINANCE CHECK → HUMAN APPROVAL → FINAL — AI may analyze attendance, calculate draft, detect anomalies, prepare draft, flag inconsistencies — AI CANNOT finalize high-risk salary/payment decisions</div><div className="font-mono bg-white p-2 rounded border text-[11px]">States: draft → review_pending → reviewed → approved → paid → rejected — Separation: maker cannot approve own payroll</div></div>
         </Card>
       )}
 
       {activeTab==='devices' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><Smartphone className="w-4 h-4 text-[var(--alo-brand)]" /> Device Management + Login Security IP/browser/OS/fingerprint/location/time/failed/session/MFA/rate limiting/suspicious detection</h2>
-          <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-[var(--alo-page)] rounded-xl border"><div className="font-bold">Devices</div><div className="text-[11px] mt-2">GET/POST /api/employee-access/devices — deviceType/deviceId/ip/browser/os/fingerprint/isTrusted/status — HR/Admin registers — audit DEVICE_REGISTERED</div></div><div className="p-3 bg-red-50 rounded-xl border border-red-100"><div className="font-bold">Login Logs</div><div className="text-[11px] mt-2">GET /api/employee-access/login-logs?employeeId — logs IP/browser/OS/fingerprint/location/status/isSuccess/failureReason/sessionId — failedAttempts, uniqueIPs, suspicious if failed&gt;5 or IPs&gt;3 — rateLimit 5 attempts /15min/IP — POST logs creates security event if failed</div></div></div>
+          <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-[var(--alo-page)] rounded-xl border"><div className="font-bold">Devices</div><div className="text-[11px] mt-2">GET/POST /api/employee-access/devices — deviceType/deviceId/ip/browser/os/fingerprint/isTrusted/status — HR/Admin registers — audit DEVICE_REGISTERED</div></div><div className="p-3 bg-crm-danger-bg rounded-xl border border-crm-danger-border"><div className="font-bold">Login Logs</div><div className="text-[11px] mt-2">GET /api/employee-access/login-logs?employeeId — logs IP/browser/OS/fingerprint/location/status/isSuccess/failureReason/sessionId — failedAttempts, uniqueIPs, suspicious if failed&gt;5 or IPs&gt;3 — rateLimit 5 attempts /15min/IP — POST logs creates security event if failed</div></div></div>
         </Card>
       )}
 
       {activeTab==='security' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
-          <h2 className="text-sm font-bold flex items-center gap-2"><Bug className="w-4 h-4 text-red-600" /> Security Events — failed_login, suspicious_location, multiple_ips, device_change, break_glass — severity low/medium/high/critical</h2>
-          <div className="overflow-x-auto rounded-xl border"><table className="w-full text-[11px]"><thead><tr className="bg-[var(--alo-page)] font-bold border-b"><th className="p-2">Employee</th><th className="p-2">Type</th><th className="p-2">Severity</th><th className="p-2">Description</th><th className="p-2">IP</th><th className="p-2">Resolved</th></tr></thead><tbody>{securityEvents.map((e:any)=><tr key={e.id} className="border-b hover:bg-[var(--alo-page)]"><td className="p-2 font-mono text-[11px]">{e.employeeId}</td><td className="p-2">{e.eventType}</td><td className="p-2"><Badge className={e.severity==='critical'?'bg-red-100 text-red-700 text-[11px]':e.severity==='high'?'bg-amber-100 text-amber-700 text-[11px]':'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] text-[11px]'}>{e.severity}</Badge></td><td className="p-2 max-w-[250px] truncate">{e.description}</td><td className="p-2 font-mono text-[11px]">{e.ipAddress}</td><td className="p-2">{e.isResolved?'Yes':'No'}</td></tr>)}{securityEvents.length===0&&<tr><td colSpan={6} className="p-8 text-center text-[var(--alo-text-muted)]">No security events — POST /api/employee-access/security-events to log — audit SECURITY_EVENT_LOGGED</td></tr>}</tbody></table></div>
+          <h2 className="text-sm font-bold flex items-center gap-2"><Bug className="w-4 h-4 text-crm-danger-text" /> Security Events — failed_login, suspicious_location, multiple_ips, device_change, break_glass — severity low/medium/high/critical</h2>
+          <div className="overflow-x-auto rounded-xl border"><table className="w-full text-[11px]"><thead><tr className="bg-[var(--alo-page)] font-bold border-b"><th className="p-2">Employee</th><th className="p-2">Type</th><th className="p-2">Severity</th><th className="p-2">Description</th><th className="p-2">IP</th><th className="p-2">Resolved</th></tr></thead><tbody>{securityEvents.map((e:any)=><tr key={e.id} className="border-b hover:bg-[var(--alo-page)]"><td className="p-2 font-mono text-[11px]">{e.employeeId}</td><td className="p-2">{e.eventType}</td><td className="p-2"><Badge className={e.severity==='critical'?'bg-crm-danger-bg text-crm-danger-text text-[11px]':e.severity==='high'?'bg-crm-warning-bg text-crm-warning-text text-[11px]':'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] text-[11px]'}>{e.severity}</Badge></td><td className="p-2 max-w-[250px] truncate">{e.description}</td><td className="p-2 font-mono text-[11px]">{e.ipAddress}</td><td className="p-2">{e.isResolved?'Yes':'No'}</td></tr>)}{securityEvents.length===0&&<tr><td colSpan={6} className="p-8 text-center text-[var(--alo-text-muted)]">No security events — POST /api/employee-access/security-events to log — audit SECURITY_EVENT_LOGGED</td></tr>}</tbody></table></div>
         </Card>
       )}
 
@@ -675,7 +675,7 @@ export default function SuperAdminAccessControlCenter() {
       {activeTab==='comments' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[var(--alo-brand)]" /> Two Comment Systems — Student-visible vs Internal never shown — Permission-controlled</h2>
-          <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl"><div className="font-bold text-emerald-900">Student Visible</div><div className="text-[11px] mt-2">visibility=student_visible / isStudentVisible true — Student can see — never include internal notes — GET filters visibility for student role — POST with visibility student_visible — audit STUDENT_VISIBLE_COMMENT_ADDED</div></div><div className="p-3 bg-red-50 border border-red-200 rounded-xl"><div className="font-bold text-red-900">Internal Only</div><div className="text-[11px] mt-2">visibility=internal — Internal only — never shown to student, permission-controlled — student role forced where visibility=student_visible — internal never leaked — audit INTERNAL_COMMENT_ADDED — two systems enforced by visibility field + role check</div></div></div>
+          <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-crm-success-bg border border-crm-success-border rounded-xl"><div className="font-bold text-crm-success-text">Student Visible</div><div className="text-[11px] mt-2">visibility=student_visible / isStudentVisible true — Student can see — never include internal notes — GET filters visibility for student role — POST with visibility student_visible — audit STUDENT_VISIBLE_COMMENT_ADDED</div></div><div className="p-3 bg-crm-danger-bg border border-crm-danger-border rounded-xl"><div className="font-bold text-crm-danger-text">Internal Only</div><div className="text-[11px] mt-2">visibility=internal — Internal only — never shown to student, permission-controlled — student role forced where visibility=student_visible — internal never leaked — audit INTERNAL_COMMENT_ADDED — two systems enforced by visibility field + role check</div></div></div>
         </Card>
       )}
 
@@ -692,7 +692,7 @@ export default function SuperAdminAccessControlCenter() {
           <div className="grid md:grid-cols-3 gap-3 text-xs">
             <div className="p-3 bg-[var(--alo-page)] rounded-xl border"><div className="font-bold">Summary</div><div className="mt-2 space-y-1"><div>Total: {analytics?.summary?.totalEmployees}</div><div>Active: {analytics?.summary?.activeEmployees}</div><div>Pending: {analytics?.summary?.pendingActivation}</div><div>Attendance Today: {analytics?.summary?.attendanceToday}</div><div>Leave Pending: {analytics?.summary?.leavePending}</div></div></div>
             <div className="p-3 bg-[var(--alo-brand-pale)] rounded-xl border border-[var(--alo-border)]"><div className="font-bold">By Designation</div><div className="mt-2 space-y-1 max-h-32 overflow-y-auto">{analytics?.byDesignation?.map((d:any)=><div key={d.designation} className="flex justify-between"><span>{d.designation}</span><span className="font-bold">{d._count.designation}</span></div>)}</div></div>
-            <div className="p-3 bg-amber-50 rounded-xl border border-amber-100"><div className="font-bold">Role Widgets</div><div className="mt-2 text-[11px] space-y-1"><div>Chairman: global_stats, financial_overview, branch_performance</div><div>CEO: global_stats, branch_performance, employee_productivity</div><div>Office Manager: office_attendance, office_tasks, office_applications</div><div>Counselor: assigned_students, tasks, followups, applications</div><div>HR: employee_directory, attendance, leave, payroll, devices, agreements</div></div></div>
+            <div className="p-3 bg-crm-warning-bg rounded-xl border border-crm-warning-border"><div className="font-bold">Role Widgets</div><div className="mt-2 text-[11px] space-y-1"><div>Chairman: global_stats, financial_overview, branch_performance</div><div>CEO: global_stats, branch_performance, employee_productivity</div><div>Office Manager: office_attendance, office_tasks, office_applications</div><div>Counselor: assigned_students, tasks, followups, applications</div><div>HR: employee_directory, attendance, leave, payroll, devices, agreements</div></div></div>
           </div>
         </Card>
       )}
@@ -700,13 +700,13 @@ export default function SuperAdminAccessControlCenter() {
       {activeTab==='notifications' && (
         <Card className="p-4 bg-white border rounded-2xl space-y-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><Bell className="w-4 h-4 text-[var(--alo-brand)]" /> Notification Engine — in-app/email/WhatsApp/SMS no sensitive leak — SLA reminder/warning/escalation — error control — audit</h2>
-          <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-[var(--alo-page)] rounded-xl border"><div className="font-bold">Channels</div><div className="text-[11px] mt-2">in-app always, email/WhatsApp/SMS optional permission-checked — POST /api/employee-access/notifications userId/title/message/type/channel — sensitivePatterns password/bank/account_number/nid/passport/salary blocked — no sensitive leak enforced — audit</div></div><div className="p-3 bg-amber-50 rounded-xl border border-amber-100"><div className="font-bold">SLA</div><div className="text-[11px] mt-2">reminder auto before SLA breach, warning at 80% SLA, escalation at 100% to senior — assign to senior — notification type sla_reminder/sla_warning/escalation — GET ?unreadOnly filters — reporting permission-checked</div></div></div>
+          <div className="grid md:grid-cols-2 gap-3 text-xs"><div className="p-3 bg-[var(--alo-page)] rounded-xl border"><div className="font-bold">Channels</div><div className="text-[11px] mt-2">in-app always, email/WhatsApp/SMS optional permission-checked — POST /api/employee-access/notifications userId/title/message/type/channel — sensitivePatterns password/bank/account_number/nid/passport/salary blocked — no sensitive leak enforced — audit</div></div><div className="p-3 bg-crm-warning-bg rounded-xl border border-crm-warning-border"><div className="font-bold">SLA</div><div className="text-[11px] mt-2">reminder auto before SLA breach, warning at 80% SLA, escalation at 100% to senior — assign to senior — notification type sla_reminder/sla_warning/escalation — GET ?unreadOnly filters — reporting permission-checked</div></div></div>
         </Card>
       )}
 
       {/* CREATE EMPLOYEE MODAL */}
       {showEmpModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-[var(--alo-page)]/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <Card className="p-5 bg-white w-full max-w-lg rounded-2xl shadow-2xl space-y-3 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-2">
               <h3 className="font-bold text-sm flex items-center gap-2"><UserCheck className="w-4 h-4 text-[var(--alo-brand)]" /> Create ALO Employee Account — Secure Activation INVITED→ACTIVE</h3>

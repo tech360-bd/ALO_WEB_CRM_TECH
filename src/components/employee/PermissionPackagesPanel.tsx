@@ -26,7 +26,7 @@ export default function PermissionPackagesPanel() {
   return <section aria-label="Employee permission packages" className="space-y-4">
     <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="font-bold">Employee permission packages</h2><Button variant="outline" onClick={() => void load()} disabled={busy}>Refresh packages</Button></div>
     <p className="text-sm">Only a non-acting Super Admin can change packages. Every grant uses the central permission engine. Designations do not grant access.</p>
-    {error && <p role="alert" className="text-red-700">{error}</p>}<p role="status">{busy ? 'Loading…' : message}</p>
+    {error && <p role="alert" className="text-crm-danger-text">{error}</p>}<p role="status">{busy ? 'Loading…' : message}</p>
     <div className="grid gap-4 lg:grid-cols-2">
       <form className="space-y-3 rounded-xl border p-4" onSubmit={e => { e.preventDefault(); try { const parsed = JSON.parse(permissions); void mutate('POST', { ...(editing ? { id: editing } : {}), name, description, permissions: parsed, reason }); } catch { setError('Permissions must be a valid JSON array.'); } }}>
         <h3 className="font-semibold">{editing ? 'Edit package' : 'Create package'}</h3>

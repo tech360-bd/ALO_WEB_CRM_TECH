@@ -154,7 +154,7 @@ function FilterSidebar({
               <Checkbox
                 checked={filters.countries.includes(country)}
                 onCheckedChange={() => toggleCountry(country)}
-                className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                className="data-[state=checked]:bg-[var(--alo-success-dark)] data-[state=checked]:border-crm-success-border"
               />
               <span className="text-sm text-[var(--alo-body)] group-hover:text-[var(--alo-text)]">
                 {COUNTRY_FLAGS[country]} {country}
@@ -175,7 +175,7 @@ function FilterSidebar({
               <Checkbox
                 checked={filters.studyLevels.includes(level)}
                 onCheckedChange={() => toggleLevel(level)}
-                className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                className="data-[state=checked]:bg-[var(--alo-success-dark)] data-[state=checked]:border-crm-success-border"
               />
               <span className="text-sm text-[var(--alo-body)] group-hover:text-[var(--alo-text)]">{level}</span>
             </label>
@@ -257,7 +257,7 @@ function FilterSidebar({
             step={5000}
             value={filters.tuitionRange}
             onValueChange={(v) => onFiltersChange({ ...filters, tuitionRange: v as [number, number] })}
-            className="[&_[data-slot=slider-range]]:bg-emerald-600 [&_[data-slot=slider-thumb]]:border-emerald-600"
+            className="[&_[data-slot=slider-range]]:bg-[var(--alo-success-dark)] [&_[data-slot=slider-thumb]]:border-crm-success-border"
           />
           <div className="flex justify-between mt-2 text-xs text-[var(--alo-text-muted)]">
             <span>${(filters.tuitionRange[0] / 1000).toFixed(0)}k</span>
@@ -275,7 +275,7 @@ function FilterSidebar({
           <Switch
             checked={filters.scholarshipOnly}
             onCheckedChange={(v) => onFiltersChange({ ...filters, scholarshipOnly: v })}
-            className="data-[state=checked]:bg-emerald-600"
+            className="data-[state=checked]:bg-[var(--alo-success-dark)]"
           />
         </div>
       </div>
@@ -333,7 +333,7 @@ function FilterSidebar({
             step={0.5}
             value={[filters.ieltsMin]}
             onValueChange={(v) => onFiltersChange({ ...filters, ieltsMin: v[0] })}
-            className="[&_[data-slot=slider-range]]:bg-emerald-600 [&_[data-slot=slider-thumb]]:border-emerald-600"
+            className="[&_[data-slot=slider-range]]:bg-[var(--alo-success-dark)] [&_[data-slot=slider-thumb]]:border-crm-success-border"
           />
           <div className="flex justify-between mt-2 text-xs text-[var(--alo-text-muted)]">
             <span>0</span>
@@ -364,11 +364,11 @@ function CourseCard({
   onEnquire: (c: Course) => void;
 }) {
   const levelColors: Record<string, string> = {
-    Undergraduate: 'bg-emerald-100 text-emerald-800',
-    Postgraduate: 'bg-amber-100 text-amber-800',
+    Undergraduate: 'bg-crm-success-bg text-crm-success-text',
+    Postgraduate: 'bg-crm-warning-bg text-crm-warning-text',
     Foundation: 'bg-sky-100 text-sky-800',
-    Diploma: 'bg-violet-100 text-violet-800',
-    PhD: 'bg-rose-100 text-rose-800',
+    Diploma: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+    PhD: 'bg-crm-warning-bg text-crm-warning-text',
   };
 
   return (
@@ -377,7 +377,7 @@ function CourseCard({
         {/* University & Country */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-emerald-600 truncate">
+            <p className="text-sm font-medium text-crm-success-text truncate">
               {COUNTRY_FLAGS[course.country]} {course.universityName}
             </p>
           </div>
@@ -417,7 +417,7 @@ function CourseCard({
         {/* Scholarship Badge */}
         {course.hasScholarship && (
           <div className="flex items-center gap-1.5">
-            <Badge className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs">
+            <Badge className="bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)] text-xs">
               <Award className="size-3" />
               Scholarship Available
             </Badge>
@@ -475,7 +475,7 @@ function CourseCard({
             href={course.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 hover:underline"
+            className="inline-flex items-center gap-1 text-xs text-crm-success-text hover:text-crm-success-text hover:underline"
           >
             <ExternalLink className="size-3" />
             View on university website
@@ -604,7 +604,7 @@ export function CourseFinderPublic() {
               onClick={() => setCurrentPage(page)}
               className={
                 currentPage === page
-                  ? 'h-8 w-8 p-0 bg-emerald-600 hover:bg-emerald-700 text-white'
+                  ? 'h-8 w-8 p-0 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white'
                   : 'h-8 w-8 p-0'
               }
             >
@@ -628,10 +628,10 @@ export function CourseFinderPublic() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-emerald-600 text-white">
+      <div className="bg-[var(--alo-success-dark)] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           <h1 className="text-2xl sm:text-3xl font-bold">Course Finder</h1>
-          <p className="text-emerald-100 mt-2 text-sm sm:text-base">
+          <p className="text-crm-success-text mt-2 text-sm sm:text-base">
             Discover the perfect course from top universities worldwide
           </p>
 
@@ -670,7 +670,7 @@ export function CourseFinderPublic() {
             <SheetTrigger asChild>
               <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                 variant="outline"
-                className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white"
+                className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-[var(--alo-success-dark)] text-white border-crm-success-border hover:bg-[var(--alo-success-dark)] hover:text-white"
               >
                 <SlidersHorizontal className="size-5" />
               </Button>
@@ -724,7 +724,7 @@ export function CourseFinderPublic() {
                 <Button
                   variant="outline"
                   onClick={handleResetFilters}
-                  className="mt-4 text-emerald-600 border-emerald-600 hover:bg-emerald-50"
+                  className="mt-4 text-crm-success-text border-crm-success-border hover:bg-crm-success-bg"
                 >
                   Clear all filters
                 </Button>

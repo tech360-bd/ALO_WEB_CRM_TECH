@@ -45,7 +45,7 @@ export default function SMSMarketingView() {
               <div><label className="text-xs font-semibold">Message (160 chars, consent & opt-out required)</label><Textarea value={campaign.message} onChange={e=>setCampaign({...campaign, message:e.target.value})} className="mt-1 min-h-[90px]" maxLength={320} /><p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{campaign.message.length} chars • Must include opt-out (e.g., “Reply STOP”)</p></div>
               <Button onClick={handleSend} disabled={sending} className="bg-[var(--alo-cta)] text-white"><>{sending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Prepare Bulk (Dry Run)</></Button>
               {log && <p className="text-xs bg-[var(--alo-page)] border rounded-lg p-3 whitespace-pre-wrap">{log}</p>}
-              <p className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-emerald-600" />Enforcement: server checks MarketingConsent + suppression list; respects consent, applicable law, provider restrictions; campaign limits & suppression lists enforced; no SMS without consent=true.</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-crm-success-text" />Enforcement: server checks MarketingConsent + suppression list; respects consent, applicable law, provider restrictions; campaign limits & suppression lists enforced; no SMS without consent=true.</p>
             </CardContent>
           </Card>
         </div>
@@ -55,7 +55,7 @@ export default function SMSMarketingView() {
             <CardContent className="text-xs space-y-2">
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Consent Summary</p><p className="text-[var(--alo-body)] mt-1">Source: MarketingConsent (leadId, channel=sms, consent, optOut). {consentInfo ? `Loaded ${consentInfo.count||0} records` : 'Loading...'}</p></div>
               <div className="p-3 bg-white border rounded-xl"><p className="font-semibold">Delivery & Cost Tracking</p><p className="text-[var(--alo-body)] mt-1">Delivery: /api/integrations/3cx/sms/journal • Cost: provider reports • Rate limit: provider limit enforced.</p></div>
-              <Badge className="bg-amber-100 text-amber-800 border-amber-200">Blocked if SMS_PROVIDER_API_KEY missing — shows Integration not connected</Badge>
+              <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border">Blocked if SMS_PROVIDER_API_KEY missing — shows Integration not connected</Badge>
             </CardContent>
           </Card>
         </div>

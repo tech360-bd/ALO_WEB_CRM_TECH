@@ -38,9 +38,9 @@ import { toast } from 'sonner';
 import type { ImportBatch } from './types';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  completed: { label: 'Completed', color: 'bg-emerald-100 text-emerald-700' },
-  failed: { label: 'Failed', color: 'bg-red-100 text-red-700' },
-  in_progress: { label: 'In Progress', color: 'bg-amber-100 text-amber-700' },
+  completed: { label: 'Completed', color: 'bg-crm-success-bg text-crm-success-text' },
+  failed: { label: 'Failed', color: 'bg-crm-danger-bg text-crm-danger-text' },
+  in_progress: { label: 'In Progress', color: 'bg-crm-warning-bg text-crm-warning-text' },
   rolled_back: { label: 'Rolled Back', color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' },
 };
 
@@ -178,23 +178,23 @@ function ErrorDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <AlertCircle className="size-5 text-red-500" />
+            <AlertCircle className="size-5 text-crm-danger-text" />
             Errors — {batch.batchId}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-3 mt-2">
           <div className="flex gap-4 text-sm text-[var(--alo-text-muted)] mb-2">
             <span>File: <strong className="text-[var(--alo-body)]">{batch.fileName}</strong></span>
-            <span>Failed: <strong className="text-red-600">{batch.rowsFailed}</strong> rows</span>
+            <span>Failed: <strong className="text-crm-danger-text">{batch.rowsFailed}</strong> rows</span>
           </div>
           <ScrollArea className="max-h-64">
             <div className="space-y-2">
               {mockErrors.map((err, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start gap-3 p-3 rounded-lg border border-red-100 bg-red-50"
+                  className="flex items-start gap-3 p-3 rounded-lg border border-crm-danger-border bg-crm-danger-bg"
                 >
-                  <div className="shrink-0 w-7 h-7 rounded-full bg-red-100 flex items-center justify-center text-xs font-medium text-red-600">
+                  <div className="shrink-0 w-7 h-7 rounded-full bg-crm-danger-bg flex items-center justify-center text-xs font-medium text-crm-danger-text">
                     {err.row}
                   </div>
                   <div>
@@ -271,7 +271,7 @@ export function ImportHistory() {
           <p className="text-[var(--alo-text-muted)] mt-1 text-sm">
             Track all CSV imports and manage your course data
           </p>
-          <p role="note" className="mt-3 rounded-md bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900">
+          <p role="note" className="mt-3 rounded-md bg-crm-warning-bg px-3 py-2 text-xs font-semibold text-crm-warning-text">
             Demo component: the statistics cards show invented sample figures, not live counts. Live import history is at /admin/data-import/history.
           </p>
         </div>
@@ -280,11 +280,11 @@ export function ImportHistory() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          <StatCard icon={Building2} label="Universities" value={DEMO_SAMPLE_STATS.totalUniversities} color="bg-emerald-600" />
-          <StatCard icon={BookOpen} label="Total Courses" value={DEMO_SAMPLE_STATS.totalCourses} color="bg-emerald-500" />
-          <StatCard icon={CheckCircle2} label="Active" value={DEMO_SAMPLE_STATS.active} color="bg-emerald-600" />
-          <StatCard icon={FileQuestion} label="Draft" value={DEMO_SAMPLE_STATS.draft} color="bg-slate-400" />
-          <StatCard icon={AlertCircle} label="Needs Review" value={DEMO_SAMPLE_STATS.needsReview} color="bg-amber-500" />
+          <StatCard icon={Building2} label="Universities" value={DEMO_SAMPLE_STATS.totalUniversities} color="bg-[var(--alo-success-dark)]" />
+          <StatCard icon={BookOpen} label="Total Courses" value={DEMO_SAMPLE_STATS.totalCourses} color="bg-[var(--alo-success)]" />
+          <StatCard icon={CheckCircle2} label="Active" value={DEMO_SAMPLE_STATS.active} color="bg-[var(--alo-success-dark)]" />
+          <StatCard icon={FileQuestion} label="Draft" value={DEMO_SAMPLE_STATS.draft} color="bg-[var(--alo-page)]" />
+          <StatCard icon={AlertCircle} label="Needs Review" value={DEMO_SAMPLE_STATS.needsReview} color="bg-[var(--alo-warning)]" />
           <StatCard icon={Eye} label="Needs Source" value={DEMO_SAMPLE_STATS.needsOfficialSource} color="bg-[var(--alo-cta)]" />
         </div>
 
@@ -397,10 +397,10 @@ export function ImportHistory() {
                           <td className="p-4 text-right text-[var(--alo-body)]">
                             {batch.rowsReceived}
                           </td>
-                          <td className="p-4 text-right text-emerald-600 font-medium">
+                          <td className="p-4 text-right text-crm-success-text font-medium">
                             {batch.rowsImported}
                           </td>
-                          <td className="p-4 text-right text-red-600 font-medium">
+                          <td className="p-4 text-right text-crm-danger-text font-medium">
                             {batch.rowsFailed}
                           </td>
                           <td className="p-4">
@@ -423,7 +423,7 @@ export function ImportHistory() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-red-600"
+                                  className="h-7 w-7 p-0 text-[var(--alo-text-muted)] hover:text-crm-danger-text"
                                   onClick={() => handleRollback(batch)}
                                   title="Rollback"
                                 >
@@ -481,11 +481,11 @@ export function ImportHistory() {
                         <span className="text-[var(--alo-body)]">
                           <span className="text-[var(--alo-text-muted)]">Received:</span> {batch.rowsReceived}
                         </span>
-                        <span className="text-emerald-600 font-medium">
+                        <span className="text-crm-success-text font-medium">
                           <span className="text-[var(--alo-text-muted)]">Imported:</span> {batch.rowsImported}
                         </span>
                         {batch.rowsFailed > 0 && (
-                          <span className="text-red-600 font-medium">
+                          <span className="text-crm-danger-text font-medium">
                             <span className="text-[var(--alo-text-muted)]">Failed:</span> {batch.rowsFailed}
                           </span>
                         )}

@@ -242,12 +242,12 @@ export default function StudentOnboarding() {
                 </div>
 
                 {saveError && (
-                  <p className="rounded-input border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700" role="alert">
+                  <p className="rounded-input border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-[12px] text-crm-danger-text" role="alert">
                     {saveError}
                   </p>
                 )}
                 {saved && !saveError && (
-                  <p className="rounded-input border border-emerald-200 bg-emerald-50 px-3 py-2 text-[12px] text-emerald-700" role="status">
+                  <p className="rounded-input border border-crm-success-border bg-crm-success-bg px-3 py-2 text-[12px] text-crm-success-text" role="status">
                     Your details have been saved.
                   </p>
                 )}
@@ -272,7 +272,7 @@ export default function StudentOnboarding() {
                       <span
                         className={cn(
                           'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold',
-                          done ? 'bg-emerald-600 text-white' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
+                          done ? 'bg-[var(--alo-success-dark)] text-white' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
                         )}
                       >
                         {index + 1}

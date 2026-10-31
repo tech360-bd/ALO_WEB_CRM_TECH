@@ -19,12 +19,12 @@ type Balance = Record<string, number | string>;
 const TYPE_LABELS: Record<string, string> = { casual: 'Casual', annual: 'Annual', medical: 'Medical', maternity: 'Maternity', paternity: 'Paternity', lwp: 'Leave without pay', compensatory: 'Compensatory' };
 const BALANCE_TYPES = [
   { key: 'annual', label: 'Annual leave', icon: Plane, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
-  { key: 'casual', label: 'Casual leave', icon: Coffee, color: 'text-amber-600', bg: 'bg-amber-50' },
-  { key: 'medical', label: 'Medical leave', icon: BriefcaseMedical, color: 'text-red-600', bg: 'bg-red-50' },
-  { key: 'maternity', label: 'Maternity leave', icon: BriefcaseMedical, color: 'text-purple-600', bg: 'bg-purple-50' },
-  { key: 'paternity', label: 'Paternity leave', icon: BriefcaseMedical, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { key: 'lwp', label: 'Leave without pay', icon: CalendarDays, color: 'text-slate-600', bg: 'bg-slate-100' },
-  { key: 'compOff', label: 'Compensatory leave', icon: CalendarDays, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { key: 'casual', label: 'Casual leave', icon: Coffee, color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg' },
+  { key: 'medical', label: 'Medical leave', icon: BriefcaseMedical, color: 'text-crm-danger-text', bg: 'bg-crm-danger-bg' },
+  { key: 'maternity', label: 'Maternity leave', icon: BriefcaseMedical, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
+  { key: 'paternity', label: 'Paternity leave', icon: BriefcaseMedical, color: 'text-[var(--alo-brand-deep)]', bg: 'bg-[var(--alo-brand-light)]' },
+  { key: 'lwp', label: 'Leave without pay', icon: CalendarDays, color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-page)]' },
+  { key: 'compOff', label: 'Compensatory leave', icon: CalendarDays, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
 ];
 const statusBadge = (status: string) => {
   const variants: Record<string, 'success' | 'warning' | 'danger' | 'muted'> = { approved: 'success', pending: 'warning', rejected: 'danger', cancelled: 'muted' };
@@ -91,12 +91,12 @@ export default function EmployeeLeavePage() {
 
   if (loading) return <div className="space-y-4"><Skeleton className="h-32 w-full" /><Skeleton className="h-64 w-full" /></div>;
 
-  if (error) return <div role="alert" className="p-6 text-red-700">{error}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
+  if (error) return <div role="alert" className="p-6 text-crm-danger-text">{error}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
 
   return (
     <div className="min-h-screen space-y-6 bg-alo-page p-4 lg:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><h1 className="text-2xl font-bold text-alo-text">Leave Management</h1><p className="text-sm text-alo-text-muted">Your leave balance and submitted requests.</p></div><div className="flex gap-2"><Button variant="outline" onClick={() => void loadLeave()} disabled={loading}><RefreshCw className="mr-2 h-4 w-4" />Refresh</Button><Button variant="brand" size="sm" onClick={() => setDialogOpen(true)}><Plus className="mr-1 h-4 w-4" />Apply for leave</Button></div></div>
-      {error && <Card role="alert" className="border-red-200"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-red-700"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void loadLeave()}>Retry</Button></CardContent></Card>}
+      {error && <Card role="alert" className="border-crm-danger-border"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-crm-danger-text"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void loadLeave()}>Retry</Button></CardContent></Card>}
       {!error && <>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">{BALANCE_TYPES.filter((item) => balance && (Number(balance[`${item.key}Total`] || 0) > 0 || Number(balance[`${item.key}Used`] || 0) > 0)).map((item) => { const Icon = item.icon; const total = Number(balance?.[`${item.key}Total`] || 0); const used = Number(balance?.[`${item.key}Used`] || 0); const remaining = Number(balance?.[`${item.key}Remaining`] ?? total - used); return <Card key={item.key} className="rounded-xl border border-alo-border bg-white"><CardContent className="flex items-center gap-4 p-4"><div className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.bg}`}><Icon className={`h-6 w-6 ${item.color}`} /></div><div><p className="text-xs text-alo-text-muted">{item.label}</p><p className="text-lg font-bold text-alo-text">{remaining}<span className="text-sm font-normal text-alo-text-muted"> / {total} days</span></p></div></CardContent></Card>; })}
           <Card className="rounded-xl border border-alo-border bg-white"><CardContent className="flex items-center gap-4 p-4"><div className="flex h-12 w-12 items-center justify-center rounded-xl bg-alo-brand-light"><CalendarDays className="h-6 w-6 text-alo-brand" /></div><div><p className="text-xs text-alo-text-muted">Total remaining</p><p className="text-lg font-bold text-alo-text">{balanceRemaining === null ? 'Unavailable' : `${balanceRemaining} / ${balanceTotal} days`}</p></div></CardContent></Card>

@@ -69,7 +69,7 @@ export default function TemplatesPage() {
                     <td className="px-3 py-2"><div className="font-medium text-[var(--alo-text)]">{t.templateName}</div><div className="text-[11px] font-mono text-[var(--alo-text-muted)]">{t.templateCode}</div></td>
                     <td className="px-3 py-2"><Badge variant="outline" className="text-[11px]">{t.channel}</Badge><div className="text-[11px] text-[var(--alo-body)]">{t.category} • {t.language}</div></td>
                     <td className="px-3 py-2 text-[11px] text-[var(--alo-body)] max-w-[200px] truncate">{(() => { try { return JSON.parse(t.variables||'[]').join(', ')} catch { return t.variables }})()}</td>
-                    <td className="px-3 py-2"><Badge className={`text-[11px] ${t.status === 'active' || t.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' : t.status === 'LOCKED' ? 'bg-amber-100 text-amber-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>{t.status}</Badge>{t.isLocked && <Lock className="w-3 h-3 inline ml-1 text-amber-600" />}</td>
+                    <td className="px-3 py-2"><Badge className={`text-[11px] ${t.status === 'active' || t.status === 'APPROVED' ? 'bg-crm-success-bg text-crm-success-text' : t.status === 'LOCKED' ? 'bg-crm-warning-bg text-crm-warning-text' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>{t.status}</Badge>{t.isLocked && <Lock className="w-3 h-3 inline ml-1 text-crm-warning-text" />}</td>
                     <td className="px-3 py-2"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-6 text-[11px]">View/Edit</Button></td>
                   </tr>
                 ))}

@@ -78,17 +78,17 @@ interface ApiResponse {
 // ─── Helpers ────────────────────────────────────────────
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode; bgClass: string }> = {
-  active:      { label: "Active",      color: "text-emerald-700",  bgClass: "bg-emerald-50",  icon: <Activity className="w-3.5 h-3.5" /> },
+  active:      { label: "Active",      color: "text-crm-success-text",  bgClass: "bg-crm-success-bg",  icon: <Activity className="w-3.5 h-3.5" /> },
   idle:        { label: "Idle",        color: "text-[var(--alo-text-muted)]",    bgClass: "bg-[var(--alo-page)]",     icon: <Clock className="w-3.5 h-3.5" /> },
-  paused:      { label: "Paused",      color: "text-amber-600",   bgClass: "bg-amber-50",    icon: <Pause className="w-3.5 h-3.5" /> },
-  error:       { label: "Error",       color: "text-red-600",     bgClass: "bg-red-50",      icon: <AlertTriangle className="w-3.5 h-3.5" /> },
+  paused:      { label: "Paused",      color: "text-crm-warning-text",   bgClass: "bg-crm-warning-bg",    icon: <Pause className="w-3.5 h-3.5" /> },
+  error:       { label: "Error",       color: "text-crm-danger-text",     bgClass: "bg-crm-danger-bg",      icon: <AlertTriangle className="w-3.5 h-3.5" /> },
   maintenance: { label: "Maintenance", color: "text-[var(--alo-brand)]",    bgClass: "bg-[var(--alo-brand-pale)]",     icon: <Wrench className="w-3.5 h-3.5" /> },
 };
 
 const healthConfig: Record<string, { label: string; dotColor: string; barColor: string }> = {
-  healthy:  { label: "Healthy",  dotColor: "bg-emerald-500", barColor: "bg-emerald-500" },
-  degraded: { label: "Degraded", dotColor: "bg-amber-500",   barColor: "bg-amber-500" },
-  critical: { label: "Critical", dotColor: "bg-red-500",     barColor: "bg-red-500" },
+  healthy:  { label: "Healthy",  dotColor: "bg-[var(--alo-success)]", barColor: "bg-[var(--alo-success)]" },
+  degraded: { label: "Degraded", dotColor: "bg-[var(--alo-warning)]",   barColor: "bg-[var(--alo-warning)]" },
+  critical: { label: "Critical", dotColor: "bg-[var(--alo-error)]",     barColor: "bg-[var(--alo-error)]" },
 };
 
 function formatUptime(hours: number): string {
@@ -174,7 +174,7 @@ export default function AgentRegistry() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h2 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <Brain className="w-5 h-5 text-emerald-600" />
+              <Brain className="w-5 h-5 text-crm-success-text" />
               AI Command Center
             </h2>
             <p className="text-sm text-[var(--alo-text-muted)] mt-0.5">
@@ -185,7 +185,7 @@ export default function AgentRegistry() {
             <Button
               variant={autoRefresh ? "default" : "outline"}
               size="sm"
-              className={autoRefresh ? "bg-emerald-600 hover:bg-emerald-700" : ""}
+              className={autoRefresh ? "bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success)]" : ""}
               onClick={() => setAutoRefresh(!autoRefresh)}
             >
               <RefreshCw className={`w-3.5 h-3.5 mr-1 ${autoRefresh ? "animate-spin" : ""}`} />
@@ -204,11 +204,11 @@ export default function AgentRegistry() {
         {stats && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             <StatCard icon={<Bot className="w-4 h-4" />} label="Total Agents" value={stats.totalAgents} sub={`${stats.departments} depts`} color="text-[var(--alo-text)]" />
-            <StatCard icon={<Activity className="w-4 h-4" />} label="Active" value={stats.activeAgents} sub={`${((stats.activeAgents / stats.totalAgents) * 100).toFixed(0)}%`} color="text-emerald-600" />
-            <StatCard icon={<HeartPulse className="w-4 h-4" />} label="Healthy" value={stats.healthyAgents} sub={`${((stats.healthyAgents / stats.totalAgents) * 100).toFixed(0)}%`} color="text-emerald-600" />
-            <StatCard icon={<AlertOctagon className="w-4 h-4" />} label="Errors" value={stats.errorAgents} sub="24h window" color={stats.errorAgents > 0 ? "text-red-600" : "text-[var(--alo-text-muted)]"} />
+            <StatCard icon={<Activity className="w-4 h-4" />} label="Active" value={stats.activeAgents} sub={`${((stats.activeAgents / stats.totalAgents) * 100).toFixed(0)}%`} color="text-crm-success-text" />
+            <StatCard icon={<HeartPulse className="w-4 h-4" />} label="Healthy" value={stats.healthyAgents} sub={`${((stats.healthyAgents / stats.totalAgents) * 100).toFixed(0)}%`} color="text-crm-success-text" />
+            <StatCard icon={<AlertOctagon className="w-4 h-4" />} label="Errors" value={stats.errorAgents} sub="24h window" color={stats.errorAgents > 0 ? "text-crm-danger-text" : "text-[var(--alo-text-muted)]"} />
             <StatCard icon={<Zap className="w-4 h-4" />} label="Tasks Today" value={stats.totalTasksToday} sub={`Avg ${(stats.avgSuccessRate * 100).toFixed(1)}% success`} color="text-[var(--alo-brand)]" />
-            <StatCard icon={<UserCheck className="w-4 h-4" />} label="Approval Queue" value={stats.approvalQueueDepth} sub="pending items" color="text-amber-600" />
+            <StatCard icon={<UserCheck className="w-4 h-4" />} label="Approval Queue" value={stats.approvalQueueDepth} sub="pending items" color="text-crm-warning-text" />
           </div>
         )}
 
@@ -228,9 +228,9 @@ export default function AgentRegistry() {
                       <TooltipTrigger asChild>
                         <button
                           onClick={() => handleDeptClick(dept.name)}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${filterDept === dept.name ? "bg-emerald-50 border-emerald-300 text-emerald-700" : "bg-white border-[var(--alo-border)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"}`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${filterDept === dept.name ? "bg-crm-success-bg border border-crm-success-border text-crm-success-text" : "bg-white border-[var(--alo-border)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]"}`}
                         >
-                          <span className={`w-2 h-2 rounded-full ${dept.healthy === dept.total ? "bg-emerald-500" : dept.healthy > 0 ? "bg-amber-500" : "bg-red-500"}`} />
+                          <span className={`w-2 h-2 rounded-full ${dept.healthy === dept.total ? "bg-[var(--alo-success)]" : dept.healthy > 0 ? "bg-[var(--alo-warning)]" : "bg-[var(--alo-error)]"}`} />
                           <span className="max-w-[140px] truncate">{dept.name}</span>
                           <span className="text-[var(--alo-text-muted)] font-normal">{dept.active}/{dept.total}</span>
                         </button>
@@ -310,8 +310,8 @@ export default function AgentRegistry() {
               </div>
             ) : error ? (
               <div className="p-12 text-center">
-                <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-3" />
-                <p className="text-sm text-red-600 font-medium">Failed to load agents</p>
+                <AlertTriangle className="w-8 h-8 text-[var(--alo-error)] mx-auto mb-3" />
+                <p className="text-sm text-crm-danger-text font-medium">Failed to load agents</p>
                 <p className="text-xs text-[var(--alo-text-muted)] mt-1">{error}</p>
                 <Button variant="outline" size="sm" className="mt-3" onClick={() => fetchData()}>Retry</Button>
               </div>
@@ -367,7 +367,7 @@ export default function AgentRegistry() {
                         <TableCell className="py-2.5">
                           <button
                             onClick={() => handleDeptClick(agent.department)}
-                            className="text-xs text-emerald-600 hover:text-emerald-800 hover:underline font-medium"
+                            className="text-xs text-crm-success-text hover:text-crm-success-text hover:underline font-medium"
                           >
                             {agent.department}
                           </button>
@@ -391,7 +391,7 @@ export default function AgentRegistry() {
                             </TooltipTrigger>
                             <TooltipContent side="bottom" className="text-xs">
                               <div>Health: {agent.health.toUpperCase()}</div>
-                              {agent.status === "error" && <div className="text-red-500 mt-0.5">{agent.errorCount24h} errors in 24h</div>}
+                              {agent.status === "error" && <div className="text-[var(--alo-error)] mt-0.5">{agent.errorCount24h} errors in 24h</div>}
                             </TooltipContent>
                           </Tooltip>
                         </TableCell>
@@ -402,11 +402,11 @@ export default function AgentRegistry() {
                             <div className="flex items-center gap-1.5">
                               <div className="w-12 h-1.5 bg-[var(--alo-surface-muted)] rounded-full overflow-hidden">
                                 <div
-                                  className={`h-full rounded-full ${agent.successRate >= 0.95 ? "bg-emerald-500" : agent.successRate >= 0.85 ? "bg-amber-500" : "bg-red-500"}`}
+                                  className={`h-full rounded-full ${agent.successRate >= 0.95 ? "bg-[var(--alo-success)]" : agent.successRate >= 0.85 ? "bg-[var(--alo-warning)]" : "bg-[var(--alo-error)]"}`}
                                   style={{ width: `${agent.successRate * 100}%` }}
                                 />
                               </div>
-                              <span className={`text-xs font-medium ${agent.successRate >= 0.95 ? "text-emerald-600" : agent.successRate >= 0.85 ? "text-amber-600" : "text-red-600"}`}>
+                              <span className={`text-xs font-medium ${agent.successRate >= 0.95 ? "text-crm-success-text" : agent.successRate >= 0.85 ? "text-crm-warning-text" : "text-crm-danger-text"}`}>
                                 {(agent.successRate * 100).toFixed(1)}%
                               </span>
                             </div>
@@ -418,7 +418,7 @@ export default function AgentRegistry() {
                         {/* Latency */}
                         <TableCell className="py-2.5">
                           {agent.status === "active" ? (
-                            <span className={`text-xs font-mono ${agent.latencyMs > 500 ? "text-red-600" : agent.latencyMs > 200 ? "text-amber-600" : "text-[var(--alo-body)]"}`}>
+                            <span className={`text-xs font-mono ${agent.latencyMs > 500 ? "text-crm-danger-text" : agent.latencyMs > 200 ? "text-crm-warning-text" : "text-[var(--alo-body)]"}`}>
                               {agent.latencyMs}ms
                             </span>
                           ) : (
@@ -438,7 +438,7 @@ export default function AgentRegistry() {
                         {/* Queue Depth */}
                         <TableCell className="py-2.5">
                           {agent.queueDepth > 0 ? (
-                            <Badge variant="secondary" className="text-xs bg-amber-50 text-amber-700">
+                            <Badge variant="secondary" className="text-xs bg-crm-warning-bg text-crm-warning-text">
                               {agent.queueDepth}
                             </Badge>
                           ) : (
@@ -451,7 +451,7 @@ export default function AgentRegistry() {
                           {agent.requiresHumanApproval ? (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Badge variant="outline" className="text-xs gap-0.5 border-amber-200 bg-amber-50 text-amber-700">
+                                <Badge variant="outline" className="text-xs gap-0.5 border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">
                                   <UserCheck className="w-3 h-3" /> Yes
                                 </Badge>
                               </TooltipTrigger>

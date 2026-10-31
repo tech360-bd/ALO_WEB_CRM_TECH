@@ -19,55 +19,55 @@ import { fmtDate, timeAgo } from "@/lib/alo-types";
 const CHANGE_TYPE_META: Record<string, { label: string; icon: string; color: string }> = {
   NEW_UNIVERSITY: { label: "New University", icon: "Building2", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
   UNIVERSITY_UPDATED: { label: "University Updated", icon: "Building2", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
-  UNIVERSITY_CLOSED: { label: "University Closed", icon: "XCircle", color: "bg-rose-50 text-rose-700 border-rose-200" },
-  NEW_FACULTY: { label: "New Faculty", icon: "Layers", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  UNIVERSITY_CLOSED: { label: "University Closed", icon: "XCircle", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+  NEW_FACULTY: { label: "New Faculty", icon: "Layers", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border" },
   FACULTY_UPDATED: { label: "Faculty Updated", icon: "Layers", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
-  NEW_COURSE: { label: "New Course", icon: "BookOpen", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  NEW_COURSE: { label: "New Course", icon: "BookOpen", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border" },
   COURSE_UPDATED: { label: "Course Updated", icon: "BookOpen", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
-  COURSE_CLOSED: { label: "Course Closed", icon: "XCircle", color: "bg-rose-50 text-rose-700 border-rose-200" },
-  COURSE_RENAMED: { label: "Course Renamed", icon: "Edit3", color: "bg-amber-50 text-amber-700 border-amber-200" },
-  COURSE_CODE_CHANGED: { label: "Course Code Changed", icon: "Hash", color: "bg-amber-50 text-amber-700 border-amber-200" },
+  COURSE_CLOSED: { label: "Course Closed", icon: "XCircle", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+  COURSE_RENAMED: { label: "Course Renamed", icon: "Edit3", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+  COURSE_CODE_CHANGED: { label: "Course Code Changed", icon: "Hash", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
   FEE_CHANGED: { label: "Fee Changed", icon: "DollarSign", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   INTAKE_CHANGED: { label: "Intake Changed", icon: "Calendar", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   DEADLINE_CHANGED: { label: "Deadline Changed", icon: "Clock", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   REQUIREMENT_CHANGED: { label: "Requirement Changed", icon: "FileCheck", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
   ENGLISH_REQUIREMENT_CHANGED: { label: "English Req. Changed", icon: "Languages", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
-  SCHOLARSHIP_NEW: { label: "New Scholarship", icon: "Award", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  SCHOLARSHIP_NEW: { label: "New Scholarship", icon: "Award", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border" },
   SCHOLARSHIP_UPDATED: { label: "Scholarship Updated", icon: "Award", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
-  SCHOLARSHIP_CLOSED: { label: "Scholarship Closed", icon: "Award", color: "bg-rose-50 text-rose-700 border-rose-200" },
-  DURATION_CHANGED: { label: "Duration Changed", icon: "Clock", color: "bg-amber-50 text-amber-700 border-amber-200" },
+  SCHOLARSHIP_CLOSED: { label: "Scholarship Closed", icon: "Award", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+  DURATION_CHANGED: { label: "Duration Changed", icon: "Clock", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
   CAMPUS_CHANGED: { label: "Campus Changed", icon: "MapPin", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
-  STUDY_MODE_CHANGED: { label: "Study Mode Changed", icon: "Monitor", color: "bg-amber-50 text-amber-700 border-amber-200" },
-  APPLICATION_PROCESS_CHANGED: { label: "Application Process", icon: "ListChecks", color: "bg-amber-50 text-amber-700 border-amber-200" },
+  STUDY_MODE_CHANGED: { label: "Study Mode Changed", icon: "Monitor", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+  APPLICATION_PROCESS_CHANGED: { label: "Application Process", icon: "ListChecks", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
   OFFICIAL_POLICY_CHANGE: { label: "Official Policy Change", icon: "ShieldAlert", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
-  GOVERNMENT_POLICY_CHANGE: { label: "Government Policy", icon: "Landmark", color: "bg-rose-50 text-rose-700 border-rose-200" },
+  GOVERNMENT_POLICY_CHANGE: { label: "Government Policy", icon: "Landmark", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
   SOURCE_CHANGED: { label: "Source Changed", icon: "RefreshCw", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
-  SOURCE_UNAVAILABLE: { label: "Source Unavailable", icon: "WifiOff", color: "bg-rose-50 text-rose-700 border-rose-200" },
+  SOURCE_UNAVAILABLE: { label: "Source Unavailable", icon: "WifiOff", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
   POSSIBLE_DATA_CONFLICT: { label: "Data Conflict", icon: "AlertTriangle", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
-  NEEDS_MANUAL_REVIEW: { label: "Needs Review", icon: "HelpCircle", color: "bg-amber-50 text-amber-700 border-amber-200" },
+  NEEDS_MANUAL_REVIEW: { label: "Needs Review", icon: "HelpCircle", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
 };
 
 const IMPACT_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  MEDIUM: "bg-amber-100 text-amber-700",
+  MEDIUM: "bg-crm-warning-bg text-crm-warning-text",
   HIGH: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  CRITICAL: "bg-rose-100 text-rose-700",
+  CRITICAL: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
   NEEDS_REVIEW: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   RECHECK_REQUESTED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   SUPERSEDED: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
 
 const HEALTH_COLORS: Record<string, string> = {
-  HEALTHY: "bg-emerald-500",
-  RUNNING: "bg-blue-500 animate-pulse",
-  NEEDS_REVIEW: "bg-amber-500",
-  ERROR: "bg-rose-500",
+  HEALTHY: "bg-[var(--alo-success)]",
+  RUNNING: "bg-[var(--alo-brand-light)]0 animate-pulse",
+  NEEDS_REVIEW: "bg-[var(--alo-warning)]",
+  ERROR: "bg-crm-warning-bg0",
 };
 
 interface DashboardData {
@@ -371,10 +371,10 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
       {/* Health Banner */}
       <Card className={`rounded-2xl border-2 p-5 ${
-        data.health === "HEALTHY" ? "border-emerald-200 bg-emerald-50/50" :
+        data.health === "HEALTHY" ? "border-crm-success-border bg-crm-success-bg/50" :
         data.health === "RUNNING" ? "border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/50" :
-        data.health === "NEEDS_REVIEW" ? "border-amber-200 bg-amber-50/50" :
-        "border-rose-200 bg-rose-50/50"
+        data.health === "NEEDS_REVIEW" ? "border-crm-warning-border bg-crm-warning-bg/50" :
+        "border-crm-warning-border bg-crm-warning-bg/50"
       }`}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -397,11 +397,11 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 <div className="text-[var(--alo-text-muted)]">Total Runs</div>
               </div>
               <div className="text-center">
-                <div className="font-bold text-emerald-600">{data.job.successfulRuns}</div>
+                <div className="font-bold text-crm-success-text">{data.job.successfulRuns}</div>
                 <div className="text-[var(--alo-text-muted)]">Successful</div>
               </div>
               <div className="text-center">
-                <div className="font-bold text-rose-600">{data.job.failedRuns}</div>
+                <div className="font-bold text-crm-warning-text">{data.job.failedRuns}</div>
                 <div className="text-[var(--alo-text-muted)]">Failed</div>
               </div>
             </div>
@@ -423,10 +423,10 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
         <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-2xl border-2 border-[var(--alo-border)] bg-white p-1.5">
           <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">Overview</TabsTrigger>
           <TabsTrigger value="queue" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">
-            Verification Queue {data.queue.pending > 0 && <Badge className="ml-2 bg-amber-100 text-amber-700">{data.queue.pending}</Badge>}
+            Verification Queue {data.queue.pending > 0 && <Badge className="ml-2 bg-crm-warning-bg text-crm-warning-text">{data.queue.pending}</Badge>}
           </TabsTrigger>
           <TabsTrigger value="conflicts" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">
-            Conflicts {data.queue.conflicts > 0 && <Badge className="ml-2 bg-rose-100 text-rose-700">{data.queue.conflicts}</Badge>}
+            Conflicts {data.queue.conflicts > 0 && <Badge className="ml-2 bg-crm-warning-bg text-crm-warning-text">{data.queue.conflicts}</Badge>}
           </TabsTrigger>
           <TabsTrigger value="sources" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">Official Sources</TabsTrigger>
           <TabsTrigger value="runs" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">Run History</TabsTrigger>
@@ -455,7 +455,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                       <div className="text-[var(--alo-text-muted)]">Changes Detected</div>
                     </div>
                     <div className="rounded-lg bg-[var(--alo-page)] p-3">
-                      <div className="font-bold text-rose-600">{data.lastRun.criticalChanges}</div>
+                      <div className="font-bold text-crm-warning-text">{data.lastRun.criticalChanges}</div>
                       <div className="text-[var(--alo-text-muted)]">Critical</div>
                     </div>
                   </div>
@@ -510,7 +510,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 {data.universitiesByCountry.map((c) => (
                   <div key={c.country} className="flex items-center justify-between text-sm">
                     <div className="text-[var(--alo-body)] capitalize">{c.country}</div>
-                    <Badge className="bg-violet-50 text-violet-700">{c.count}</Badge>
+                    <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{c.count}</Badge>
                   </div>
                 ))}
               </div>
@@ -520,8 +520,8 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
           {/* AI Safety Rules */}
           <SectionCard title="AI Safety Rules — Non-Negotiable" icon="ShieldCheck">
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="rounded-xl border-2 border-rose-200 bg-rose-50/50 p-4">
-                <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-rose-700">
+              <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/50 p-4">
+                <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-crm-warning-text">
                   <Icon name="X" className="h-4 w-4" /> AI MUST NOT
                 </div>
                 <ul className="space-y-1.5 text-xs text-[var(--alo-body)]">
@@ -534,8 +534,8 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                   <li>• Mark unverified information as verified</li>
                 </ul>
               </div>
-              <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/50 p-4">
-                <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-emerald-700">
+              <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/50 p-4">
+                <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-crm-success-text">
                   <Icon name="Check" className="h-4 w-4" /> AI MUST
                 </div>
                 <ul className="space-y-1.5 text-xs text-[var(--alo-body)]">
@@ -651,16 +651,16 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                           </TableCell>
                           <TableCell className="align-top text-xs font-mono text-[var(--alo-brand)]">{c.fieldName}</TableCell>
                           <TableCell className="align-top text-xs max-w-xs">
-                            <div className="truncate text-rose-600 line-through" title={c.oldValue || ""}>{c.oldValue || "(none)"}</div>
-                            <div className="truncate text-emerald-700" title={c.newValue || ""}>{c.newValue || "(removed)"}</div>
+                            <div className="truncate text-crm-warning-text line-through" title={c.oldValue || ""}>{c.oldValue || "(none)"}</div>
+                            <div className="truncate text-crm-success-text" title={c.newValue || ""}>{c.newValue || "(removed)"}</div>
                           </TableCell>
                           <TableCell className="align-top">
                             <Badge className={IMPACT_COLORS[c.impactLevel]}>{c.impactLevel}</Badge>
                           </TableCell>
                           <TableCell className="align-top text-xs">
                             <div className="flex items-center gap-1">
-                              <div className="h-1.5 w-10 rounded-full bg-slate-200 overflow-hidden">
-                                <div className={`h-full ${c.confidence >= 0.8 ? "bg-emerald-500" : c.confidence >= 0.5 ? "bg-amber-500" : "bg-rose-500"}`} style={{ width: `${c.confidence * 100}%` }} />
+                              <div className="h-1.5 w-10 rounded-full bg-[var(--alo-page)] overflow-hidden">
+                                <div className={`h-full ${c.confidence >= 0.8 ? "bg-[var(--alo-success)]" : c.confidence >= 0.5 ? "bg-[var(--alo-warning)]" : "bg-crm-warning-bg0"}`} style={{ width: `${c.confidence * 100}%` }} />
                               </div>
                               <span>{(c.confidence * 100).toFixed(0)}%</span>
                             </div>
@@ -671,10 +671,10 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                               <Button size="sm" variant="outline" className="h-7 px-2 " onClick={() => recheck(c.id)} disabled={acting}>
                                 <Icon name="RefreshCw" className="h-3 w-3" />
                               </Button>
-                              <Button size="sm" variant="outline" className="h-7 px-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={() => performAction(c.id, "APPROVE")} disabled={acting}>
+                              <Button size="sm" variant="outline" className="h-7 px-2 border-crm-success-border text-crm-success-text hover:bg-crm-success-bg" onClick={() => performAction(c.id, "APPROVE")} disabled={acting}>
                                 <Icon name="Check" className="h-3 w-3" />
                               </Button>
-                              <Button size="sm" variant="outline" className="h-7 px-2 border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => performAction(c.id, "REJECT")} disabled={acting}>
+                              <Button size="sm" variant="outline" className="h-7 px-2 border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg" onClick={() => performAction(c.id, "REJECT")} disabled={acting}>
                                 <Icon name="X" className="h-3 w-3" />
                               </Button>
                             </div>
@@ -752,25 +752,25 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                         <a href={s.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--alo-brand)] hover:underline">{s.sourceUrl}</a>
                       </TableCell>
                       <TableCell className="align-top">
-                        <Badge className="bg-violet-50 text-violet-700 text-xs">{s.sourceType.replace(/_/g, " ")}</Badge>
+                        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs">{s.sourceType.replace(/_/g, " ")}</Badge>
                       </TableCell>
                       <TableCell className="align-top text-xs">
                         <div>{s.entityType}</div>
                         <div className="text-[var(--alo-text-muted)]">{s.universitySlug || s.courseSlug || s.countrySlug || "—"}</div>
                       </TableCell>
                       <TableCell className="align-top text-xs">
-                        <Badge className={s.priority === 1 ? "bg-emerald-100 text-emerald-700" : s.priority <= 3 ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>P{s.priority}</Badge>
+                        <Badge className={s.priority === 1 ? "bg-crm-success-bg text-crm-success-text" : s.priority <= 3 ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>P{s.priority}</Badge>
                       </TableCell>
                       <TableCell className="align-top text-xs text-[var(--alo-text-muted)]">{s.lastCheckedAt ? timeAgo(s.lastCheckedAt) : "never"}</TableCell>
                       <TableCell className="align-top">
-                        <Badge className={['verified', 'VERIFIED'].includes(s.verificationStatus) ? "bg-emerald-100 text-emerald-700" : s.verificationStatus === 'failed' ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"}>{String(s.verificationStatus || 'pending').replace(/_/g, ' ')}</Badge>
+                        <Badge className={['verified', 'VERIFIED'].includes(s.verificationStatus) ? "bg-crm-success-bg text-crm-success-text" : s.verificationStatus === 'failed' ? "bg-crm-warning-bg text-crm-warning-text" : "bg-crm-warning-bg text-crm-warning-text"}>{String(s.verificationStatus || 'pending').replace(/_/g, ' ')}</Badge>
                         <div className="mt-1 text-[11px] text-[var(--alo-text-muted)]">{s.lastVerifiedAt ? `source confirmed ${timeAgo(s.lastVerifiedAt)}` : 'ownership not confirmed'}</div>
                       </TableCell>
                       <TableCell className="align-top">
-                        <Badge className={s.status === "ACTIVE" && s.monitoringEnabled ? "bg-emerald-100 text-emerald-700" : s.status === "BROKEN" ? "bg-rose-100 text-rose-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>{s.status}{s.monitoringEnabled ? ' · ON' : ' · OFF'}</Badge>
+                        <Badge className={s.status === "ACTIVE" && s.monitoringEnabled ? "bg-crm-success-bg text-crm-success-text" : s.status === "BROKEN" ? "bg-crm-warning-bg text-crm-warning-text" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>{s.status}{s.monitoringEnabled ? ' · ON' : ' · OFF'}</Badge>
                       </TableCell>
                       <TableCell className="align-top text-xs">
-                        {s.consecutiveFailures > 0 ? <span className="text-rose-600 font-semibold">{s.consecutiveFailures}</span> : <span className="text-[var(--alo-text-muted)]">0</span>}
+                        {s.consecutiveFailures > 0 ? <span className="text-crm-warning-text font-semibold">{s.consecutiveFailures}</span> : <span className="text-[var(--alo-text-muted)]">0</span>}
                       </TableCell>
                       {canManageSources && <TableCell className="align-top">
                         {s.category === 'CATALOGUE' && <Button size="sm" variant="outline" disabled={catalogueLoading} onClick={() => void viewCatalogue(s.id)}>Catalogue evidence</Button>}
@@ -778,7 +778,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                           {s.status !== 'RETIRED' && (s.status === 'ACTIVE' && s.monitoringEnabled
                             ? <Button size="sm" variant="outline" disabled={sourceActionId === s.id} onClick={() => updateSource(s, 'PAUSE')}>Pause</Button>
                             : <Button size="sm" variant="outline" disabled={sourceActionId === s.id} onClick={() => updateSource(s, 'VERIFY_SOURCE')}>Verify / Recheck</Button>)}
-                          {s.status !== 'RETIRED' && <Button size="sm" variant="ghost" className="text-rose-700" disabled={sourceActionId === s.id} onClick={() => updateSource(s, 'RETIRE')}>Retire</Button>}
+                          {s.status !== 'RETIRED' && <Button size="sm" variant="ghost" className="text-crm-warning-text" disabled={sourceActionId === s.id} onClick={() => updateSource(s, 'RETIRE')}>Retire</Button>}
                         </div>
                       </TableCell>}
                     </TableRow>
@@ -793,7 +793,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 <DialogTitle>Register official source candidate</DialogTitle>
               </DialogHeader>
               <form onSubmit={submitSourceCandidate} className="space-y-4">
-                <p className="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">Registering does not mark a source or its facts as verified. The new record stays paused until a Super Admin verifies the official ownership and connectivity.</p>
+                <p className="rounded-lg bg-crm-warning-bg p-3 text-xs text-crm-warning-text">Registering does not mark a source or its facts as verified. The new record stays paused until a Super Admin verifies the official ownership and connectivity.</p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="monitor-source-name">Source label</Label><Input id="monitor-source-name" required maxLength={180} value={sourceForm.sourceName} onChange={(e) => setSourceForm((current) => ({ ...current, sourceName: e.target.value }))} placeholder="Official source page label" /></div>
                   <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="monitor-source-url">Official HTTPS URL</Label><Input id="monitor-source-url" required type="url" value={sourceForm.sourceUrl} onChange={(e) => setSourceForm((current) => ({ ...current, sourceUrl: e.target.value }))} placeholder="https://..." /></div>
@@ -839,8 +839,8 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                       <TableCell className="text-xs text-[var(--alo-text-muted)]">{r.completedAt ? timeAgo(r.completedAt) : "—"}</TableCell>
                       <TableCell className="text-xs">{r.sourcesChecked}</TableCell>
                       <TableCell className="text-xs">{r.changesDetected}</TableCell>
-                      <TableCell className="text-xs text-rose-600 font-semibold">{r.criticalChanges}</TableCell>
-                      <TableCell className="text-xs text-rose-600">{r.failedSources}</TableCell>
+                      <TableCell className="text-xs text-crm-warning-text font-semibold">{r.criticalChanges}</TableCell>
+                      <TableCell className="text-xs text-crm-warning-text">{r.failedSources}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -859,7 +859,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 logs.map((l) => (
                   <div key={l.id} className="flex gap-2 py-1 border-b border-[var(--alo-border)]">
                     <span className="text-[var(--alo-text-muted)] w-32 shrink-0">{new Date(l.createdAt).toISOString().slice(0, 19)}</span>
-                    <span className={`w-12 shrink-0 font-semibold ${l.level === "ERROR" ? "text-rose-600" : l.level === "WARN" ? "text-amber-600" : l.level === "AUDIT" ? "text-[var(--alo-brand)]" : "text-[var(--alo-body)]"}`}>{l.level}</span>
+                    <span className={`w-12 shrink-0 font-semibold ${l.level === "ERROR" ? "text-crm-warning-text" : l.level === "WARN" ? "text-crm-warning-text" : l.level === "AUDIT" ? "text-[var(--alo-brand)]" : "text-[var(--alo-body)]"}`}>{l.level}</span>
                     <span className="text-[var(--alo-body)]">{l.message}</span>
                   </div>
                 ))
@@ -890,12 +890,12 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
 
                 {/* Old vs New comparison */}
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="rounded-lg border-2 border-rose-200 bg-rose-50/50 p-4">
-                    <div className="mb-2 text-xs font-semibold text-rose-700">OLD VALUE (verified {selectedChange.previousVerifiedAt ? fmtDate(selectedChange.previousVerifiedAt) : "unknown"})</div>
+                  <div className="rounded-lg border-2 border-crm-warning-border bg-crm-warning-bg/50 p-4">
+                    <div className="mb-2 text-xs font-semibold text-crm-warning-text">OLD VALUE (verified {selectedChange.previousVerifiedAt ? fmtDate(selectedChange.previousVerifiedAt) : "unknown"})</div>
                     <pre className="whitespace-pre-wrap break-words text-xs text-[var(--alo-text)]">{selectedChange.oldValue || "(field did not exist before)"}</pre>
                   </div>
-                  <div className="rounded-lg border-2 border-emerald-200 bg-emerald-50/50 p-4">
-                    <div className="mb-2 text-xs font-semibold text-emerald-700">NEW VALUE (detected {timeAgo(selectedChange.detectedAt)})</div>
+                  <div className="rounded-lg border-2 border-crm-success-border bg-crm-success-bg/50 p-4">
+                    <div className="mb-2 text-xs font-semibold text-crm-success-text">NEW VALUE (detected {timeAgo(selectedChange.detectedAt)})</div>
                     <pre className="whitespace-pre-wrap break-words text-xs text-[var(--alo-text)]">{selectedChange.newValue || "(field was removed)"}</pre>
                   </div>
                 </div>
@@ -905,7 +905,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                   <div className="mb-1 font-semibold text-[var(--alo-brand)]">AI Explanation</div>
                   <div className="text-[var(--alo-body)]">{selectedChange.aiExplanation}</div>
                   <div className="mt-2 flex items-center gap-4 text-xs text-[var(--alo-text-muted)]">
-                    <span>Confidence: <strong className={selectedChange.confidence >= 0.8 ? "text-emerald-600" : selectedChange.confidence >= 0.5 ? "text-amber-600" : "text-rose-600"}>{(selectedChange.confidence * 100).toFixed(0)}%</strong></span>
+                    <span>Confidence: <strong className={selectedChange.confidence >= 0.8 ? "text-crm-success-text" : selectedChange.confidence >= 0.5 ? "text-crm-warning-text" : "text-crm-warning-text"}>{(selectedChange.confidence * 100).toFixed(0)}%</strong></span>
                     <span>Impact: <strong>{selectedChange.impactLevel}</strong></span>
                   </div>
                 </div>
@@ -923,8 +923,8 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-wrap gap-2 rounded-lg bg-amber-50 p-3 text-xs text-[var(--alo-body)]">
-                  <Icon name="Info" className="h-4 w-4 text-amber-600" />
+                <div className="flex flex-wrap gap-2 rounded-lg bg-crm-warning-bg p-3 text-xs text-[var(--alo-body)]">
+                  <Icon name="Info" className="h-4 w-4 text-crm-warning-text" />
                   <span>Approval applies only allowlisted fields after the current official snapshot, quoted evidence, and production version are checked. Rejected values never write; the actual pre-change value is preserved in history.</span>
                 </div>
               </div>
@@ -932,10 +932,10 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 <Button variant="outline" onClick={() => recheck(selectedChange.id)} disabled={acting}>
                   <Icon name="RefreshCw" className={`mr-2 h-4 w-4 ${acting ? "animate-spin" : ""}`} /> Request Recheck
                 </Button>
-                <Button variant="outline" className="border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => performAction(selectedChange.id, "REJECT")} disabled={acting}>
+                <Button variant="outline" className="border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg" onClick={() => performAction(selectedChange.id, "REJECT")} disabled={acting}>
                   <Icon name="X" className="mr-2 h-4 w-4" /> Reject
                 </Button>
-                <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => performAction(selectedChange.id, "APPROVE")} disabled={acting}>
+                <Button className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)]" onClick={() => performAction(selectedChange.id, "APPROVE")} disabled={acting}>
                   <Icon name="Check" className="mr-2 h-4 w-4" /> Approve & Apply to Production
                 </Button>
               </DialogFooter>
@@ -947,13 +947,13 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
         <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
           <DialogHeader><DialogTitle>Official catalogue discovery evidence</DialogTitle></DialogHeader>
           {catalogueReport && <div className="space-y-4 text-sm">
-            <p className="rounded-lg bg-amber-50 p-3 text-amber-900">{catalogueReport.safetyNotice}</p>
+            <p className="rounded-lg bg-crm-warning-bg p-3 text-crm-warning-text">{catalogueReport.safetyNotice}</p>
             <p><strong>Status:</strong> {catalogueReport.report.status} · <strong>Catalogue verified:</strong> No</p>
             <p>Fetched pages: {catalogueReport.report.visited?.length || 0} · Candidate links: {catalogueReport.report.discovered?.length || 0} · Queued pages: {catalogueReport.report.frontier?.length || 0} · Failed pages: {catalogueReport.report.failures?.length || 0}</p>
             <h3 className="font-bold">Completeness blockers</h3>
             <ul className="list-inside list-disc">{(catalogueReport.report.blockers || []).map((message: string) => <li key={message}>{message}</li>)}</ul>
             <h3 className="font-bold">Special programme candidates—not verified programmes</h3>
-            <pre className="overflow-auto rounded bg-slate-50 p-3 text-xs">{JSON.stringify(catalogueReport.report.specialProgrammeCandidates, null, 2)}</pre>
+            <pre className="overflow-auto rounded bg-[var(--alo-page)] p-3 text-xs">{JSON.stringify(catalogueReport.report.specialProgrammeCandidates, null, 2)}</pre>
             <h3 className="font-bold">Discovered official-host links</h3>
             <ul className="max-h-72 space-y-2 overflow-auto">{(catalogueReport.report.discovered || []).map((link: { url: string; label: string; kind: string }) => <li key={link.url}>
               <Badge variant="outline" className="mr-2">{link.kind}</Badge>

@@ -54,7 +54,7 @@ interface AppRow {
 }
 
 const PRIORITY_META: Record<string, { label: string; cls: string }> = {
-  URGENT: { label: "Urgent", cls: "bg-red-100 text-red-700" },
+  URGENT: { label: "Urgent", cls: "bg-crm-danger-bg text-crm-danger-text" },
   HIGH: { label: "High", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   NORMAL: { label: "Normal", cls: "bg-sky-100 text-sky-700" },
   LOW: { label: "Low", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
@@ -221,7 +221,7 @@ export function ApplicationsView() {
                 <span className="truncate max-w-[140px]">{STAGE_LABELS[stage]}</span>
                 <span
                   className={`ml-1 inline-flex min-w-[20px] items-center justify-center rounded-full px-1.5 text-[11px] font-bold ${
-                    active ? "bg-white/70 text-current" : "bg-slate-200 text-[var(--alo-text-muted)]"
+                    active ? "bg-white/70 text-current" : "bg-[var(--alo-page)] text-[var(--alo-text-muted)]"
                   }`}
                 >
                   {count}
@@ -387,9 +387,9 @@ export function ApplicationsView() {
                           name="CalendarClock"
                           className={`size-3.5 ${
                             deadlinePassed
-                              ? "text-red-500"
+                              ? "text-crm-danger-text"
                               : deadlineNear
-                              ? "text-amber-500"
+                              ? "text-crm-warning-text"
                               : "text-muted-foreground"
                           }`}
                         />
@@ -397,9 +397,9 @@ export function ApplicationsView() {
                         <span
                           className={`font-semibold ${
                             deadlinePassed
-                              ? "text-red-600"
+                              ? "text-crm-danger-text"
                               : deadlineNear
-                              ? "text-amber-600"
+                              ? "text-crm-warning-text"
                               : "text-foreground"
                           }`}
                         >
@@ -410,7 +410,7 @@ export function ApplicationsView() {
                             variant="outline"
                             className={`ml-1 px-1.5 py-0 text-[11px] ${
                               deadlineNear
-                                ? "border-amber-300 text-amber-700"
+                                ? "border-crm-warning-border text-crm-warning-text"
                                 : "border-[var(--alo-brand)]/20 text-[var(--alo-brand)]"
                             }`}
                           >
@@ -418,7 +418,7 @@ export function ApplicationsView() {
                           </Badge>
                         )}
                         {deadlinePassed && (
-                          <Badge variant="outline" className="ml-1 border-red-300 px-1.5 py-0 text-[11px] text-red-700">
+                          <Badge variant="outline" className="ml-1 border-crm-danger-border px-1.5 py-0 text-[11px] text-crm-danger-text">
                             Overdue
                           </Badge>
                         )}
@@ -489,7 +489,7 @@ export function ApplicationsView() {
                 </Select>
               </div>
 
-              <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+              <div className="flex items-center gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2 text-xs text-crm-warning-text">
                 <Icon name="History" className="size-3.5 shrink-0" />
                 A timeline event &amp; audit log entry will be created for this change.
               </div>

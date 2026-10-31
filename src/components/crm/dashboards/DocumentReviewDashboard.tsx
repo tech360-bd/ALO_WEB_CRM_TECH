@@ -79,8 +79,8 @@ export default function DocumentReviewDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <kpi.icon className="w-5 h-5 text-alo-brand" />
-                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-red-600" />}{kpi.change}
+                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
+                  {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-crm-danger-text" />}{kpi.change}
                 </span>
               </div>
               <p className="text-2xl font-bold text-alo-text">{kpi.value}</p>
@@ -140,7 +140,7 @@ export default function DocumentReviewDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <XCircle className="w-4 h-4 text-red-500" /> Rejected Documents
+                  <XCircle className="w-4 h-4 text-crm-danger-text" /> Rejected Documents
                 </CardTitle>
                 <Badge variant="danger" className="text-[11px]">{rejectedDocs.length}</Badge>
               </div>
@@ -148,7 +148,7 @@ export default function DocumentReviewDashboard() {
             <CardContent>
               <div className="space-y-2 max-h-56 overflow-y-auto">
                 {rejectedDocs.map((d) => (
-                  <div key={d.student} className="p-2.5 rounded-lg border border-red-200 bg-red-50">
+                  <div key={d.student} className="p-2.5 rounded-lg border border-crm-danger-border bg-crm-danger-bg">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text truncate">{d.student}</p>
                       <Badge variant="danger" className="text-[11px] shrink-0 ml-1">{d.doc}</Badge>
@@ -166,7 +166,7 @@ export default function DocumentReviewDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" /> Expired Documents
+                  <AlertTriangle className="w-4 h-4 text-crm-warning-text" /> Expired Documents
                 </CardTitle>
                 <Badge variant="warning" className="text-[11px]">{expiredDocs.length}</Badge>
               </div>
@@ -174,10 +174,10 @@ export default function DocumentReviewDashboard() {
             <CardContent>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {expiredDocs.map((d) => (
-                  <div key={d.student + d.doc} className="p-2.5 rounded-lg border border-amber-200 bg-amber-50">
+                  <div key={d.student + d.doc} className="p-2.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg">
                     <p className="text-sm font-medium text-alo-text">{d.student} — {d.doc}</p>
                     <p className="text-[11px] text-alo-text-muted">Expired: {d.expired}</p>
-                    <p className="text-[11px] text-red-600 mt-0.5">{d.action}</p>
+                    <p className="text-[11px] text-crm-danger-text mt-0.5">{d.action}</p>
                   </div>
                 ))}
               </div>
@@ -189,7 +189,7 @@ export default function DocumentReviewDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-red-500" /> Deadline Alerts
+                  <Calendar className="w-4 h-4 text-crm-danger-text" /> Deadline Alerts
                 </CardTitle>
                 <Badge variant="danger" className="text-[11px]">{deadlineAlerts.length}</Badge>
               </div>
@@ -197,7 +197,7 @@ export default function DocumentReviewDashboard() {
             <CardContent>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {deadlineAlerts.map((d) => (
-                  <div key={d.student + d.doc} className="p-2.5 rounded-lg border border-red-200 bg-red-50">
+                  <div key={d.student + d.doc} className="p-2.5 rounded-lg border border-crm-danger-border bg-crm-danger-bg">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text truncate">{d.student}</p>
                       <Badge variant="danger" className="text-[11px] shrink-0 ml-1">{d.daysLeft}d</Badge>

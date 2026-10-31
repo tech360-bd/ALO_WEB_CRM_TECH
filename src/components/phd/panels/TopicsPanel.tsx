@@ -95,7 +95,7 @@ export default function TopicsPanel() {
             </Button>
           </div>
         </div>
-        {actionError && <p className="mt-3 text-xs text-red-700">{actionError}</p>}
+        {actionError && <p className="mt-3 text-xs text-crm-danger-text">{actionError}</p>}
         <p className="mt-3 text-[11px] text-[var(--alo-text-muted)]">
           Each candidate records its provisional gap and an explicit &quot;unverified&quot; novelty status until you find
           literature that supports the claim.

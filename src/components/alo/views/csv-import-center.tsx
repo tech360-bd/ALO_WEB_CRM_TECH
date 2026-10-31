@@ -93,10 +93,10 @@ const BATCH_STATUS_META: Record<
   ImportBatch["status"],
   { label: string; bg: string; text: string; icon: string }
 > = {
-  PENDING: { label: "Pending", bg: "bg-amber-100", text: "text-amber-700", icon: "Clock" },
+  PENDING: { label: "Pending", bg: "bg-crm-warning-bg", text: "text-crm-warning-text", icon: "Clock" },
   PROCESSING: { label: "Processing", bg: "bg-sky-100", text: "text-sky-700", icon: "Loader2" },
-  COMPLETED: { label: "Completed", bg: "bg-emerald-100", text: "text-emerald-700", icon: "CheckCircle" },
-  FAILED: { label: "Failed", bg: "bg-rose-100", text: "text-rose-700", icon: "XCircle" },
+  COMPLETED: { label: "Completed", bg: "bg-crm-success-bg", text: "text-crm-success-text", icon: "CheckCircle" },
+  FAILED: { label: "Failed", bg: "bg-crm-warning-bg", text: "text-crm-warning-text", icon: "XCircle" },
 };
 
 const TYPE_META: Record<
@@ -317,9 +317,9 @@ export function CsvImportCenter() {
               };
               const accentMap: Record<string, string> = {
                 blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-                emerald: "bg-emerald-50 text-emerald-600",
-                amber: "bg-amber-50 text-amber-600",
-                violet: "bg-violet-50 text-violet-600",
+                emerald: "bg-crm-success-bg text-crm-success-text",
+                amber: "bg-crm-warning-bg text-crm-warning-text",
+                violet: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
               };
               const cols = t.columns.split(",").map((c) => c.trim());
               return (
@@ -517,23 +517,23 @@ export function CsvImportCenter() {
               >
                 <ul className="space-y-2 text-xs text-muted-foreground">
                   <li className="flex items-start gap-2">
-                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
                     <span>Validates required columns are present</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
                     <span>Checks foreign keys (country_code, university_code, course_code exist)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
                     <span>Validates numeric fields (tuition, fees, amounts)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
                     <span>Validates dates and intake formats</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
                     <span>Checks for duplicate slugs / codes</span>
                   </li>
                 </ul>
@@ -591,8 +591,8 @@ export function CsvImportCenter() {
                   className={cn(
                     "h-7",
                     totalErrors > 0
-                      ? "bg-amber-100 text-amber-700 hover:bg-amber-100"
-                      : "bg-emerald-100 text-emerald-700 hover:bg-emerald-100",
+                      ? "bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg"
+                      : "bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg",
                   )}
                 >
                   <Icon
@@ -628,35 +628,35 @@ export function CsvImportCenter() {
               {/* Error table */}
               {parsedErrors.length > 0 && (
                 <div className="mt-5">
-                  <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-rose-700">
+                  <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-crm-warning-text">
                     <Icon name="AlertTriangle" className="size-4" />
                     Validation errors ({parsedErrors.length})
                   </h4>
-                  <ScrollArea className="max-h-72 rounded-lg border border-rose-200">
+                  <ScrollArea className="max-h-72 rounded-lg border border-crm-warning-border">
                     <Table>
                       <TableHeader className="sticky top-0 bg-white">
-                        <TableRow className="border-b border-rose-200">
-                          <TableHead className="w-16 text-xs font-bold uppercase text-rose-700">
+                        <TableRow className="border-b border-crm-warning-border">
+                          <TableHead className="w-16 text-xs font-bold uppercase text-crm-warning-text">
                             Row
                           </TableHead>
-                          <TableHead className="w-40 text-xs font-bold uppercase text-rose-700">
+                          <TableHead className="w-40 text-xs font-bold uppercase text-crm-warning-text">
                             Field
                           </TableHead>
-                          <TableHead className="text-xs font-bold uppercase text-rose-700">
+                          <TableHead className="text-xs font-bold uppercase text-crm-warning-text">
                             Error
                           </TableHead>
-                          <TableHead className="w-64 text-xs font-bold uppercase text-rose-700">
+                          <TableHead className="w-64 text-xs font-bold uppercase text-crm-warning-text">
                             Raw data
                           </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {parsedErrors.map((err, i) => (
-                          <TableRow key={i} className="border-b border-rose-100">
-                            <TableCell className="font-mono text-xs font-semibold text-rose-700">
+                          <TableRow key={i} className="border-b border-crm-warning-border">
+                            <TableCell className="font-mono text-xs font-semibold text-crm-warning-text">
                               {err.rowNumber}
                             </TableCell>
-                            <TableCell className="font-mono text-xs text-rose-700">
+                            <TableCell className="font-mono text-xs text-crm-warning-text">
                               {err.fieldName}
                             </TableCell>
                             <TableCell className="text-xs text-foreground/80">
@@ -822,10 +822,10 @@ export function CsvImportCenter() {
                           <TableCell className="text-right align-top font-semibold tabular-nums text-foreground">
                             {b.totalRows}
                           </TableCell>
-                          <TableCell className="text-right align-top font-semibold tabular-nums text-emerald-700">
+                          <TableCell className="text-right align-top font-semibold tabular-nums text-crm-success-text">
                             {b.successRows}
                           </TableCell>
-                          <TableCell className="text-right align-top font-semibold tabular-nums text-rose-600">
+                          <TableCell className="text-right align-top font-semibold tabular-nums text-crm-warning-text">
                             {b.errorRows || b._count?.errors || 0}
                           </TableCell>
                           <TableCell className="align-top text-xs text-muted-foreground">
@@ -877,16 +877,16 @@ export function CsvImportCenter() {
                     Total rows
                   </p>
                 </div>
-                <div className="rounded-lg bg-emerald-50 p-3 text-center">
-                  <p className="text-2xl font-black tabular-nums text-emerald-700">
+                <div className="rounded-lg bg-crm-success-bg p-3 text-center">
+                  <p className="text-2xl font-black tabular-nums text-crm-success-text">
                     {errorsBatch.successRows}
                   </p>
                   <p className="mt-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
                     Successful
                   </p>
                 </div>
-                <div className="rounded-lg bg-rose-50 p-3 text-center">
-                  <p className="text-2xl font-black tabular-nums text-rose-700">
+                <div className="rounded-lg bg-crm-warning-bg p-3 text-center">
+                  <p className="text-2xl font-black tabular-nums text-crm-warning-text">
                     {errorsBatch.errorRows || errorsBatch._count?.errors || 0}
                   </p>
                   <p className="mt-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -903,9 +903,9 @@ export function CsvImportCenter() {
                   correction.
                 </p>
               </div>
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+              <div className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-xs text-crm-warning-text">
                 <p className="font-semibold">Next steps</p>
-                <ul className="mt-1 space-y-1 text-amber-700">
+                <ul className="mt-1 space-y-1 text-crm-warning-text">
                   <li>1. Download the original CSV file</li>
                   <li>2. Fix the rows highlighted in the error report</li>
                   <li>3. Re-upload the corrected CSV via the Import New tab</li>

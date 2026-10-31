@@ -41,9 +41,9 @@ export default function LeadNurturingView() {
               </div>
               {log && <p className="text-xs bg-[var(--alo-page)] border rounded-lg p-3">{log}</p>}
               <div className="grid grid-cols-3 gap-3 text-xs">
-                <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><MessageSquare className="w-3 h-3 text-emerald-600" />WhatsApp</p><p className="text-[var(--alo-body)] mt-1">Day 1 Welcome → Day 3 Program match → Day 7 Deadline</p></div>
+                <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><MessageSquare className="w-3 h-3 text-crm-success-text" />WhatsApp</p><p className="text-[var(--alo-body)] mt-1">Day 1 Welcome → Day 3 Program match → Day 7 Deadline</p></div>
                 <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><Mail className="w-3 h-3 text-[var(--alo-brand)]" />Email</p><p className="text-[var(--alo-body)] mt-1">Welcome → Scholarship → Success story → CTA</p></div>
-                <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><Clock className="w-3 h-3 text-amber-600" />SMS</p><p className="text-[var(--alo-body)] mt-1">Deadline + counselor contact + opt-out</p></div>
+                <div className="p-3 bg-white border rounded-xl"><p className="font-semibold flex items-center gap-1"><Clock className="w-3 h-3 text-crm-warning-text" />SMS</p><p className="text-[var(--alo-body)] mt-1">Deadline + counselor contact + opt-out</p></div>
               </div>
               <p className="text-[11px] text-[var(--alo-text-muted)]">Preserves CRM workflows — AI must not overwrite important student records or reassign counselors outside authorized rules. Uses MarketingLead.counselorId via existing assignment rules.</p>
             </CardContent>

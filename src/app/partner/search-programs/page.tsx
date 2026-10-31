@@ -65,7 +65,7 @@ export default function PartnerSearchProgramsPage() {
             ))}
             {students.length === 0 && <p className="text-xs text-[var(--alo-text-muted)] col-span-3">No own students yet — partner sees only own students, other partner students blocked via partnerId filter at DB/API.</p>}
           </div>
-          {!selectedStudent && <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-3 mt-3">Select own student first — partner cannot see other partner students, other partner commissions, internal ALO notes, staff risk notes, full finance info — blocked at backend.</p>}
+          {!selectedStudent && <p className="text-xs text-crm-warning-text bg-crm-warning-bg border border-crm-warning-border rounded-xl p-3 mt-3">Select own student first — partner cannot see other partner students, other partner commissions, internal ALO notes, staff risk notes, full finance info — blocked at backend.</p>}
         </Card>
 
         <Card className="p-4 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
@@ -78,7 +78,7 @@ export default function PartnerSearchProgramsPage() {
           <div className="grid sm:grid-cols-2 gap-4">
             {courses.map((c: any) => (
               <Card key={c.courseId} className="p-5 bg-white border-[var(--alo-border)] hover:border-[var(--alo-brand)] rounded-2xl">
-                <div className="flex justify-between mb-2"><Badge className={`${c.eligibility.label === 'Eligible' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{c.eligibility.label}</Badge><Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">Own Commission: {c.commissions?.[0]?.partnerCommission ? `${c.commissions[0].partnerCommission}` : 'Check permitted'}</Badge></div>
+                <div className="flex justify-between mb-2"><Badge className={`${c.eligibility.label === 'Eligible' ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border'} text-[11px]`}>{c.eligibility.label}</Badge><Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">Own Commission: {c.commissions?.[0]?.partnerCommission ? `${c.commissions[0].partnerCommission}` : 'Check permitted'}</Badge></div>
                 <h3 className="font-bold text-sm line-clamp-2">{c.courseTitle}</h3>
                 <p className="text-xs text-[var(--alo-text-muted)]">{c.university?.name} • {c.country}</p>
                 <div className="flex gap-2 mt-3">

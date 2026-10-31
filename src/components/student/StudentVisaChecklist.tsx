@@ -109,7 +109,7 @@ export default function StudentVisaChecklist() {
                         const Icon = done ? CheckCircle2 : CircleDashed;
                         return (
                           <li key={item.id} className="flex flex-wrap items-start gap-3 px-5 py-3.5">
-                            <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', done ? 'text-emerald-600' : 'text-[var(--alo-text-muted)]')} aria-hidden="true" />
+                            <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', done ? 'text-crm-success-text' : 'text-[var(--alo-text-muted)]')} aria-hidden="true" />
                             <div className="min-w-0 flex-1">
                               <p className="text-[13px] font-semibold text-[var(--alo-text)]">{item.item}</p>
                               {item.documentName && (
@@ -117,7 +117,7 @@ export default function StudentVisaChecklist() {
                               )}
                               {item.reason && <p className="mt-1 text-[12px] leading-relaxed text-[var(--alo-text-muted)]">{item.reason}</p>}
                               {item.deadline && (
-                                <p className="mt-1 text-[12px] font-medium text-amber-700">
+                                <p className="mt-1 text-[12px] font-medium text-crm-warning-text">
                                   Due {new Date(item.deadline).toLocaleDateString('en-GB')}
                                 </p>
                               )}

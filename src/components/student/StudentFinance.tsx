@@ -233,7 +233,7 @@ function BalanceTile({
   note: string;
 }) {
   const entries = Object.entries(amounts);
-  const toneClass = tone === 'warning' ? 'text-amber-600' : tone === 'success' ? 'text-emerald-600' : 'text-[var(--alo-text)]';
+  const toneClass = tone === 'warning' ? 'text-crm-warning-text' : tone === 'success' ? 'text-crm-success-text' : 'text-[var(--alo-text)]';
   return (
     <div className="rounded-2xl border border-[var(--alo-border)] bg-white px-4 py-3">
       {entries.length === 0 ? (

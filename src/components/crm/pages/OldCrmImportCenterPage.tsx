@@ -100,7 +100,7 @@ export default function OldCrmImportCenterPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-xl border border-[var(--alo-border)] shadow-xs">
         <div>
           <h1 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">
-            <Database className="w-5 h-5 text-indigo-600" />
+            <Database className="w-5 h-5 text-[var(--alo-brand)]" />
             Old CRM Student Migration Import Center
           </h1>
           <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
@@ -109,7 +109,7 @@ export default function OldCrmImportCenterPage() {
         </div>
 
         <Button
- className="bg-indigo-600 hover:bg-indigo-700 text-white "
+ className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)] text-white "
  onClick={handleCreateImportPreview}
  disabled={importing}
  >
@@ -175,21 +175,21 @@ export default function OldCrmImportCenterPage() {
                       </div>
                     </TableCell>
                     <TableCell className="text-xs font-bold text-[var(--alo-text)]">{b.totalRows}</TableCell>
-                    <TableCell><Badge variant="outline" className="text-[11px] bg-emerald-50 text-emerald-700">{b.newCount} New</Badge></TableCell>
+                    <TableCell><Badge variant="outline" className="text-[11px] bg-crm-success-bg text-crm-success-text">{b.newCount} New</Badge></TableCell>
                     <TableCell><Badge variant="outline" className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{b.matchedCount} Matched</Badge></TableCell>
-                    <TableCell><Badge variant="outline" className="text-[11px] bg-amber-50 text-amber-700">{b.duplicateCount} Risk</Badge></TableCell>
+                    <TableCell><Badge variant="outline" className="text-[11px] bg-crm-warning-bg text-crm-warning-text">{b.duplicateCount} Risk</Badge></TableCell>
                     <TableCell>
-                      <Badge className={`text-[11px] ${b.status === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                      <Badge className={`text-[11px] ${b.status === 'approved' ? 'bg-crm-success-bg text-crm-success-text' : 'bg-crm-warning-bg text-crm-warning-text'}`}>
                         {b.status.toUpperCase()}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       {b.status === 'pending_review' ? (
-                        <Button size="sm" className="h-7 bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => handleApproveBatch(b.id)}>
+                        <Button size="sm" className="h-7 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)] text-white" onClick={() => handleApproveBatch(b.id)}>
                           Approve Import
                         </Button>
                       ) : (
-                        <span className="text-xs text-emerald-600 font-semibold flex items-center justify-end">
+                        <span className="text-xs text-crm-success-text font-semibold flex items-center justify-end">
                           <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Imported
                         </span>
                       )}

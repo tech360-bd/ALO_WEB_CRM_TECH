@@ -67,14 +67,14 @@ interface MatchedCourse {
 }
 
 const VERIFICATION_META: Record<string, { label: string; className: string; icon: React.ElementType }> = {
-  VERIFIED: { label: 'Verified', className: 'bg-green-100 text-green-700', icon: CheckCircle2 },
+  VERIFIED: { label: 'Verified', className: 'bg-crm-success-bg text-crm-success-text', icon: CheckCircle2 },
   OFFICIAL_SOURCE_FOUND: { label: 'Official source found', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', icon: CheckCircle2 },
-  NEEDS_REVIEW: { label: 'Needs review', className: 'bg-amber-100 text-amber-700', icon: Info },
-  PARTIAL: { label: 'Partially verified', className: 'bg-amber-100 text-amber-700', icon: Info },
+  NEEDS_REVIEW: { label: 'Needs review', className: 'bg-crm-warning-bg text-crm-warning-text', icon: Info },
+  PARTIAL: { label: 'Partially verified', className: 'bg-crm-warning-bg text-crm-warning-text', icon: Info },
   UNVERIFIED: { label: 'Unverified', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', icon: AlertTriangle },
-  EXPIRED_SOURCE: { label: 'Source expired', className: 'bg-amber-100 text-amber-700', icon: AlertTriangle },
-  CONFLICT_FOUND: { label: 'Conflict found', className: 'bg-red-100 text-red-700', icon: AlertTriangle },
-  REJECTED: { label: 'Rejected', className: 'bg-red-100 text-red-700', icon: AlertTriangle },
+  EXPIRED_SOURCE: { label: 'Source expired', className: 'bg-crm-warning-bg text-crm-warning-text', icon: AlertTriangle },
+  CONFLICT_FOUND: { label: 'Conflict found', className: 'bg-crm-danger-bg text-crm-danger-text', icon: AlertTriangle },
+  REJECTED: { label: 'Rejected', className: 'bg-crm-danger-bg text-crm-danger-text', icon: AlertTriangle },
 };
 
 function verificationMeta(value: string) {
@@ -107,7 +107,7 @@ function CourseCard({ course }: { course: MatchedCourse }) {
   const ranking = uni?.ranking ?? 0;
 
   return (
-    <div className="rounded-xl border border-[var(--alo-border)] bg-white p-5 flex flex-col gap-3 hover:border-blue-300 transition-colors">
+    <div className="rounded-xl border border-[var(--alo-border)] bg-white p-5 flex flex-col gap-3 hover:border-[var(--alo-brand-border)] transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="font-semibold text-[var(--alo-text)] leading-snug">{course.courseTitle}</h3>

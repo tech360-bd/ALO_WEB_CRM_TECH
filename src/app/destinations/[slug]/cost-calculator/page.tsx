@@ -34,7 +34,7 @@ export default async function CountryCostCalculatorPage({ params }: { params: Pr
 
         {/* Header Hero */}
         <div className="bg-white rounded-3xl p-8 border border-[var(--alo-border)] shadow-sm space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-crm-success-bg text-crm-success-text text-xs font-bold rounded-full border border-crm-success-border">
             <Calculator className="w-4 h-4" /> Financial Planning & Budget Guide
           </div>
           <h1 className="text-3xl font-extrabold text-[var(--alo-text)]">
@@ -55,7 +55,7 @@ export default async function CountryCostCalculatorPage({ params }: { params: Pr
 
           <div className="bg-white rounded-2xl border border-[var(--alo-border)] p-6 space-y-2">
             <span className="text-xs font-semibold text-[var(--alo-text-muted)]">Living Expenses</span>
-            <p className="text-xl font-bold text-emerald-600">{countryData.livingCost}</p>
+            <p className="text-xl font-bold text-crm-success-text">{countryData.livingCost}</p>
             <span className="text-[11px] text-[var(--alo-text-muted)]">Accommodation, food & transit</span>
           </div>
 
@@ -81,7 +81,7 @@ export default async function CountryCostCalculatorPage({ params }: { params: Pr
                 <p className="text-[var(--alo-body)]">Vibe: <strong>{city.vibe}</strong></p>
                 <div className="flex items-center justify-between pt-2 border-t border-[var(--alo-border)]">
                   <span className="text-[var(--alo-text-muted)]">Estimated Monthly Cost:</span>
-                  <span className="font-bold text-emerald-600">{city.livingCost}</span>
+                  <span className="font-bold text-crm-success-text">{city.livingCost}</span>
                 </div>
               </div>
             ))}

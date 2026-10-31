@@ -1472,7 +1472,7 @@ function ReviewJustificationDialog({
           </div>
 
           {/* Manager Review form */}
-          <div className="space-y-3 rounded-lg border border-[var(--alo-violet)]/30 bg-violet-50/40 p-3">
+          <div className="space-y-3 rounded-lg border border-[var(--alo-violet)]/30 bg-[var(--alo-brand-pale)]/40 p-3">
             <p className="caption-text text-[var(--alo-violet)]">Manager Review</p>
 
             <div className="space-y-2">

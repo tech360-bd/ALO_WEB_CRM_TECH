@@ -74,10 +74,10 @@ const EMPTY_PROFILE: Profile = {
 };
 
 const LABEL_STYLE: Record<string, string> = {
-  Eligible: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  Eligible: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
   'Likely Eligible': 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
-  'Need Review': 'bg-amber-50 text-amber-700 border-amber-200',
-  'Not Eligible': 'bg-red-50 text-red-700 border-red-200',
+  'Need Review': 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+  'Not Eligible': 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
   'Missing Information': 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 
@@ -316,8 +316,8 @@ export default function StudentCourseFinder() {
       </Card>
 
       {loadError && (
-        <Card className="rounded-2xl border-2 border-amber-200 bg-white p-10 text-center">
-          <AlertTriangle className="mx-auto mb-3 size-10 text-amber-500" />
+        <Card className="rounded-2xl border-2 border-crm-warning-border bg-white p-10 text-center">
+          <AlertTriangle className="mx-auto mb-3 size-10 text-crm-warning-text" />
           <p className="text-sm font-semibold text-[var(--alo-text)]">Course search unavailable</p>
           <p className="mx-auto mt-1 max-w-md text-xs text-[var(--alo-text-muted)]">{loadError}</p>
           <p className="mx-auto mt-2 max-w-md text-[11px] text-[var(--alo-text-muted)]">
@@ -413,7 +413,7 @@ export default function StudentCourseFinder() {
                             {eligibility.reasons.slice(0, 2).join(' • ') || 'No reasons recorded'}
                           </p>
                           {eligibility.missing.length > 0 && (
-                            <p className="text-amber-700">
+                            <p className="text-crm-warning-text">
                               <strong className="font-semibold">Missing:</strong>{' '}
                               {eligibility.missing.join(', ')}
                             </p>

@@ -161,7 +161,7 @@ export default function ProposalPanel() {
             Create proposal
           </Button>
         </div>
-        {actionError && <p className="mt-3 text-xs text-red-700">{actionError}</p>}
+        {actionError && <p className="mt-3 text-xs text-crm-danger-text">{actionError}</p>}
       </Card>
 
       {activeId && (
@@ -224,7 +224,7 @@ export default function ProposalPanel() {
                   </p>
                   <p className="text-[11px] text-[var(--alo-text-muted)]">{quality.data.report.draftLabel}</p>
                   {quality.data.requirements.verificationStatus !== 'VERIFIED_OFFICIAL' && (
-                    <p className="rounded-lg bg-amber-50 p-2 text-[11px] text-amber-800">
+                    <p className="rounded-lg bg-crm-warning-bg p-2 text-[11px] text-crm-warning-text">
                       This university&apos;s proposal requirements are not verified. Treat the document as a general draft
                       and check the official instructions before submitting.
                     </p>
@@ -232,7 +232,7 @@ export default function ProposalPanel() {
                   <ul className="max-h-64 space-y-1 overflow-y-auto">
                     {quality.data.report.checks.slice(0, 12).map((check, index) => (
                       <li key={`${check.code}-${index}`} className="text-[var(--alo-body)]">
-                        <span className={check.severity === 'ERROR' ? 'font-semibold text-red-700' : check.severity === 'WARNING' ? 'font-semibold text-amber-700' : 'text-[var(--alo-text-muted)]'}>
+                        <span className={check.severity === 'ERROR' ? 'font-semibold text-crm-danger-text' : check.severity === 'WARNING' ? 'font-semibold text-crm-warning-text' : 'text-[var(--alo-text-muted)]'}>
                           {check.severity}
                         </span>{' '}
                         {check.message}

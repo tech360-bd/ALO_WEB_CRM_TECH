@@ -86,11 +86,11 @@ const COUNTRY_FLAGS: Record<string, string> = {
 };
 
 const VISA_STAGE_COLORS: Record<string, string> = {
-  VISA_DOCUMENTS: "bg-amber-100 text-amber-700",
+  VISA_DOCUMENTS: "bg-crm-warning-bg text-crm-warning-text",
   VISA_SUBMITTED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   VISA_DECISION_PENDING: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  VISA_APPROVED: "bg-emerald-100 text-emerald-700",
-  VISA_REFUSED: "bg-red-100 text-red-700",
+  VISA_APPROVED: "bg-crm-success-bg text-crm-success-text",
+  VISA_REFUSED: "bg-crm-danger-bg text-crm-danger-text",
 };
 
 const VISA_STAGE_LABELS: Record<string, string> = {
@@ -110,14 +110,14 @@ const VISA_STAGES = [
 ];
 
 const CAS_BADGE: Record<string, string> = {
-  ISSUED: "bg-emerald-100 text-emerald-700",
-  PENDING: "bg-amber-100 text-amber-700",
+  ISSUED: "bg-crm-success-bg text-crm-success-text",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const INTERVIEW_BADGE: Record<string, string> = {
   NOT_SCHEDULED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  SCHEDULED: "bg-amber-100 text-amber-700",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
+  SCHEDULED: "bg-crm-warning-bg text-crm-warning-text",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
 };
 
 const INTERVIEW_LABEL: Record<string, string> = {
@@ -127,15 +127,15 @@ const INTERVIEW_LABEL: Record<string, string> = {
 };
 
 const DOC_BADGE: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   UPLOADED: "bg-sky-100 text-sky-700",
-  UNDER_REVIEW: "bg-violet-100 text-violet-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-red-100 text-red-700",
+  UNDER_REVIEW: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-danger-bg text-crm-danger-text",
 };
 
 const PRIORITY_BADGE: Record<string, string> = {
-  URGENT: "bg-red-100 text-red-700",
+  URGENT: "bg-crm-danger-bg text-crm-danger-text",
   HIGH: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
@@ -153,16 +153,16 @@ function riskCount(cases: VisaCase[], field: "financialRisk" | "studyGapRisk" | 
 
 function readinessColor(score: number | null) {
   if (score == null) return "text-[var(--alo-text-muted)]";
-  if (score >= 80) return "text-emerald-600";
-  if (score >= 60) return "text-amber-600";
-  return "text-red-600";
+  if (score >= 80) return "text-crm-success-text";
+  if (score >= 60) return "text-crm-warning-text";
+  return "text-crm-danger-text";
 }
 
 function readinessBg(score: number | null) {
   if (score == null) return "bg-[var(--alo-surface-muted)]";
-  if (score >= 80) return "bg-emerald-50";
-  if (score >= 60) return "bg-amber-50";
-  return "bg-red-50";
+  if (score >= 80) return "bg-crm-success-bg";
+  if (score >= 60) return "bg-crm-warning-bg";
+  return "bg-crm-danger-bg";
 }
 
 function isPast(dateStr: string | null) {
@@ -327,10 +327,10 @@ export function VisaDashboard() {
       <SectionCard title={title} icon={icon} description={desc}>
         <div className="space-y-3">
           {high > 0 && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-2.5">
+            <div className="rounded-lg border border-crm-danger-border bg-crm-danger-bg p-2.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-red-700">High Risk</span>
-                <span className="font-bold text-red-700 tabular-nums">{high}</span>
+                <span className="font-semibold text-crm-danger-text">High Risk</span>
+                <span className="font-bold text-crm-danger-text tabular-nums">{high}</span>
               </div>
               <div className="mt-1.5">
                 <MiniBar value={high} max={max} color="#EF4444" />
@@ -409,11 +409,11 @@ export function VisaDashboard() {
                 description="High priority, low readiness, or near deadlines"
               >
                 {urgentCases.length === 0 ? (
-                  <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-                    <Icon name="CheckCircle2" className="size-5 text-emerald-600" />
+                  <div className="flex items-center gap-3 rounded-xl border border-crm-success-border bg-crm-success-bg p-4">
+                    <Icon name="CheckCircle2" className="size-5 text-crm-success-text" />
                     <div>
-                      <p className="text-sm font-semibold text-emerald-800">All clear — no urgent cases</p>
-                      <p className="text-xs text-emerald-700">Every case is on track.</p>
+                      <p className="text-sm font-semibold text-crm-success-text">All clear — no urgent cases</p>
+                      <p className="text-xs text-crm-success-text">Every case is on track.</p>
                     </div>
                   </div>
                 ) : (
@@ -429,8 +429,8 @@ export function VisaDashboard() {
                             className={cn(
                               "flex flex-col gap-2 rounded-xl border-2 p-3 sm:flex-row sm:items-center sm:justify-between",
                               c.priority === "URGENT"
-                                ? "border-red-200 bg-red-50"
-                                : "border-amber-200 bg-amber-50"
+                                ? "border-crm-danger-border bg-crm-danger-bg"
+                                : "border-crm-warning-border bg-crm-warning-bg"
                             )}
                           >
                             <div className="min-w-0">
@@ -440,12 +440,12 @@ export function VisaDashboard() {
                                   {c.priority}
                                 </Badge>
                                 {lowScore && (
-                                  <Badge className="border-0 bg-red-100 text-red-700">
+                                  <Badge className="border-0 bg-crm-danger-bg text-crm-danger-text">
                                     AI {c.aiReadinessScore}
                                   </Badge>
                                 )}
                                 {(past || soon) && (
-                                  <Badge className={cn("border-0", past ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700")}>
+                                  <Badge className={cn("border-0", past ? "bg-crm-danger-bg text-crm-danger-text" : "bg-crm-warning-bg text-crm-warning-text")}>
                                     {past ? "Overdue" : "Soon"}
                                   </Badge>
                                 )}
@@ -459,7 +459,7 @@ export function VisaDashboard() {
                             </div>
                             <div className="flex shrink-0 items-center gap-2">
                               {c.deadline && (
-                                <span className={cn("text-xs font-medium", past ? "text-red-600" : "text-muted-foreground")}>
+                                <span className={cn("text-xs font-medium", past ? "text-crm-danger-text" : "text-muted-foreground")}>
                                   Due {fmtDate(c.deadline)}
                                 </span>
                               )}
@@ -685,7 +685,7 @@ export function VisaDashboard() {
                             </span>
                           </TableCell>
                           <TableCell>
-                            <span className={cn("text-xs font-medium", past ? "text-red-600" : "text-muted-foreground")}>
+                            <span className={cn("text-xs font-medium", past ? "text-crm-danger-text" : "text-muted-foreground")}>
                               {fmtDate(c.deadline)}
                             </span>
                           </TableCell>
@@ -822,7 +822,7 @@ export function VisaDashboard() {
                   <InfoRow
                     label="Deadline"
                     value={
-                      <span className={cn(isPast(detailsCase.deadline) && "font-semibold text-red-600")}>
+                      <span className={cn(isPast(detailsCase.deadline) && "font-semibold text-crm-danger-text")}>
                         {fmtDate(detailsCase.deadline)}
                       </span>
                     }
@@ -865,17 +865,17 @@ export function VisaDashboard() {
                         className={cn(
                           "rounded-lg border p-2 text-center",
                           r.value === "HIGH"
-                            ? "border-red-200 bg-red-50"
+                            ? "border-crm-danger-border bg-crm-danger-bg"
                             : r.value === "MEDIUM"
-                            ? "border-amber-200 bg-amber-50"
-                            : "border-emerald-200 bg-emerald-50"
+                            ? "border-crm-warning-border bg-crm-warning-bg"
+                            : "border-crm-success-border bg-crm-success-bg"
                         )}
                       >
                         <p className="text-[11px] font-medium text-muted-foreground">{r.label}</p>
                         <p
                           className={cn(
                             "mt-0.5 text-sm font-bold",
-                            r.value === "HIGH" ? "text-red-700" : r.value === "MEDIUM" ? "text-amber-700" : "text-emerald-700"
+                            r.value === "HIGH" ? "text-crm-danger-text" : r.value === "MEDIUM" ? "text-crm-warning-text" : "text-crm-success-text"
                           )}
                         >
                           {r.value || "—"}

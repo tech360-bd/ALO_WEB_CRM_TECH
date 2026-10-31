@@ -354,7 +354,7 @@ export default function MarketingAuditAccessView() {
         className={cn(
           'text-xs',
           isFull
-            ? 'bg-violet-100 text-violet-700 hover:bg-violet-100'
+            ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]'
             : 'bg-sky-100 text-sky-700 hover:bg-sky-100',
         )}
       >
@@ -366,9 +366,9 @@ export default function MarketingAuditAccessView() {
 
   const statusBadge = (status: string) => {
     const map: Record<string, { cls: string; label: string }> = {
-      ACTIVE: { cls: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100', label: 'Active' },
+      ACTIVE: { cls: 'bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg', label: 'Active' },
       REVOKED: { cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]', label: 'Revoked' },
-      SUSPENDED: { cls: 'bg-red-100 text-red-700 hover:bg-red-100', label: 'Suspended' },
+      SUSPENDED: { cls: 'bg-crm-danger-bg text-crm-danger-text hover:bg-crm-danger-bg', label: 'Suspended' },
     };
     const match = map[status] || { cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', label: status || 'Unknown' };
     return <Badge variant="secondary" className={cn('text-xs', match.cls)}>{match.label}</Badge>;
@@ -670,7 +670,7 @@ export default function MarketingAuditAccessView() {
                           <p className="text-destructive text-sm">{saveError}</p>
                         )}
                         {saveMessage && (
-                          <p className="text-sm text-emerald-600">{saveMessage}</p>
+                          <p className="text-sm text-crm-success-text">{saveMessage}</p>
                         )}
                       </div>
 

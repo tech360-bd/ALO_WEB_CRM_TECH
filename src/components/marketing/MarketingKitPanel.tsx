@@ -136,7 +136,7 @@ function CopyButton({
  aria-label={label ? `${isCopied ? 'Copied' : 'Copy'} ${label}` : undefined}
  onClick={() => onCopy(text, id)}
     >
-      {isCopied ? <Check className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" /> : <Clipboard className="h-3.5 w-3.5" aria-hidden="true" />}
+      {isCopied ? <Check className="h-3.5 w-3.5 text-crm-success-text" aria-hidden="true" /> : <Clipboard className="h-3.5 w-3.5" aria-hidden="true" />}
       {isCopied ? 'Copied' : 'Copy'}
     </Button>
   );
@@ -224,7 +224,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
           <p className="mt-1 max-w-3xl text-xs text-[var(--alo-text-muted)]">
             Campaign kits, email sequences, lead magnets, SMS templates, a social calendar, and a CRO checklist — copy individual assets or download the complete library.
           </p>
-          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800">
+          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-crm-warning-border bg-crm-warning-bg px-2.5 py-1 text-[11px] font-semibold text-crm-warning-text">
             <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
             Draft material — verify facts and get human approval before live use.
           </p>
@@ -312,7 +312,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-sm font-bold text-[var(--alo-text)]">{kit.name}</h3>
-                  <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-amber-800">
+                  <span className="rounded-full border border-crm-warning-border bg-crm-warning-bg px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-crm-warning-text">
                     Draft only · not approved
                   </span>
                 </div>
@@ -368,7 +368,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             <CampaignCreativeComposer key={kit.id} kit={kit} />
 
             <section
-              className="mt-5 rounded-2xl border border-amber-200 bg-white p-4"
+              className="mt-5 rounded-2xl border border-crm-warning-border bg-white p-4"
               aria-labelledby={`${instanceId}-review-heading-${kit.id}`}
             >
               <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
@@ -404,7 +404,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                   );
                 })}
               </ul>
-              <p className="mt-3 text-[11px] leading-relaxed text-amber-800">
+              <p className="mt-3 text-[11px] leading-relaxed text-crm-warning-text">
                 Checklist progress is kept only in this page view. It does not create an approval record or schedule, send, or publish this campaign.
               </p>
             </section>
@@ -511,7 +511,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 <ul className="mt-3 space-y-1 text-xs text-[var(--alo-body)]">
                   {magnet.deliverable.map((item) => (
                     <li key={item} className="flex items-start gap-1.5">
-                      <Check className="mt-0.5 h-3 w-3 shrink-0 text-emerald-600" />
+                      <Check className="mt-0.5 h-3 w-3 shrink-0 text-crm-success-text" />
                       {item}
                     </li>
                   ))}
@@ -551,7 +551,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
                 />
               </div>
               <p className="rounded-xl bg-[var(--alo-page)] p-3 text-xs leading-relaxed text-[var(--alo-body)]">{template.body}</p>
-              <p className="mt-2 flex items-start gap-1.5 text-[11px] text-amber-700">
+              <p className="mt-2 flex items-start gap-1.5 text-[11px] text-crm-warning-text">
                 <MessageCircle className="mt-0.5 h-3 w-3 shrink-0" />
                 {template.compliance}
               </p>
@@ -607,7 +607,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             <article key={item.id} className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F0FDF4] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-emerald-700">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F0FDF4] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-crm-success-text">
                     <TrendingUp className="h-3 w-3" />
                     {item.page}
                   </span>

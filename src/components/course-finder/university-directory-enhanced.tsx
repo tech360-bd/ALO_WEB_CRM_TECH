@@ -105,9 +105,9 @@ const SORT_OPTIONS = [
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 function getTypeBadgeClasses(type: string | null | undefined): string {
   switch (type?.toUpperCase()) {
-    case 'PUBLIC': return 'bg-emerald-100 text-emerald-700';
-    case 'PRIVATE': return 'bg-violet-100 text-violet-700';
-    case 'SPECIALISED': return 'bg-amber-100 text-amber-700';
+    case 'PUBLIC': return 'bg-crm-success-bg text-crm-success-text';
+    case 'PRIVATE': return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]';
+    case 'SPECIALISED': return 'bg-crm-warning-bg text-crm-warning-text';
     default: return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   }
 }
@@ -560,7 +560,7 @@ function UniversityCard({
         <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs">
           {/* Ranking */}
           <div className="flex items-center gap-1.5">
-            <Trophy className="size-3.5 text-amber-500 flex-shrink-0" />
+            <Trophy className="size-3.5 text-crm-warning-text flex-shrink-0" />
             {ranking.show ? (
               <span className="font-medium text-[var(--alo-body)] truncate" title={ranking.label}>
                 {ranking.label}
@@ -595,7 +595,7 @@ function UniversityCard({
 
         {/* Scholarship Badge */}
         {uni.scholarshipAvailable && (
-          <Badge className="bg-amber-50 text-amber-700 border border-amber-200 text-xs self-start">
+          <Badge className="bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border text-xs self-start">
             <Award className="size-3 mr-1" />
             Scholarships Available
           </Badge>
