@@ -69,9 +69,9 @@ export default async function CountryVisaGuidePage({ params }: { params: Promise
         <div className="bg-white rounded-2xl p-6 border border-[var(--alo-border)] space-y-4">
           <h2 className="text-lg font-bold text-[var(--alo-text)]">Work Rights & Post-Study Career Route</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-1">
-              <span className="font-bold text-emerald-800">Term-Time Work Allowance:</span>
-              <p className="text-emerald-700">{countryData.workRights}</p>
+            <div className="p-4 bg-crm-success-bg rounded-xl border border-crm-success-border space-y-1">
+              <span className="font-bold text-crm-success-text">Term-Time Work Allowance:</span>
+              <p className="text-crm-success-text">{countryData.workRights}</p>
             </div>
             <div className="p-4 bg-[var(--alo-brand-pale)] rounded-xl border border-[var(--alo-border)] space-y-1">
               <span className="font-bold text-[var(--alo-brand-deep)]">Living Costs & Proof of Funds:</span>

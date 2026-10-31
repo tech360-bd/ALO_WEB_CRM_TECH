@@ -292,7 +292,7 @@ export function InternationalOfficerDashboard() {
                     <div className="flex items-start justify-between gap-2">
                       <div><p className="font-semibold text-sm text-[var(--alo-text)]">{i+1}. {m.title}</p><p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{m.desc}</p></div>
                       <div className="flex flex-col gap-1 items-end">
-                        <Badge variant="outline" className="text-[11px] bg-emerald-50 text-emerald-700">{m.success}</Badge>
+                        <Badge variant="outline" className="text-[11px] bg-crm-success-bg text-crm-success-text">{m.success}</Badge>
                         <Badge variant="outline" className="text-[11px]">{m.time}</Badge>
                       </div>
                     </div>
@@ -312,12 +312,12 @@ export function InternationalOfficerDashboard() {
                       <div className="size-8 rounded-lg bg-[var(--alo-brand-pale)] flex items-center justify-center text-[var(--alo-brand)] font-bold text-xs">{c.slug.toUpperCase().slice(0,2)}</div>
                       <div><p className="font-medium text-sm text-[var(--alo-text)]">{c.label}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.region} • {c.universities} universities</p></div>
                     </div>
-                    <Badge variant="outline" className={cn("text-[11px]", c.priority==="High" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-700 border-amber-200")}>{c.priority}</Badge>
+                    <Badge variant="outline" className={cn("text-[11px]", c.priority==="High" ? "bg-crm-success-bg text-crm-success-text border-crm-success-border" : "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border")}>{c.priority}</Badge>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/60 p-3">
-                <p className="font-semibold text-sm text-[var(--alo-text)] flex items-center gap-1"><Icon name="Lightbulb" className="size-4 text-amber-600" />Business Expansion Tips</p>
+              <div className="mt-4 rounded-xl border border-crm-warning-border bg-crm-warning-bg/60 p-3">
+                <p className="font-semibold text-sm text-[var(--alo-text)] flex items-center gap-1"><Icon name="Lightbulb" className="size-4 text-crm-warning-text" />Business Expansion Tips</p>
                 <ul className="mt-2 space-y-1 text-xs text-[var(--alo-text-secondary)]">
                   <li>• Focus on UK, Canada, Australia first — fastest agreement turnaround (COMMISSION type)</li>
                   <li>• Leverage research data: show university ranking, courses, scholarships from DigitalTwin</li>
@@ -369,7 +369,7 @@ export function InternationalOfficerDashboard() {
                       <p className="text-sm text-[var(--alo-body)]">{r.title}</p>
                       <p className="text-xs text-[var(--alo-text-muted)] line-clamp-2">{r.description}</p>
                       <div className="flex gap-1 flex-wrap"><Badge variant="outline" className="text-[11px]">{r.activityType}</Badge><Badge variant="outline" className="text-[11px]">{r.priority}</Badge><Badge variant="outline" className="text-[11px]">{r.countrySlug}</Badge></div>
-                      {r.nextAction && <p className="text-xs bg-amber-50 border border-amber-200 rounded-md p-2"><span className="font-semibold">Next:</span> {r.nextAction}</p>}
+                      {r.nextAction && <p className="text-xs bg-crm-warning-bg border border-crm-warning-border rounded-md p-2"><span className="font-semibold">Next:</span> {r.nextAction}</p>}
                       <div className="flex justify-between text-[11px] text-[var(--alo-text-muted)]"><span>{r.assignedOfficerName || "Unassigned"}</span><span>{new Date(r.createdAt).toLocaleDateString()}</span></div>
                     </CardContent>
                   </Card>
@@ -386,7 +386,7 @@ export function InternationalOfficerDashboard() {
               <div className="space-y-2">
                 {communications.map((c) => (
                   <div key={c.id} className="rounded-xl border p-3 bg-white">
-                    <div className="flex justify-between gap-2"><div><p className="font-medium text-sm">{c.universityName} — {c.subject}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.contactName} • {c.contactEmail} • {c.communicationType} • {c.direction}</p><p className="text-xs text-[var(--alo-body)] mt-1 line-clamp-2">{c.body.slice(0,200)}</p></div><Badge variant="outline" className={cn("h-fit text-[11px]", c.status==="SENT" ? "bg-emerald-50 text-emerald-700" : c.status==="REPLIED" ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" : "bg-[var(--alo-page)]")}>{c.status}</Badge></div>
+                    <div className="flex justify-between gap-2"><div><p className="font-medium text-sm">{c.universityName} — {c.subject}</p><p className="text-xs text-[var(--alo-text-muted)]">{c.contactName} • {c.contactEmail} • {c.communicationType} • {c.direction}</p><p className="text-xs text-[var(--alo-body)] mt-1 line-clamp-2">{c.body.slice(0,200)}</p></div><Badge variant="outline" className={cn("h-fit text-[11px]", c.status==="SENT" ? "bg-crm-success-bg text-crm-success-text" : c.status==="REPLIED" ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" : "bg-[var(--alo-page)]")}>{c.status}</Badge></div>
                   </div>
                 ))}
               </div>
@@ -415,7 +415,7 @@ export function InternationalOfficerDashboard() {
                 {agreements.map((a) => (
                   <div key={a.id} className="rounded-xl border p-3 bg-white flex justify-between">
                     <div><p className="font-medium text-sm">{a.agreementCode} — {a.universityName}</p><p className="text-xs text-[var(--alo-text-muted)]">{a.partnershipType} • {a.countrySlug} • {a.contactName} • {a.contactEmail}</p></div>
-                    <Badge variant="outline" className={cn("h-fit text-[11px]", a.status==="ACTIVE" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : a.status==="PENDING" ? "bg-amber-50 text-amber-700" : "bg-[var(--alo-page)]")}>{a.status}</Badge>
+                    <Badge variant="outline" className={cn("h-fit text-[11px]", a.status==="ACTIVE" ? "bg-crm-success-bg text-crm-success-text border-crm-success-border" : a.status==="PENDING" ? "bg-crm-warning-bg text-crm-warning-text" : "bg-[var(--alo-page)]")}>{a.status}</Badge>
                   </div>
                 ))}
               </div>
@@ -425,18 +425,18 @@ export function InternationalOfficerDashboard() {
 
         {/* Business Strategy */}
         <TabsContent value="strategy" className="space-y-4">
-          <SectionCard title="Partnership Business Strategy" description="Clearly outline business strategy regarding partnerships — best methods and locations for rapidly establishing partnerships with universities. How to communicate with universities, leverage research data, expand business." icon="MapPinned" action={<Button onClick={() => setStrategyFormOpen(true)} className="h-9 bg-amber-600 text-white hover:bg-amber-700"><Icon name="Plus" className="size-4" />New Strategy</Button>}>
+          <SectionCard title="Partnership Business Strategy" description="Clearly outline business strategy regarding partnerships — best methods and locations for rapidly establishing partnerships with universities. How to communicate with universities, leverage research data, expand business." icon="MapPinned" action={<Button onClick={() => setStrategyFormOpen(true)} className="h-9 bg-[var(--alo-warning)] text-white hover:bg-[var(--alo-warning)]"><Icon name="Plus" className="size-4" />New Strategy</Button>}>
             {strategies.length===0 ? (
               <div className="space-y-4">
-                <div className="rounded-xl border-2 border-dashed border-amber-200 bg-amber-50/30 p-6 text-center">
-                  <Icon name="MapPinned" className="size-10 mx-auto text-amber-600 mb-2" />
+                <div className="rounded-xl border-2 border-dashed border-crm-warning-border bg-crm-warning-bg/30 p-6 text-center">
+                  <Icon name="MapPinned" className="size-10 mx-auto text-crm-warning-text mb-2" />
                   <p className="font-semibold text-[var(--alo-text)]">No business strategy documented yet</p>
                   <p className="text-sm text-[var(--alo-text-muted)] mt-1">Create your first strategy outlining best methods and locations for rapid partnerships</p>
-                  <Button onClick={() => setStrategyFormOpen(true)} className="mt-3 h-9 bg-amber-600 text-white">Create Strategy</Button>
+                  <Button onClick={() => setStrategyFormOpen(true)} className="mt-3 h-9 bg-[var(--alo-warning)] text-white">Create Strategy</Button>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                   <div className="rounded-xl border bg-white p-4">
-                    <h4 className="font-bold text-sm flex items-center gap-2"><Icon name="Zap" className="size-4 text-amber-600" />Default Rapid Partnership Playbook (Template)</h4>
+                    <h4 className="font-bold text-sm flex items-center gap-2"><Icon name="Zap" className="size-4 text-crm-warning-text" />Default Rapid Partnership Playbook (Template)</h4>
                     <div className="mt-3 space-y-3 text-xs text-[var(--alo-body)]">
                       <div><p className="font-semibold">Best Methods:</p><ul className="list-disc pl-4 space-y-1 mt-1"><li>Direct outreach to International Office via OfficialEmail + B2BContact (2-5 days)</li><li>Agent warm intro via existing B2BContact type=AGENT (1-3 days, highest success)</li><li>Commission-only fast track: UniversityAgreement type=COMMISSION, 10-15% commission, zero upfront (2-7 days)</li><li>Education fairs ICEF/NAFSA/EAIE — pre-book meetings (1-4 weeks)</li><li>Digital research leverage: show UniversityDigitalTwin + ResearchEvidence to prove value</li></ul></div>
                       <div><p className="font-semibold">Best Locations:</p><ul className="list-disc pl-4 space-y-1 mt-1"><li>UK (130 unis, high demand, easy COMMISSION agreements, Tier 4 visa)</li><li>Canada (200 unis, SDS, high commission, fast approval)</li><li>Australia (100 unis, GTE, high value)</li><li>USA (4000 unis, but complex — start with community colleges & state unis)</li><li>Ireland, Germany, Netherlands (medium, growing demand, EU post-study work)</li></ul></div>
@@ -450,7 +450,7 @@ export function InternationalOfficerDashboard() {
             ) : (
               <div className="grid grid-cols-1 gap-4">
                 {strategies.map((s) => (
-                  <Card key={s.id} className="rounded-xl border"><CardContent className="pt-4 space-y-3"><div className="flex justify-between"><p className="font-bold text-sm">{s.title}</p><Badge variant="outline" className="text-[11px]">{s.status}</Badge></div><p className="text-xs text-[var(--alo-text-muted)]">{s.countrySlug} • {s.region} • {s.strategyType}</p><p className="text-sm text-[var(--alo-body)]">{s.description}</p><div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"><div className="rounded-lg border p-2 bg-amber-50/50"><p className="font-semibold">Best Methods</p><p className="mt-1 whitespace-pre-wrap">{s.bestMethods.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-[var(--alo-brand-pale)]/50"><p className="font-semibold">Best Locations</p><p className="mt-1 whitespace-pre-wrap">{s.bestLocations.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-emerald-50/50"><p className="font-semibold">Contact Strategy</p><p className="mt-1 whitespace-pre-wrap">{s.contactStrategy.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-violet-50/50"><p className="font-semibold">Research Leverage & Expansion</p><p className="mt-1 whitespace-pre-wrap">{(s.researchLeverage + "\n" + s.businessExpansion).slice(0,500)}</p></div></div></CardContent></Card>
+                  <Card key={s.id} className="rounded-xl border"><CardContent className="pt-4 space-y-3"><div className="flex justify-between"><p className="font-bold text-sm">{s.title}</p><Badge variant="outline" className="text-[11px]">{s.status}</Badge></div><p className="text-xs text-[var(--alo-text-muted)]">{s.countrySlug} • {s.region} • {s.strategyType}</p><p className="text-sm text-[var(--alo-body)]">{s.description}</p><div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"><div className="rounded-lg border p-2 bg-crm-warning-bg/50"><p className="font-semibold">Best Methods</p><p className="mt-1 whitespace-pre-wrap">{s.bestMethods.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-[var(--alo-brand-pale)]/50"><p className="font-semibold">Best Locations</p><p className="mt-1 whitespace-pre-wrap">{s.bestLocations.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-crm-success-bg/50"><p className="font-semibold">Contact Strategy</p><p className="mt-1 whitespace-pre-wrap">{s.contactStrategy.slice(0,500)}</p></div><div className="rounded-lg border p-2 bg-[var(--alo-brand-pale)]/50"><p className="font-semibold">Research Leverage & Expansion</p><p className="mt-1 whitespace-pre-wrap">{(s.researchLeverage + "\n" + s.businessExpansion).slice(0,500)}</p></div></div></CardContent></Card>
                 ))}
               </div>
             )}
@@ -522,7 +522,7 @@ export function InternationalOfficerDashboard() {
             <div className="grid gap-1"><Label>Research Leverage (how to leverage research data)</Label><Textarea value={strategyForm.researchLeverage} onChange={(e) => setStrategyForm({ ...strategyForm, researchLeverage: e.target.value })} rows={3} /></div>
             <div className="grid gap-1"><Label>Business Expansion (how to expand business through partnerships)</Label><Textarea value={strategyForm.businessExpansion} onChange={(e) => setStrategyForm({ ...strategyForm, businessExpansion: e.target.value })} rows={3} /></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setStrategyFormOpen(false)}>Cancel</Button><Button onClick={handleCreateStrategy} className="bg-amber-600 text-white hover:bg-amber-700">Create Strategy</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setStrategyFormOpen(false)}>Cancel</Button><Button onClick={handleCreateStrategy} className="bg-[var(--alo-warning)] text-white hover:bg-[var(--alo-warning)]">Create Strategy</Button></DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

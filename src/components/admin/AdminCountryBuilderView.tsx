@@ -176,12 +176,12 @@ export default function AdminCountryBuilderView() {
           <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Countries: UK, Canada, Australia, USA, Ireland, New Zealand, Dubai/UAE — same premium design system, ALL CONTENT country-specific, NEVER copy UK rules into another country.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button onClick={() => handleSimulateCsvImport('country_pages.csv')} className="bg-emerald-600 hover:bg-emerald-700 text-white h-11 text-xs"><FileSpreadsheet className="w-4 h-4 mr-1" />CSV Facts Import</Button>
+          <Button onClick={() => handleSimulateCsvImport('country_pages.csv')} className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white h-11 text-xs"><FileSpreadsheet className="w-4 h-4 mr-1" />CSV Facts Import</Button>
           <Button onClick={() => { setSelectedCountry(null); setFormData({ name: '', slug: '', code: '', flag: '🌐', capital: '', currency: '', heroTitle: '', heroSubtitle: '', overview: '', whyStudySummary: '', visaType: '', tuitionRange: '', livingCost: '', workRights: '', seoTitle: '', seoDescription: '', visaOverview: '', costOfLiving: '' }); setIsEditing(true); setActiveTab('Overview'); }} className="bg-[var(--alo-brand)] text-white h-11 text-xs"><Plus className="w-4 h-4 mr-1" />Add Destination</Button>
         </div>
       </div>
 
-      {csvUploadSuccess && <Card className="p-4 bg-emerald-50 border-emerald-200 rounded-2xl text-xs text-emerald-700 flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500" />CSV Country Data Processed and Verified successfully — Total rows, Valid rows, Invalid rows, Duplicate rows, Warnings — do not import invalid rows automatically, save errors.</Card>}
+      {csvUploadSuccess && <Card className="p-4 bg-crm-success-bg border-crm-success-border rounded-2xl text-xs text-crm-success-text flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-crm-success-text" />CSV Country Data Processed and Verified successfully — Total rows, Valid rows, Invalid rows, Duplicate rows, Warnings — do not import invalid rows automatically, save errors.</Card>}
 
       <div className="grid lg:grid-cols-12 gap-6">
         <div className="lg:col-span-5 space-y-4">

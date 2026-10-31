@@ -373,7 +373,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
               We will log your interest for this course and a counselor will call you back.
             </p>
             {leadState === 'sent' ? (
-              <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+              <div className="mt-5 rounded-xl border border-crm-success-border bg-crm-success-bg p-4 text-sm text-crm-success-text">
                 <CheckCircle2 className="mr-1 inline h-4 w-4" />
                 Thank you — your details are with the ALO counseling team. Register any time to open the application.
               </div>
@@ -431,7 +431,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
                   </label>
                 </div>
                 {leadState === 'error' && (
-                  <p className="mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+                  <p className="mt-3 flex items-center gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-xs text-crm-danger-text">
                     <AlertTriangle className="h-4 w-4" /> {leadError}
                   </p>
                 )}
@@ -458,15 +458,15 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
           </p>
 
           {needsProfile && (
-            <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
-              <p className="flex items-start gap-2 text-sm font-semibold text-amber-900">
+            <div className="mt-5 rounded-xl border border-crm-warning-border bg-crm-warning-bg p-4">
+              <p className="flex items-start gap-2 text-sm font-semibold text-crm-warning-text">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 Your application profile (Form B) is {readiness?.percent ?? 0}% complete. We will not create an application until it is finished — this is the rule for every Apply Now on the site.
               </p>
               <ul className="mt-3 space-y-2">
                 {(readiness?.missing || []).map((section) => (
                   <li key={section.key}>
-                    <Link href={section.href} className="flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm font-semibold text-alo-brand hover:border-alo-cta hover:text-alo-cta">
+                    <Link href={section.href} className="flex items-center justify-between gap-3 rounded-lg border border-crm-warning-border bg-white px-3 py-2 text-sm font-semibold text-alo-brand hover:border-alo-cta hover:text-alo-cta">
                       <span>{section.label}</span>
                       <span className="inline-flex items-center gap-1 text-xs font-bold text-alo-cta">Complete <ArrowRight className="h-3 w-3" /></span>
                     </Link>
@@ -484,7 +484,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
           )}
 
           {readinessError && !readiness && (
-            <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            <p className="mt-4 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-xs text-crm-danger-text">
               {readinessError} — you can still submit; the server re-checks before creating anything.
             </p>
           )}
@@ -550,7 +550,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
           </p>
 
           {result && (
-            <div className={`mt-5 rounded-xl border p-4 text-sm ${result.ok ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-red-200 bg-red-50 text-red-800'}`}>
+            <div className={`mt-5 rounded-xl border p-4 text-sm ${result.ok ? 'border-crm-success-border bg-crm-success-bg text-crm-success-text' : 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text'}`}>
               {result.ok ? (
                 <>
                   <p className="flex items-start gap-2 font-semibold">

@@ -111,7 +111,7 @@ export default function MasterCountryDestinationView({
     setEligibilityResult({
       status: 'Eligible',
       label: 'High Admission Eligibility',
-      badgeColor: 'bg-emerald-50 text-emerald-800 border-emerald-300',
+      badgeColor: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
       recommendations: [
         `Direct admission available for ${calcLevel} in ${countryData.name}.`,
         `Eligible for verified partial scholarships up to £3,000 / $4,000.`,
@@ -182,7 +182,7 @@ export default function MasterCountryDestinationView({
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-full text-xs font-bold border border-[var(--alo-border)]">
                 <span className="text-lg">{countryData.flag}</span>
                 <span className="tracking-wider uppercase">STUDY IN {countryData.name}</span>
-                <span className="bg-emerald-100 text-emerald-800 text-[11px] px-2 py-0.5 rounded-full font-extrabold">✓ Verified 2026</span>
+                <span className="flex items-center gap-1 bg-crm-success-bg text-crm-success-text border border-crm-success-border text-[11px] px-2 py-0.5 rounded-full font-extrabold"><CheckCircle2 className="w-3 h-3 shrink-0" /> Verified 2026</span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[var(--alo-text)] tracking-tight leading-[1.15]">
@@ -217,7 +217,7 @@ export default function MasterCountryDestinationView({
                   href="https://wa.me/8801805020101"
                   target="_blank"
                   rel="noreferrer"
-                  className="h-12 px-5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition shadow-sm"
+                  className="h-12 px-5 bg-[var(--alo-whatsapp)] text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition hover:opacity-90 shadow-sm"
                 >
                   <MessageSquare className="w-4 h-4" /> WhatsApp 01805020101
                 </a>
@@ -293,10 +293,10 @@ export default function MasterCountryDestinationView({
             <a href="#entry-requirements" className="px-4 py-2 rounded-xl hover:bg-[var(--alo-surface-muted)] shrink-0 transition">
               Requirements
             </a>
-            <a href="#visa-process" className="px-4 py-2 rounded-xl hover:bg-[var(--alo-surface-muted)] shrink-0 transition text-amber-700">
+            <a href="#visa-process" className="px-4 py-2 rounded-xl hover:bg-[var(--alo-surface-muted)] shrink-0 transition text-[var(--alo-brand)] hover:text-[var(--alo-brand-hover)]">
               Visa Process
             </a>
-            <a href="#work-rights" className="px-4 py-2 rounded-xl hover:bg-[var(--alo-surface-muted)] shrink-0 transition text-emerald-700">
+            <a href="#work-rights" className="px-4 py-2 rounded-xl hover:bg-[var(--alo-surface-muted)] shrink-0 transition text-[var(--alo-brand)] hover:text-[var(--alo-brand-hover)]">
               Work Rights
             </a>
             <a href="#scholarships" className="px-4 py-2 rounded-xl hover:bg-[var(--alo-surface-muted)] shrink-0 transition">
@@ -335,7 +335,7 @@ export default function MasterCountryDestinationView({
               </p>
               <div className="p-4 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] text-xs text-[var(--alo-body)] space-y-2">
                 <div className="font-bold text-[var(--alo-brand)] flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" /> ALO Counselor Guidance for Bangladesh:
+                  <ShieldCheck className="w-4 h-4 text-[var(--alo-success)]" /> ALO Counselor Guidance for Bangladesh:
                 </div>
                 <p className="leading-relaxed">
                   {countryData.whyStudySummary}
@@ -403,7 +403,7 @@ export default function MasterCountryDestinationView({
                   Pathway {idx + 1}
                 </span>
                 <h4 className="font-bold text-sm text-[var(--alo-text)]">{path.fromLevel}</h4>
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-600">
+                <div className="flex items-center gap-2 text-xs font-bold text-[var(--alo-brand)]">
                   <ChevronRight className="w-4 h-4" /> {path.toPathway}
                 </div>
                 <p className="text-xs text-[var(--alo-text-muted)] leading-relaxed">{path.description}</p>
@@ -581,13 +581,13 @@ export default function MasterCountryDestinationView({
                   <span className="text-[var(--alo-brand-pale)]">Estimated Living Expenses:</span>
                   <span className="font-bold text-sm">{countryData.currency} {estimatedLiving.toLocaleString()}</span>
                 </div>
-                <div className="border-t border-white/20 pt-2 flex justify-between text-base font-black text-amber-300">
+                <div className="border-t border-white/20 pt-2 flex justify-between text-base font-black text-crm-warning-text">
                   <span>Total First Year Cost:</span>
                   <span>৳ {totalCostBdt.toLocaleString()} BDT</span>
                 </div>
                 <div className="p-3 bg-white/10 rounded-xl space-y-1">
                   <span className="text-[var(--alo-brand-pale)] font-semibold">Estimated Bank Statement Requirement:</span>
-                  <p className="text-sm font-black text-emerald-300">৳ {bankStatementBdt.toLocaleString()} BDT</p>
+                  <p className="text-sm font-black text-[var(--alo-brand)]">৳ {bankStatementBdt.toLocaleString()} BDT</p>
                 </div>
               </div>
             </div>
@@ -626,7 +626,7 @@ export default function MasterCountryDestinationView({
 
               <div className="bg-white p-6 rounded-2xl border border-[var(--alo-border)] shadow-sm space-y-4 text-xs">
                 <div className="flex items-center gap-2 font-bold text-sm text-[var(--alo-brand)]">
-                  <Sparkles className="w-4 h-4 text-amber-500" /> Instant AI Eligibility Checker
+                  <Sparkles className="w-4 h-4 text-crm-warning-text" /> Instant AI Eligibility Checker
                 </div>
 
                 <div className="space-y-3">
@@ -716,7 +716,7 @@ export default function MasterCountryDestinationView({
               </div>
               <div className="space-y-1">
                 <span className="text-[var(--alo-text-muted)] font-semibold">Post-Study Work Route:</span>
-                <p className="text-sm font-black text-emerald-700">{rule.postStudyRoute}</p>
+                <p className="text-sm font-black text-[var(--alo-body)]">{rule.postStudyRoute}</p>
               </div>
             </div>
           ))}
@@ -756,9 +756,9 @@ export default function MasterCountryDestinationView({
           </div>
 
           {leadSuccess ? (
-            <div className="p-8 bg-emerald-50 border border-emerald-300 rounded-2xl text-center space-y-3">
-              <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-              <h3 className="text-xl font-bold text-emerald-900">Inquiry Registered Successfully!</h3>
+            <div className="p-8 bg-crm-success-bg border border-crm-success-border rounded-2xl text-center space-y-3">
+              <CheckCircle2 className="w-12 h-12 text-crm-success-text mx-auto" />
+              <h3 className="text-xl font-bold text-crm-success-text">Inquiry Registered Successfully!</h3>
               <p className="text-xs text-[var(--alo-body)]">Our Senior {countryData.name} Admissions Counselor will contact you on WhatsApp shortly.</p>
             </div>
           ) : (

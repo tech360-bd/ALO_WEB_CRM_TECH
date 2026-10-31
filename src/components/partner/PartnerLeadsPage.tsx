@@ -201,11 +201,11 @@ export default function PartnerLeadsPage() {
             <div className="space-y-4 pt-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="leadName">Full Name <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="leadName">Full Name <span className="text-crm-danger-text">*</span></Label>
                   <Input id="leadName" placeholder="Student full name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="leadPhone">Phone <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="leadPhone">Phone <span className="text-crm-danger-text">*</span></Label>
                   <Input id="leadPhone" placeholder="+880 1XXX-XXXXXX" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
                 </div>
                 <div className="space-y-2">
@@ -213,7 +213,7 @@ export default function PartnerLeadsPage() {
                   <Input id="leadEmail" type="email" placeholder="student@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="leadDest">Destination <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="leadDest">Destination <span className="text-crm-danger-text">*</span></Label>
                   <Select value={form.destination} onValueChange={(v) => setForm({ ...form, destination: v })}>
                     <SelectTrigger id="leadDest"><SelectValue placeholder="Select country" /></SelectTrigger>
                     <SelectContent>
@@ -257,9 +257,9 @@ export default function PartnerLeadsPage() {
       </div>
 
       {loadError && (
-        <Card className="border-amber-200 bg-amber-50">
+        <Card className="border-crm-warning-border bg-crm-warning-bg">
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
-            <p className="text-sm text-amber-900">{loadError}</p>
+            <p className="text-sm text-crm-warning-text">{loadError}</p>
             <Button variant="outline" size="sm" onClick={fetchLeads} disabled={loading}>Retry</Button>
           </CardContent>
         </Card>
@@ -281,13 +281,13 @@ export default function PartnerLeadsPage() {
         </Card>
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><MessageSquare className="w-4 h-4 text-amber-500" /><span className="text-xs text-alo-text-muted">Contacted</span></div>
+            <div className="flex items-center gap-2 mb-1"><MessageSquare className="w-4 h-4 text-crm-warning-text" /><span className="text-xs text-alo-text-muted">Contacted</span></div>
             <p className="text-2xl font-bold text-alo-text">{statusCounts.contacted}</p>
           </CardContent>
         </Card>
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 mb-1"><GraduationCap className="w-4 h-4 text-emerald-500" /><span className="text-xs text-alo-text-muted">Converted</span></div>
+            <div className="flex items-center gap-2 mb-1"><GraduationCap className="w-4 h-4 text-crm-success-text" /><span className="text-xs text-alo-text-muted">Converted</span></div>
             <p className="text-2xl font-bold text-alo-text">{statusCounts.converted}</p>
           </CardContent>
         </Card>

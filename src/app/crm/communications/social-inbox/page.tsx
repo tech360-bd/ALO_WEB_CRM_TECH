@@ -67,14 +67,14 @@ export default function SocialInboxPage() {
                   </div>
                   <div className="text-[11px] text-[var(--alo-text-muted)] mt-1">{it.attachmentUrl ? `Attachment: ${it.attachmentUrl}` : '—'} • Intent: {it.intent} • {new Date(it.createdAt).toLocaleString()}</div>
                 </div>
-                <Badge className={`text-[11px] ${it.status==='replied'?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-700'}`}>{it.status}</Badge>
+                <Badge className={`text-[11px] ${it.status==='replied'?'bg-crm-success-bg text-crm-success-text':'bg-crm-warning-bg text-crm-warning-text'}`}>{it.status}</Badge>
               </div>
               <div className="flex flex-wrap gap-1.5 mt-2">
                 <Button size="sm" variant="outline" className="h-6 text-[11px]" disabled={busyId === it.id} onClick={()=>act(it.id,'reply')}><FileText className="w-3 h-3 mr-1"/>Save Reply Draft</Button>
                 <Button size="sm" variant="outline" className="h-6 text-[11px]" disabled title="Official provider moderation is not configured"><EyeOff className="w-3 h-3 mr-1"/>Hide (Unavailable)</Button>
                 <Button size="sm" variant="outline" className="h-6 text-[11px]" disabled={busyId === it.id} onClick={()=>act(it.id,'mark_spam')}><Flag className="w-3 h-3 mr-1"/>Mark CRM Spam</Button>
                 <Button size="sm" variant="outline" className="h-6 text-[11px]" disabled={busyId === it.id} onClick={()=>act(it.id,'create_lead')}><UserPlus className="w-3 h-3 mr-1"/>Create Lead</Button>
-                <Button size="sm" variant="outline" className="h-6 text-[11px] bg-purple-50 text-purple-700" disabled title="No verified AI provider is configured"><Sparkles className="w-3 h-3 mr-1"/>AI Draft (Unavailable)</Button>
+                <Button size="sm" variant="outline" className="h-6 text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" disabled title="No verified AI provider is configured"><Sparkles className="w-3 h-3 mr-1"/>AI Draft (Unavailable)</Button>
               </div>
             </div>
           ))}

@@ -96,7 +96,7 @@ export default function EmployeeSettingsPage() {
   };
 
   if (loading) return <div className="space-y-4"><Skeleton className="h-48 w-full" /><Skeleton className="h-48 w-full" /></div>;
-  if (error) return <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">{error}</div>;
+  if (error) return <div role="alert" className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-5 text-sm text-crm-warning-text">{error}</div>;
 
   return (
     <div className="space-y-6 bg-alo-page min-h-screen p-4 lg:p-6 max-w-4xl">

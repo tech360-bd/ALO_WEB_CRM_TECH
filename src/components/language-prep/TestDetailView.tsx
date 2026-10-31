@@ -124,7 +124,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-8">
         <Card className="p-8 max-w-lg text-center border border-[var(--alo-border)] rounded-3xl">
-          <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
+          <AlertCircle className="w-10 h-10 text-crm-warning-text mx-auto mb-3" />
           <h2 className="font-bold text-lg text-[var(--alo-text)]">Test not found</h2>
           <p className="text-sm text-[var(--alo-body)] mt-2">The test "{slug}" is not available. Check /language-prep for available tests.</p>
           {loadError && <Button type="button" onClick={() => window.location.reload()}>Retry loading guide</Button>}
@@ -163,7 +163,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                 <Badge className="bg-[var(--alo-brand)] text-white font-bold text-[11px] px-3 py-1">{test.name}</Badge>
                 {test.testType !== 'moi_guidance' && <Badge className="bg-white border border-[var(--alo-border)] text-[var(--alo-text)] font-semibold text-[11px]">{test.format}</Badge>}
                 {test.isPopular && <Badge className="bg-[var(--alo-cta)] text-white font-bold text-[11px]">Popular</Badge>}
-                {isMoi && <Badge className="bg-amber-50 text-amber-700 border-amber-200 font-bold text-[11px]">Guidance Resource — Not a test</Badge>}
+                {isMoi && <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border font-bold text-[11px]">Guidance Resource — Not a test</Badge>}
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.1] text-[var(--alo-text)]">
@@ -208,7 +208,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                   <div className="flex justify-between p-2.5 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Duration</span><span className="font-bold text-[var(--alo-text)]">{test.durationDisplay}</span></div>
                   <div className="flex justify-between p-2.5 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Scoring</span><span className="font-bold text-[var(--alo-text)]">{test.scoringSystem}</span></div>
                   <div className="flex justify-between p-2.5 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Format</span><span className="font-semibold">{test.format}</span></div>
-                  <div className="flex justify-between p-2.5 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Results</span><span className="font-semibold text-emerald-600">{test.resultTimeline}</span></div>
+                  <div className="flex justify-between p-2.5 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Results</span><span className="font-semibold text-crm-success-text">{test.resultTimeline}</span></div>
                   <div className="flex justify-between p-2.5 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Cost</span><span className="font-semibold">{test.costSummary}</span></div>
                   <div className="flex justify-between p-2.5 rounded-xl bg-[var(--alo-page)] border border-[var(--alo-border)]"><span className="text-[var(--alo-text-muted)]">Validity</span><span className="font-semibold">{test.validitySummary}</span></div>
                 </div>
@@ -221,7 +221,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                 <div className="mt-4">
                   <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-text-muted)] mb-2">Acceptance</p>
                   <p className="text-[11px] text-[var(--alo-body)] leading-relaxed">{test.acceptanceSummary}</p>
-                  <p className="text-[11px] text-amber-700 mt-2 p-2 rounded-lg bg-amber-50 border border-amber-100">Acceptance varies by university, course and visa route. Check university-specific acceptance.</p>
+                  <p className="text-[11px] text-crm-warning-text mt-2 p-2 rounded-lg bg-crm-warning-bg border border-crm-warning-border">Acceptance varies by university, course and visa route. Check university-specific acceptance.</p>
                 </div>
 
                 <Button asChild variant="outline" className="w-full bg-white border-[var(--alo-border)] font-semibold rounded-xl "><a href={test.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-5 block">
@@ -303,13 +303,13 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                         <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--alo-text-muted)]">Question style</p>
                         <p className="text-[11px] text-[var(--alo-body)] mt-1 leading-relaxed">{mod.questionFormat}</p>
                       </div>
-                      <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-100">
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-amber-700">Common challenge</p>
-                        <p className="text-[11px] text-amber-800 mt-1">{mod.commonChallenges}</p>
+                      <div className="p-2.5 rounded-xl bg-crm-warning-bg border border-crm-warning-border">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-crm-warning-text">Common challenge</p>
+                        <p className="text-[11px] text-crm-warning-text mt-1">{mod.commonChallenges}</p>
                       </div>
-                      <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-100">
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Preparation tip</p>
-                        <p className="text-[11px] text-emerald-800 mt-1">{mod.preparationTips}</p>
+                      <div className="p-2.5 rounded-xl bg-crm-success-bg border border-crm-success-border">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-crm-success-text">Preparation tip</p>
+                        <p className="text-[11px] text-crm-success-text mt-1">{mod.preparationTips}</p>
                       </div>
                     </div>
                     <a href="#book-counselling" className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[var(--alo-brand)] hover:text-[var(--alo-cta)]">
@@ -352,7 +352,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
             <section>
               <LanguageSectionVisual index={6} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">Where Is This Test Accepted?</h2>
-              <p className="text-xs text-amber-700 mb-4 p-2.5 rounded-xl bg-amber-50 border border-amber-100">Acceptance is university/course specific. Do not claim universal acceptance. Acceptance varies by university, course and visa route.</p>
+              <p className="text-xs text-crm-warning-text mb-4 p-2.5 rounded-xl bg-crm-warning-bg border border-crm-warning-border">Acceptance is university/course specific. Do not claim universal acceptance. Acceptance varies by university, course and visa route.</p>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[
                   { name: 'UK', flag: '🇬🇧' }, { name: 'Australia', flag: '🇦🇺' }, { name: 'Canada', flag: '🇨🇦' },
@@ -391,11 +391,11 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
               <LanguageSectionVisual index={8} />
               <h2 className="text-2xl font-extrabold text-[var(--alo-text)] mb-2">English Tests and Visa Requirements</h2>
               <p className="text-sm text-[var(--alo-body)] mb-4">Visa evidence depends on your country, route, qualifications and any applicable exemptions. Confirm the current official requirements before booking.</p>
-              <Card className="p-6 bg-amber-50 border border-amber-200 rounded-3xl">
-                <h4 className="font-bold text-sm text-amber-900 flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Important Disclaimer</h4>
+              <Card className="p-6 bg-crm-warning-bg border border-crm-warning-border rounded-3xl">
+                <h4 className="font-bold text-sm text-crm-warning-text flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Important Disclaimer</h4>
                 <p className="text-sm text-[var(--alo-body)] mt-2 leading-relaxed">{ACCEPTANCE_NOTICE} Academic aptitude tests do not substitute for English-language evidence.</p>
                 <a href="https://www.gov.uk/student-visa/knowledge-of-english" target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-sm text-[var(--alo-brand)] underline">Read official UK Student visa English guidance</a>
-                <p className="text-[11px] text-amber-700 mt-3">Last verified: {test.lastVerifiedAt || 'Information requires verification'} • Source: {test.sourceName} • {test.sourceUrl}</p>
+                <p className="text-[11px] text-crm-warning-text mt-3">Last verified: {test.lastVerifiedAt || 'Information requires verification'} • Source: {test.sourceName} • {test.sourceUrl}</p>
               </Card>
             </section>
 
@@ -482,7 +482,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                     <p>Planned exam date: {plannerResult.examDate || 'Not specified'}</p>
                     <div><span className="text-[var(--alo-text-muted)]">Priority:</span><p className="font-medium mt-1">{plannerResult.priority}</p></div>
                     <div><span className="text-[var(--alo-text-muted)]">Schedule:</span><p className="font-medium mt-1">{plannerResult.schedule}</p></div>
-                    <p className="text-[11px] text-amber-700 p-2 rounded-lg bg-amber-50 border border-amber-100 mt-2">{plannerResult.note}</p>
+                    <p className="text-[11px] text-crm-warning-text p-2 rounded-lg bg-crm-warning-bg border border-crm-warning-border mt-2">{plannerResult.note}</p>
                   </div>
                 )}
               </Card>
@@ -523,7 +523,7 @@ export default function TestDetailView({ slug, initialTest }: TestDetailProps) {
                     <Card key={i} className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl">
                       <h4 className="font-bold text-sm text-[var(--alo-text)]">{s.studentName}</h4>
                       <p className="text-xs text-[var(--alo-body)]">{s.universityName} — {s.courseName}</p>
-                      <p className="text-xs mt-2"><span className="text-[var(--alo-text-muted)]">Previous:</span> <span className="font-semibold">{s.previousScore}</span> → <span className="text-[var(--alo-text-muted)]">Final:</span> <span className="font-bold text-emerald-600">{s.finalScore}</span></p>
+                      <p className="text-xs mt-2"><span className="text-[var(--alo-text-muted)]">Previous:</span> <span className="font-semibold">{s.previousScore}</span> → <span className="text-[var(--alo-text-muted)]">Final:</span> <span className="font-bold text-crm-success-text">{s.finalScore}</span></p>
                       <p className="text-xs text-[var(--alo-body)] mt-2 italic">"{s.testimonial}"</p>
                     </Card>
                   ))}

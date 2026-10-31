@@ -144,8 +144,8 @@ export default function ApplicationsPanel() {
             Add to my applications
           </Button>
         </div>
-        {catalogue.error && <p className="mt-2 text-[11px] text-amber-700">{catalogue.error}</p>}
-        {actionError && <p className="mt-2 text-xs text-red-700">{actionError}</p>}
+        {catalogue.error && <p className="mt-2 text-[11px] text-crm-warning-text">{catalogue.error}</p>}
+        {actionError && <p className="mt-2 text-xs text-crm-danger-text">{actionError}</p>}
       </Card>
 
       <Card

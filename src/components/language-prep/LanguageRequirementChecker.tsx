@@ -30,7 +30,7 @@ export default function LanguageRequirementChecker({ testSlug }: { testSlug?: st
       <Button type="submit" disabled={loading}>{loading ? 'Checking requirements…' : 'Check Requirements'}</Button>
     </form>
     <div className="mt-5 space-y-3" aria-live="polite" aria-busy={loading}>
-      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="text-sm text-crm-danger-text">{error}</p>}
       {rows && rows.length === 0 && !error && <p className="text-sm">No matching requirements are recorded. Check the official university course page or ask ALO to confirm the requirement.</p>}
       {!error && rows?.map(row => <article key={row.id} className="rounded-xl border border-[var(--alo-border)] bg-white p-4 text-sm">
         <h3 className="font-bold">{row.universityName} · {row.courseName}</h3>

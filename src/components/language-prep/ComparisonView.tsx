@@ -54,7 +54,7 @@ export default function ComparisonView() {
           <p className="text-sm text-[var(--alo-body)] mt-3 max-w-3xl leading-relaxed">
             Side-by-side evaluation of test durations, result delivery speed, scoring scales, and delivery formats. Check the current provider information where it is not yet verified. Acceptance varies by university, course and visa route.
           </p>
-          <p className="text-[11px] text-amber-700 mt-3 p-3 rounded-xl bg-amber-50 border border-amber-100">
+          <p className="text-[11px] text-crm-warning-text mt-3 p-3 rounded-xl bg-crm-warning-bg border border-crm-warning-border">
             Prices and result times change. Check the current provider information before you decide.
           </p>
         </div>
@@ -123,8 +123,8 @@ export default function ComparisonView() {
                       <td className="p-4 text-[var(--alo-body)]">{t.cost}</td>
                       <td className="p-4 text-[var(--alo-body)]">{t.format}</td>
                       <td className="p-4 text-[var(--alo-body)]">{t.scoring}</td>
-                      <td className="p-4 font-medium text-emerald-700">{t.resultTimeline}</td>
-                      <td className="p-4 text-[var(--alo-body)] max-w-[200px]"><span className="line-clamp-3">{t.acceptance}</span><p className="text-[11px] text-amber-600 mt-1">Acceptance varies</p></td>
+                      <td className="p-4 font-medium text-crm-success-text">{t.resultTimeline}</td>
+                      <td className="p-4 text-[var(--alo-body)] max-w-[200px]"><span className="line-clamp-3">{t.acceptance}</span><p className="text-[11px] text-crm-warning-text mt-1">Acceptance varies</p></td>
                       <td className="p-4 text-[var(--alo-body)] max-w-[180px] line-clamp-3">{t.bestFor}</td>
                       <td className="p-4 text-[var(--alo-body)]">Module practice + Mock + Feedback</td>
                     </tr>
@@ -145,8 +145,8 @@ export default function ComparisonView() {
                     <div><span className="text-[var(--alo-text-muted)] block">Duration</span><span className="font-semibold">{t.duration}</span></div>
                     <div><span className="text-[var(--alo-text-muted)] block">Format</span><span className="font-semibold">{t.format}</span></div>
                     <div><span className="text-[var(--alo-text-muted)] block">Scoring</span><span className="font-semibold">{t.scoring}</span></div>
-                    <div><span className="text-[var(--alo-text-muted)] block">Results</span><span className="font-semibold text-emerald-600">{t.resultTimeline}</span></div>
-                    <div className="col-span-2"><span className="text-[var(--alo-text-muted)] block">Acceptance</span><span className="font-medium">{t.acceptance}</span><p className="text-[11px] text-amber-600 mt-1">Acceptance varies by university, course and visa route</p></div>
+                    <div><span className="text-[var(--alo-text-muted)] block">Results</span><span className="font-semibold text-crm-success-text">{t.resultTimeline}</span></div>
+                    <div className="col-span-2"><span className="text-[var(--alo-text-muted)] block">Acceptance</span><span className="font-medium">{t.acceptance}</span><p className="text-[11px] text-crm-warning-text mt-1">Acceptance varies by university, course and visa route</p></div>
                     <div className="col-span-2"><span className="text-[var(--alo-text-muted)] block">Best For</span><span className="font-medium">{t.bestFor}</span></div>
                   </div>
                   <div className="mt-4 flex gap-2">
@@ -157,14 +157,14 @@ export default function ComparisonView() {
               ))}
             </div>
 
-            <Card className="mt-8 p-6 bg-amber-50 border border-amber-200 rounded-2xl">
-              <h4 className="font-bold text-sm text-amber-900 flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Source Verification & Disclaimer</h4>
-              <p className="text-xs text-amber-800 mt-2 leading-relaxed">
+            <Card className="mt-8 p-6 bg-crm-warning-bg border border-crm-warning-border rounded-2xl">
+              <h4 className="font-bold text-sm text-crm-warning-text flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Source Verification & Disclaimer</h4>
+              <p className="text-xs text-crm-warning-text mt-2 leading-relaxed">
                 Test information is taken from official provider sources where available. Check the official provider for current duration, scoring, fees and requirements. Acceptance varies by university, course and visa route. Visa requirements vary by country and route. MOI is a guidance resource, not an English proficiency test.
               </p>
               <div className="mt-4 grid sm:grid-cols-3 gap-3 text-[11px]">
                 {filtered.slice(0,3).map((t: any) => (
-                  <div key={t.slug} className="p-3 rounded-xl bg-white border border-amber-100">
+                  <div key={t.slug} className="p-3 rounded-xl bg-white border border-crm-warning-border">
                     <p className="font-bold text-[var(--alo-text)]">{t.name}</p>
                     <p className="text-[var(--alo-text-muted)] mt-1">Source: {t.sourceUrl ? <a href={t.sourceUrl} target="_blank" className="text-[var(--alo-brand)] hover:underline">{t.sourceUrl}</a> : 'Check official provider'}</p>
                     <p className="text-[var(--alo-text-muted)]">Last verified: {t.lastVerifiedAt || 'Information requires verification'}</p>

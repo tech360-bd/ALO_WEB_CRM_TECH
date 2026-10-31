@@ -97,16 +97,16 @@ const PAYMENT_TYPE_META: Record<string, { label: string; color: string; icon: st
 };
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  PAID: "bg-emerald-100 text-emerald-700",
-  REFUNDED: "bg-red-100 text-red-700",
-  FAILED: "bg-red-100 text-red-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  PAID: "bg-crm-success-bg text-crm-success-text",
+  REFUNDED: "bg-crm-danger-bg text-crm-danger-text",
+  FAILED: "bg-crm-danger-bg text-crm-danger-text",
 };
 
 const COMMISSION_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   APPROVED: "bg-sky-100 text-sky-700",
-  PAID: "bg-emerald-100 text-emerald-700",
+  PAID: "bg-crm-success-bg text-crm-success-text",
 };
 
 const PAYMENT_METHOD_LABEL: Record<string, string> = {
@@ -168,7 +168,7 @@ function PrivateAmount({
       </span>
       {showPin && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--alo-navy)]/40 p-4"
           onClick={() => {
             setShowPin(false);
             setPin("");
@@ -546,7 +546,7 @@ export function FinanceDashboard() {
           {/* Partner commissions */}
           <TabsContent value="partner" className="p-4 pt-4 sm:px-6">
             {!loading && (
-              <div className="mb-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-700">
+              <div className="mb-3 flex items-start gap-2 rounded-xl border border-crm-warning-border bg-crm-warning-bg px-3 py-2.5 text-xs text-crm-warning-text">
                 <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0" />
                 <p>
                   Partner commission amounts are <strong>restricted</strong>. Visible only to <strong>Finance</strong> and{" "}
@@ -671,7 +671,7 @@ export function FinanceDashboard() {
                             variant="outline"
                             onClick={() => handleMarkPaid(c)}
                             disabled={c.status === "PAID"}
-                            className="h-8 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                            className="h-8 border-crm-success-border text-crm-success-text hover:bg-crm-success-bg"
                           >
                             <Icon name="BadgeCheck" className="size-3.5" />
                             <span className="hidden md:inline">Mark Paid</span>
@@ -688,7 +688,7 @@ export function FinanceDashboard() {
           {/* Payroll summary */}
           <TabsContent value="payroll" className="p-4 pt-4 sm:px-6">
             {!loading && (
-              <div className="mb-3 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-700">
+              <div className="mb-3 flex items-start gap-2 rounded-xl border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-xs text-crm-danger-text">
                 <Icon name="ShieldAlert" className="mt-0.5 size-3.5 shrink-0" />
                 <p>
                   Payroll data is <strong>highly restricted</strong>. <code className="font-mono">HR_MANAGER</code> and{" "}
@@ -792,7 +792,7 @@ export function FinanceDashboard() {
             </p>
           </div>
           <div className="rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-crm-success-bg text-crm-success-text">
               <Icon name="BadgeCheck" className="size-4" />
             </div>
             <p className="mt-2 text-sm font-bold text-foreground">3. Disburse</p>
@@ -801,7 +801,7 @@ export function FinanceDashboard() {
             </p>
           </div>
         </div>
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-crm-success-border bg-crm-success-bg px-3 py-2 text-xs text-crm-success-text">
           <Icon name="History" className="mt-0.5 size-3.5 shrink-0" />
           <p>
             Every commission approval, edit, and disbursement is recorded in the audit log with actor, timestamp, and

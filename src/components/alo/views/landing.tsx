@@ -448,7 +448,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                 <div className="flex h-full flex-col items-center justify-center py-10 text-center">
                   <div
                     className={`flex size-16 items-center justify-center rounded-full ${
-                      result.duplicate ? "bg-amber-100 text-amber-600" : "bg-emerald-100 text-emerald-600"
+                      result.duplicate ? "bg-crm-warning-bg text-crm-warning-text" : "bg-crm-success-bg text-crm-success-text"
                     }`}
                   >
                     <Icon
@@ -486,7 +486,7 @@ export function LandingView({ onNavigate }: LandingViewProps) {
                   </div>
 
                   {result?.ok === false && (
-                    <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                    <div className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-sm text-crm-danger-text">
                       <Icon name="AlertCircle" className="mt-0.5 size-4 shrink-0" />
                       <span>{result.error}</span>
                     </div>
@@ -716,12 +716,12 @@ const SOURCE_ICON: Record<string, string> = {
 };
 
 function inputCls(err?: string) {
-  return `h-11 ${err ? "border-red-400 focus-visible:ring-red-200" : "border-[var(--alo-brand)]/20 focus:ring-[var(--alo-brand)]/30"}`;
+  return `h-11 ${err ? "border-crm-danger-border focus-visible:ring-red-200" : "border-[var(--alo-brand)]/20 focus:ring-[var(--alo-brand)]/30"}`;
 }
 
 function FieldError({ msg }: { msg: string }) {
   return (
-    <p className="flex items-center gap-1 text-xs font-medium text-red-600">
+    <p className="flex items-center gap-1 text-xs font-medium text-crm-danger-text">
       <Icon name="AlertCircle" className="size-3" />
       {msg}
     </p>

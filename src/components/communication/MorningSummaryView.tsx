@@ -14,11 +14,11 @@ import {
 } from 'lucide-react';
 
 const CHANNEL_ICONS: Record<string, React.ReactNode> = {
-  whatsapp: <Zap className="w-3.5 h-3.5 text-emerald-500" />,
+  whatsapp: <Zap className="w-3.5 h-3.5 text-crm-success-text" />,
   facebook: <Facebook className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
-  instagram: <Instagram className="w-3.5 h-3.5 text-pink-500" />,
-  email: <Mail className="w-3.5 h-3.5 text-amber-500" />,
-  live_chat: <Globe className="w-3.5 h-3.5 text-blue-400" />,
+  instagram: <Instagram className="w-3.5 h-3.5 text-crm-danger-text" />,
+  email: <Mail className="w-3.5 h-3.5 text-crm-warning-text" />,
+  live_chat: <Globe className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
   sms: <Phone className="w-3.5 h-3.5 text-[var(--alo-text-muted)]" />,
 };
 
@@ -118,8 +118,8 @@ export default function MorningSummaryView() {
       {/* Greeting header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center">
-            <Sun className="w-8 h-8 text-amber-500" />
+          <div className="w-14 h-14 bg-crm-warning-bg rounded-2xl flex items-center justify-center">
+            <Sun className="w-8 h-8 text-crm-warning-text" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[var(--alo-text)]">{greeting()} ☀️</h1>
@@ -153,16 +153,16 @@ export default function MorningSummaryView() {
             bg: 'bg-[var(--alo-cta-soft)]',
           },
           {
-            icon: <FileText className="w-6 h-6 text-amber-500" />,
+            icon: <FileText className="w-6 h-6 text-crm-warning-text" />,
             value: summary.pendingActions.ocrReviewRequired,
             label: 'OCR Reviews',
-            bg: 'bg-amber-50',
+            bg: 'bg-crm-warning-bg',
           },
           {
             icon: <Clock className="w-6 h-6 text-[var(--alo-error)]" />,
             value: summary.pendingActions.overdueReplies,
             label: 'Overdue Replies',
-            bg: 'bg-red-50',
+            bg: 'bg-crm-danger-bg',
           },
         ].map((kpi, i) => (
           <div key={i} className={`${kpi.bg} rounded-2xl p-4 border border-white text-center`}>
@@ -179,14 +179,14 @@ export default function MorningSummaryView() {
           <div className="px-5 py-3.5 border-b border-[var(--alo-border)] flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-[var(--alo-cta)]" />
             <h2 className="font-bold text-sm text-[var(--alo-text)]">Urgent / High Priority Conversations</h2>
-            <span className="ml-auto text-xs font-bold text-[var(--alo-cta)] bg-red-50 px-2 py-0.5 rounded-full">
+            <span className="ml-auto text-xs font-bold text-[var(--alo-cta)] bg-crm-danger-bg px-2 py-0.5 rounded-full">
               {summary.topPriorityConversations.length} cases
             </span>
           </div>
           <div className="divide-y divide-[var(--alo-border)]">
             {summary.topPriorityConversations.map((conv) => (
               <div key={conv.id} className="flex items-center gap-3 px-5 py-3 hover:bg-[var(--alo-page)] transition">
-                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-sm font-bold text-red-700">
+                <div className="w-8 h-8 bg-crm-danger-bg rounded-full flex items-center justify-center text-sm font-bold text-crm-danger-text">
                   {(conv.name || 'U')[0].toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -200,7 +200,7 @@ export default function MorningSummaryView() {
                 </div>
                 <div className="text-right flex-shrink-0">
                   <div className={`text-[11px] font-bold px-2 py-0.5 rounded-full mb-1 ${
-                    conv.priority === 'urgent' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-700'
+                    conv.priority === 'urgent' ? 'bg-crm-danger-bg text-crm-danger-text' : 'bg-crm-warning-bg text-crm-warning-text'
                   }`}>
                     {conv.priority.toUpperCase()}
                   </div>
@@ -239,36 +239,36 @@ export default function MorningSummaryView() {
 
       {/* Pending actions summary */}
       {totalActions > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+        <div className="bg-crm-warning-bg border border-crm-warning-border rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Bell className="w-4 h-4 text-amber-600" />
-            <h2 className="font-bold text-sm text-amber-900">
+            <Bell className="w-4 h-4 text-crm-warning-text" />
+            <h2 className="font-bold text-sm text-crm-warning-text">
               {totalActions} Pending Action{totalActions !== 1 ? 's' : ''} Required
             </h2>
           </div>
           <div className="space-y-2">
             {summary.pendingActions.ocrReviewRequired > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-800">OCR documents awaiting human review</span>
-                <span className="font-bold text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full">{summary.pendingActions.ocrReviewRequired}</span>
+                <span className="text-crm-warning-text">OCR documents awaiting human review</span>
+                <span className="font-bold text-crm-warning-text bg-crm-warning-bg px-2 py-0.5 rounded-full">{summary.pendingActions.ocrReviewRequired}</span>
               </div>
             )}
             {summary.pendingActions.approvalsPending > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-800">Approval requests pending</span>
-                <span className="font-bold text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full">{summary.pendingActions.approvalsPending}</span>
+                <span className="text-crm-warning-text">Approval requests pending</span>
+                <span className="font-bold text-crm-warning-text bg-crm-warning-bg px-2 py-0.5 rounded-full">{summary.pendingActions.approvalsPending}</span>
               </div>
             )}
             {summary.pendingActions.overdueReplies > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-800">Conversations with overdue replies (4h+)</span>
-                <span className="font-bold text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full">{summary.pendingActions.overdueReplies}</span>
+                <span className="text-crm-warning-text">Conversations with overdue replies (4h+)</span>
+                <span className="font-bold text-crm-warning-text bg-crm-warning-bg px-2 py-0.5 rounded-full">{summary.pendingActions.overdueReplies}</span>
               </div>
             )}
             {summary.pendingActions.contentApprovalsPending > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-800">Social content pending approval</span>
-                <span className="font-bold text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full">{summary.pendingActions.contentApprovalsPending}</span>
+                <span className="text-crm-warning-text">Social content pending approval</span>
+                <span className="font-bold text-crm-warning-text bg-crm-warning-bg px-2 py-0.5 rounded-full">{summary.pendingActions.contentApprovalsPending}</span>
               </div>
             )}
           </div>
@@ -276,11 +276,11 @@ export default function MorningSummaryView() {
       )}
 
       {totalActions === 0 && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 flex items-center gap-3">
-          <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0" />
+        <div className="bg-crm-success-bg border border-crm-success-border rounded-2xl p-5 flex items-center gap-3">
+          <CheckCircle2 className="w-6 h-6 text-crm-success-text flex-shrink-0" />
           <div>
-            <p className="text-sm font-bold text-emerald-900">All clear!</p>
-            <p className="text-xs text-emerald-700">No pending actions. You are fully up to date.</p>
+            <p className="text-sm font-bold text-crm-success-text">All clear!</p>
+            <p className="text-xs text-crm-success-text">No pending actions. You are fully up to date.</p>
           </div>
         </div>
       )}

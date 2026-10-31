@@ -1228,10 +1228,10 @@ export function WhatsAppCommandCenter() {
                     </div>
                   )}
                   {attachments.length > 0 && student?.hasB2bConfidentialApplications && !student.canManageB2bDocuments && (
-                    <p role="status" className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">This student has B2B-confidential applications. Media sending is blocked until an authorized B2B user handles the file.</p>
+                    <p role="status" className="rounded-md border border-crm-warning-border bg-crm-warning-bg px-2 py-1.5 text-xs text-crm-warning-text">This student has B2B-confidential applications. Media sending is blocked until an authorized B2B user handles the file.</p>
                   )}
                   {attachments.length > 0 && student?.hasB2bConfidentialApplications && student.canManageB2bDocuments && !outboundApplicationId && (
-                    <p role="status" className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">Select the relevant application before uploading this media.</p>
+                    <p role="status" className="rounded-md border border-crm-warning-border bg-crm-warning-bg px-2 py-1.5 text-xs text-crm-warning-text">Select the relevant application before uploading this media.</p>
                   )}
                   <Textarea
                     placeholder="Type your reply…"

@@ -161,8 +161,8 @@ export default function StudentPayments() {
           {/* ALO Service Fee */}
           <GuideCard
             icon={<FileCheck className="size-5" />}
-            iconBg="bg-purple-100 dark:bg-purple-900/20"
-            iconColor="text-purple-700 dark:text-purple-400"
+            iconBg="bg-[var(--alo-brand-pale)] dark:bg-[var(--alo-brand)]/20"
+            iconColor="text-[var(--alo-brand)] dark:text-[var(--alo-brand)]"
             title="ALO Service Fee"
             description="Service charges for application processing"
             details={[

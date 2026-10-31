@@ -104,7 +104,7 @@ export default function StudentShortlistPage() {
           </div>
         </div>
 
-        {error && <Card className="p-4 bg-amber-50 border-amber-200 rounded-2xl text-sm text-amber-800">{error}</Card>}
+        {error && <Card className="p-4 bg-crm-warning-bg border-crm-warning-border rounded-2xl text-sm text-crm-warning-text">{error}</Card>}
 
         {loading ? (
           <div className="grid sm:grid-cols-2 gap-4">
@@ -153,7 +153,7 @@ export default function StudentShortlistPage() {
                       variant="outline"
                       disabled={busyId === courseId}
                       onClick={() => void remove(course)}
-                      className="border-[var(--alo-border)] text-red-600"
+                      className="border-[var(--alo-border)] text-crm-danger-text"
                     >
                       {busyId === courseId
                         ? <Loader2 className="w-3 h-3 mr-1 animate-spin" />

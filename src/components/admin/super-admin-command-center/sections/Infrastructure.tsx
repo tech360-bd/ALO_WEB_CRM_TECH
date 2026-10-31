@@ -307,7 +307,7 @@ function SettingsPanel() {
             </div>
             <button
               onClick={() => setToggles((prev) => prev.map((x, j) => (j === i ? { ...x, enabled: !x.enabled } : x)))}
-              className={`relative inline-flex items-center w-11 h-6 rounded-full transition-colors ${toggles[i].enabled ? "bg-[var(--cc-green)]" : "bg-gray-700"}`}
+              className={`relative inline-flex items-center w-11 h-6 rounded-full transition-colors ${toggles[i].enabled ? "bg-[var(--cc-green)]" : "bg-[var(--alo-page)]"}`}
               aria-pressed={toggles[i].enabled}
               aria-label={t.name}
             >

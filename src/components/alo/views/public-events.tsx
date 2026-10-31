@@ -172,7 +172,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
                         <Icon name={EVENT_TYPE_ICONS[event.eventType] || "Calendar"} className="mr-1 size-3" />
                         {EVENT_TYPE_LABELS[event.eventType] || event.eventType}
                       </Badge>
-                      <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                      <span className="rounded-full bg-crm-success-bg px-2.5 py-0.5 text-xs font-semibold text-crm-success-text">
                         Free
                       </span>
                     </div>
@@ -241,7 +241,7 @@ function EventList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => 
                     <Badge variant="outline" className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                       {EVENT_TYPE_LABELS[event.eventType] || event.eventType}
                     </Badge>
-                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                    <span className="rounded-full bg-crm-success-bg px-2 py-0.5 text-xs font-semibold text-crm-success-text">
                       {event.isFree ? "Free" : event.price}
                     </span>
                   </div>
@@ -410,7 +410,7 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
                 {event.country && (
                   <Badge variant="outline" className="bg-white text-[var(--alo-text)]">{event.country}</Badge>
                 )}
-                <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                <span className="rounded-full bg-crm-success-bg px-2.5 py-0.5 text-xs font-semibold text-crm-success-text">
                   {event.isFree ? "Free to attend" : event.price}
                 </span>
                 {isPast && (
@@ -458,10 +458,10 @@ function EventDetail({ slug, onNavigate }: { slug: string; onNavigate: (v: ViewK
                   </Button>
                 )}
                 {registered && (
-                  <div className="mt-5 rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-center">
-                    <Icon name="Check" className="mx-auto size-6 text-emerald-600" />
-                    <p className="mt-2 text-sm font-bold text-emerald-900">Registration confirmed!</p>
-                    <p className="mt-1 text-xs text-emerald-800">ALO will send your join link via WhatsApp/email shortly.</p>
+                  <div className="mt-5 rounded-xl border border-crm-success-border bg-crm-success-bg p-4 text-center">
+                    <Icon name="Check" className="mx-auto size-6 text-crm-success-text" />
+                    <p className="mt-2 text-sm font-bold text-crm-success-text">Registration confirmed!</p>
+                    <p className="mt-1 text-xs text-crm-success-text">ALO will send your join link via WhatsApp/email shortly.</p>
                   </div>
                 )}
                 {isPast && (

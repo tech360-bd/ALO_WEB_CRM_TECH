@@ -440,7 +440,7 @@ export function DocumentHub() {
                           )}
                         </div>
                         {d.status === "REJECTED" && d.rejectionReason && (
-                          <p className="mt-1 flex items-start gap-1 pl-6 text-xs text-red-600">
+                          <p className="mt-1 flex items-start gap-1 pl-6 text-xs text-crm-danger-text">
                             <Icon name="AlertTriangle" className="mt-0.5 size-3 shrink-0" />
                             <span>{d.rejectionReason}</span>
                           </p>
@@ -571,7 +571,7 @@ export function DocumentHub() {
                 </div>
               )}
 
-              <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+              <div className="flex items-center gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2 text-xs text-crm-warning-text">
                 <Icon name="History" className="size-3.5 shrink-0" />
                 This action will be recorded in the audit log.
               </div>

@@ -172,7 +172,7 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
           {loading ? (
             <div className="p-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--alo-brand)]" /><p className="text-sm text-[var(--alo-text-muted)] mt-2">Loading real database records...</p></div>
           ) : error ? (
-            <div className="p-8 text-center space-y-3"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto" /><p className="text-sm text-[var(--alo-body)]">{error}</p><Button size="sm" onClick={() => fetchApps()} className="bg-[var(--alo-brand)] text-white">Retry</Button></div>
+            <div className="p-8 text-center space-y-3"><AlertTriangle className="w-8 h-8 text-crm-warning-text mx-auto" /><p className="text-sm text-[var(--alo-body)]">{error}</p><Button size="sm" onClick={() => fetchApps()} className="bg-[var(--alo-brand)] text-white">Retry</Button></div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[1400px]">
@@ -214,13 +214,13 @@ export default function ApplicationTable({ initialSource, title = 'Applications'
                         <td className="p-3 truncate max-w-[150px] text-xs">{app.courseName || '-'}</td>
                         <td className="p-3 text-xs">{app.intake || '-'}</td>
                         <td className="p-3"><Badge variant="outline" className="text-[11px] border-[var(--alo-border)]">{(app.applicationSource || 'DIRECT').replace(/_/g, ' ')}</Badge></td>
-                        {showB2B && <td className="p-3">{app.isB2b || app.b2bType ? <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[11px]"><Lock className="w-2.5 h-2.5 mr-1" />{app.b2bType || 'B2B'}</Badge> : <span className="text-[var(--alo-text-muted)] text-xs">-</span>}</td>}
+                        {showB2B && <td className="p-3">{app.isB2b || app.b2bType ? <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]"><Lock className="w-2.5 h-2.5 mr-1" />{app.b2bType || 'B2B'}</Badge> : <span className="text-[var(--alo-text-muted)] text-xs">-</span>}</td>}
                         <td className="p-3 text-xs">{app.partnerId?.substring(0, 6) || '-'}</td>
                         <td className="p-3 text-xs">{app.counselorName || app.counselorId?.substring(0, 6) || '-'}</td>
                         <td className="p-3 text-xs">{app.appTeamOfficerId?.substring(0, 6) || app.applicationOfficer?.substring(0, 6) || '-'}</td>
-                        <td className="p-3"><Badge className={`${app.documentStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{app.documentStatus || 'PENDING'}</Badge></td>
-                        <td className="p-3"><Badge className="bg-purple-50 text-purple-700 border-purple-200 text-[11px]">{app.offerStatus || 'PENDING'}</Badge></td>
-                        <td className="p-3"><Badge className="bg-cyan-50 text-cyan-700 border-cyan-200 text-[11px]">{app.casI20CoeStatus || 'NOT_STARTED'}</Badge></td>
+                        <td className="p-3"><Badge className={`${app.documentStatus === 'VERIFIED' ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border'} text-[11px]`}>{app.documentStatus || 'PENDING'}</Badge></td>
+                        <td className="p-3"><Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px]">{app.offerStatus || 'PENDING'}</Badge></td>
+                        <td className="p-3"><Badge className="bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] border-[var(--alo-info-border)] text-[11px]">{app.casI20CoeStatus || 'NOT_STARTED'}</Badge></td>
                         <td className="p-3 text-xs">{app.deadlineDate ? new Date(app.deadlineDate).toLocaleDateString() : app.deadline || '-'}</td>
                         <td className="p-3 text-xs">{new Date(app.updatedAt).toLocaleDateString()}</td>
                         <td className="p-3 text-right"><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="text-[var(--alo-brand)]"><Eye className="w-4 h-4" /></Button></Link></td>

@@ -20,12 +20,12 @@ const stageLabels: Record<string, string> = {
 
 const stageColors: Record<string, string> = {
   research: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', shortlisted: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
-  counseling: 'bg-cyan-100 text-cyan-700', document_ready: 'bg-yellow-100 text-yellow-700',
-  submitted: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', under_review: 'bg-purple-100 text-purple-700',
-  offer_received: 'bg-green-100 text-green-700', conditional: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-  unconditional: 'bg-green-100 text-green-700', enrolled: 'bg-emerald-100 text-emerald-700',
-  rejected: 'bg-red-100 text-red-700', withdrawn: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-  visa_applied: 'bg-indigo-100 text-indigo-700', visa_approved: 'bg-emerald-100 text-emerald-700',
+  counseling: 'bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]', document_ready: 'bg-yellow-100 text-yellow-700',
+  submitted: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', under_review: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  offer_received: 'bg-crm-success-bg text-crm-success-text', conditional: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
+  unconditional: 'bg-crm-success-bg text-crm-success-text', enrolled: 'bg-crm-success-bg text-crm-success-text',
+  rejected: 'bg-crm-danger-bg text-crm-danger-text', withdrawn: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
+  visa_applied: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', visa_approved: 'bg-crm-success-bg text-crm-success-text',
 };
 
 export default function CrmApplicationsPage() {
@@ -72,7 +72,7 @@ export default function CrmApplicationsPage() {
         <h1 className="text-2xl font-bold text-alo-text">Application Tracking</h1>
         <div className="flex gap-2" aria-label="Application view"><Button type="button" variant={view === 'table' ? 'default' : 'outline'} aria-pressed={view === 'table'} onClick={() => setView('table')}>Table</Button><Button type="button" variant={view === 'board' ? 'default' : 'outline'} aria-pressed={view === 'board'} onClick={() => setView('board')}>Board</Button></div>
       </div>
-      {loadError && <p role="alert" className="text-sm text-red-700">{loadError}</p>}
+      {loadError && <p role="alert" className="text-sm text-crm-danger-text">{loadError}</p>}
       <Dialog open={!!selected} onOpenChange={open => { if (!open) setSelectedId(null); }}><DialogContent><DialogHeader><DialogTitle>Application information</DialogTitle><DialogDescription>Persisted record from the authenticated CRM API. No stage changes are made in this view.</DialogDescription></DialogHeader>{selected && <dl className="space-y-2 text-sm">{Object.entries({ Student: selected.studentProfile?.fullName || 'Not recorded', University: selected.university, Course: selected.course, Stage: selected.stage, Country: selected.country, Intake: selected.intake }).map(([label, value]) => <div key={label}><dt className="font-semibold">{label}</dt><dd>{String(value || 'Not recorded')}</dd></div>)}</dl>}</DialogContent></Dialog>
       {view === 'board' ? <><p className="text-xs text-[var(--alo-text-muted)]">Read-only board of the loaded records (up to 100). Stage editing needs an audited transition API; it is not simulated here.</p><KanbanPipeline stages={Object.keys(stageLabels)} items={apps.map(app => ({ id: app.id, title: `${app.university || 'University not recorded'} · ${app.course || 'Course not recorded'}`, subtitle: app.studentProfile?.fullName, stage: app.stage }))} onOpen={setSelectedId} /></> : <Card className="bg-white rounded-xl border border-alo-border">
         <CardContent className="p-4">

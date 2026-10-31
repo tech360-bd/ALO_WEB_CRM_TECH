@@ -42,7 +42,7 @@ export default function BlogPage() {
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   category === 'All' 
                     ? 'bg-[var(--alo-cta)] text-white'
-                    : 'bg-white text-[var(--alo-body)] hover:bg-gray-200 border border-[var(--alo-border)]'
+                    : 'bg-white text-[var(--alo-body)] hover:bg-[var(--alo-page)] border border-[var(--alo-border)]'
                 }`}
               >
                 {category}
@@ -77,7 +77,7 @@ export default function BlogPage() {
                   
                   <div className="mt-auto pt-4 border-t border-[var(--alo-border)] flex items-center justify-between text-xs text-[var(--alo-text-muted)]">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[var(--alo-brand)] font-bold">
+                      <div className="w-6 h-6 rounded-full bg-[var(--alo-page)] flex items-center justify-center text-[var(--alo-brand)] font-bold">
                         {blog.author.charAt(0)}
                       </div>
                       <span>{blog.author}</span>

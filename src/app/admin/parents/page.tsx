@@ -97,7 +97,7 @@ interface Parent {
 }
 
 const ACCESS_STYLE: Record<string, string> = {
-  FULL_JOURNEY: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+  FULL_JOURNEY: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
   LIMITED: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   NONE: 'border-[var(--alo-border-strong)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
@@ -395,12 +395,12 @@ export default function ParentsAdminPage() {
       </Card>
 
       {state === 'error' && (
-        <Card className="rounded-2xl border-2 border-red-200">
+        <Card className="rounded-2xl border-2 border-crm-danger-border">
           <CardContent className="flex items-start gap-3 pt-6 pb-6">
-            <AlertTriangle className="mt-0.5 size-5 shrink-0 text-red-600" />
+            <AlertTriangle className="mt-0.5 size-5 shrink-0 text-crm-danger-text" />
             <div className="flex-1">
-              <p className="text-sm font-bold text-red-800">Could not load parents</p>
-              <p className="mt-0.5 text-xs text-red-700">{message}</p>
+              <p className="text-sm font-bold text-crm-danger-text">Could not load parents</p>
+              <p className="mt-0.5 text-xs text-crm-danger-text">{message}</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => void load(studentId)}>
               <RefreshCw className="mr-1.5 size-3.5" />
@@ -561,7 +561,7 @@ export default function ParentsAdminPage() {
                   {parent.portalEnabled && <Badge variant="outline" className="text-[11px]">portal on</Badge>}
                   {parent.isPrimaryContact && <Badge variant="outline" className="text-[11px]">primary</Badge>}
                   {parent.isFinancialSponsor && <Badge variant="outline" className="text-[11px]">sponsor</Badge>}
-                  <Badge variant="outline" className={parent.status === 'ACTIVE' ? 'text-[11px]' : 'border-red-200 bg-red-50 text-[11px] text-red-700'}>
+                  <Badge variant="outline" className={parent.status === 'ACTIVE' ? 'text-[11px]' : 'border-crm-danger-border bg-crm-danger-bg text-[11px] text-crm-danger-text'}>
                     {parent.status}
                   </Badge>
                   <Button variant="ghost" size="sm" onClick={() => setExpanded(isOpen ? null : parent.id)}>
@@ -622,7 +622,7 @@ export default function ParentsAdminPage() {
                       </Button>
                     </div>
                     {parent.accessLevel === 'NONE' && parent.portalEnabled && (
-                      <p className="text-[11px] text-amber-800">
+                      <p className="text-[11px] text-crm-warning-text">
                         Portal is enabled but the access level is NONE, so the parent still sees nothing.
                       </p>
                     )}
@@ -658,7 +658,7 @@ export default function ParentsAdminPage() {
                               </p>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <Badge variant="outline" className={active ? 'border-emerald-200 bg-emerald-50 text-[11px] text-emerald-800' : 'border-[var(--alo-border)] bg-white text-[11px] text-[var(--alo-text-muted)]'}>
+                              <Badge variant="outline" className={active ? 'border-crm-success-border bg-crm-success-bg text-[11px] text-crm-success-text' : 'border-[var(--alo-border)] bg-white text-[11px] text-[var(--alo-text-muted)]'}>
                                 {active ? 'ACTIVE' : 'INACTIVE'}
                               </Badge>
                               <Button variant="outline" size="sm" disabled={busyId === parent.id} onClick={() => void setConsent(parent, type, true)}>

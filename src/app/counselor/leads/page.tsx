@@ -68,10 +68,10 @@ const STATUS_OPTIONS = [
 
 const STATUS_TONE: Record<string, string> = {
   new: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
-  contacted: 'border-indigo-200 bg-indigo-50 text-indigo-800',
-  qualified: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+  contacted: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  qualified: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
   applied: 'border-teal-200 bg-teal-50 text-teal-800',
-  converted: 'border-emerald-300 bg-emerald-100 text-emerald-900',
+  converted: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
   lost: 'border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
@@ -226,13 +226,13 @@ export default function CounselorLeadsPage() {
         </div>
 
         {state === 'error' && (
-          <div className="mb-4 flex flex-col items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-5 py-5 sm:flex-row sm:items-center">
-            <AlertCircle className="h-5 w-5 shrink-0 text-red-600" aria-hidden="true" />
+          <div className="mb-4 flex flex-col items-start gap-3 rounded-xl border border-crm-danger-border bg-crm-danger-bg px-5 py-5 sm:flex-row sm:items-center">
+            <AlertCircle className="h-5 w-5 shrink-0 text-crm-danger-text" aria-hidden="true" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-red-900">Lead queue unavailable</p>
-              <p className="mt-0.5 text-sm text-red-800">{error}</p>
+              <p className="text-sm font-semibold text-crm-danger-text">Lead queue unavailable</p>
+              <p className="mt-0.5 text-sm text-crm-danger-text">{error}</p>
             </div>
-            <Button variant="outline" className="shrink-0 border-red-300 bg-white text-red-700" onClick={load}>
+            <Button variant="outline" className="shrink-0 border-crm-danger-border bg-white text-crm-danger-text" onClick={load}>
               <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
               Try Again
             </Button>
@@ -319,9 +319,9 @@ export default function CounselorLeadsPage() {
                       </TableCell>
                       <TableCell>
                         {lead.followUpDone ? (
-                          <span className="text-[12px] text-emerald-700">Completed</span>
+                          <span className="text-[12px] text-crm-success-text">Completed</span>
                         ) : due ? (
-                          <span className={cn('text-[12px] font-medium', due.overdue ? 'text-red-600' : 'text-[var(--alo-body)]')}>
+                          <span className={cn('text-[12px] font-medium', due.overdue ? 'text-crm-danger-text' : 'text-[var(--alo-body)]')}>
                             {due.label}
                           </span>
                         ) : (
@@ -353,7 +353,7 @@ export default function CounselorLeadsPage() {
             <Input value={form.intake} onChange={(e) => setForm({ ...form, intake: e.target.value })} placeholder="Target intake" aria-label="Target intake" className="h-9 rounded-input border-[var(--alo-border)] text-sm" />
 
             {formError && (
-              <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700 sm:col-span-2 lg:col-span-3" role="alert">
+              <div className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg p-3 text-xs text-crm-danger-text sm:col-span-2 lg:col-span-3" role="alert">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>{formError}</span>
               </div>

@@ -87,7 +87,7 @@ export function AiChatWidget() {
             <div className="flex-1">
               <p className="text-sm font-bold">ALO AI Assistant</p>
               <p className="flex items-center gap-1 text-[11px] text-white/80">
-                <span className="size-1.5 rounded-full bg-emerald-300" /> Online · Journey guide
+                <span className="size-1.5 rounded-full bg-[var(--alo-success)]" /> Online · Journey guide
               </p>
             </div>
           </div>

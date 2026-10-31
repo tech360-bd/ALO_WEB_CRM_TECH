@@ -31,7 +31,7 @@ export default function ServicesDirectoryPage() {
     <div className="min-h-screen bg-white text-[var(--alo-text)]">
       <main className="flex-1 pt-20 pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {error && <p role="alert" className="p-4 mb-6 border border-red-200 bg-red-50 rounded-xl">{error}</p>}
+          {error && <p role="alert" className="p-4 mb-6 border border-crm-danger-border bg-crm-danger-bg rounded-xl">{error}</p>}
           {/* Hero — spec §3 exact copy */}
           <div className="mb-12 rounded-[20px] border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-6 md:p-10">
             <Badge className="bg-card text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px] px-3 py-1 mb-4 uppercase tracking-[0.07em] font-semibold">ALO End-to-End Advisory</Badge>
@@ -79,7 +79,7 @@ export default function ServicesDirectoryPage() {
               <Link href="/book-consultation"><Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] font-bold text-sm px-8 h-12 rounded-xl shadow-sm">Request Consultation</Button></Link>
               <Link href="/course-finder"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6 font-bold text-[var(--alo-brand)]">Start Course Finder</Button></Link>
               <Link href="/eligibility-check"><Button variant="outline" className="border-[var(--alo-border)] h-12 px-6 font-bold text-[var(--alo-brand)]">Check Eligibility</Button></Link>
-              <Button asChild variant="outline" className="border-emerald-300 text-emerald-700 h-12 px-6 font-bold"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{ALO_PUBLIC_CONTACT_CTA.label}</a></Button>
+              <Button asChild variant="outline" className="border-crm-success-border text-crm-success-text h-12 px-6 font-bold"><a href={ALO_PUBLIC_CONTACT_CTA.href} {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{ALO_PUBLIC_CONTACT_CTA.label}</a></Button>
             </div>
           </div>
         </div>

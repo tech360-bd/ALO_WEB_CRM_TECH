@@ -194,7 +194,7 @@ export default function StudentAppointmentsPage() {
               </div>
 
               {submitError && (
-                <p className="rounded-input border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700" role="alert">
+                <p className="rounded-input border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-[12px] text-crm-danger-text" role="alert">
                   {submitError}
                 </p>
               )}

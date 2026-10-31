@@ -54,7 +54,7 @@ export default function CommunicationSettingsPage() {
   const badgeFor = (channel: ChannelStatusView) => {
     if (channel.status === 'active') {
       return (
-        <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 gap-1">
+        <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border gap-1">
           <CheckCircle2 className="w-3 h-3" /> ACTIVE
         </Badge>
       );
@@ -67,7 +67,7 @@ export default function CommunicationSettingsPage() {
       );
     }
     return (
-      <Badge className="bg-amber-100 text-amber-900 border-amber-300 gap-1">
+      <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border gap-1">
         <AlertTriangle className="w-3 h-3" /> CONFIGURATION REQUIRED
       </Badge>
     );
@@ -95,8 +95,8 @@ export default function CommunicationSettingsPage() {
       </div>
 
       {error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="text-sm text-red-800 py-3 flex items-center gap-2">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="text-sm text-crm-danger-text py-3 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" /> {error}
           </CardContent>
         </Card>
@@ -106,8 +106,8 @@ export default function CommunicationSettingsPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: 'Channels for your role', value: data.summary.total, tone: 'text-[var(--alo-text)]' },
-            { label: 'Active', value: data.summary.active, tone: 'text-emerald-700' },
-            { label: 'Configuration required', value: data.summary.configurationRequired, tone: 'text-amber-700' },
+            { label: 'Active', value: data.summary.active, tone: 'text-crm-success-text' },
+            { label: 'Configuration required', value: data.summary.configurationRequired, tone: 'text-crm-warning-text' },
             { label: 'Internal (no provider)', value: data.summary.internal, tone: 'text-[var(--alo-body)]' },
           ].map((item) => (
             <Card key={item.label}>
@@ -138,7 +138,7 @@ export default function CommunicationSettingsPage() {
                   </div>
                   <p className="text-xs text-[var(--alo-body)]">{channel.notes}</p>
                   {channel.missingVariables.length > 0 && (
-                    <div className="text-[11px] text-amber-800">
+                    <div className="text-[11px] text-crm-warning-text">
                       <span className="font-semibold">Missing configuration:</span>{' '}
                       <span className="font-mono">{channel.missingVariables.join(', ')}</span>
                       <span className="text-[var(--alo-text-muted)]"> — set these in the server environment, never in the browser.</span>
@@ -165,7 +165,7 @@ export default function CommunicationSettingsPage() {
         </CardHeader>
         <CardContent className="text-xs text-[var(--alo-body)] space-y-2">
           <p className="flex items-start gap-2">
-            <ShieldCheck className="w-3.5 h-3.5 mt-0.5 text-emerald-600" />
+            <ShieldCheck className="w-3.5 h-3.5 mt-0.5 text-crm-success-text" />
             {data?.policy?.personalAccountPolicy ||
               'Employees must not connect personal social accounts to the official ALO engine unless company policy explicitly authorizes it.'}
           </p>

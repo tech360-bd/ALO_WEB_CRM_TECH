@@ -79,9 +79,9 @@ function parseRecipientLines(raw: string): Array<{ email: string; first_name?: s
 function StatusBadge({ status }: { status: string }) {
   const tone =
     status === 'sent'
-      ? 'bg-emerald-50 text-emerald-700'
+      ? 'bg-crm-success-bg text-crm-success-text'
       : status === 'paused' || status === 'cancelled'
-        ? 'bg-amber-50 text-amber-700'
+        ? 'bg-crm-warning-bg text-crm-warning-text'
         : status === 'sending' || status === 'queued'
           ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'
           : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
@@ -244,11 +244,11 @@ export default function EmailMarketingView() {
       <div
         className={`rounded-xl border p-3 text-sm flex gap-2 items-start ${
           sendBanner.tone === 'emerald'
-            ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+            ? 'bg-crm-success-bg border-crm-success-border text-crm-success-text'
             : sendBanner.tone === 'red'
-              ? 'bg-red-50 border-red-200 text-red-800'
+              ? 'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text'
               : sendBanner.tone === 'amber'
-                ? 'bg-amber-50 border-amber-200 text-amber-800'
+                ? 'bg-crm-warning-bg border-crm-warning-border text-crm-warning-text'
                 : 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]'
         }`}
       >
@@ -256,7 +256,7 @@ export default function EmailMarketingView() {
         <span>{sendBanner.text}</span>
       </div>
 
-      {error && <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3">{error}</p>}
+      {error && <p className="text-sm text-crm-danger-text bg-crm-danger-bg border border-crm-danger-border rounded-lg p-3">{error}</p>}
       {message && <p className="text-sm text-[var(--alo-text)] bg-[var(--alo-page)] border rounded-lg p-3">{message}</p>}
 
       <div className="grid lg:grid-cols-12 gap-6">
@@ -331,7 +331,7 @@ export default function EmailMarketingView() {
                       <tr key={row.id} className={`border-t ${selectedId === row.id ? 'bg-[var(--alo-cta-soft)]' : ''}`}>
                         <td className="py-1.5 pr-2">
                           {row.name}
-                          {row.testMode && <span className="ml-1 text-[11px] text-amber-700">[test]</span>}
+                          {row.testMode && <span className="ml-1 text-[11px] text-crm-warning-text">[test]</span>}
                         </td>
                         <td><StatusBadge status={row.status} /></td>
                         <td>{row.recipientCount}</td>
@@ -351,7 +351,7 @@ export default function EmailMarketingView() {
           <Card>
             <CardHeader>
               <CardTitle className="text-sm flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />Campaign detail
+                <ShieldCheck className="w-4 h-4 text-crm-success-text" />Campaign detail
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs">
@@ -361,8 +361,8 @@ export default function EmailMarketingView() {
                   <div>
                     <p className="font-semibold text-sm">{campaign.name}</p>
                     <p className="text-[var(--alo-body)]">Subject: {campaign.subject}</p>
-                    <p className="mt-1"><StatusBadge status={campaign.status} />{campaign.testMode && <span className="ml-2 text-amber-700">test campaign</span>}</p>
-                    {campaign.lastErrorCode && <p className="text-amber-700 mt-1">Reason: {campaign.lastErrorCode}</p>}
+                    <p className="mt-1"><StatusBadge status={campaign.status} />{campaign.testMode && <span className="ml-2 text-crm-warning-text">test campaign</span>}</p>
+                    {campaign.lastErrorCode && <p className="text-crm-warning-text mt-1">Reason: {campaign.lastErrorCode}</p>}
                     {campaign.consentBasis && <p className="text-[var(--alo-body)] mt-1">Consent basis: {campaign.consentBasis}</p>}
                   </div>
 
@@ -399,7 +399,7 @@ export default function EmailMarketingView() {
                       <Button size="sm" variant="outline" onClick={() => changeStatus('resume')} disabled={busy}>Resume</Button>
                     )}
                     {!TERMINAL.has(campaign.status) && (
-                      <Button size="sm" variant="outline" className="text-red-700" onClick={() => changeStatus('cancel')} disabled={busy}>Cancel campaign</Button>
+                      <Button size="sm" variant="outline" className="text-crm-danger-text" onClick={() => changeStatus('cancel')} disabled={busy}>Cancel campaign</Button>
                     )}
                     <Button size="sm" variant="outline" onClick={() => void loadDetail(campaign.id)} disabled={busy}>Refresh detail</Button>
                   </div>

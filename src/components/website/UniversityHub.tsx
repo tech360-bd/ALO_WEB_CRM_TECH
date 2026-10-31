@@ -69,7 +69,7 @@ export default function UniversityHub({ slug }: Props) {
   }, [slug, coursePage]);
 
   if (loading) return <div className="p-12 text-center"><div className="h-64 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl animate-pulse max-w-7xl mx-auto" /></div>;
-  if (error || !uni) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><p className="text-xs text-[var(--alo-text-muted)] mt-2">{error || 'University not found'}</p><Link href="/universities"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-12">Browse Universities</Button></Link></Card></div>;
+  if (error || !uni) return <div className="p-8 max-w-7xl mx-auto"><Card className="p-8 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-crm-warning-text mx-auto mb-2" /><p className="text-sm">Information not currently verified. Please check with an ALO Education counselor.</p><p className="text-xs text-[var(--alo-text-muted)] mt-2">{error || 'University not found'}</p><Link href="/universities"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-12">Browse Universities</Button></Link></Card></div>;
 
   const name = uni.name;
   const country = uni.country || 'Country not recorded';
@@ -113,7 +113,7 @@ export default function UniversityHub({ slug }: Props) {
           <div className="p-6 md:p-10">
           <p className="mb-3 text-xs font-semibold tracking-wide text-[var(--alo-text-muted)]">ALO university reference: {uni.universityId || uni.id || 'Not recorded'}</p>
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <Badge className={`${uni.verificationStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-xs`}>
+            <Badge variant={uni.verificationStatus === 'VERIFIED' ? 'success' : 'warning'} className="text-xs">
               {uni.verificationStatus === 'VERIFIED' ? 'Verified university record' : `Verification: ${uni.verificationStatus || 'not verified'}`}
             </Badge>
             {uni.worldRanking > 0 && <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)] text-xs">World ranking recorded: #{uni.worldRanking}</Badge>}
@@ -134,7 +134,7 @@ export default function UniversityHub({ slug }: Props) {
             <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)] text-[11px] uppercase">IELTS minimum</p><p className="font-bold text-[var(--alo-brand)]">{ieltsMin ?? 'Not recorded'}</p></div>
             <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)] text-[11px] uppercase">Tuition range</p><p className="font-bold">{tuition || 'Not recorded'}</p></div>
             <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)] text-[11px] uppercase">International student count</p><p className="font-bold">{uni.intlStudents || 'Not recorded'}</p></div>
-            <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)] text-[11px] uppercase">Scholarships</p><p className="font-bold text-emerald-600">{uni.scholarships ? 'Availability recorded' : 'Not recorded'}</p></div>
+            <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)] text-[11px] uppercase">Scholarships</p><p className="font-bold text-crm-success-text">{uni.scholarships ? 'Availability recorded' : 'Not recorded'}</p></div>
             <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3"><p className="text-[var(--alo-text-muted)] text-[11px] uppercase">Verified international courses</p><p className="font-bold">{courseLoading ? 'Loading…' : courseTotal}</p></div>
           </div>
           </div>
@@ -172,14 +172,14 @@ export default function UniversityHub({ slug }: Props) {
                 <Badge className="bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]">Institution code on file: {uni.universityCode?.trim() || 'Not recorded'}</Badge>
               </div>
               {internationalCourseCatalog && (
-                <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-950" role="status" aria-live="polite">
+                <div className="mb-4 rounded-xl border border-[var(--alo-info-border)] bg-[var(--alo-info-bg)] p-4 text-xs text-[var(--alo-info-text)]" role="status" aria-live="polite">
                   <p className="font-semibold">Catalogue coverage: {internationalCourseCatalog.catalogueCoverageStatus || 'RESEARCH_REQUIRED'}</p>
                   <p className="mt-1">Showing {courseTotal} source-linked, verified, published course records with explicit positive international eligibility, regardless of intake year. {internationalCourseCatalog.courseRecordsNotCurrentlyPublishable || 0} of {internationalCourseCatalog.candidateCourseRecords || 0} CRM course records are not currently published and verified; {internationalCourseCatalog.eligibilityNotConfirmedCourseRecords || 0} records do not have an explicit positive international-eligibility status.</p>
                   <p className="mt-1">{internationalCourseCatalog.verifiedInternationalCoursesWithoutVerifiedIntake || 0} verified eligible course records have no linked source-verified intake/fee record. The course remains listed; no intake or fee is inferred. These are database counts, not a count of every course in the institution’s official catalogue.</p>
                 </div>
               )}
               {internationalCourseCatalog && (
-                <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-950" role="status">
+                <div className="mb-5 rounded-xl border border-crm-warning-border bg-crm-warning-bg p-4 text-xs text-crm-warning-text" role="status">
                   <p className="font-semibold">Course-code coverage is not certified by stored text fields.</p>
                   <p className="mt-1">{internationalCourseCatalog.courseCodesRecorded} of {courseTotal} listed eligible course records have a non-empty course-code field; {internationalCourseCatalog.courseCodesMissing} have none. This is a field-presence count, not proof that every official code is present, active, or international-student applicable.</p>
                 </div>
@@ -187,7 +187,7 @@ export default function UniversityHub({ slug }: Props) {
               {courseLoading && courses.length === 0 ? (
                 <p className="text-sm text-[var(--alo-text-muted)]" role="status">Loading verified international course records…</p>
               ) : courseListing?.error ? (
-                <p className="text-sm text-red-700" role="alert">Course data could not be loaded. {courseListing.error}</p>
+                <p className="text-sm text-crm-danger-text" role="alert">Course data could not be loaded. {courseListing.error}</p>
               ) : courses.length === 0 ? (
                 <p className="text-sm text-[var(--alo-body)]">No published, source-linked course record with verified explicit international eligibility was returned. This may indicate a data-coverage gap; it does not establish that the university has no internationally eligible courses.</p>
               ) : (
@@ -202,7 +202,7 @@ export default function UniversityHub({ slug }: Props) {
                       <Card key={c.courseId || c.id} className="p-4 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-xl h-full">
                         <div className="flex flex-wrap items-center gap-2 mb-2">
                           <Badge className="bg-white border-[var(--alo-border)] text-[11px]">{c.studyLevel || 'Course level not recorded'}</Badge>
-                          <Badge className={`${c.verificationStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{c.verificationStatus || 'NEEDS_REVIEW'}</Badge>
+                          <Badge variant={c.verificationStatus === 'VERIFIED' ? 'success' : 'warning'} className="text-[11px]">{c.verificationStatus || 'NEEDS_REVIEW'}</Badge>
                         </div>
                         <h3 className="font-semibold text-sm text-[var(--alo-text)]">{c.courseTitle}</h3>
                         <p className="text-xs text-[var(--alo-body)] mt-1">{c.qualification || 'Qualification not recorded'} • {c.durationMonths ? `${Math.round(c.durationMonths / 12 * 10) / 10} years` : 'Duration not recorded'}</p>
@@ -254,7 +254,7 @@ export default function UniversityHub({ slug }: Props) {
             <div className="grid md:grid-cols-3 gap-4">
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[var(--alo-text)] mb-2 flex items-center gap-2"><DollarSign className="w-4 h-4 text-[var(--alo-brand)]" />Tuition range</h4><p className="text-lg font-bold text-[var(--alo-text)]">{tuition || 'Not recorded'}</p><p className="text-xs text-[var(--alo-text-muted)] mt-1">Official tuition source: {uni.officialTuitionFeeUrl ? <a href={uni.officialTuitionFeeUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--alo-brand)] underline">View</a> : 'Not recorded'}</p></Card>
               <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[var(--alo-text)] mb-2 flex items-center gap-2"><Award className="w-4 h-4 text-[var(--alo-cta)]" />Scholarship records</h4><p className="text-sm font-semibold">{scholarships.length > 0 ? `${scholarships.length} active, verified record${scholarships.length === 1 ? '' : 's'}` : 'No verified scholarship record linked'}</p><p className="text-xs text-[var(--alo-text-muted)] mt-1">{scholarships.slice(0,2).map((s:any)=> s.scholarshipName || s.name).filter(Boolean).join(', ') || 'Coverage may be incomplete; no scholarship is inferred.'}</p><Link href={`/scholarships?university=${encodeURIComponent(uni.universityId || '')}`} className="text-xs text-[var(--alo-brand)] underline mt-2 inline-block">Search scholarship records →</Link></Card>
-              <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[var(--alo-text)] mb-2 flex items-center gap-2"><Calendar className="w-4 h-4 text-emerald-600" />Verified intake records</h4><p className="text-sm">All years, when source-backed</p><p className="text-xs text-[var(--alo-text-muted)] mt-1">{courseLoading ? 'Loading verified intake records…' : `${courses.reduce((count: number, course: any) => count + (course.intakes?.length || 0), 0)} source-verified intake/fee records are attached to the current course page.`}</p></Card>
+              <Card className="p-5 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h4 className="font-bold text-sm text-[var(--alo-text)] mb-2 flex items-center gap-2"><Calendar className="w-4 h-4 text-crm-success-text" />Verified intake records</h4><p className="text-sm">All years, when source-backed</p><p className="text-xs text-[var(--alo-text-muted)] mt-1">{courseLoading ? 'Loading verified intake records…' : `${courses.reduce((count: number, course: any) => count + (course.intakes?.length || 0), 0)} source-verified intake/fee records are attached to the current course page.`}</p></Card>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
@@ -316,7 +316,7 @@ export default function UniversityHub({ slug }: Props) {
           <div className="space-y-6">
             <Card className="p-6 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm"><h3 className="font-bold text-[var(--alo-text)] mb-3">Quick Actions</h3><div className="space-y-2"><Link href="/eligibility-check" className="block"><Button className="w-full bg-[var(--alo-cta)] text-white h-12">Check Eligibility</Button></Link><Link href="/book-consultation" className="block"><Button variant="outline" className="w-full border-[var(--alo-border)] h-12">Book Consultation</Button></Link><Link href={`/course-finder?university=${uni.universityId}`} className="block"><Button variant="outline" className="w-full border-[var(--alo-border)] h-12">View Courses</Button></Link><Link href="/compare" className="block"><Button variant="outline" className="w-full border-[var(--alo-border)] h-12">Compare</Button></Link></div></Card>
             <TestPreparationMiniCard contextTitle={`English for ${name}`} recommendedTest={ieltsMin ? `IELTS ${ieltsMin}` : 'Test requirement not recorded'} targetScore={ieltsMin ? `Recorded overall score: ${ieltsMin}` : 'Verify the official course requirement'} />
-            <Card className="p-6 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Sources & Verification</h3><div className="space-y-2 text-xs"><p><strong>Official URL:</strong> {uni.officialUrl ? <a href={uni.officialUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{uni.officialUrl}</a> : 'Information not currently verified.'}</p><p><strong>Source URL:</strong> {uni.sourceUrl ? <a href={uni.sourceUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{uni.sourceUrl}</a> : 'Not verified'}</p><p><strong>Verification Status:</strong> <Badge className={`${uni.verificationStatus === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'} text-[11px]`}>{uni.verificationStatus || 'NEEDS_REVIEW'}</Badge></p><p><strong>Last Verified:</strong> {uni.lastVerifiedAt ? new Date(uni.lastVerifiedAt).toLocaleDateString() : 'Information not currently verified.'}</p></div></Card>
+            <Card className="p-6 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl"><h3 className="font-bold text-sm mb-3">Official Sources & Verification</h3><div className="space-y-2 text-xs"><p><strong>Official URL:</strong> {uni.officialUrl ? <a href={uni.officialUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{uni.officialUrl}</a> : 'Information not currently verified.'}</p><p><strong>Source URL:</strong> {uni.sourceUrl ? <a href={uni.sourceUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{uni.sourceUrl}</a> : 'Not verified'}</p><p><strong>Verification Status:</strong> <Badge variant={uni.verificationStatus === 'VERIFIED' ? 'success' : 'warning'} className="text-[11px]">{uni.verificationStatus || 'NEEDS_REVIEW'}</Badge></p><p><strong>Last Verified:</strong> {uni.lastVerifiedAt ? new Date(uni.lastVerifiedAt).toLocaleDateString() : 'Information not currently verified.'}</p></div></Card>
           </div>
         </div>
       </div>

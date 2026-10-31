@@ -213,7 +213,7 @@ export function PublicAdmissionRequirements({ onNavigate }: PublicAdmissionRequi
                     <ul className="mt-2 space-y-1.5">
                       {l.requirements.map((r, i) => (
                         <li key={i} className="flex items-start gap-1.5 text-xs text-[var(--alo-text-muted)]">
-                          <Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />
+                          <Icon name="Check" className="mt-0.5 size-3 shrink-0 text-crm-success-text" />
                           <span>{r}</span>
                         </li>
                       ))}

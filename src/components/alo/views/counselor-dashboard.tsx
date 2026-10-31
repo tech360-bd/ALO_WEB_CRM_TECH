@@ -157,8 +157,8 @@ interface HrSelfSummary {
 const PRIORITY_COLORS: Record<string, string> = {
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   NORMAL: "bg-sky-100 text-sky-700",
-  HIGH: "bg-amber-100 text-amber-700",
-  URGENT: "bg-rose-100 text-rose-700",
+  HIGH: "bg-crm-warning-bg text-crm-warning-text",
+  URGENT: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const TASK_TYPE_LABELS: Record<string, string> = {
@@ -179,12 +179,12 @@ const APPT_TYPE_LABELS: Record<string, string> = {
 };
 
 const SLA_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  UNREAD: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  UNREAD: "bg-crm-warning-bg text-crm-warning-text",
   ESCALATED_40: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  ESCALATED_50: "bg-rose-100 text-rose-700",
-  RESPONDED: "bg-emerald-100 text-emerald-700",
-  AI_HANDLED: "bg-violet-100 text-violet-700",
+  ESCALATED_50: "bg-crm-warning-bg text-crm-warning-text",
+  RESPONDED: "bg-crm-success-bg text-crm-success-text",
+  AI_HANDLED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   MISSED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
@@ -199,11 +199,11 @@ const SLA_STATUS_LABELS: Record<string, string> = {
 };
 
 const CHANNEL_COLORS: Record<string, string> = {
-  WHATSAPP: "bg-emerald-100 text-emerald-700",
+  WHATSAPP: "bg-crm-success-bg text-crm-success-text",
   SMS: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  EMAIL: "bg-violet-100 text-violet-700",
+  EMAIL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   FACEBOOK: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  INSTAGRAM: "bg-pink-100 text-pink-700",
+  INSTAGRAM: "bg-crm-danger-bg text-crm-danger-text",
   MESSENGER: "bg-sky-100 text-sky-700",
   WEBSITE_CHAT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PORTAL: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
@@ -383,8 +383,8 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                     <Icon name="Globe" className="size-3.5" />
                     UK · Canada · Australia focus
                   </span>
-                  <span className="flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 font-semibold text-emerald-700">
-                    <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+                  <span className="flex items-center gap-1 rounded-full bg-crm-success-bg px-2 py-0.5 font-semibold text-crm-success-text">
+                    <span className="size-1.5 animate-pulse rounded-full bg-[var(--alo-success)]" />
                     Online today
                   </span>
                   <span className="flex items-center gap-1">
@@ -401,10 +401,10 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700">
+                    <span className="flex items-center gap-1.5 rounded-lg border border-crm-success-border bg-crm-success-bg px-2.5 py-1.5 text-xs font-semibold text-crm-success-text">
                       <Icon name="MessageCircle" className="size-3.5" />
                       <span className="hidden sm:inline">WhatsApp</span>
-                      <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+                      <span className="size-1.5 animate-pulse rounded-full bg-[var(--alo-success)]" />
                     </span>
                   </TooltipTrigger>
                   <TooltipContent>WhatsApp Business connected — {metrics.unreadWhatsApp} unread</TooltipContent>
@@ -523,7 +523,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                             </span>
                           )}
                           {task.dueDate && (
-                            <span className={`flex items-center gap-1 ${overdue ? "font-semibold text-rose-600" : ""}`}>
+                            <span className={`flex items-center gap-1 ${overdue ? "font-semibold text-crm-warning-text" : ""}`}>
                               <Icon name="Calendar" className="size-3" />
                               Due {fmtDate(task.dueDate)} {fmtTime(task.dueDate)}
                               {overdue && " · overdue"}
@@ -535,7 +535,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                         size="sm"
                         disabled={completingTask === task.id}
                         onClick={() => completeTask(task.id)}
-                        className="h-8 shrink-0 bg-emerald-600 text-white hover:bg-emerald-700"
+                        className="h-8 shrink-0 bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]"
                       >
                         {completingTask === task.id ? (
                           <Icon name="Loader2" className="mr-1 size-3.5 animate-spin" />
@@ -605,7 +605,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
             description="First-response timer on inbound messages"
             icon="AlertTriangle"
             action={
-              <Badge variant="outline" className="border-rose-200 bg-rose-50 text-rose-700">
+              <Badge variant="outline" className="border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">
                 {slaEvents.length} active
               </Badge>
             }
@@ -623,8 +623,8 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                       key={ev.id}
                       className={`rounded-xl border p-3 ${
                         isEscalated
-                          ? "border-rose-200 bg-rose-50/50"
-                          : "border-amber-200 bg-amber-50/30"
+                          ? "border-crm-warning-border bg-crm-warning-bg/50"
+                          : "border-crm-warning-border bg-crm-warning-bg/30"
                       }`}
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -633,7 +633,7 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                           <Badge variant="outline" className="text-[11px]">
                             {CHANNEL_LABELS[ev.channel] ?? ev.channel}
                           </Badge>
-                          <span className={`text-xs font-semibold ${overdue ? "text-rose-600" : "text-muted-foreground"}`}>
+                          <span className={`text-xs font-semibold ${overdue ? "text-crm-warning-text" : "text-muted-foreground"}`}>
                             {minutesSince}m ago · SLA {ev.slaMinutes}m
                           </span>
                         </div>
@@ -754,13 +754,13 @@ export function CounselorDashboard({ onNavigate = () => {} }: { onNavigate?: (v:
                 <div>
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">This month's attendance</p>
                   <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="rounded-lg bg-emerald-50 p-2">
-                      <p className="text-lg font-bold text-emerald-700">{hrSummary.presentDays}</p>
-                      <p className="text-[11px] font-medium uppercase text-emerald-600">Present</p>
+                    <div className="rounded-lg bg-crm-success-bg p-2">
+                      <p className="text-lg font-bold text-crm-success-text">{hrSummary.presentDays}</p>
+                      <p className="text-[11px] font-medium uppercase text-crm-success-text">Present</p>
                     </div>
-                    <div className="rounded-lg bg-amber-50 p-2">
-                      <p className="text-lg font-bold text-amber-700">{hrSummary.lateDays}</p>
-                      <p className="text-[11px] font-medium uppercase text-amber-600">Late</p>
+                    <div className="rounded-lg bg-crm-warning-bg p-2">
+                      <p className="text-lg font-bold text-crm-warning-text">{hrSummary.lateDays}</p>
+                      <p className="text-[11px] font-medium uppercase text-crm-warning-text">Late</p>
                     </div>
                     <div className="rounded-lg bg-[var(--alo-surface-muted)] p-2">
                       <p className="text-lg font-bold text-[var(--alo-body)]">{hrSummary.leaveDays}</p>

@@ -31,15 +31,15 @@ interface SupportTicket {
 
 const statusColors: Record<TicketStatus, string> = {
   'Open': 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
-  'In Progress': 'bg-amber-100 text-amber-700',
-  'Resolved': 'bg-emerald-100 text-emerald-700',
+  'In Progress': 'bg-crm-warning-bg text-crm-warning-text',
+  'Resolved': 'bg-crm-success-bg text-crm-success-text',
   'Closed': 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
 const priorityColors: Record<TicketPriority, string> = {
-  'High': 'bg-red-100 text-red-700',
+  'High': 'bg-crm-danger-bg text-crm-danger-text',
   'Medium': 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-  'Low': 'bg-green-100 text-green-700',
+  'Low': 'bg-crm-success-bg text-crm-success-text',
 };
 
 const fallbackTickets: SupportTicket[] = [
@@ -89,9 +89,9 @@ export default function CrmSupportPage() {
 
   const statsCards = [
     { label: 'Open Tickets', value: openCount, icon: AlertCircle, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
-    { label: 'In Progress', value: inProgressCount, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
-    { label: 'Resolved', value: resolvedCount, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'High Priority', value: highPriorityCount, icon: Headphones, color: 'text-red-600', bg: 'bg-red-50' },
+    { label: 'In Progress', value: inProgressCount, icon: Clock, color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg' },
+    { label: 'Resolved', value: resolvedCount, icon: CheckCircle, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
+    { label: 'High Priority', value: highPriorityCount, icon: Headphones, color: 'text-crm-danger-text', bg: 'bg-crm-danger-bg' },
   ];
 
   return (

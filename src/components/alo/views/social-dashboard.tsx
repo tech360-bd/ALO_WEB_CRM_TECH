@@ -438,7 +438,7 @@ function SocialAccountCard({
     label: account.platform,
     icon: "Globe",
     brand: "#64748B",
-    bg: "bg-slate-500",
+    bg: "bg-[var(--alo-page)]0",
     text: "text-white",
   };
   const perms = parsePermissions(account.permissions);
@@ -1048,7 +1048,7 @@ function ConfigurePermissionsDialog({
     label: account.platform,
     icon: "Globe",
     brand: "#64748B",
-    bg: "bg-slate-500",
+    bg: "bg-[var(--alo-page)]0",
     text: "text-white",
   };
 

@@ -29,11 +29,11 @@ interface Lead {
 }
 const STATUS_STYLE: Record<LeadStatus, string> = {
   New: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
-  Contacted: 'bg-amber-100 text-amber-700 border-amber-200',
-  Qualified: 'bg-purple-100 text-purple-700 border-purple-200',
-  Converted: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  Lost: 'bg-red-100 text-red-600 border-red-200',
-  Other: 'bg-slate-100 text-slate-700 border-slate-200',
+  Contacted: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+  Qualified: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+  Converted: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
+  Lost: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+  Other: 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 const statusLabel = (value: unknown): LeadStatus => {
   const normalized = typeof value === 'string' ? value.trim().toLowerCase().replace(/[_-]+/g, ' ') : '';
@@ -130,12 +130,12 @@ export default function EmployeeLeadsPage() {
         <div><h1 className="text-2xl font-bold text-alo-text">My Created Leads</h1><p className="mt-1 text-sm text-alo-text-muted">Leads created by your authenticated account. Assignment/team access is not shown until its identity mapping is verified.</p></div>
         <div className="flex gap-2"><Button variant="outline" onClick={() => void loadLeads()} disabled={loading}><RefreshCw className="mr-2 h-4 w-4" />Refresh</Button><Button variant="brand" onClick={() => setShowCreate(true)}><Plus className="mr-1 h-4 w-4" />Add lead</Button></div>
       </div>
-      {error && <Card role="alert" className="border-red-200"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-red-700"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void loadLeads()}>Retry</Button></CardContent></Card>}
+      {error && <Card role="alert" className="border-crm-danger-border"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-crm-danger-text"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void loadLeads()}>Retry</Button></CardContent></Card>}
       {!error && <>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Kpi icon={<Users className="h-5 w-5 text-[var(--alo-brand)]" />} label="Created leads" value={leads.length} />
-          <Kpi icon={<UserPlus className="h-5 w-5 text-amber-600" />} label="Created in last 7 days" value={newThisWeek} />
-          <Kpi icon={<TrendingUp className="h-5 w-5 text-emerald-600" />} label="Converted share" value={`${conversionRate}%`} />
+          <Kpi icon={<UserPlus className="h-5 w-5 text-crm-warning-text" />} label="Created in last 7 days" value={newThisWeek} />
+          <Kpi icon={<TrendingUp className="h-5 w-5 text-crm-success-text" />} label="Converted share" value={`${conversionRate}%`} />
         </div>
         <Card className="rounded-xl border border-alo-border"><CardContent className="p-4"><Tabs value={statusTab} onValueChange={setStatusTab}><div className="flex flex-col items-start justify-between gap-3 lg:flex-row lg:items-center"><TabsList className="max-w-full overflow-x-auto bg-alo-page">{['All', 'New', 'Contacted', 'Qualified', 'Converted', 'Lost'].map((status) => <TabsTrigger key={status} value={status} className="text-xs">{status}</TabsTrigger>)}</TabsList><div className="flex w-full gap-2 lg:w-auto"><div className="relative flex-1 lg:w-64"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-alo-text-muted" /><Input aria-label="Search created leads" placeholder="Search created leads" value={search} onChange={(event) => setSearch(event.target.value)} className="pl-9" /></div><select aria-label="Filter destination" value={destinationFilter} onChange={(event) => setDestinationFilter(event.target.value)} className="h-9 rounded-lg border border-alo-border bg-white px-3 text-sm"><option value="All">All destinations</option>{[...new Set(leads.map((lead) => lead.destination).filter(Boolean))].sort().map((destination) => <option key={destination} value={destination}>{destination}</option>)}</select></div></div></Tabs></CardContent></Card>
         <div className="space-y-3">{filtered.map((lead) => <Card key={lead.id} className="rounded-xl border border-alo-border"><CardContent className="p-4"><div className="flex flex-col gap-3 lg:flex-row lg:items-center"><div className="flex min-w-0 flex-1 items-center gap-3"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-alo-brand-light text-sm font-semibold text-alo-brand">{lead.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2)}</div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><span className="text-sm font-semibold text-alo-text">{lead.name}</span><Badge variant="outline" className={cn('border text-[11px]', STATUS_STYLE[lead.status])}>{lead.status}</Badge></div><div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-alo-text-secondary">{lead.email && <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" />{lead.email}</span>}{lead.phone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" />{lead.phone}</span>}{lead.destination && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{lead.destination}</span>}{lead.studyLevel && <span className="inline-flex items-center gap-1"><BookOpen className="h-3 w-3" />{lead.studyLevel}</span>}{lead.source && <span className="inline-flex items-center gap-1"><Globe className="h-3 w-3" />{lead.source}</span>}</div></div></div><span className="text-xs text-alo-text-muted">{lead.createdAt ? `Created ${new Date(lead.createdAt).toLocaleDateString()}` : 'Creation date unavailable'}</span></div></CardContent></Card>)}

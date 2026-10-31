@@ -171,9 +171,9 @@ function parseJsonField(field: string | null | undefined): string[] {
 
 function getMatchColor(level: string) {
   switch (level) {
-    case 'likely': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
-    case 'possible': return 'text-amber-600 bg-amber-50 border-amber-200';
-    case 'review': return 'text-red-600 bg-red-50 border-red-200';
+    case 'likely': return 'text-crm-success-text bg-crm-success-bg border-crm-success-border';
+    case 'possible': return 'text-crm-warning-text bg-crm-warning-bg border-crm-warning-border';
+    case 'review': return 'text-crm-danger-text bg-crm-danger-bg border-crm-danger-border';
     default: return 'text-[var(--alo-body)] bg-[var(--alo-page)] border-[var(--alo-border)]';
   }
 }
@@ -303,7 +303,7 @@ function RequirementsDrawer({ course }: { course: CourseData }) {
               <div key={r.label} className="flex items-center justify-between bg-[var(--alo-page)] rounded-lg p-3">
                 <span className="text-sm text-[var(--alo-body)]">{r.label}</span>
                 {r.required ? (
-                  <Badge className="bg-amber-100 text-amber-700 text-xs">Required</Badge>
+                  <Badge className="bg-crm-warning-bg text-crm-warning-text text-xs">Required</Badge>
                 ) : (
                   <span className="text-xs text-[var(--alo-text-muted)]">Not required</span>
                 )}
@@ -533,7 +533,7 @@ function RelatedCourseCard({ course }: { course: RelatedCourse }) {
             )}
           </div>
           {course.scholarshipAvailable && (
-            <Badge className="bg-amber-100 text-amber-700 text-[11px] font-medium">
+            <Badge className="bg-crm-warning-bg text-crm-warning-text text-[11px] font-medium">
               <Award className="size-2.5 mr-0.5" /> Scholarship
             </Badge>
           )}
@@ -552,7 +552,7 @@ function ApplicationStepItem({ step, index }: { step: ReturnType<typeof getAppli
         <div className="w-8 h-8 rounded-full bg-[var(--alo-brand)] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
           {step.step}
         </div>
-        {index < 19 && <div className="w-px flex-1 bg-slate-200 mt-1" />}
+        {index < 19 && <div className="w-px flex-1 bg-[var(--alo-page)] mt-1" />}
       </div>
       <div className="pb-6">
         <div className="flex items-center gap-2">
@@ -773,8 +773,8 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-8">
         <div className="text-center max-w-md">
-          <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-6">
-            <SearchX className="size-10 text-red-300" />
+          <div className="w-20 h-20 rounded-full bg-crm-danger-bg flex items-center justify-center mx-auto mb-6">
+            <SearchX className="size-10 text-crm-danger-text" />
           </div>
           <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Error Loading Course</h2>
           <p className="text-[var(--alo-text-muted)] mb-6">{error || 'Unable to load course data.'}</p>
@@ -853,7 +853,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                   </span>
                 )}
                 {uni.rankingValue && (
-                  <span className="flex items-center gap-1 text-amber-600">
+                  <span className="flex items-center gap-1 text-crm-warning-text">
                     <Trophy className="size-3.5" />
                     #{uni.rankingValue}
                   </span>
@@ -887,12 +887,12 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
             </Badge>
           )}
           {isNotPublished && (
-            <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+            <Badge variant="secondary" className="bg-crm-warning-bg text-crm-warning-text">
               Not Published
             </Badge>
           )}
           {isUnverified && !isNotPublished && (
-            <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+            <Badge variant="secondary" className="bg-crm-warning-bg text-crm-warning-text">
               Verification Pending
             </Badge>
           )}
@@ -1072,7 +1072,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                     Career Outcomes
                   </h2>
                   {course.placementAvailable && (
-                    <Badge className="bg-emerald-100 text-emerald-700 text-xs">
+                    <Badge className="bg-crm-success-bg text-crm-success-text text-xs">
                       <Briefcase className="size-3 mr-1" />
                       Placement Available
                     </Badge>
@@ -1115,10 +1115,10 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
 
           {/* ── Scholarships Tab ── */}
           <TabsContent value="scholarships" className="mt-6">
-            <Card className="overflow-hidden border-amber-200 bg-amber-50/50">
+            <Card className="overflow-hidden border-crm-warning-border bg-crm-warning-bg/50">
               <CardContent className="p-5 sm:p-6">
                 <h2 className="text-lg font-bold text-[var(--alo-text)] flex items-center gap-2">
-                  <Award className="size-5 text-amber-600" />
+                  <Award className="size-5 text-crm-warning-text" />
                   Scholarship Information
                 </h2>
                 {course.scholarshipAvailable ? (
@@ -1137,7 +1137,7 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-amber-300 text-amber-700 hover:bg-amber-100"
+                        className="border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
                         onClick={() => toast.info('Navigating to scholarship search...')}
                       >
                         <SearchX className="size-4 mr-1.5" />
@@ -1357,11 +1357,11 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
 
       {/* ═══ Preliminary Eligibility Disclaimer ═══ */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mb-4">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
-          <AlertTriangle className="size-5 text-amber-500 flex-shrink-0 mt-0.5" />
+        <div className="bg-crm-warning-bg border border-crm-warning-border rounded-lg p-4 flex items-start gap-3">
+          <AlertTriangle className="size-5 text-crm-warning-text flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-amber-800">Preliminary Eligibility Only</p>
-            <p className="text-xs text-amber-700 mt-1 leading-relaxed">
+            <p className="text-sm font-medium text-crm-warning-text">Preliminary Eligibility Only</p>
+            <p className="text-xs text-crm-warning-text mt-1 leading-relaxed">
               Any eligibility result shown is indicative and based on self-reported information. It does not
               guarantee admission. Universities assess applications holistically and may have additional
               requirements not captured here. Always verify requirements directly with the university or
@@ -1389,8 +1389,8 @@ export function CourseDetailEnhanced({ slug }: { slug: string }) {
           <span>Verified: {formatDate(course.lastVerifiedAt)}</span>
           <span className="flex items-center gap-1">
             Status: {course.verificationStatus === 'VERIFIED'
-              ? <span className="text-emerald-500 flex items-center gap-0.5"><CheckCircle className="size-3" /> Verified</span>
-              : <span className="text-amber-500">{course.verificationStatus || 'Unverified'}</span>}
+              ? <span className="text-crm-success-text flex items-center gap-0.5"><CheckCircle className="size-3" /> Verified</span>
+              : <span className="text-crm-warning-text">{course.verificationStatus || 'Unverified'}</span>}
           </span>
         </div>
       </div>

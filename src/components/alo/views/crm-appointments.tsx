@@ -14,9 +14,9 @@ const TYPE_LABELS: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
   SCHEDULED: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
-  CANCELLED: "bg-rose-100 text-rose-700",
-  NO_SHOW: "bg-amber-100 text-amber-700",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
+  CANCELLED: "bg-crm-warning-bg text-crm-warning-text",
+  NO_SHOW: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 export function CrmAppointments() {

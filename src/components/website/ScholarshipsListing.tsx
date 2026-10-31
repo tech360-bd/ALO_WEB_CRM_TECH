@@ -27,10 +27,10 @@ const AMOUNT_BANDS = [
 ] as const;
 
 const STATUS_CHIP: Record<string, string> = {
-  OPEN: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  CLOSING_SOON: 'bg-amber-50 text-amber-700 border-amber-200',
+  OPEN: 'bg-crm-success-bg text-crm-success-text border border-crm-success-border',
+  CLOSING_SOON: 'bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border',
   UPCOMING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
-  CLOSED: 'bg-red-50 text-red-700 border-red-200',
+  CLOSED: 'bg-crm-danger-bg text-crm-danger-text border border-crm-danger-border',
   NEEDS_VERIFICATION: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 

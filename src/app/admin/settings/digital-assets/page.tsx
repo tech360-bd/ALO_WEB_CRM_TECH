@@ -27,7 +27,7 @@ export default async function AdminDigitalAssetsPage() {
   const isAdmin = role === "SUPER_ADMIN" || role === "ADMIN";
 
   if (!isAdmin) {
-    return <div className="p-8 text-red-600">Access denied — requires SUPER_ADMIN or ADMIN. Current: {role || "unauthenticated"}</div>;
+    return <div className="p-8 text-crm-danger-text">Access denied — requires SUPER_ADMIN or ADMIN. Current: {role || "unauthenticated"}</div>;
   }
 
   // Fetch SocialIntegration rows (official accounts) — reuse existing model
@@ -52,14 +52,14 @@ export default async function AdminDigitalAssetsPage() {
           const lastSync = row?.lastSyncAt ? new Date(row.lastSyncAt).toLocaleString() : "never";
           const isConnected = status === "connected";
           return (
-            <div key={p.id} className={`border rounded-lg p-4 ${isConnected ? "border-green-300 bg-green-50" : "border-[var(--alo-border)] bg-white"}`}>
+            <div key={p.id} className={`border rounded-lg p-4 ${isConnected ? "border-[var(--alo-success)] bg-crm-success-bg" : "border-[var(--alo-border)] bg-white"}`}>
               <div className="flex justify-between items-start">
                 <div>
                   <div className="font-semibold">{p.name}</div>
                   <div className="text-xs text-[var(--alo-text-muted)]">{p.provider} • {p.oauth}</div>
                   <div className="text-xs text-[var(--alo-text-muted)]">Scopes: {p.scopes}</div>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded ${isConnected ? "bg-green-600 text-white" : status==="expired" ? "bg-amber-600 text-white" : "bg-slate-200"}`}>{status}</span>
+                <span className={`text-xs px-2 py-1 rounded ${isConnected ? "bg-[var(--alo-success-dark)] text-white" : status==="expired" ? "bg-[var(--alo-warning)] text-white" : "bg-[var(--alo-page)]"}`}>{status}</span>
               </div>
               <div className="mt-3 text-xs space-y-1">
                 <div>Accounts: <b>{accounts}</b> {row?.businessAccountId ? `(Business ${row.businessAccountId.slice(0,12)}…)` : ""}</div>
@@ -71,7 +71,7 @@ export default async function AdminDigitalAssetsPage() {
                 <a className="inline-flex items-center rounded-[10px] bg-[var(--alo-brand)] px-3 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[var(--alo-brand-hover)]" href={`/api/crm/ucc/oauth/start?provider=${p.provider}`}>Connect OAuth</a>
                 <a className="text-xs border px-3 py-1.5 rounded" href={`/api/crm/ucc/webhooks/${p.provider}`}>Webhook</a>
               </div>
-              {!isConnected && <div className="mt-2 text-xs text-amber-700">Connect through each provider's official OAuth flow. Access tokens are stored encrypted and every connection change is audit logged.</div>}
+              {!isConnected && <div className="mt-2 text-xs text-crm-warning-text">Connect through each provider's official OAuth flow. Access tokens are stored encrypted and every connection change is audit logged.</div>}
               {row?.metadata && <details className="mt-2 text-xs"><summary>metadata</summary><pre className="bg-[var(--alo-surface-muted)] p-2 rounded mt-1 overflow-auto max-h-32">{JSON.stringify(JSON.parse(row.metadata || "{}"), null, 2).slice(0,1000)}</pre></details>}
             </div>
           );

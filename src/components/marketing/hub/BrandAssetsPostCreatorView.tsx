@@ -40,7 +40,7 @@ export default function BrandAssetsPostCreatorView() {
         <Button type="button" size="sm" variant="outline" disabled={status === 'loading'} onClick={() => void load()}><RefreshCw aria-hidden="true" className="h-4 w-4" />Refresh assets</Button>
       </div>
       {status === 'loading' ? <p role="status" className="mt-3 text-sm text-[var(--alo-text-muted)]">Loading stored assets…</p>
-        : status === 'error' ? <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>
+        : status === 'error' ? <p role="alert" className="mt-3 text-sm text-crm-danger-text">{error}</p>
           : assets.length ? <ul className="mt-3 grid gap-2 sm:grid-cols-2">{assets.map((asset) => <li key={asset.id} className="rounded-lg border p-3 text-sm"><span className="font-medium">{asset.name}</span><span className="ml-2 text-xs text-[var(--alo-text-muted)]">{asset.assetType}</span></li>)}</ul>
             : <p className="mt-3 text-sm text-[var(--alo-text-muted)]">No active brand assets are stored yet. Draft layouts use ALO typography and colors, not an invented logo or phone number.</p>}
       <p className="mt-3 text-xs text-[var(--alo-text-muted)]">Stored assets are not automatically imprinted into these local templates. Verify logos, contact details and destination links before publishing.</p>

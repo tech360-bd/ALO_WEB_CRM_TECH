@@ -168,7 +168,7 @@ export default function UniversityUpdatesCenter() {
       {/* Message */}
       {message && (
         <div className={`p-4 rounded-xl flex items-center gap-3 border ${
-          message.type === 'success' ? 'bg-[var(--alo-surface-muted)] border-emerald-500/20 text-crm-success-text' : 'bg-[var(--alo-surface-muted)] border-red-500/20 text-crm-danger-text'
+          message.type === 'success' ? 'bg-[var(--alo-surface-muted)] border-crm-success-border/20 text-crm-success-text' : 'bg-[var(--alo-surface-muted)] border-crm-danger-border/20 text-crm-danger-text'
         }`}>
           {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
           <p className="text-sm font-medium">{message.text}</p>
@@ -272,7 +272,7 @@ export default function UniversityUpdatesCenter() {
                             <Button
                               size="sm"
                               onClick={() => handlePublish(u.id)}
-                              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                              className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
                             >
                               <Play className="w-3.5 h-3.5 mr-1" />
                               Publish

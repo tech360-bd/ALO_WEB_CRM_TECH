@@ -109,13 +109,13 @@ export default function AICommandCenterDashboard() {
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1 shadow-sm">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase">Tasks recorded today</span>
-          <p className="text-2xl font-black text-purple-600">{health?.tasksToday ?? '—'}</p>
-          <span className="text-[11px] text-purple-600 font-semibold">{health?.totalTasksEver ?? '—'} total task records</span>
+          <p className="text-2xl font-black text-[var(--alo-brand)]">{health?.tasksToday ?? '—'}</p>
+          <span className="text-[11px] text-[var(--alo-brand)] font-semibold">{health?.totalTasksEver ?? '—'} total task records</span>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1 shadow-sm">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)] uppercase">Pending legacy approvals</span>
-          <p className="text-2xl font-black text-amber-600">{health?.pendingApprovals ?? '—'}</p>
-          <span className="text-[11px] text-amber-600 font-semibold">Database status only; decision flow not verified</span>
+          <p className="text-2xl font-black text-crm-warning-text">{health?.pendingApprovals ?? '—'}</p>
+          <span className="text-[11px] text-crm-warning-text font-semibold">Database status only; decision flow not verified</span>
         </Card>
       </div>
 
@@ -201,8 +201,8 @@ export default function AICommandCenterDashboard() {
                 </div>
                 <p className="text-[11px] text-[var(--alo-body)]">{e.description}</p>
                 <div className="flex items-center gap-2 pt-2">
-                    <span className="text-[11px] font-semibold text-[var(--alo-text-muted)] bg-slate-200 px-2 py-0.5 rounded">Model: {e.modelId}</span>
-                    <span className="text-[11px] font-semibold text-[var(--alo-text-muted)] bg-slate-200 px-2 py-0.5 rounded">Tokens: {e.maxTokens}</span>
+                    <span className="text-[11px] font-semibold text-[var(--alo-text-muted)] bg-[var(--alo-page)] px-2 py-0.5 rounded">Model: {e.modelId}</span>
+                    <span className="text-[11px] font-semibold text-[var(--alo-text-muted)] bg-[var(--alo-page)] px-2 py-0.5 rounded">Tokens: {e.maxTokens}</span>
                 </div>
               </div>
             ))}
@@ -214,13 +214,13 @@ export default function AICommandCenterDashboard() {
       {activeTab === 'activity' && (
         <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl space-y-4">
           <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2 border-b border-[var(--alo-border)] pb-3">
-            <Activity className="w-5 h-5 text-indigo-600" /> Recent legacy AgentOS audit records
+            <Activity className="w-5 h-5 text-[var(--alo-brand)]" /> Recent legacy AgentOS audit records
           </h2>
           <div className="space-y-3">
             {health?.recentActivity && health.recentActivity.length > 0 ? (
                 health.recentActivity.map((log: any, i: number) => (
                     <div key={i} className="flex items-start gap-3 p-3 rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)]">
-                        <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg shrink-0">
+                        <div className="p-2 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-lg shrink-0">
                             <Activity className="w-4 h-4" />
                         </div>
                         <div>

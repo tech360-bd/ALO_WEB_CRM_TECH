@@ -384,10 +384,10 @@ export default function EnhancedCourseFinder() {
             )}
 
             {state.status === 'error' && (
-              <Card className="p-8 bg-red-50 border-red-200 rounded-2xl text-center" role="alert">
-                <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" aria-hidden="true" />
-                <p className="font-semibold text-red-900">Courses could not be loaded.</p>
-                <p className="text-sm text-red-800 mt-1">{state.message}</p>
+              <Card className="p-8 bg-crm-danger-bg border-crm-danger-border rounded-2xl text-center" role="alert">
+                <AlertTriangle className="w-10 h-10 text-crm-danger-text mx-auto mb-3" aria-hidden="true" />
+                <p className="font-semibold text-crm-danger-text">Courses could not be loaded.</p>
+                <p className="text-sm text-crm-danger-text mt-1">{state.message}</p>
                 <Button onClick={() => setRetryNonce((n) => n + 1)} className="mt-4 bg-[var(--alo-brand)] text-white h-12">Try again</Button>
               </Card>
             )}
@@ -428,7 +428,7 @@ export default function EnhancedCourseFinder() {
                           <span className="flex items-center gap-1"><Globe className="w-3 h-3" aria-hidden="true" />{c.country || 'Country not recorded'}</span>
                         </div>
                         <div className="flex flex-wrap gap-1 mt-2">
-                          {c.scholarships && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]"><Award className="w-3 h-3 mr-1" aria-hidden="true" />Scholarship recorded</Badge>}
+                          {c.scholarships && <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]"><Award className="w-3 h-3 mr-1" aria-hidden="true" />Scholarship recorded</Badge>}
                           {c.applicationDeadline && <Badge className="bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)] text-[11px]">Deadline: {c.applicationDeadline}</Badge>}
                         </div>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">
@@ -491,7 +491,7 @@ function CompareToggle({ id, title }: { id: string; title: string }) {
       >
         {inList ? 'Remove from compare' : 'Add to compare'}
       </Button>
-      {full && <span role="status" className="text-red-700">You can compare up to {COMPARE_MAX} courses.</span>}
+      {full && <span role="status" className="text-crm-danger-text">You can compare up to {COMPARE_MAX} courses.</span>}
       {list.length > 0 && !full && (
         <Link href={`/compare?courses=${encodeURIComponent(list.join(','))}`} className="text-[var(--alo-brand)] underline">Compare ({list.length})</Link>
       )}

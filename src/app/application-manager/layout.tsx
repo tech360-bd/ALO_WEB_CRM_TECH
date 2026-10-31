@@ -102,8 +102,8 @@ export default function ApplicationManagerLayout({ children }: { children: React
     return (
       <div className="min-h-screen bg-[#FFFFFF] flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl p-8 text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto">
-            <AlertTriangle className="w-6 h-6 text-red-500" />
+          <div className="w-12 h-12 rounded-full bg-crm-danger-bg flex items-center justify-center mx-auto">
+            <AlertTriangle className="w-6 h-6 text-crm-danger-text" />
           </div>
           <h2 className="text-lg font-semibold text-[var(--alo-text)]">Access Restricted</h2>
           <p className="text-sm text-[var(--alo-body)]">{authError}</p>
@@ -120,7 +120,7 @@ export default function ApplicationManagerLayout({ children }: { children: React
     <div className="min-h-screen bg-[#FFFFFF] text-[var(--alo-text)] flex">
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/20 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-[var(--alo-navy)]/20 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
@@ -147,9 +147,9 @@ export default function ApplicationManagerLayout({ children }: { children: React
               <Link key={item.href} href={item.href} onClick={() => setSidebarOpen(false)}>
                 <div className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all ${isActive ? 'bg-[var(--alo-brand)] text-white shadow-sm' : 'text-[var(--alo-body)] hover:bg-white hover:shadow-sm border border-transparent hover:border-[var(--alo-border)]'}`}>
                   <div className="flex items-center gap-2.5">
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[var(--alo-text-muted)]'} ${item.confidential ? 'text-rose-500' : ''}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[var(--alo-text-muted)]'} ${item.confidential ? 'text-crm-warning-text' : ''}`} />
                     <span className="font-medium truncate">{item.label}</span>
-                    {item.confidential && <Lock className="w-3 h-3 text-rose-400" />}
+                    {item.confidential && <Lock className="w-3 h-3 text-crm-warning-text" />}
                   </div>
                   {count !== null && count > 0 && (
                     <Badge className={`${isActive ? 'bg-white/20 text-white border-white/20' : 'bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20'} text-[11px] px-1.5 py-0`}>{count}</Badge>

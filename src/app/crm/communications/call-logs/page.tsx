@@ -53,7 +53,7 @@ export default function CallLogsPage() {
               <tr key={l.id} className="border-b hover:bg-[var(--alo-page)]">
                 <td className="px-3 py-2 font-mono text-[11px]">{l.callCode}</td>
                 <td className="px-3 py-2"><div className="font-medium">{l.phone}</div><Badge variant="outline" className="text-[11px]">{l.callType}</Badge></td>
-                <td className="px-3 py-2"><Badge className={`text-[11px] ${l.callOutcome==='connected'||l.callOutcome==='interested'?'bg-emerald-100 text-emerald-700':l.callOutcome==='missed'||l.callOutcome==='not_answered'?'bg-amber-100 text-amber-700':'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>{l.callOutcome}</Badge><div className="text-[11px] text-[var(--alo-text-muted)]"><Clock className="w-3 h-3 inline" /> {l.durationSeconds}s</div></td>
+                <td className="px-3 py-2"><Badge className={`text-[11px] ${l.callOutcome==='connected'||l.callOutcome==='interested'?'bg-crm-success-bg text-crm-success-text':l.callOutcome==='missed'||l.callOutcome==='not_answered'?'bg-crm-warning-bg text-crm-warning-text':'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>{l.callOutcome}</Badge><div className="text-[11px] text-[var(--alo-text-muted)]"><Clock className="w-3 h-3 inline" /> {l.durationSeconds}s</div></td>
                 <td className="px-3 py-2 text-[11px]">{l.nextFollowupAt ? new Date(l.nextFollowupAt).toLocaleString() : '—'}</td>
                 <td className="px-3 py-2 text-[11px] max-w-[200px] truncate">{l.note || '—'}</td>
                 <td className="px-3 py-2 text-[11px] text-[var(--alo-text-muted)]">{new Date(l.createdAt).toLocaleString()}</td>

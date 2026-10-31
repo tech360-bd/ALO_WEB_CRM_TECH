@@ -39,13 +39,13 @@ const ALO_ORANGE = '#E8501A';
 // ELIGIBILITY CONFIG
 // ============================================================
 const ELIGIBILITY_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
-  ELIGIBLE: { label: 'Eligible', color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', icon: CircleCheck },
+  ELIGIBLE: { label: 'Eligible', color: 'text-crm-success-text', bg: 'bg-crm-success-bg border-crm-success-border', icon: CircleCheck },
   LIKELY_ELIGIBLE: { label: 'Likely Eligible', color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)] border-[var(--alo-border)]', icon: TrendingUp },
-  CONDITIONALLY_ELIGIBLE: { label: 'Conditional', color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', icon: AlertCircle },
+  CONDITIONALLY_ELIGIBLE: { label: 'Conditional', color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg border-crm-warning-border', icon: AlertCircle },
   PARTIALLY_MATCHED: { label: 'Partial Match', color: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)] border-[var(--alo-cta)]/25', icon: HelpCircle },
-  NOT_CURRENTLY_ELIGIBLE: { label: 'Not Eligible', color: 'text-red-700', bg: 'bg-red-50 border-red-200', icon: CircleAlert },
+  NOT_CURRENTLY_ELIGIBLE: { label: 'Not Eligible', color: 'text-crm-danger-text', bg: 'bg-crm-danger-bg border-crm-danger-border', icon: CircleAlert },
   INSUFFICIENT_INFO: { label: 'Info Needed', color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-page)] border-[var(--alo-border)]', icon: HelpCircle },
-  COUNSELLOR_REVIEW_REQUIRED: { label: 'Counsellor Review', color: 'text-purple-700', bg: 'bg-purple-50 border-purple-200', icon: Users },
+  COUNSELLOR_REVIEW_REQUIRED: { label: 'Counsellor Review', color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)] border-[var(--alo-border)]', icon: Users },
 };
 
 // ============================================================
@@ -203,10 +203,10 @@ function getMatchScoreStroke(score: number): string {
 }
 
 function getMatchScoreTextClass(score: number): string {
-  if (score >= 90) return 'text-emerald-600';
+  if (score >= 90) return 'text-crm-success-text';
   if (score >= 70) return 'text-[var(--alo-brand)]';
-  if (score >= 50) return 'text-amber-600';
-  return 'text-red-500';
+  if (score >= 50) return 'text-crm-warning-text';
+  return 'text-crm-danger-text';
 }
 
 // ============================================================
@@ -519,7 +519,7 @@ function ProfileStep2({ tests, onChange, onAdd, onRemove }: {
         <Card key={i} className="p-4 border-[var(--alo-border)]">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2"><Languages className="size-4" style={{ color: ALO_BLUE }} /><span className="font-medium text-sm">Test #{i + 1}</span></div>
-            <Button variant="ghost" size="sm" className="h-7 text-red-500 hover:text-red-700" onClick={() => onRemove(i)}><X className="size-3 mr-1" />Remove</Button>
+            <Button variant="ghost" size="sm" className="h-7 text-crm-danger-text hover:text-crm-danger-text" onClick={() => onRemove(i)}><X className="size-3 mr-1" />Remove</Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div className="space-y-1.5">
@@ -902,10 +902,10 @@ function EnhancedCourseCard({
             {expanded && (
               <div className="mt-2 space-y-2">
                 {requirements.map((req, i) => (
-                  <div key={i} className={`flex items-start gap-2 text-xs p-2 rounded ${req.status === 'MET' ? 'bg-emerald-50' : req.status === 'CONDITION' ? 'bg-amber-50' : req.status === 'NOT_MET' ? 'bg-red-50' : 'bg-[var(--alo-page)]'}`}>
-                    {req.status === 'MET' ? <CheckCircle2 className="size-3.5 text-emerald-600 mt-0.5 shrink-0" />
-                      : req.status === 'NOT_MET' ? <CircleAlert className="size-3.5 text-red-500 mt-0.5 shrink-0" />
-                      : <HelpCircle className="size-3.5 text-amber-500 mt-0.5 shrink-0" />}
+                  <div key={i} className={`flex items-start gap-2 text-xs p-2 rounded ${req.status === 'MET' ? 'bg-crm-success-bg' : req.status === 'CONDITION' ? 'bg-crm-warning-bg' : req.status === 'NOT_MET' ? 'bg-crm-danger-bg' : 'bg-[var(--alo-page)]'}`}>
+                    {req.status === 'MET' ? <CheckCircle2 className="size-3.5 text-crm-success-text mt-0.5 shrink-0" />
+                      : req.status === 'NOT_MET' ? <CircleAlert className="size-3.5 text-crm-danger-text mt-0.5 shrink-0" />
+                      : <HelpCircle className="size-3.5 text-crm-warning-text mt-0.5 shrink-0" />}
                     <div className="min-w-0">
                       <p className="font-medium text-[var(--alo-body)]">{req.name}</p>
                       <p className="text-[var(--alo-text-muted)]">Required: {req.required} | Your: {req.actual || 'Not provided'}</p>
@@ -914,8 +914,8 @@ function EnhancedCourseCard({
                   </div>
                 ))}
                 {improvements && improvements.length > 0 && (
-                  <div className="mt-2 p-2 bg-amber-50 rounded">
-                    <p className="text-xs font-semibold text-amber-700 mb-1">Improvement Plan</p>
+                  <div className="mt-2 p-2 bg-crm-warning-bg rounded">
+                    <p className="text-xs font-semibold text-crm-warning-text mb-1">Improvement Plan</p>
                     {improvements.map((imp, i) => (
                       <div key={i} className="text-xs text-[var(--alo-body)] mb-1">
                         <span className="font-medium">{imp.gap}</span> — {imp.action} ({imp.timeframe})
@@ -1027,7 +1027,7 @@ function CounsellorForm({ onBack }: { onBack: () => void }) {
   if (submitted) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6"><CheckCircle2 className="size-10 text-emerald-600" /></div>
+        <div className="w-20 h-20 rounded-full bg-crm-success-bg flex items-center justify-center mx-auto mb-6"><CheckCircle2 className="size-10 text-crm-success-text" /></div>
         <h2 className="text-2xl font-bold text-[var(--alo-text)]">Request Submitted!</h2>
         <p className="mt-3 text-[var(--alo-text-muted)] max-w-md mx-auto">Our counsellor will contact you within 24 hours. Thank you for choosing ALO Education.</p>
         <Button className="mt-6 text-white" style={{ backgroundColor: ALO_BLUE }} onClick={onBack}>Back to Course Finder</Button>
@@ -1078,13 +1078,13 @@ function CounsellorForm({ onBack }: { onBack: () => void }) {
 // ============================================================
 function EligibilitySummaryBar({ summary }: { summary: Record<string, number> }) {
   const items = [
-    { key: 'eligible', label: 'Eligible', color: 'bg-emerald-500', count: summary.eligible || 0 },
-    { key: 'likelyEligible', label: 'Likely', color: 'bg-blue-500', count: summary.likelyEligible || 0 },
-    { key: 'conditionallyEligible', label: 'Conditional', color: 'bg-amber-500', count: summary.conditionallyEligible || 0 },
+    { key: 'eligible', label: 'Eligible', color: 'bg-[var(--alo-success)]', count: summary.eligible || 0 },
+    { key: 'likelyEligible', label: 'Likely', color: 'bg-[var(--alo-brand)]', count: summary.likelyEligible || 0 },
+    { key: 'conditionallyEligible', label: 'Conditional', color: 'bg-[var(--alo-warning)]', count: summary.conditionallyEligible || 0 },
     { key: 'partiallyMatched', label: 'Partial', color: 'bg-[var(--alo-cta)]', count: summary.partiallyMatched || 0 },
-    { key: 'notCurrentlyEligible', label: 'Not Eligible', color: 'bg-red-500', count: summary.notCurrentlyEligible || 0 },
-    { key: 'insufficientInfo', label: 'Info Needed', color: 'bg-slate-400', count: summary.insufficientInfo || 0 },
-    { key: 'counsellorReviewRequired', label: 'Counsellor', color: 'bg-purple-500', count: summary.counsellorReviewRequired || 0 },
+    { key: 'notCurrentlyEligible', label: 'Not Eligible', color: 'bg-[var(--alo-error)]', count: summary.notCurrentlyEligible || 0 },
+    { key: 'insufficientInfo', label: 'Info Needed', color: 'bg-[var(--alo-page)]', count: summary.insufficientInfo || 0 },
+    { key: 'counsellorReviewRequired', label: 'Counsellor', color: 'bg-[var(--alo-brand)]', count: summary.counsellorReviewRequired || 0 },
   ];
   const total = items.reduce((s, i) => s + i.count, 0);
   return (
@@ -1407,7 +1407,7 @@ export function CourseFinderEnhanced() {
               const isDone = profileStep > i + 1;
               return (
                 <button key={i} onClick={() => setProfileStep(i + 1)} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${isActive ? 'text-white' : isDone ? 'text-[var(--alo-body)] bg-[var(--alo-surface-muted)]' : 'text-[var(--alo-text-muted)] bg-[var(--alo-page)]'}`} style={isActive ? { backgroundColor: ALO_BLUE } : undefined}>
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold ${isActive ? 'bg-white/20' : isDone ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-[var(--alo-text-muted)]'}`}>
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold ${isActive ? 'bg-white/20' : isDone ? 'bg-[var(--alo-success)] text-white' : 'bg-[var(--alo-page)] text-[var(--alo-text-muted)]'}`}>
                     {isDone ? <CheckCircle2 className="size-3.5" /> : i + 1}
                   </span>
                   <Icon className="size-3.5" />{step.title}

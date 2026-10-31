@@ -298,11 +298,11 @@ export function PublicUniversities({ onNavigate }: PublicUniversitiesProps) {
                   {/* Footer: verified date + buttons */}
                   <div className="mt-auto flex flex-col gap-3 pt-4">
                     <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                      <Icon name="ShieldCheck" className="size-3 text-emerald-600" />
+                      <Icon name="ShieldCheck" className="size-3 text-crm-success-text" />
                       <span>Verified {u.lastVerifiedAt ? fmtDate(u.lastVerifiedAt) : "recently"}</span>
                       {quickFacts.applicationStatus && (
-                        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
-                          <span className="size-1.5 rounded-full bg-emerald-500" /> {quickFacts.applicationStatus}
+                        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-crm-success-bg px-2 py-0.5 font-medium text-crm-success-text">
+                          <span className="size-1.5 rounded-full bg-[var(--alo-success)]" /> {quickFacts.applicationStatus}
                         </span>
                       )}
                     </div>

@@ -134,12 +134,12 @@ const MOCK_DATA: DashboardData = {
     slaOverdue: 3,
   },
   leadSources: [
-    { source: 'Facebook', count: 21, color: 'bg-blue-500' },
-    { source: 'WhatsApp', count: 8, color: 'bg-green-500' },
-    { source: 'Website', count: 12, color: 'bg-purple-500' },
-    { source: 'Instagram', count: 3, color: 'bg-pink-500' },
+    { source: 'Facebook', count: 21, color: 'bg-[var(--alo-brand)]' },
+    { source: 'WhatsApp', count: 8, color: 'bg-[var(--alo-success)]' },
+    { source: 'Website', count: 12, color: 'bg-[var(--alo-brand)]' },
+    { source: 'Instagram', count: 3, color: 'bg-[var(--alo-error)]' },
     { source: 'Referral', count: 2, color: 'bg-yellow-500' },
-    { source: 'Google', count: 1, color: 'bg-red-500' },
+    { source: 'Google', count: 1, color: 'bg-[var(--alo-error)]' },
   ],
   slaStatus: {
     assigned: 34,
@@ -271,7 +271,7 @@ function DeltaBadge({ value, suffix = '' }: { value: number; suffix?: string }) 
     <span
       className={cn(
         'inline-flex items-center gap-0.5 text-xs font-medium',
-        positive ? 'text-green-600' : 'text-red-500'
+        positive ? 'text-crm-success-text' : 'text-crm-danger-text'
       )}
     >
       {positive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
@@ -307,7 +307,7 @@ function KpiCard({
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <p className="text-xs text-alo-text-muted">{label}</p>
-            <p className={cn('text-2xl font-bold text-alo-text', alert && 'text-red-600')}>
+            <p className={cn('text-2xl font-bold text-alo-text', alert && 'text-crm-danger-text')}>
               {value}
               {suffix && <span className="text-sm font-normal text-alo-text-secondary ml-1">{suffix}</span>}
             </p>
@@ -316,7 +316,7 @@ function KpiCard({
             className={cn(
               'flex items-center justify-center h-10 w-10 rounded-lg',
               iconColor ?? 'bg-alo-brand/10 text-alo-brand',
-              alert && 'bg-red-50 text-red-600'
+              alert && 'bg-crm-danger-bg text-crm-danger-text'
             )}
           >
             <Icon className="h-5 w-5" />
@@ -430,7 +430,7 @@ export default function MarketingDashboardView() {
   if (error || !data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center space-y-3">
-        <AlertTriangle className="h-8 w-8 text-amber-500" />
+        <AlertTriangle className="h-8 w-8 text-crm-warning-text" />
         <h3 className="font-semibold text-[var(--alo-text)]">Dashboard data unavailable</h3>
         <p className="text-sm text-[var(--alo-text-muted)] max-w-md">{error || 'No marketing data returned from /api/marketing/dashboard. This view only displays database-backed metrics — no fabricated statistics are shown.'}</p>
         <p className="text-xs text-[var(--alo-text-muted)]">Data source: MarketingLead, MarketingCampaign, MarketingApproval, MarketingCalendar, MarketingAgentJob via Prisma • Period: today • Sync: live</p>
@@ -480,14 +480,14 @@ export default function MarketingDashboardView() {
           label="WhatsApp Replies"
           value={kpis.whatsappReplies}
           delta={kpis.whatsappRepliesDelta}
-          iconColor="bg-green-50 text-green-600"
+          iconColor="bg-crm-success-bg text-crm-success-text"
         />
         <KpiCard
           icon={Globe}
           label="Website Chat Leads"
           value={kpis.websiteChatLeads}
           delta={kpis.websiteChatLeadsDelta}
-          iconColor="bg-purple-50 text-purple-600"
+          iconColor="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]"
         />
         <KpiCard
           icon={Megaphone}
@@ -499,13 +499,13 @@ export default function MarketingDashboardView() {
           icon={Clock}
           label="Pending Approvals"
           value={kpis.pendingApprovals}
-          iconColor="bg-amber-50 text-amber-600"
+          iconColor="bg-crm-warning-bg text-crm-warning-text"
         />
         <KpiCard
           icon={MessageSquare}
           label="Pending Comments"
           value={kpis.pendingComments}
-          iconColor="bg-indigo-50 text-indigo-600"
+          iconColor="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]"
         />
         <KpiCard
           icon={CalendarDays}
@@ -517,7 +517,7 @@ export default function MarketingDashboardView() {
           icon={XCircle}
           label="Failed Posts"
           value={kpis.failedPosts}
-          iconColor="bg-red-50 text-red-600"
+          iconColor="bg-crm-danger-bg text-crm-danger-text"
           alert={kpis.failedPosts > 0}
         />
         <KpiCard
@@ -525,7 +525,7 @@ export default function MarketingDashboardView() {
           label="Cost Per Lead"
           value={`৳${kpis.costPerLead}`}
           delta={kpis.costPerLeadDelta}
-          iconColor="bg-emerald-50 text-emerald-600"
+          iconColor="bg-crm-success-bg text-crm-success-text"
         />
         <KpiCard
           icon={TrendingUp}
@@ -538,7 +538,7 @@ export default function MarketingDashboardView() {
           icon={ShieldAlert}
           label="SLA Overdue"
           value={kpis.slaOverdue}
-          iconColor="bg-red-50 text-red-600"
+          iconColor="bg-crm-danger-bg text-crm-danger-text"
           alert={kpis.slaOverdue > 0}
         />
       </div>
@@ -580,7 +580,7 @@ export default function MarketingDashboardView() {
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-              <Phone className="h-4 w-4 text-green-600" />
+              <Phone className="h-4 w-4 text-crm-success-text" />
               WhatsApp SLA Status
             </CardTitle>
           </CardHeader>
@@ -591,9 +591,9 @@ export default function MarketingDashboardView() {
                 <p className="text-lg font-bold text-[var(--alo-brand)]">{slaStatus.assigned}</p>
                 <p className="text-xs text-[var(--alo-brand)]">Assigned</p>
               </div>
-              <div className="rounded-lg bg-green-50 py-2">
-                <p className="text-lg font-bold text-green-700">{slaStatus.responded}</p>
-                <p className="text-xs text-green-600">Responded</p>
+              <div className="rounded-lg bg-crm-success-bg py-2">
+                <p className="text-lg font-bold text-crm-success-text">{slaStatus.responded}</p>
+                <p className="text-xs text-crm-success-text">Responded</p>
               </div>
               <div className="rounded-lg bg-[var(--alo-cta-soft)] py-2">
                 <p className="text-lg font-bold text-[var(--alo-cta-active)]">{slaStatus.escalated}</p>
@@ -607,7 +607,7 @@ export default function MarketingDashboardView() {
               <span className={cn(
                 'text-sm font-semibold',
                 slaStatus.assigned > 0 && slaStatus.responded / slaStatus.assigned >= 0.85
-                  ? 'text-green-600'
+                  ? 'text-crm-success-text'
                   : 'text-[var(--alo-cta-active)]'
               )}>
                 {slaStatus.assigned > 0
@@ -620,14 +620,14 @@ export default function MarketingDashboardView() {
             {/* Overdue conversations */}
             {slaStatus.overdueConversations.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-red-600 flex items-center gap-1">
+                <p className="text-xs font-semibold text-crm-danger-text flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" />
                   Overdue Conversations
                 </p>
                 {slaStatus.overdueConversations.map((conv) => (
                   <div
                     key={conv.id}
-                    className="rounded-lg border border-red-200 bg-red-50 p-3 space-y-1"
+                    className="rounded-lg border border-crm-danger-border bg-crm-danger-bg p-3 space-y-1"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-alo-text">{conv.leadName}</span>
@@ -662,11 +662,11 @@ export default function MarketingDashboardView() {
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   {agent.status === 'active' ? (
-                    <Zap className="h-4 w-4 text-green-500 shrink-0" />
+                    <Zap className="h-4 w-4 text-crm-success-text shrink-0" />
                   ) : agent.status === 'paused' ? (
-                    <Clock className="h-4 w-4 text-amber-500 shrink-0" />
+                    <Clock className="h-4 w-4 text-crm-warning-text shrink-0" />
                   ) : (
-                    <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                    <XCircle className="h-4 w-4 text-crm-danger-text shrink-0" />
                   )}
                   <span className="text-sm text-alo-text truncate">{agent.name}</span>
                 </div>
@@ -677,9 +677,9 @@ export default function MarketingDashboardView() {
                   <Badge
                     className={cn(
                       'text-[11px] px-1.5 py-0 font-medium',
-                      agent.status === 'active' && 'bg-green-100 text-green-700 hover:bg-green-100',
-                      agent.status === 'paused' && 'bg-amber-100 text-amber-700 hover:bg-amber-100',
-                      agent.status === 'error' && 'bg-red-100 text-red-700 hover:bg-red-100'
+                      agent.status === 'active' && 'bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg',
+                      agent.status === 'paused' && 'bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg',
+                      agent.status === 'error' && 'bg-crm-danger-bg text-crm-danger-text hover:bg-crm-danger-bg'
                     )}
                   >
                     {agent.status === 'active' && <CheckCircle2 className="h-2.5 w-2.5 mr-0.5" />}
@@ -743,7 +743,7 @@ export default function MarketingDashboardView() {
                           lead.status === 'Hot' && 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] hover:bg-[var(--alo-cta-soft)]',
                           lead.status === 'New' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]',
                           lead.status === 'Contacted' && 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]',
-                          lead.status === 'Follow-up' && 'bg-purple-50 text-purple-700 hover:bg-purple-50'
+                          lead.status === 'Follow-up' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]'
                         )}
                       >
                         {lead.status}

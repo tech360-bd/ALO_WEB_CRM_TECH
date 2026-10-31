@@ -145,20 +145,20 @@ type EmployeeListResponse = {
 
 const PROFILE_STATUS_COLORS: Record<string, string> = {
   INCOMPLETE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  SUBMITTED: "bg-amber-100 text-amber-700",
+  SUBMITTED: "bg-crm-warning-bg text-crm-warning-text",
   UNDER_REVIEW: "bg-sky-100 text-sky-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  CORRECTION_REQUIRED: "bg-rose-100 text-rose-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  CORRECTION_REQUIRED: "bg-crm-warning-bg text-crm-warning-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
-  TERMINATED: "bg-slate-200 text-[var(--alo-body)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
-  TERMINATED: "bg-slate-200 text-[var(--alo-body)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const PROFILE_STATUS_OPTIONS = [
@@ -202,9 +202,9 @@ const DOC_TYPE_LABELS: Record<string, string> = {
 };
 
 const DOC_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const SUPER_ADMIN_ID = "seed-super-admin";
@@ -212,9 +212,9 @@ const SUPER_ADMIN_ID = "seed-super-admin";
 // Profile workflow stages for the visual note
 const PROFILE_WORKFLOW = [
   { key: "INCOMPLETE", label: "Incomplete", icon: "CircleDashed", color: "text-[var(--alo-text-muted)]" },
-  { key: "SUBMITTED", label: "Submitted", icon: "Send", color: "text-amber-600" },
+  { key: "SUBMITTED", label: "Submitted", icon: "Send", color: "text-crm-warning-text" },
   { key: "UNDER_REVIEW", label: "Under Review", icon: "Search", color: "text-sky-600" },
-  { key: "APPROVED", label: "Approved", icon: "CheckCircle", color: "text-emerald-600" },
+  { key: "APPROVED", label: "Approved", icon: "CheckCircle", color: "text-crm-success-text" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -606,7 +606,7 @@ export function EmployeeManagement() {
                         {(emp.profileStatus === "SUBMITTED" || emp.profileStatus === "UNDER_REVIEW") && (
                           <Button
  size="sm"
- className=" bg-emerald-600 text-white hover:bg-emerald-600/90"
+ className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90"
  onClick={() => handleApproveProfile(emp)}
                           >
                             <Icon name="Check" className="size-3.5" />
@@ -661,9 +661,9 @@ export function EmployeeManagement() {
                 </React.Fragment>
               ))}
             </div>
-            <div className="mt-3 flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50/60 px-2.5 py-1.5">
-              <Icon name="AlertTriangle" className="size-3.5 text-rose-600" />
-              <span className="text-xs text-rose-700">If issues found → Correction Required (HR sends back)</span>
+            <div className="mt-3 flex items-center gap-1.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg/60 px-2.5 py-1.5">
+              <Icon name="AlertTriangle" className="size-3.5 text-crm-warning-text" />
+              <span className="text-xs text-crm-warning-text">If issues found → Correction Required (HR sends back)</span>
             </div>
           </CardContent>
         </Card>
@@ -687,10 +687,10 @@ export function EmployeeManagement() {
             </p>
             <p className="mt-2 text-xs font-semibold text-[var(--alo-brand)]">Who can view private data:</p>
             <ul className="mt-1.5 space-y-1 text-xs text-foreground/80">
-              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> The employee themselves</li>
-              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> Super Admin</li>
-              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> Chairman</li>
-              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> HR Manager (with permission)</li>
+              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-crm-success-text" /> The employee themselves</li>
+              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-crm-success-text" /> Super Admin</li>
+              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-crm-success-text" /> Chairman</li>
+              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-crm-success-text" /> HR Manager (with permission)</li>
             </ul>
             <p className="mt-2 text-[11px] text-muted-foreground">
               Privacy mode is currently <strong>{privacyOn ? "ON" : "OFF"}</strong>. Toggle in the header to blur fields by default.
@@ -856,8 +856,8 @@ export function EmployeeManagement() {
                     />
                   </div>
                 </div>
-                <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5 text-xs text-foreground/80">
-                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+                <div className="mt-4 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg/60 px-3 py-2.5 text-xs text-foreground/80">
+                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
                   <p>
                     Employee cannot login until password is created via activation link. Link expires
                     in 7 days. After activation, profile status moves to <strong>INCOMPLETE</strong> and
@@ -924,7 +924,7 @@ function DropdownActions({
             <button
               className={cn(
                 "flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium hover:bg-[var(--alo-brand-light)]/60",
-                emp.status === "ACTIVE" ? "text-rose-600" : "text-emerald-600"
+                emp.status === "ACTIVE" ? "text-crm-warning-text" : "text-crm-success-text"
               )}
               onClick={() => { onToggleStatus(); setOpen(false); }}
               disabled={emp.role === "SUPER_ADMIN"}
@@ -991,7 +991,7 @@ function EmployeeProfileBody({
           </div>
           <div className="flex flex-wrap gap-1.5">
             {(emp.profileStatus === "SUBMITTED" || emp.profileStatus === "UNDER_REVIEW") && (
-              <Button size="sm" className=" bg-emerald-600 text-white hover:bg-emerald-600/90" onClick={onApprove}>
+              <Button size="sm" className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90" onClick={onApprove}>
                 <Icon name="Check" className="size-3.5" /> Approve Profile
               </Button>
             )}
@@ -1014,13 +1014,13 @@ function EmployeeProfileBody({
 
       {/* Privacy banner */}
       {canViewPrivate ? (
-        <div className="flex items-start gap-2 border-b border-emerald-200 bg-emerald-50/60 px-6 py-2.5 text-xs text-emerald-800">
-          <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+        <div className="flex items-start gap-2 border-b border-crm-success-border bg-crm-success-bg/60 px-6 py-2.5 text-xs text-crm-success-text">
+          <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
           <p>{detail.privacyNote}</p>
         </div>
       ) : (
-        <div className="flex items-start gap-2 border-b border-amber-200 bg-amber-50/60 px-6 py-2.5 text-xs text-amber-800">
-          <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+        <div className="flex items-start gap-2 border-b border-crm-warning-border bg-crm-warning-bg/60 px-6 py-2.5 text-xs text-crm-warning-text">
+          <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
           <p>
             <strong>Access restricted.</strong> {detail.privacyNote}
           </p>
@@ -1172,12 +1172,12 @@ function EmployeeProfileBody({
           {/* Salary */}
           <TabsContent value="salary" className="mt-0">
             {!canViewPrivate ? (
-              <div className="rounded-xl border-2 border-amber-200 bg-amber-50/60 p-4 text-center">
-                <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+              <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/60 p-4 text-center">
+                <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-crm-warning-bg text-crm-warning-text">
                   <Icon name="Lock" className="size-5" />
                 </div>
-                <p className="mt-2 text-sm font-semibold text-amber-800">Salary data is private</p>
-                <p className="mt-1 text-xs text-amber-700">
+                <p className="mt-2 text-sm font-semibold text-crm-warning-text">Salary data is private</p>
+                <p className="mt-1 text-xs text-crm-warning-text">
                   Only the employee themselves, Super Admin, Chairman, and HR Manager (with permission)
                   can view salary details.
                 </p>
@@ -1193,7 +1193,7 @@ function EmployeeProfileBody({
                 <SensitiveField id={`sal-bonus-${emp.id}`} label="Bonus" type="currency" value={fmtBDT(salary.bonus)} mono />
                 <InfoRow label="Payment Method" value={salary.paymentMethod.replace(/_/g, " ")} />
                 <InfoRow label="Effective Date" value={fmtDate(salary.effectiveDate)} />
-                <InfoRow label="Visibility" value={<Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-700">{salary.visibility}</Badge>} />
+                <InfoRow label="Visibility" value={<Badge variant="outline" className="border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">{salary.visibility}</Badge>} />
                 <SensitiveField id={`sal-bank-${emp.id}`} label="Bank Name" value={salary.bankName || "—"} />
                 <SensitiveField id={`sal-acct-${emp.id}`} label="Bank Account" value={salary.bankAccount || "—"} mono />
                 <div className="sm:col-span-2">
@@ -1294,13 +1294,13 @@ function CreateEmployeeSuccess({
   return (
     <div className="flex max-h-[70vh] flex-col overflow-hidden">
       <ScrollArea className="flex-1 px-6 py-4">
-        <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/60 p-4">
+        <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/60 p-4">
           <div className="flex items-center gap-2">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-success-dark)] text-white">
               <Icon name="CheckCircle" className="size-5" />
             </div>
             <div>
-              <p className="font-semibold text-emerald-700">Employee account created</p>
+              <p className="font-semibold text-crm-success-text">Employee account created</p>
               <p className="text-xs text-foreground/80">
                 {result.employeeCode} · {result.companyEmail}
               </p>
@@ -1308,14 +1308,14 @@ function CreateEmployeeSuccess({
           </div>
         </div>
 
-        <div className={`mt-4 rounded-lg border p-3 text-sm ${result.emailSent ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>
+        <div className={`mt-4 rounded-lg border p-3 text-sm ${result.emailSent ? 'border-crm-success-border bg-crm-success-bg text-crm-success-text' : 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text'}`}>
           {result.emailSent
             ? 'The activation email was accepted by SMTP. This does not confirm inbox delivery.'
             : 'SMTP did not accept the activation email. Correct the email configuration and use the authenticated resend action.'}
         </div>
 
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5 text-xs text-foreground/80">
-          <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg/60 px-3 py-2.5 text-xs text-foreground/80">
+          <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
           <p>{result.message}</p>
         </div>
       </ScrollArea>

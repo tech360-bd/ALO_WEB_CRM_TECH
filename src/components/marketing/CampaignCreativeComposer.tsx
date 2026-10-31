@@ -70,7 +70,7 @@ export default function CampaignCreativeComposer({ kit }: { kit: MarketingKit })
           <textarea id={`${id}-${field}`} value={content[field]} maxLength={max} rows={field === 'body' ? 4 : 2} onChange={(e) => setContent({ ...content, [field]: e.target.value })} className="mt-1 w-full rounded-lg border p-2 font-normal focus-visible:outline-2 focus-visible:outline-blue-600" />
           <span aria-hidden="true" className="font-normal text-[var(--alo-text-muted)]">{content[field].length}/{max}</span>
         </label>)}
-        {errors.length > 0 && <ul role="alert" className="text-xs text-red-700">{errors.map((error) => <li key={error}>{error}</li>)}</ul>}
+        {errors.length > 0 && <ul role="alert" className="text-xs text-crm-danger-text">{errors.map((error) => <li key={error}>{error}</li>)}</ul>}
         <div className="flex flex-wrap gap-2" aria-busy={exporting}>
           {(['svg', 'png', 'md'] as const).map((kind) => <Button key={kind} type="button" size="sm" variant="outline" disabled={!svg || exporting} onClick={() => void save(kind)}><Download aria-hidden="true" className="h-4 w-4" />{kind === 'md' ? 'Copy brief' : kind.toUpperCase()}</Button>)}
           <Button type="button" size="sm" variant="ghost" disabled={exporting} onClick={() => { setContent(creativeFromKit(kit)); setFeedback('Draft reset to the selected kit.'); }}>Reset draft</Button>

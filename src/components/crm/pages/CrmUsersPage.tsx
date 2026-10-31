@@ -21,12 +21,12 @@ interface RealUser {
 }
 
 const roleColors: Record<string, string> = {
-  super_admin: 'bg-red-100 text-red-700', ceo: 'bg-red-50 text-red-600', branch_manager: 'bg-amber-100 text-amber-700',
-  counselor: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', application_team: 'bg-green-100 text-green-700', visa_officer: 'bg-purple-100 text-purple-700',
-  finance: 'bg-teal-100 text-teal-700', marketing_manager: 'bg-pink-100 text-pink-700', front_desk: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-  hr: 'bg-indigo-100 text-indigo-700', partner_manager: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]', document_officer: 'bg-cyan-100 text-cyan-700',
-  data_manager: 'bg-lime-100 text-lime-700', support_agent: 'bg-sky-100 text-sky-700', ai_manager: 'bg-violet-100 text-violet-700',
-  student: 'bg-emerald-100 text-emerald-700', SUPER_ADMIN: 'bg-red-100 text-red-700', ADMIN: 'bg-red-50 text-red-600',
+  super_admin: 'bg-crm-danger-bg text-crm-danger-text', ceo: 'bg-crm-danger-bg text-crm-danger-text', branch_manager: 'bg-crm-warning-bg text-crm-warning-text',
+  counselor: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', application_team: 'bg-crm-success-bg text-crm-success-text', visa_officer: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  finance: 'bg-teal-100 text-teal-700', marketing_manager: 'bg-crm-danger-bg text-crm-danger-text', front_desk: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
+  hr: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', partner_manager: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]', document_officer: 'bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]',
+  data_manager: 'bg-lime-100 text-lime-700', support_agent: 'bg-sky-100 text-sky-700', ai_manager: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  student: 'bg-crm-success-bg text-crm-success-text', SUPER_ADMIN: 'bg-crm-danger-bg text-crm-danger-text', ADMIN: 'bg-crm-danger-bg text-crm-danger-text',
 };
 const roleLabels: Record<string, string> = {
   super_admin: 'Super Admin', SUPER_ADMIN: 'Super Admin', ADMIN: 'Admin', ceo: 'CEO', branch_manager: 'Branch Mgr', counselor: 'Counselor',
@@ -149,9 +149,9 @@ export default function CrmUsersPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Total Users', value: stats.total, icon: Users, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' },
-          { label: 'Active', value: stats.active, icon: UserCheck, color: 'text-green-600 bg-green-50' },
-          { label: 'Suspended', value: stats.suspended, icon: UserX, color: 'text-red-600 bg-red-50' },
-          { label: 'Roles', value: stats.roles, icon: Shield, color: 'text-purple-600 bg-purple-50' },
+          { label: 'Active', value: stats.active, icon: UserCheck, color: 'text-crm-success-text bg-crm-success-bg' },
+          { label: 'Suspended', value: stats.suspended, icon: UserX, color: 'text-crm-danger-text bg-crm-danger-bg' },
+          { label: 'Roles', value: stats.roles, icon: Shield, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' },
         ].map(s => (
           <Card key={s.label}><CardContent className="p-4 flex items-center gap-3"><div className={`p-2 rounded-lg ${s.color}`}><s.icon className="w-5 h-5" /></div><div><p className="text-2xl font-bold">{s.value}</p><p className="text-xs text-[var(--alo-text-muted)]">{s.label}</p></div></CardContent></Card>
         ))}
@@ -179,8 +179,8 @@ export default function CrmUsersPage() {
                   <td className="p-3 text-[var(--alo-body)]"><Phone className="w-3 h-3 inline mr-1" />{u.phone || 'N/A'}</td>
                   <td className="p-3"><Badge variant="outline" className={roleColors[u.role] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{roleLabels[u.role] || u.role}</Badge></td>
                   <td className="p-3">
-                    <button onClick={() => toggleStatus(u.id)} className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${u.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'active' ? 'bg-green-500' : 'bg-red-500'}`} />{u.status}
+                    <button onClick={() => toggleStatus(u.id)} className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${u.status === 'active' ? 'bg-crm-success-bg text-crm-success-text' : 'bg-crm-danger-bg text-crm-danger-text'}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'active' ? 'bg-[var(--alo-success)]' : 'bg-[var(--alo-error)]'}`} />{u.status}
                     </button>
                   </td>
                   <td className="p-3 text-[var(--alo-text-muted)]"><Clock className="w-3 h-3 inline mr-1" />{u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : 'Never'}</td>

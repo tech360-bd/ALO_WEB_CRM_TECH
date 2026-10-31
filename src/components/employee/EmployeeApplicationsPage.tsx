@@ -117,7 +117,7 @@ export default function EmployeeApplicationsPage() {
 
       {actionMessage && <div role="status" className="rounded-lg border border-alo-border bg-white px-4 py-3 text-sm">{actionMessage}</div>}
       {loading && <div className="space-y-3" aria-live="polite">{Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-36 rounded-xl" />)}</div>}
-      {!loading && error && <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><span>{error}</span><Button variant="outline" onClick={() => void loadApplications()}>Retry</Button></div>}
+      {!loading && error && <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-crm-danger-border bg-crm-danger-bg p-4 text-sm text-crm-danger-text"><span>{error}</span><Button variant="outline" onClick={() => void loadApplications()}>Retry</Button></div>}
       {!loading && !error && applications.length === 0 && <div className="rounded-xl border border-alo-border bg-white p-10 text-center"><GraduationCap className="mx-auto mb-3 h-10 w-10 text-alo-text-muted/50" /><p className="font-semibold">No assigned applications</p><p className="mt-1 text-sm text-alo-text-muted">No records matched this employee’s assignment and filters.</p></div>}
 
       {!loading && !error && applications.length > 0 && <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

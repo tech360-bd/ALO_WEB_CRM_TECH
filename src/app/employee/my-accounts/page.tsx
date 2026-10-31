@@ -23,7 +23,7 @@ export default async function EmployeeMyAccountsPage() {
   const session = await getServerSession(authOptions as any) as any;
   const userId = (session?.user as any)?.id || (session?.user as any)?.email;
   if (!userId) {
-    return <div className="p-8 text-red-600">Please login — employee session required.</div>;
+    return <div className="p-8 text-crm-danger-text">Please login — employee session required.</div>;
   }
 
   // Fetch Employee + CommunicationProfile + owned SocialAccounts
@@ -58,10 +58,10 @@ export default async function EmployeeMyAccountsPage() {
           const connected = !!acc;
           const status = acc?.status || acc?.connectedStatus || (connected ? "connected" : "disconnected");
           return (
-            <div key={p.id} className={`border rounded-lg p-4 ${connected ? "border-green-300 bg-green-50" : "border-[var(--alo-border)] bg-white"}`}>
+            <div key={p.id} className={`border rounded-lg p-4 ${connected ? "border-[var(--alo-success)] bg-crm-success-bg" : "border-[var(--alo-border)] bg-white"}`}>
               <div className="flex justify-between">
                 <div className="font-semibold">{p.name}</div>
-                <span className={`text-xs px-2 py-1 rounded ${connected ? "bg-green-600 text-white" : "bg-slate-200"}`}>{status}</span>
+                <span className={`text-xs px-2 py-1 rounded ${connected ? "bg-[var(--alo-success-dark)] text-white" : "bg-[var(--alo-page)]"}`}>{status}</span>
               </div>
               {connected && (
                 <div className="mt-2 text-xs space-y-1">

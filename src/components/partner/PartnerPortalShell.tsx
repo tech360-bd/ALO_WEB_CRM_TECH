@@ -267,7 +267,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
                 />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.badge && !isActive && (
-                  <span className="text-[11px] leading-none font-medium px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">
+                  <span className="text-[11px] leading-none font-medium px-1.5 py-0.5 rounded-full bg-crm-danger-bg text-crm-danger-text">
                     {item.badge}
                   </span>
                 )}
@@ -295,7 +295,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
       <div className="p-3">
         <Button
  variant="ghost"
- className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 "
+ className="w-full justify-start text-alo-text-secondary hover:text-crm-danger-text hover:bg-crm-danger-bg "
  onClick={handleLogout}
  >
           <LogOut className="w-4 h-4 mr-2" />
@@ -344,7 +344,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
             >
               <Bell className="w-5 h-5 text-alo-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-[var(--alo-error)] text-white text-[11px] flex items-center justify-center font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}

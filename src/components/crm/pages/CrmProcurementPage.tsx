@@ -25,25 +25,25 @@ const statusBadge = (status: string): string => ({
   DRAFT: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   SUBMITTED: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   PENDING_APPROVAL: 'bg-yellow-100 text-yellow-700',
-  APPROVED: 'bg-emerald-100 text-emerald-700',
-  REJECTED: 'bg-red-100 text-red-700',
-  CONVERTED: 'bg-purple-100 text-purple-700',
+  APPROVED: 'bg-crm-success-bg text-crm-success-text',
+  REJECTED: 'bg-crm-danger-bg text-crm-danger-text',
+  CONVERTED: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   SENT: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   PARTIALLY_RECEIVED: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-  RECEIVED: 'bg-emerald-100 text-emerald-700',
+  RECEIVED: 'bg-crm-success-bg text-crm-success-text',
   CANCELLED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-  MATCHED: 'bg-emerald-100 text-emerald-700',
-  PAID: 'bg-emerald-100 text-emerald-700',
+  MATCHED: 'bg-crm-success-bg text-crm-success-text',
+  PAID: 'bg-crm-success-bg text-crm-success-text',
   PARTIALLY_PAID: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
-  DISPUTED: 'bg-red-100 text-red-700',
-  IN_USE: 'bg-emerald-100 text-emerald-700',
+  DISPUTED: 'bg-crm-danger-bg text-crm-danger-text',
+  IN_USE: 'bg-crm-success-bg text-crm-success-text',
   IN_STORAGE: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
   MAINTENANCE: 'bg-yellow-100 text-yellow-700',
   RETIRED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   DISPOSED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-  ACTIVE: 'bg-emerald-100 text-emerald-700',
+  ACTIVE: 'bg-crm-success-bg text-crm-success-text',
   SUSPENDED: 'bg-yellow-100 text-yellow-700',
-  BLACKLISTED: 'bg-red-100 text-red-700',
+  BLACKLISTED: 'bg-crm-danger-bg text-crm-danger-text',
 }[status] ?? 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]');
 
 export default function CrmProcurementPage() {
@@ -117,8 +117,8 @@ export default function CrmProcurementPage() {
       </div>
 
       {error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="pt-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="pt-4 text-sm text-crm-danger-text">
             API error: {error}. Verify your session has FINANCE/ADMIN/SUPER_ADMIN/PROCUREMENT access.
           </CardContent>
         </Card>

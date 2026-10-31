@@ -118,15 +118,15 @@ type Country = {
 // ---------------------------------------------------------------------------
 
 const APPROVAL_COLORS: Record<string, string> = {
-  PUBLISHED: "bg-emerald-100 text-emerald-700",
+  PUBLISHED: "bg-crm-success-bg text-crm-success-text",
   DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  PENDING_REVIEW: "bg-amber-100 text-amber-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING_REVIEW: "bg-crm-warning-bg text-crm-warning-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const VERIFICATION_COLORS: Record<string, string> = {
-  VERIFIED: "bg-emerald-100 text-emerald-700",
-  NEEDS_REVIEW: "bg-amber-100 text-amber-700",
+  VERIFIED: "bg-crm-success-bg text-crm-success-text",
+  NEEDS_REVIEW: "bg-crm-warning-bg text-crm-warning-text",
   UNVERIFIED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
@@ -901,8 +901,8 @@ export function AdminCourseManagement() {
                                 className={cn(
                                   "h-8",
                                   course.approvalStatus === "PUBLISHED"
-                                    ? "border-amber-200 text-amber-700 hover:bg-amber-50"
-                                    : "border-emerald-200 text-emerald-700 hover:bg-emerald-50",
+                                    ? "border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
+                                    : "border-crm-success-border text-crm-success-text hover:bg-crm-success-bg",
                                 )}
                               >
                                 <Icon
@@ -926,7 +926,7 @@ export function AdminCourseManagement() {
                           }}
                           variant="outline"
                           size="sm"
-                          className="h-8 border-rose-200 text-rose-600 hover:bg-rose-50"
+                          className="h-8 border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
                         >
                           <Icon name="Trash2" className="size-3.5" />
                         </Button>
@@ -1113,7 +1113,7 @@ export function AdminCourseManagement() {
                       disabled={sortedUniversities.length === 0}
                     />
                     {editingForm.countrySlug && sortedUniversities.length === 0 && (
-                      <p className="text-xs text-amber-600">
+                      <p className="text-xs text-crm-warning-text">
                         <Icon name="Info" className="mr-1 inline size-3" />
                         No published universities for this country. Add universities first via CSV
                         import.
@@ -1328,7 +1328,7 @@ export function AdminCourseManagement() {
       >
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-rose-600">
+            <AlertDialogTitle className="flex items-center gap-2 text-crm-warning-text">
               <Icon name="AlertTriangle" className="size-5" />
               Delete course?
             </AlertDialogTitle>
@@ -1357,7 +1357,7 @@ export function AdminCourseManagement() {
             <AlertDialogAction
               onClick={confirmDelete}
               disabled={deleting}
-              className="h-10 bg-rose-600 text-white hover:bg-rose-700"
+              className="h-10 bg-[var(--alo-error)] text-white hover:bg-[var(--alo-error)]"
             >
               {deleting ? (
                 <>

@@ -103,7 +103,7 @@ export default function EmployeeProfilePage() {
   }
 
   if (!profile) {
-    return <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">{error || 'Your employee profile is unavailable.'}</div>;
+    return <div role="alert" className="rounded-xl border border-crm-warning-border bg-crm-warning-bg p-5 text-sm text-crm-warning-text">{error || 'Your employee profile is unavailable.'}</div>;
   }
 
   const displayInitials = profile.name.split(' ').map((part) => part[0]).join('').slice(0, 2) || 'E';
@@ -115,7 +115,7 @@ export default function EmployeeProfilePage() {
         <div><h1 className="text-2xl font-bold text-alo-text">My Profile</h1><p className="text-sm text-alo-text-muted mt-1">Personal information and employment details</p></div>
         {!editMode ? <Button variant="brand" size="sm" onClick={() => setEditMode(true)}><Pencil className="w-4 h-4" /> Edit personal details</Button> : <div className="flex gap-2"><Button variant="outline" size="sm" onClick={handleCancel}><X className="w-4 h-4" /> Cancel</Button><Button variant="brand" size="sm" onClick={() => void handleSave()} disabled={saving}>{saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}{saving ? 'Saving…' : 'Save Changes'}</Button></div>}
       </div>
-      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="text-sm text-crm-danger-text">{error}</p>}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div>
@@ -156,7 +156,7 @@ export default function EmployeeProfilePage() {
             </div>}</CardContent>
           </Card>
 
-          <Card className="bg-white rounded-xl border border-alo-border"><CardHeader><CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2"><Heart className="w-5 h-5 text-red-500" /> Emergency Contact</CardTitle></CardHeader>
+          <Card className="bg-white rounded-xl border border-alo-border"><CardHeader><CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2"><Heart className="w-5 h-5 text-crm-danger-text" /> Emergency Contact</CardTitle></CardHeader>
             <CardContent><p className="text-xs text-alo-text-muted mb-4">Visible only in your authenticated profile. HR access is managed through the authorized HR workflow.</p>
               {editMode ? <FormField label="Emergency contact details" value={profile.emergencyContact} onChange={(value) => setField('emergencyContact', value)} /> : <InfoRow icon={Heart} label="Emergency Contact" value={profile.emergencyContact || 'Not recorded'} />}
             </CardContent>

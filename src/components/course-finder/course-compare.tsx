@@ -35,7 +35,7 @@ function renderCellValue(course: Course, key: string): React.ReactNode {
   switch (key) {
     case 'universityName':
       return (
-        <span className="font-medium text-emerald-600">
+        <span className="font-medium text-crm-success-text">
           {COUNTRY_FLAGS[course.country]} {course.universityName}
         </span>
       );
@@ -49,7 +49,7 @@ function renderCellValue(course: Course, key: string): React.ReactNode {
       return course.pteMin ?? '—';
     case 'hasScholarship':
       return course.hasScholarship ? (
-        <Badge className="bg-emerald-600 text-white text-xs">Available</Badge>
+        <Badge className="bg-[var(--alo-success-dark)] text-white text-xs">Available</Badge>
       ) : (
         <span className="text-[var(--alo-text-muted)]">None</span>
       );
@@ -96,18 +96,18 @@ export function CourseCompare({ courses, onRemove, onApplySelected }: CourseComp
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <GitCompare className="size-5 text-emerald-600" />
+          <GitCompare className="size-5 text-crm-success-text" />
           <h2 className="text-lg font-semibold text-[var(--alo-text)]">
             Compare Courses
           </h2>
-          <Badge variant="secondary" className="bg-emerald-50 text-emerald-700">
+          <Badge variant="secondary" className="bg-crm-success-bg text-crm-success-text">
             {courses.length}/3
           </Badge>
         </div>
         <Button
           onClick={handleApply}
           disabled={applying}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white"
+          className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
         >
           {applying ? (
             <>
@@ -136,12 +136,12 @@ export function CourseCompare({ courses, onRemove, onApplySelected }: CourseComp
                   <th key={course.id} className="text-left p-4 min-w-[220px] relative">
                     <button
                       onClick={() => onRemove(course.id)}
-                      className="absolute top-2 right-2 text-[var(--alo-text-muted)] hover:text-red-500 transition-colors"
+                      className="absolute top-2 right-2 text-[var(--alo-text-muted)] hover:text-crm-danger-text transition-colors"
                       aria-label={`Remove ${course.courseTitle}`}
                     >
                       <X className="size-4" />
                     </button>
-                    <p className="text-sm font-semibold text-emerald-600 pr-6">
+                    <p className="text-sm font-semibold text-crm-success-text pr-6">
                       {COUNTRY_FLAGS[course.country]} {course.universityName}
                     </p>
                   </th>

@@ -87,11 +87,11 @@ const INTAKE_OPTIONS = [
 const COMPARE_LIMIT = 3;
 const LEVEL_COLORS: Record<string, string> = {
   Foundation: "bg-sky-100 text-sky-700",
-  Bachelor: "bg-emerald-100 text-emerald-700",
-  Masters: "bg-violet-100 text-violet-700",
+  Bachelor: "bg-crm-success-bg text-crm-success-text",
+  Masters: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   MBA: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  PhD: "bg-rose-100 text-rose-700",
-  "Postgraduate Diploma": "bg-amber-100 text-amber-700",
+  PhD: "bg-crm-warning-bg text-crm-warning-text",
+  "Postgraduate Diploma": "bg-crm-warning-bg text-crm-warning-text",
   "Pre-Masters": "bg-teal-100 text-teal-700",
   "Top-up": "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
@@ -719,7 +719,7 @@ function CourseCard({
 
         {/* Scholarship badge */}
         {course.scholarship && (
-          <div className="mt-2 inline-flex items-center gap-1.5 self-start rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700">
+          <div className="mt-2 inline-flex items-center gap-1.5 self-start rounded-full bg-crm-success-bg px-2.5 py-0.5 text-[11px] font-medium text-crm-success-text">
             <Icon name="Award" className="size-3" />
             {course.scholarship}
           </div>
@@ -762,9 +762,9 @@ function CourseCard({
             className={cn(
               "mt-2 flex items-center gap-1.5 text-[11px] font-medium",
               dw.overdue
-                ? "text-rose-600"
+                ? "text-crm-warning-text"
                 : dw.near
-                ? "text-amber-600"
+                ? "text-crm-warning-text"
                 : "text-muted-foreground"
             )}
           >

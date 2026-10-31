@@ -145,7 +145,7 @@ export default function StudentComparePage() {
         </div>
 
         {error && (
-          <Card className="p-4 bg-amber-50 border-amber-200 rounded-2xl text-sm text-amber-800">{error}</Card>
+          <Card className="p-4 bg-crm-warning-bg border-crm-warning-border rounded-2xl text-sm text-crm-warning-text">{error}</Card>
         )}
 
         {loading ? (
@@ -170,7 +170,7 @@ export default function StudentComparePage() {
                       <button
                         type="button"
                         onClick={() => void remove(course.courseId)}
-                        className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-red-600 hover:underline"
+                        className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-crm-danger-text hover:underline"
                       >
                         <Trash2 className="h-3 w-3" /> Remove
                       </button>

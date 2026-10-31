@@ -16,7 +16,7 @@ export default function AdminHomepageBuilderPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Badge className="bg-[var(--alo-brand)] text-white font-bold text-xs">SUPER_ADMIN / ADMIN</Badge>
-              <Badge variant="outline" className="text-emerald-700 border-emerald-300 font-semibold text-xs">Changes are audit logged</Badge>
+              <Badge variant="outline" className="text-crm-success-text border-crm-success-border font-semibold text-xs">Changes are audit logged</Badge>
             </div>
             <h1 className="text-xl font-black text-[var(--alo-text)] tracking-tight">Homepage Master Builder & CMS — Real Implementation</h1>
             <p className="text-xs text-[var(--alo-body)] mt-1">

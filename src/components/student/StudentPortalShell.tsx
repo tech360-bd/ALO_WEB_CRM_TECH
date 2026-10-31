@@ -156,7 +156,7 @@ function SidebarContent() {
                 />
                 <span className="flex-1 text-left truncate">{item.label}</span>
                 {item.badge === 'unread-messages' && unreadMessages > 0 && (
-                  <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center font-bold shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-[var(--alo-error)] text-white text-[11px] flex items-center justify-center font-bold shrink-0">
                     {unreadMessages > 9 ? '9+' : unreadMessages}
                   </span>
                 )}
@@ -202,7 +202,7 @@ function SidebarContent() {
       <div className="p-3">
         <Button
           variant="ghost"
-          className="w-full justify-start text-red-600 hover:bg-red-50"
+          className="w-full justify-start text-crm-danger-text hover:bg-crm-danger-bg"
           onClick={logout}
         >
           <LogOut className="w-4 h-4 mr-2" />
@@ -299,7 +299,7 @@ export default function StudentPortalShell({
             >
               <Bell className="w-5 h-5 text-alo-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-[var(--alo-error)] text-white text-[11px] flex items-center justify-center font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -317,11 +317,11 @@ export default function StudentPortalShell({
                     <span
                       className={cn(
                         'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-semibold',
-                        realtimeStatus === 'connected' && 'bg-emerald-100 text-emerald-700',
+                        realtimeStatus === 'connected' && 'bg-crm-success-bg text-crm-success-text',
                         realtimeStatus === 'connecting' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
-                        realtimeStatus === 'reconnecting' && 'bg-amber-100 text-amber-800',
-                        realtimeStatus === 'not_configured' && 'bg-slate-200 text-[var(--alo-body)]',
-                        realtimeStatus === 'error' && 'bg-red-100 text-red-700',
+                        realtimeStatus === 'reconnecting' && 'bg-crm-warning-bg text-crm-warning-text',
+                        realtimeStatus === 'not_configured' && 'bg-[var(--alo-page)] text-[var(--alo-body)]',
+                        realtimeStatus === 'error' && 'bg-crm-danger-bg text-crm-danger-text',
                         realtimeStatus === 'idle' && 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
                       )}
                       title={REALTIME_STATUS_HINT[realtimeStatus] ?? ''}
@@ -329,12 +329,12 @@ export default function StudentPortalShell({
                       <span
                         className={cn(
                           'size-1.5 rounded-full',
-                          realtimeStatus === 'connected' && 'bg-emerald-500',
-                          realtimeStatus === 'connecting' && 'bg-blue-500',
-                          realtimeStatus === 'reconnecting' && 'animate-pulse bg-amber-500',
-                          realtimeStatus === 'not_configured' && 'bg-slate-400',
-                          realtimeStatus === 'error' && 'bg-red-500',
-                          realtimeStatus === 'idle' && 'bg-slate-400',
+                          realtimeStatus === 'connected' && 'bg-[var(--alo-success)]',
+                          realtimeStatus === 'connecting' && 'bg-[var(--alo-brand)]',
+                          realtimeStatus === 'reconnecting' && 'animate-pulse bg-[var(--alo-warning)]',
+                          realtimeStatus === 'not_configured' && 'bg-[var(--alo-page)]',
+                          realtimeStatus === 'error' && 'bg-[var(--alo-error)]',
+                          realtimeStatus === 'idle' && 'bg-[var(--alo-page)]',
                         )}
                       />
                       {REALTIME_STATUS_LABEL[realtimeStatus] ?? 'idle'}

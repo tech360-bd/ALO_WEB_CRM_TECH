@@ -41,8 +41,8 @@ function CmsAnnouncements() {
   const level = top.data?.level === 'urgent' ? 'error' : top.data?.level === 'warning' ? 'warning' : 'info';
   const styles: Record<string, string> = {
     info: 'bg-[var(--alo-brand)] text-white',
-    warning: 'bg-amber-500 text-white',
-    error: 'bg-red-600 text-white',
+    warning: 'bg-[var(--alo-warning)] text-white',
+    error: 'bg-[var(--alo-error)] text-white',
   };
   const message = top.data?.message || top.label;
   return (

@@ -177,7 +177,7 @@ export default function N8nWorkflowsView() {
         </CardContent>
       </Card>
 
-      <div className="flex gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
+      <div className="flex gap-3 rounded-lg border border-crm-warning-border bg-crm-warning-bg p-4 text-sm text-crm-warning-text">
         <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
         <div className="flex gap-2"><ShieldAlert className="hidden h-4 w-4 shrink-0 sm:block" /><p>No webhook is called from this page. Clearing local configuration does not disable or revoke an external n8n workflow. Provider access and live execution remain NOT VERIFIED.</p></div>
       </div>

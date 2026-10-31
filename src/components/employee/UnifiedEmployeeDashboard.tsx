@@ -225,7 +225,7 @@ export default function UnifiedEmployeeDashboard({
           >
             <Bell className="w-5 h-5" />
             {data?.unreadNotifsCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-ping" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[var(--alo-error)] rounded-full animate-ping" />
             )}
           </Button>
 
@@ -240,7 +240,7 @@ export default function UnifiedEmployeeDashboard({
             <Button
  variant="ghost"
  size="icon"
- className="text-[var(--alo-text-muted)] hover:text-red-600 size-12 ml-1"
+ className="text-[var(--alo-text-muted)] hover:text-crm-danger-text size-12 ml-1"
  onClick={() => {
                 logout();
                 router.replace('/portal/login');
@@ -253,29 +253,29 @@ export default function UnifiedEmployeeDashboard({
       </header>
 
       {isOffline && (
-        <div className="bg-amber-50 border-b border-amber-200 text-amber-800 px-4 py-2 text-xs font-medium flex items-center gap-2">
+        <div className="bg-crm-warning-bg border-b border-crm-warning-border text-crm-warning-text px-4 py-2 text-xs font-medium flex items-center gap-2">
           <AlertTriangle className="w-4 h-4" /> You are offline — showing cached data where available. Reconnect to refresh live metrics.
         </div>
       )}
       {/* 3. Main Dashboard Workspace */}
       <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-6">
         {permissionDenied && (
-          <Card className="bg-red-50 border-red-200">
+          <Card className="bg-crm-danger-bg border-crm-danger-border">
             <CardContent className="p-6 text-center space-y-3">
-              <ShieldAlert className="w-8 h-8 text-red-600 mx-auto" />
-              <h3 className="font-bold text-red-800">Permission Denied</h3>
-              <p className="text-xs text-red-700 max-w-md mx-auto">{error || 'Your role does not have access to this dashboard. Contact Super Admin for permission.'}</p>
+              <ShieldAlert className="w-8 h-8 text-crm-danger-text mx-auto" />
+              <h3 className="font-bold text-crm-danger-text">Permission Denied</h3>
+              <p className="text-xs text-crm-danger-text max-w-md mx-auto">{error || 'Your role does not have access to this dashboard. Contact Super Admin for permission.'}</p>
               <Button size="sm" variant="outline" onClick={()=> router.push('/employee/dashboard')} className="text-xs">Back to My Dashboard</Button>
             </CardContent>
           </Card>
         )}
         {error && !permissionDenied && !loading && (
-          <Card className="bg-amber-50 border-amber-200">
+          <Card className="bg-crm-warning-bg border-crm-warning-border">
             <CardContent className="p-4 flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-crm-warning-text mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-semibold text-amber-800">Unable to load dashboard metrics</p>
-                <p className="text-xs text-amber-700 mt-1">{error}</p>
+                <p className="text-sm font-semibold text-crm-warning-text">Unable to load dashboard metrics</p>
+                <p className="text-xs text-crm-warning-text mt-1">{error}</p>
                 <Button size="sm" variant="outline" className="mt-3 h-7 gap-1" onClick={fetchDashboardData}><RefreshCw className="w-3 h-3" /> Retry</Button>
               </div>
             </CardContent>
@@ -361,7 +361,7 @@ export default function UnifiedEmployeeDashboard({
                     <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.activeApplications ?? data?.branchApplications ?? data?.countryApplications)}</h3>
                     <p className="text-[11px] text-[var(--alo-brand)] font-medium mt-1">{displayMetric(data?.offersReceived ?? data?.countryOffers ?? data?.offerCount)} Offers Received</p>
                   </div>
-                  <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-xl bg-crm-success-bg text-crm-success-text flex items-center justify-center">
                     <FileText className="w-6 h-6" />
                   </div>
                 </CardContent>
@@ -372,9 +372,9 @@ export default function UnifiedEmployeeDashboard({
                   <div>
                     <p className="text-xs font-semibold text-[var(--alo-text-muted)] uppercase tracking-wider">Open Tasks & Follow-ups</p>
                     <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.pendingTasksCount)}</h3>
-                    <p className="text-[11px] text-amber-600 font-medium mt-1">{displayMetric(data?.followUpsDue)} follow-ups due • {displayMetric(data?.overdueFollowUps)} overdue • {displayMetric(data?.slaBreaches)} breaches</p>
+                    <p className="text-[11px] text-crm-warning-text font-medium mt-1">{displayMetric(data?.followUpsDue)} follow-ups due • {displayMetric(data?.overdueFollowUps)} overdue • {displayMetric(data?.slaBreaches)} breaches</p>
                   </div>
-                  <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-xl bg-crm-warning-bg text-crm-warning-text flex items-center justify-center">
                     <Clock className="w-6 h-6" />
                   </div>
                 </CardContent>
@@ -390,7 +390,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.conversionRate)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] font-medium mt-1">Share of assigned leads marked converted in CRM.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><TrendingUp className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-success-bg text-crm-success-text flex items-center justify-center"><TrendingUp className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -400,7 +400,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.unreadMessages ?? data?.unreadMessagesCount)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{displayMetric(data?.unreadNotifsCount)} notifications</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><MessageSquare className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><MessageSquare className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -420,7 +420,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.pendingDocuments)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Document pending-status data is unavailable.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><FileText className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><FileText className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                 </>
@@ -445,7 +445,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.offerCount ?? data?.offersReceived)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Offer status present in scoped application records.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><CheckCircle2 className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-success-bg text-crm-success-text flex items-center justify-center"><CheckCircle2 className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -455,7 +455,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.deadlineAlerts)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Deadline metrics are not connected.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center"><AlertTriangle className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-danger-bg text-crm-danger-text flex items-center justify-center"><AlertTriangle className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -490,7 +490,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.interviewsScheduled ?? data?.interviewsPending)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Interview schedule data is unavailable.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><Calendar className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><Calendar className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -500,7 +500,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.highRiskCount ?? data?.highRisk)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Recorded risk classification in CRM.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center"><ShieldAlert className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-danger-bg text-crm-danger-text flex items-center justify-center"><ShieldAlert className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -525,7 +525,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-lg font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.todaysReceipts)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Payment totals are not connected to this dashboard.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><DollarSign className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-success-bg text-crm-success-text flex items-center justify-center"><DollarSign className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -535,7 +535,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.pendingPayrollRecords)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Only records in this employee's scope.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><Clock className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><Clock className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -555,7 +555,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-lg font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.monthlyRevenue)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Revenue totals are not connected to this dashboard.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><TrendingUp className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><TrendingUp className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                 </>
@@ -570,7 +570,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.activeCampaigns ?? data?.campaignsRunning)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">active/published status in CRM</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><Megaphone className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center"><Megaphone className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -600,7 +600,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-sm font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.topChannel)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">source attribution unavailable</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center"><Globe className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-danger-bg text-crm-danger-text flex items-center justify-center"><Globe className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                 </>
@@ -635,7 +635,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.leaveRequestsToday ?? data?.offersReceived ?? data?.countryOffers)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Pending requests created today.' : 'Offer status recorded in scoped applications.'}</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><Clock className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><Clock className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                   <Card className="bg-white border-[var(--alo-border)]/80 shadow-sm">
@@ -645,7 +645,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.attendancePresent ?? data?.branchApplications ?? data?.visaCasesCount)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{activeRole.includes('HR') || activeRole.includes('OFFICE_MANAGER') ? 'Attendance records for today in this scope.' : activeRole.includes('BRANCH') ? 'Applications assigned in this branch scope.' : 'Visa cases matching destination focus.'}</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><CheckCircle2 className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-success-bg text-crm-success-text flex items-center justify-center"><CheckCircle2 className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                 </>
@@ -670,7 +670,7 @@ export default function UnifiedEmployeeDashboard({
                         <h3 className="text-2xl font-black text-[var(--alo-text)] mt-1">{displayMetric(data?.urgentTickets)}</h3>
                         <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Open threads marked urgent in CRM.</p>
                       </div>
-                      <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><AlertTriangle className="w-6 h-6" /></div>
+                      <div className="w-11 h-11 rounded-xl bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><AlertTriangle className="w-6 h-6" /></div>
                     </CardContent>
                   </Card>
                 </>
@@ -703,7 +703,7 @@ export default function UnifiedEmployeeDashboard({
                   Tasks & Follow-ups
                 </TabsTrigger>
                 <TabsTrigger value="ai-assistant" className="text-xs font-semibold data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-400" /> AI Workspace
+                  <Sparkles className="w-3 h-3 text-crm-warning-text" /> AI Workspace
                 </TabsTrigger>
               </TabsList>
 
@@ -770,7 +770,7 @@ export default function UnifiedEmployeeDashboard({
                           {(data?.recentApplications && data.recentApplications.length>0) ? data.recentApplications.slice(0,4).map((app:any)=>(
                             <div key={app.id} className="flex items-center justify-between p-3 bg-[var(--alo-brand-pale)]/50 rounded-lg border border-[var(--alo-border)] text-xs">
                               <span className="font-semibold text-[var(--alo-body)] truncate pr-2">{app.universityName || app.university} - {app.courseName || app.course} {app.intake? `(${app.intake})`:''}</span>
-                              <Badge className={`${app.stage==='offer_received' || app.safeStatus==='OFFER_RECEIVED' ? 'bg-emerald-600' : 'bg-[var(--alo-brand)]'} text-white text-[11px] shrink-0`}>{app.safeStatus || app.stage}</Badge>
+                              <Badge className={`${app.stage==='offer_received' || app.safeStatus==='OFFER_RECEIVED' ? 'bg-[var(--alo-success-dark)]' : 'bg-[var(--alo-brand)]'} text-white text-[11px] shrink-0`}>{app.safeStatus || app.stage}</Badge>
                             </div>
                           )) : (
                             <div className="text-center py-4 text-xs text-[var(--alo-text-muted)]">No applications in queue. Create an application draft to begin.</div>
@@ -843,7 +843,7 @@ export default function UnifiedEmployeeDashboard({
                         <Button
                           variant="outline"
                           onClick={() => router.push('/employee/ucc')}
-                          className="h-14 text-xs flex-col gap-1 border-[var(--alo-border)] hover:bg-emerald-50 hover:text-emerald-700"
+                          className="h-14 text-xs flex-col gap-1 border-[var(--alo-border)] hover:bg-crm-success-bg hover:text-crm-success-text"
                         >
                           <MessageSquare className="w-4 h-4" /> WhatsApp UCC
                         </Button>
@@ -857,7 +857,7 @@ export default function UnifiedEmployeeDashboard({
                         <Button
                           variant="outline"
                           onClick={() => router.push('/employee/tasks')}
-                          className="h-14 text-xs flex-col gap-1 border-[var(--alo-border)] hover:bg-purple-50 hover:text-purple-700"
+                          className="h-14 text-xs flex-col gap-1 border-[var(--alo-border)] hover:bg-[var(--alo-brand-pale)] hover:text-[var(--alo-brand)]"
                         >
                           <CheckCircle2 className="w-4 h-4" /> All Tasks
                         </Button>
@@ -904,7 +904,7 @@ export default function UnifiedEmployeeDashboard({
                               <td className="p-3 font-bold text-[var(--alo-text)]">{lead.name}</td>
                               <td className="p-3 text-[var(--alo-body)]">{lead.phone}</td>
                               <td className="p-3 text-[var(--alo-body)]">{lead.destination || lead.country || '—'}</td>
-                              <td className="p-3"><Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]'} text-[11px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge></td>
+                              <td className="p-3"><Badge className={`${lead.hotLead ? 'bg-crm-success-bg text-crm-success-text' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]'} text-[11px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge></td>
                               <td className="p-3 text-right">
                                 <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="text-[var(--alo-brand)] h-7">Contact</Button>
                               </td>
@@ -928,7 +928,7 @@ export default function UnifiedEmployeeDashboard({
                                 <p className="font-bold text-sm text-[var(--alo-text)]">{lead.name}</p>
                                 <p className="text-xs text-[var(--alo-text-muted)]">{lead.phone} • {lead.destination || lead.country || '—'}</p>
                               </div>
-                              <Badge className={`${lead.hotLead ? 'bg-emerald-100 text-emerald-800' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]'} text-[11px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge>
+                              <Badge className={`${lead.hotLead ? 'bg-crm-success-bg text-crm-success-text' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]'} text-[11px]`}>{lead.status || (lead.hotLead ? 'Hot Lead' : 'New')}</Badge>
                             </div>
                             <div className="mt-3 flex gap-2">
                               <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="flex-1 "><PhoneCall className="w-3 h-3 mr-1" /> Call</Button>
@@ -977,7 +977,7 @@ export default function UnifiedEmployeeDashboard({
                 <Card className="bg-gradient-to-br from-blue-900 to-indigo-950 text-white border-none shadow-lg">
                   <CardContent className="p-6 space-y-4">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-amber-400" />
+                      <Sparkles className="w-5 h-5 text-crm-warning-text" />
                       <h3 className="font-bold text-base">ALO Counselor & Officer AI Co-Pilot</h3>
                     </div>
                     <p className="text-xs text-[var(--alo-brand-pale)] max-w-xl">
@@ -986,7 +986,7 @@ export default function UnifiedEmployeeDashboard({
                     <div className="flex flex-wrap gap-2 pt-2">
                       <Button
  size="sm"
- className="bg-amber-500 text-[var(--alo-text)] font-bold opacity-60"
+ className="bg-[var(--alo-warning)] text-[var(--alo-text)] font-bold opacity-60"
  disabled
  title="Unavailable: no verified, role-scoped follow-up workflow is connected to this control."
  >
@@ -1012,7 +1012,7 @@ export default function UnifiedEmployeeDashboard({
 
       {/* Quick Lead Registration Modal */}
       {showLeadModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[var(--alo-navy)]/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <Card className="bg-white max-w-md w-full shadow-2xl border-[var(--alo-border)]">
             <CardHeader className="p-4 border-b border-[var(--alo-border)] flex flex-row items-center justify-between">
               <CardTitle className="text-sm font-bold text-[var(--alo-text)]">Quick Lead Registration</CardTitle>

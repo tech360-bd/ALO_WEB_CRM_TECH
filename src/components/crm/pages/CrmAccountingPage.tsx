@@ -135,8 +135,8 @@ export default function CrmAccountingPage() {
       </div>
 
       {error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="pt-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="pt-4 text-sm text-crm-danger-text">
             API error: {error}. Verify your session has FINANCE/ADMIN/SUPER_ADMIN access.
           </CardContent>
         </Card>
@@ -240,7 +240,7 @@ export default function CrmAccountingPage() {
                           <p className="text-xs text-[var(--alo-text-muted)]">{new Date(entry.entryDate).toISOString().slice(0, 10)} • source: {entry.source} • currency: {entry.currency}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge className={entry.status === 'POSTED' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{entry.status}</Badge>
+                          <Badge className={entry.status === 'POSTED' ? 'bg-crm-success-bg text-crm-success-text' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{entry.status}</Badge>
                           {entry.status === 'POSTED' && !entry.reversalOfId && (
                             <Button size="sm" variant="outline" onClick={() => reverseEntry(entry.id)}>
                               <Ban className="h-3 w-3 mr-1" /> Reverse
@@ -335,7 +335,7 @@ export default function CrmAccountingPage() {
                           <td className="py-2 pr-4 font-medium">{p.name}</td>
                           <td className="py-2 pr-4">{new Date(p.startDate).toISOString().slice(0, 10)}</td>
                           <td className="py-2 pr-4">{new Date(p.endDate).toISOString().slice(0, 10)}</td>
-                          <td className="py-2"><Badge className={p.status === 'OPEN' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{p.status}</Badge></td>
+                          <td className="py-2"><Badge className={p.status === 'OPEN' ? 'bg-crm-success-bg text-crm-success-text' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{p.status}</Badge></td>
                         </tr>
                       ))}
                     </tbody>

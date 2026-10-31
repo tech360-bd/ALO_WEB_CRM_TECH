@@ -153,7 +153,7 @@ export default function AIMarketingDirectorView() {
               </div>
             </div>
           </div>
-          {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4" />{error}</p>}
+          {error && <p className="text-xs text-crm-danger-text bg-crm-danger-bg border border-crm-danger-border rounded-lg p-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4" />{error}</p>}
         </CardContent>
       </Card>
 
@@ -196,11 +196,11 @@ export default function AIMarketingDirectorView() {
                 </div>)}
               </CardContent>
             </Card>
-            <Card className="bg-amber-50 border-amber-200">
-              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-amber-700" /> Task Status & Approval</CardTitle></CardHeader>
+            <Card className="bg-crm-warning-bg border-crm-warning-border">
+              <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-crm-warning-text" /> Task Status & Approval</CardTitle></CardHeader>
               <CardContent className="text-xs space-y-2">
-                <div className="flex items-center gap-2"><Badge className={executionStatus==='running' ? 'bg-emerald-500 text-white' : executionStatus==='completed' ? 'bg-blue-500 text-white' : executionStatus==='paused' ? 'bg-amber-500 text-white' : 'bg-gray-400 text-white'}>{executionStatus}</Badge><span className="text-[var(--alo-body)]">Execution — 70% AI automation, 30% human supervision</span></div>
-                <p className="text-amber-800">Low-risk: auto-execution • Medium-risk: approval unless policy permits • High-risk: explicit human approval (budget, bulk messaging, payments). Backend-enforced.</p>
+                <div className="flex items-center gap-2"><Badge className={executionStatus==='running' ? 'bg-[var(--alo-success)] text-white' : executionStatus==='completed' ? 'bg-[var(--alo-brand)] text-white' : executionStatus==='paused' ? 'bg-[var(--alo-warning)] text-white' : 'bg-[var(--alo-page)] text-white'}>{executionStatus}</Badge><span className="text-[var(--alo-body)]">Execution — 70% AI automation, 30% human supervision</span></div>
+                <p className="text-crm-warning-text">Low-risk: auto-execution • Medium-risk: approval unless policy permits • High-risk: explicit human approval (budget, bulk messaging, payments). Backend-enforced.</p>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2 bg-white border rounded-lg"><p className="font-semibold">Budget Consumption</p><p className="text-[var(--alo-body)] mt-1">{plan.budget.map(b=>`${b.channel}: ৳${b.amount.toLocaleString()}`).join(', ')}</p></div>
                   <div className="p-2 bg-white border rounded-lg"><p className="font-semibold">Retry & Errors</p><p className="text-[var(--alo-body)] mt-1">Duplicate prevention, idempotency, execution locks — no duplicate publishing on retry.</p></div>

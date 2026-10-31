@@ -162,7 +162,7 @@ export default function StudentReferrals() {
                           </p>
                         )}
                         {referral.enrolledAt && (
-                          <p className="mt-1 text-[12px] text-emerald-700">
+                          <p className="mt-1 text-[12px] text-crm-success-text">
                             Enrolled {new Date(referral.enrolledAt).toLocaleDateString('en-GB')}
                           </p>
                         )}
@@ -221,7 +221,7 @@ export default function StudentReferrals() {
                   </div>
 
                   {submitError && (
-                    <p className="rounded-input border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700" role="alert">
+                    <p className="rounded-input border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-[12px] text-crm-danger-text" role="alert">
                       {submitError}
                     </p>
                   )}

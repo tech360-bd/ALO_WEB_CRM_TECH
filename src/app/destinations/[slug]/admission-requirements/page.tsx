@@ -61,7 +61,7 @@ export default async function CountryAdmissionRequirementsPage({ params }: { par
 
                 <div>
                   <span className="text-[var(--alo-text-muted)] font-medium">English Proficiency:</span>
-                  <p className="font-semibold text-emerald-600 mt-0.5">{req.english}</p>
+                  <p className="font-semibold text-crm-success-text mt-0.5">{req.english}</p>
                 </div>
 
                 <div>
@@ -96,7 +96,7 @@ export default async function CountryAdmissionRequirementsPage({ params }: { par
                 {countryData.englishTests.map((test, t) => (
                   <tr key={t}>
                     <td className="p-3 font-bold text-[var(--alo-text)]">{test.name}</td>
-                    <td className="p-3 text-emerald-600 font-semibold">{test.accepted}</td>
+                    <td className="p-3 text-crm-success-text font-semibold">{test.accepted}</td>
                     <td className="p-3 text-[var(--alo-body)]">{test.note}</td>
                   </tr>
                 ))}

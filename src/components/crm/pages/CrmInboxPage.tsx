@@ -50,10 +50,10 @@ function channelMeta(value: string) {
 
 const STATUS_META: Record<string, { label: string; className: string }> = {
   open: { label: 'Open', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' },
-  escalated: { label: 'Escalated', className: 'bg-red-100 text-red-700' },
-  resolved: { label: 'Resolved', className: 'bg-green-100 text-green-700' },
+  escalated: { label: 'Escalated', className: 'bg-crm-danger-bg text-crm-danger-text' },
+  resolved: { label: 'Resolved', className: 'bg-crm-success-bg text-crm-success-text' },
   closed: { label: 'Closed', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' },
-  pending: { label: 'Pending', className: 'bg-amber-100 text-amber-700' },
+  pending: { label: 'Pending', className: 'bg-crm-warning-bg text-crm-warning-text' },
 };
 
 function statusMeta(value: string) {
@@ -294,7 +294,7 @@ export default function CrmInboxPage() {
                           </Badge>
                           <Badge className={`text-[11px] ${sMeta.className}`}>{sMeta.label}</Badge>
                           {thread.needsHumanTakeover && (
-                            <Badge className="text-[11px] bg-amber-100 text-amber-700">
+                            <Badge className="text-[11px] bg-crm-warning-bg text-crm-warning-text">
                               <Flag className="h-2.5 w-2.5 mr-0.5" />Needs human
                             </Badge>
                           )}

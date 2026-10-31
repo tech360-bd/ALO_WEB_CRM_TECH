@@ -641,7 +641,7 @@ export function CommCommandCenter() {
                             ch.accent === "orange" && "bg-[var(--alo-orange-soft)] text-[var(--alo-orange-strong)]",
                             ch.accent === "emerald" && "bg-[var(--alo-success-soft)] text-[var(--alo-success-strong)]",
                             ch.accent === "amber" && "bg-[var(--alo-warning-soft)] text-[var(--alo-warning-strong)]",
-                            ch.accent === "violet" && "bg-violet-50 text-violet-700",
+                            ch.accent === "violet" && "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
                             ch.accent === "rose" && "bg-[var(--alo-danger-soft)] text-[var(--alo-danger-strong)]",
                             ch.accent === "sky" && "bg-[var(--alo-info-soft)] text-[var(--alo-info-strong)]",
                             ch.accent === "slate" && "bg-[var(--alo-surface-muted)] text-[var(--alo-text-secondary)]"

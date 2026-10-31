@@ -26,10 +26,10 @@ const ACTION_LABEL: Record<Action, string> = {
 const ACTION_CLASS: Record<Action, string> = {
   SKIP: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   NORMALIZE: 'bg-sky-50 text-sky-800',
-  PENDING_CHANGE: 'bg-amber-50 text-amber-900',
-  NEW_PENDING_REVIEW: 'bg-emerald-50 text-emerald-800',
-  BLOCK_DUPLICATE: 'bg-red-50 text-red-800',
-  INVALID: 'bg-red-50 text-red-800',
+  PENDING_CHANGE: 'bg-crm-warning-bg text-crm-warning-text',
+  NEW_PENDING_REVIEW: 'bg-crm-success-bg text-crm-success-text',
+  BLOCK_DUPLICATE: 'bg-crm-danger-bg text-crm-danger-text',
+  INVALID: 'bg-crm-danger-bg text-crm-danger-text',
 };
 
 interface Batch {
@@ -96,7 +96,7 @@ function useBatches() {
 
 function ErrorNote({ message }: { message: string }) {
   return (
-    <div role="alert" className="p-3 bg-red-50 border border-red-200 text-red-800 text-sm rounded-xl flex items-center gap-2">
+    <div role="alert" className="p-3 bg-crm-danger-bg border border-crm-danger-border text-crm-danger-text text-sm rounded-xl flex items-center gap-2">
       <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
       <span>{message}</span>
     </div>
@@ -238,11 +238,11 @@ export function NewCatalogueImport() {
             </Button>
           </div>
           {queued && (
-            <p role="status" className="text-sm text-emerald-800 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+            <p role="status" className="text-sm text-crm-success-text flex items-center gap-2"><CheckCircle2 className="w-4 h-4" aria-hidden="true" />
               Batch {queued.batchId} recorded. {queued.queued ?? 0} field change(s) queued for approval{queued.alreadyQueued ? `, ${queued.alreadyQueued} already pending` : ''}. Live values are unchanged. <Link className="underline" href="/admin/change-approval">Review and apply in the approval queue</Link> (approval does not change the live record; a Super Admin applies approved changes separately, and nothing becomes verified by approval).
             </p>
           )}
-          {staged && <p role="status" className="text-sm text-emerald-800">{staged}</p>}
+          {staged && <p role="status" className="text-sm text-crm-success-text">{staged}</p>}
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

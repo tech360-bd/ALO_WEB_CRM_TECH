@@ -212,13 +212,13 @@ export default function PartnerBrandingPanel() {
         </CardHeader>
         <CardContent className="space-y-5">
           {!canEdit && (
-            <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-[12.5px] text-amber-900">
+            <div className="flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-[12.5px] text-crm-warning-text">
               <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
               Only a Partner Super Admin can change these settings. You can review them here.
             </div>
           )}
           {error && (
-            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-[12.5px] text-red-700">
+            <div role="alert" className="rounded-lg border border-crm-danger-border bg-crm-danger-bg p-3 text-[12.5px] text-crm-danger-text">
               {error}
             </div>
           )}

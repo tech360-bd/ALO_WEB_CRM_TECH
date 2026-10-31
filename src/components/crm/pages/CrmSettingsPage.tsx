@@ -50,7 +50,7 @@ const initialSections: SettingsSection[] = [
   },
   {
     id: 'sms', title: 'SMS Settings', description: 'SMS gateway configuration for OTP and notifications.',
-    icon: MessageSquare, color: 'text-emerald-600 bg-emerald-50',
+    icon: MessageSquare, color: 'text-crm-success-text bg-crm-success-bg',
     fields: [
       { label: 'SMS Provider', type: 'text', value: 'BulkSMS BD' },
       { label: 'API Key', type: 'text', value: '••••••••••••' },
@@ -60,7 +60,7 @@ const initialSections: SettingsSection[] = [
   },
   {
     id: 'whatsapp', title: 'WhatsApp Settings', description: 'WhatsApp Business API integration for messaging.',
-    icon: Smartphone, color: 'text-green-600 bg-green-50',
+    icon: Smartphone, color: 'text-crm-success-text bg-crm-success-bg',
     fields: [
       { label: 'Business Number', type: 'text', value: '+880 1XXX-XXXXXX' },
       { label: 'API Token', type: 'text', value: '••••••••••••' },
@@ -80,7 +80,7 @@ const initialSections: SettingsSection[] = [
   },
   {
     id: 'security', title: 'Security Settings', description: 'Password policy, 2FA, session management, and IP restrictions.',
-    icon: Shield, color: 'text-red-600 bg-red-50',
+    icon: Shield, color: 'text-crm-danger-text bg-crm-danger-bg',
     fields: [
       { label: 'Enforce 2FA', type: 'toggle', value: true, description: 'Require two-factor authentication for all staff' },
       { label: 'Session Timeout (min)', type: 'number', value: '30' },
@@ -91,7 +91,7 @@ const initialSections: SettingsSection[] = [
   },
   {
     id: 'notifications', title: 'Notification Templates', description: 'Customize notification messages for different events.',
-    icon: Bell, color: 'text-purple-600 bg-purple-50',
+    icon: Bell, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]',
     fields: [
       { label: 'Welcome Email Template', type: 'toggle', value: true },
       { label: 'Application Update SMS', type: 'toggle', value: true },

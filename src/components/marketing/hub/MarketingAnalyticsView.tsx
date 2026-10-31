@@ -125,8 +125,8 @@ const kpis: KPIData[] = [
     value: '1,247',
     change: 12.4,
     icon: <Users className="h-4 w-4" />,
-    color: 'text-emerald-600',
-    bgColor: 'bg-emerald-50',
+    color: 'text-crm-success-text',
+    bgColor: 'bg-crm-success-bg',
   },
   {
     label: 'Hot Leads',
@@ -141,8 +141,8 @@ const kpis: KPIData[] = [
     value: '23.6%',
     change: 3.2,
     icon: <TrendingUp className="h-4 w-4" />,
-    color: 'text-violet-600',
-    bgColor: 'bg-violet-50',
+    color: 'text-[var(--alo-brand)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
   },
   {
     label: 'Cost Per Lead',
@@ -157,24 +157,24 @@ const kpis: KPIData[] = [
     value: '2,891',
     change: 18.3,
     icon: <MessageCircle className="h-4 w-4" />,
-    color: 'text-green-600',
-    bgColor: 'bg-green-50',
+    color: 'text-crm-success-text',
+    bgColor: 'bg-crm-success-bg',
   },
   {
     label: 'AI Handled',
     value: '2,134',
     change: 24.6,
     icon: <Bot className="h-4 w-4" />,
-    color: 'text-cyan-600',
-    bgColor: 'bg-cyan-50',
+    color: 'text-[var(--alo-info-text)]',
+    bgColor: 'bg-[var(--alo-info-bg)]',
   },
   {
     label: 'Human Handled',
     value: '757',
     change: -2.3,
     icon: <UserCheck className="h-4 w-4" />,
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-50',
+    color: 'text-crm-warning-text',
+    bgColor: 'bg-crm-warning-bg',
   },
   {
     label: 'SLA Rate',
@@ -189,8 +189,8 @@ const kpis: KPIData[] = [
     value: '48',
     change: 15.0,
     icon: <FileText className="h-4 w-4" />,
-    color: 'text-rose-600',
-    bgColor: 'bg-rose-50',
+    color: 'text-crm-warning-text',
+    bgColor: 'bg-crm-warning-bg',
   },
   {
     label: 'Total Reach',
@@ -205,24 +205,24 @@ const kpis: KPIData[] = [
     value: '5.8%',
     change: 0.7,
     icon: <ThumbsUp className="h-4 w-4" />,
-    color: 'text-pink-600',
-    bgColor: 'bg-pink-50',
+    color: 'text-crm-danger-text',
+    bgColor: 'bg-crm-danger-bg',
   },
   {
     label: 'Followers Gained',
     value: '1,023',
     change: 31.5,
     icon: <UserPlus className="h-4 w-4" />,
-    color: 'text-indigo-600',
-    bgColor: 'bg-indigo-50',
+    color: 'text-[var(--alo-brand)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
   },
   {
     label: 'Campaign ROI',
     value: '342%',
     change: 28.9,
     icon: <Target className="h-4 w-4" />,
-    color: 'text-emerald-700',
-    bgColor: 'bg-emerald-100',
+    color: 'text-crm-success-text',
+    bgColor: 'bg-crm-success-bg',
   },
   {
     label: 'Revenue',
@@ -237,8 +237,8 @@ const kpis: KPIData[] = [
     value: '97.1%',
     change: 2.4,
     icon: <Phone className="h-4 w-4" />,
-    color: 'text-green-700',
-    bgColor: 'bg-green-100',
+    color: 'text-crm-success-text',
+    bgColor: 'bg-crm-success-bg',
   },
   {
     label: 'Avg Response Time',
@@ -271,7 +271,7 @@ const channelPerformance: ChannelPerformance[] = [
   },
   {
     channel: 'WhatsApp Business',
-    icon: <MessageCircle className="h-4 w-4 text-green-600" />,
+    icon: <MessageCircle className="h-4 w-4 text-crm-success-text" />,
     leads: 298,
     conversations: 1547,
     conversion: '31.5%',
@@ -473,10 +473,10 @@ function SLAComplianceChart({ data }: { data: SLAData[] }) {
                 className={cn(
                   'font-bold tabular-nums text-sm',
                   item.rate >= 95
-                    ? 'text-emerald-600'
+                    ? 'text-crm-success-text'
                     : item.rate >= 90
-                      ? 'text-amber-600'
-                      : 'text-red-600'
+                      ? 'text-crm-warning-text'
+                      : 'text-crm-danger-text'
                 )}
               >
                 {item.rate}%
@@ -505,10 +505,10 @@ function SLAComplianceChart({ data }: { data: SLAData[] }) {
             />
             {/* 95% target line */}
             <div
-              className="absolute top-0 bottom-0 w-0.5 bg-red-400/70"
+              className="absolute top-0 bottom-0 w-0.5 bg-[var(--alo-error)]/70"
               style={{ left: '95%' }}
             >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[11px] text-red-500 font-medium">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[11px] text-crm-danger-text font-medium">
                 95%
               </div>
             </div>
@@ -537,7 +537,7 @@ function AIvsHumanChart({ data }: { data: AIComparison[] }) {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-cyan-600 font-semibold flex items-center gap-1">
+                <span className="text-[var(--alo-info-text)] font-semibold flex items-center gap-1">
                   <Bot className="h-3 w-3" /> AI
                 </span>
                 <span className="tabular-nums font-medium">
@@ -546,14 +546,14 @@ function AIvsHumanChart({ data }: { data: AIComparison[] }) {
               </div>
               <div className="relative h-4 w-full rounded bg-muted/40 overflow-hidden">
                 <div
-                  className="absolute inset-y-0 left-0 rounded bg-cyan-500 transition-all duration-700"
+                  className="absolute inset-y-0 left-0 rounded bg-[var(--alo-info)] transition-all duration-700"
                   style={{ width: `${(item.ai / maxVal) * 100}%` }}
                 />
               </div>
             </div>
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-600 font-semibold flex items-center gap-1">
+                <span className="text-crm-warning-text font-semibold flex items-center gap-1">
                   <UserCheck className="h-3 w-3" /> Human
                 </span>
                 <span className="tabular-nums font-medium">
@@ -562,7 +562,7 @@ function AIvsHumanChart({ data }: { data: AIComparison[] }) {
               </div>
               <div className="relative h-4 w-full rounded bg-muted/40 overflow-hidden">
                 <div
-                  className="absolute inset-y-0 left-0 rounded bg-amber-500 transition-all duration-700"
+                  className="absolute inset-y-0 left-0 rounded bg-[var(--alo-warning)] transition-all duration-700"
                   style={{ width: `${(item.human / maxVal) * 100}%` }}
                 />
               </div>
@@ -688,7 +688,7 @@ export default function MarketingAnalyticsView() {
                       </div>
                       <div className={cn(
                         'flex items-center gap-0.5 text-xs font-medium',
-                        kpi.change >= 0 ? 'text-emerald-600' : 'text-red-500'
+                        kpi.change >= 0 ? 'text-crm-success-text' : 'text-crm-danger-text'
                       )}>
                         {kpi.change >= 0 ? (
                           <ArrowUpRight className="h-3 w-3" />
@@ -732,7 +732,7 @@ export default function MarketingAnalyticsView() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Bot className="h-4 w-4 text-cyan-500" />
+              <Bot className="h-4 w-4 text-[var(--alo-info-text)]" />
               AI vs Human Performance
             </CardTitle>
             <CardDescription>Comparing automated and manual handling metrics</CardDescription>
@@ -782,9 +782,9 @@ export default function MarketingAnalyticsView() {
                         variant={ch.status === 'active' ? 'default' : ch.status === 'paused' ? 'secondary' : 'outline'}
                         className={cn(
                           'text-xs',
-                          ch.status === 'active' && 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100',
-                          ch.status === 'paused' && 'bg-amber-100 text-amber-700 hover:bg-amber-100',
-                          ch.status === 'low' && 'bg-red-100 text-red-700 hover:bg-red-100'
+                          ch.status === 'active' && 'bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg',
+                          ch.status === 'paused' && 'bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg',
+                          ch.status === 'low' && 'bg-crm-danger-bg text-crm-danger-text hover:bg-crm-danger-bg'
                         )}
                       >
                         {ch.status}
@@ -804,7 +804,7 @@ export default function MarketingAnalyticsView() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base flex items-center gap-2">
-                <Target className="h-4 w-4 text-emerald-500" />
+                <Target className="h-4 w-4 text-crm-success-text" />
                 Campaign ROI
               </CardTitle>
               <CardDescription>Return on investment for active and completed campaigns</CardDescription>
@@ -837,11 +837,11 @@ export default function MarketingAnalyticsView() {
                     <TableCell className="text-right tabular-nums">{camp.spent}</TableCell>
                     <TableCell className="text-right tabular-nums">{camp.leads}</TableCell>
                     <TableCell className="text-right tabular-nums font-medium">{camp.conversions}</TableCell>
-                    <TableCell className="text-right tabular-nums font-medium text-emerald-600">{camp.revenue}</TableCell>
+                    <TableCell className="text-right tabular-nums font-medium text-crm-success-text">{camp.revenue}</TableCell>
                     <TableCell className="text-right">
                       <span className={cn(
                         'font-bold tabular-nums',
-                        parseInt(camp.roi) >= 150 ? 'text-emerald-600' : parseInt(camp.roi) >= 100 ? 'text-amber-600' : 'text-red-500'
+                        parseInt(camp.roi) >= 150 ? 'text-crm-success-text' : parseInt(camp.roi) >= 100 ? 'text-crm-warning-text' : 'text-crm-danger-text'
                       )}>
                         {camp.roi}
                       </span>
@@ -851,9 +851,9 @@ export default function MarketingAnalyticsView() {
                         variant={camp.status === 'running' ? 'default' : camp.status === 'completed' ? 'secondary' : 'outline'}
                         className={cn(
                           'text-xs',
-                          camp.status === 'running' && 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100',
+                          camp.status === 'running' && 'bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg',
                           camp.status === 'completed' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]',
-                          camp.status === 'paused' && 'bg-amber-100 text-amber-700 hover:bg-amber-100'
+                          camp.status === 'paused' && 'bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg'
                         )}
                       >
                         {camp.status}
@@ -880,7 +880,7 @@ export default function MarketingAnalyticsView() {
           <SLAComplianceChart data={slaData} />
           <div className="mt-6 pt-4 border-t flex items-center justify-between text-sm text-muted-foreground">
             <span>Overall SLA compliance: <span className="font-semibold text-foreground">94.2%</span></span>
-            <span>Total breaches this period: <span className="font-semibold text-red-500">283</span></span>
+            <span>Total breaches this period: <span className="font-semibold text-crm-danger-text">283</span></span>
           </div>
         </CardContent>
       </Card>

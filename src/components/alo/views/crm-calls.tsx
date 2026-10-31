@@ -143,7 +143,7 @@ export function CrmCalls() {
                         </td>
                         <td className="px-5 py-3">
                           {c.aiAssisted ? (
-                            <Badge className="bg-violet-100 text-violet-700">
+                            <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                               <Icon name="Sparkles" className="mr-1 size-3" /> AI
                             </Badge>
                           ) : (

@@ -45,14 +45,14 @@ export default function VerificationAgentsRoute() {
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[var(--alo-text-muted)] font-medium">Robots.txt Policy</span>
-          <p className="text-lg font-bold text-emerald-600">100% Lawful & Compliant</p>
+          <p className="text-lg font-bold text-crm-success-text">100% Lawful & Compliant</p>
         </Card>
       </div>
 
       {runResult && (
         <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl space-y-3 text-xs">
           <h3 className="font-bold text-[var(--alo-text)] text-sm flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Verification Agent Run Summary
+            <CheckCircle2 className="w-4 h-4 text-crm-success-text" /> Verification Agent Run Summary
           </h3>
           <p><strong>Run ID:</strong> {runResult.runId}</p>
           <p><strong>Sources Inspected:</strong> {runResult.sourcesChecked}</p>

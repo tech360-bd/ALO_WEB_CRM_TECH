@@ -9,8 +9,8 @@ import {
 const stats = [
   { label: 'Active Students', value: '24', icon: Users, color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' },
   { label: 'Pending Applications', value: '8', icon: FileText, color: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]' },
-  { label: 'New Leads', value: '12', icon: Target, color: 'bg-green-50 text-green-600' },
-  { label: 'Upcoming Appointments', value: '5', icon: CalendarDays, color: 'bg-purple-50 text-purple-600' },
+  { label: 'New Leads', value: '12', icon: Target, color: 'bg-crm-success-bg text-crm-success-text' },
+  { label: 'Upcoming Appointments', value: '5', icon: CalendarDays, color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' },
 ];
 
 const recentActivities = [
@@ -71,9 +71,9 @@ export default function CounselorDashboard() {
               <div key={i} className="flex items-start gap-3 pb-3 border-b border-alo-border last:border-0 last:pb-0">
                 <div className="mt-0.5">
                   {activity.type === 'success' ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    <CheckCircle2 className="w-4 h-4 text-crm-success-text" />
                   ) : activity.type === 'warning' ? (
-                    <AlertCircle className="w-4 h-4 text-amber-500" />
+                    <AlertCircle className="w-4 h-4 text-crm-warning-text" />
                   ) : (
                     <Clock className="w-4 h-4 text-[var(--alo-brand)]" />
                   )}
@@ -106,8 +106,8 @@ export default function CounselorDashboard() {
                   variant="secondary"
                   className={cn(
                     'text-[11px] shrink-0',
-                    item.priority === 'high' && 'bg-red-50 text-red-600 border-red-200',
-                    item.priority === 'medium' && 'bg-amber-50 text-amber-600 border-amber-200',
+                    item.priority === 'high' && 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+                    item.priority === 'medium' && 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
                     item.priority === 'low' && 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]'
                   )}
                 >

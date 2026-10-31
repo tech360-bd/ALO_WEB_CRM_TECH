@@ -21,14 +21,14 @@ import {
 // Constants
 // ─────────────────────────────────────────────────────────────
 const CHANNEL_ICONS: Record<string, React.ReactNode> = {
-  whatsapp: <Zap className="w-3.5 h-3.5 text-emerald-500" />,
+  whatsapp: <Zap className="w-3.5 h-3.5 text-crm-success-text" />,
   facebook: <Facebook className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
-  instagram: <Instagram className="w-3.5 h-3.5 text-pink-500" />,
-  email: <Mail className="w-3.5 h-3.5 text-amber-500" />,
-  live_chat: <Globe className="w-3.5 h-3.5 text-blue-400" />,
+  instagram: <Instagram className="w-3.5 h-3.5 text-crm-danger-text" />,
+  email: <Mail className="w-3.5 h-3.5 text-crm-warning-text" />,
+  live_chat: <Globe className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
   sms: <Phone className="w-3.5 h-3.5 text-[var(--alo-text-muted)]" />,
-  internal: <Users className="w-3.5 h-3.5 text-purple-500" />,
-  portal: <BookOpen className="w-3.5 h-3.5 text-indigo-500" />,
+  internal: <Users className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
+  portal: <BookOpen className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
   telegram: <Bot className="w-3.5 h-3.5 text-sky-500" />,
 };
 
@@ -225,19 +225,19 @@ export default function EmployeeOmnichannelInbox() {
   // ── Render helpers ─────────────────────────────────────────
   const priorityBadge = (priority: string) => {
     const map: Record<string, string> = {
-      urgent: 'bg-red-100 text-red-600',
-      high: 'bg-amber-100 text-amber-700',
+      urgent: 'bg-crm-danger-bg text-crm-danger-text',
+      high: 'bg-crm-warning-bg text-crm-warning-text',
       normal: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
-      low: 'bg-green-50 text-green-600',
+      low: 'bg-crm-success-bg text-crm-success-text',
     };
     return map[priority] || map.normal;
   };
 
   const statusBadge = (status: string) => {
     const map: Record<string, string> = {
-      open: 'bg-emerald-100 text-emerald-700',
-      pending: 'bg-amber-100 text-amber-700',
-      snoozed: 'bg-purple-100 text-purple-600',
+      open: 'bg-crm-success-bg text-crm-success-text',
+      pending: 'bg-crm-warning-bg text-crm-warning-text',
+      snoozed: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
       closed: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
     };
     return map[status] || map.open;
@@ -261,7 +261,7 @@ export default function EmployeeOmnichannelInbox() {
             <div className="flex items-center gap-1.5">
               <div className={`flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
                 officeOpen === null ? 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]' :
-                officeOpen ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                officeOpen ? 'bg-crm-success-bg text-crm-success-text' : 'bg-crm-warning-bg text-crm-warning-text'
               }`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-current" />
                 {officeOpen === null ? 'Checking...' : officeOpen ? 'OPEN' : 'CLOSED'}
@@ -406,14 +406,14 @@ export default function EmployeeOmnichannelInbox() {
                   <button
                     onClick={createLead}
                     disabled={creatingLead}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold bg-[var(--alo-success)] hover:bg-green-600 text-white rounded-xl transition disabled:opacity-50"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold bg-[var(--alo-success)] hover:bg-[var(--alo-success-dark)] text-white rounded-xl transition disabled:opacity-50"
                   >
                     <Link2 className="w-3 h-3" />
                     {creatingLead ? 'Creating...' : 'Create Lead'}
                   </button>
                 )}
                 {selectedConv.leadId && (
-                  <span className="text-[11px] font-semibold px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full flex items-center gap-1">
+                  <span className="text-[11px] font-semibold px-2 py-1 bg-crm-success-bg text-crm-success-text rounded-full flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" /> Lead Linked
                   </span>
                 )}
@@ -444,7 +444,7 @@ export default function EmployeeOmnichannelInbox() {
                   >
                     {msg.direction === 'internal_note' && (
                       <div className="max-w-lg w-full text-center">
-                        <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-xl text-[11px]">
+                        <div className="inline-flex items-center gap-2 bg-crm-warning-bg border border-crm-warning-border text-crm-warning-text px-4 py-2 rounded-xl text-[11px]">
                           <Lock className="w-3 h-3" />
                           <span className="font-bold">INTERNAL NOTE</span>
                           <span>—</span>
@@ -460,9 +460,9 @@ export default function EmployeeOmnichannelInbox() {
                     {(msg.direction === 'outbound' || msg.direction === 'inbound') && (
                       <div className={`max-w-[72%] space-y-1 ${msg.direction === 'outbound' ? 'items-end' : 'items-start'} flex flex-col`}>
                         {msg.aiGenerated && (
-                          <div className="text-[11px] font-bold text-purple-500 flex items-center gap-1">
+                          <div className="text-[11px] font-bold text-[var(--alo-brand)] flex items-center gap-1">
                             <Bot className="w-3 h-3" /> AI Generated
-                            {!msg.aiApproved && <span className="text-amber-500">— Pending Approval</span>}
+                            {!msg.aiApproved && <span className="text-crm-warning-text">— Pending Approval</span>}
                           </div>
                         )}
                         <div className={`px-4 py-2.5 rounded-2xl text-xs leading-relaxed ${
@@ -475,7 +475,7 @@ export default function EmployeeOmnichannelInbox() {
                             <a
                               key={attachment.id}
                               href={`/api/crm/ucc/documents/${encodeURIComponent(attachment.id)}/download`}
-                              className="mt-2 flex items-center gap-2 rounded-lg bg-black/10 px-2 py-1.5 underline underline-offset-2"
+                              className="mt-2 flex items-center gap-2 rounded-lg bg-[var(--alo-navy)]/10 px-2 py-1.5 underline underline-offset-2"
                             >
                               <Paperclip className="w-3 h-3" />
                               <span className="truncate">{attachment.fileName}</span>
@@ -495,9 +495,9 @@ export default function EmployeeOmnichannelInbox() {
 
             {/* AI Suggestions */}
             {showAi && aiSuggestions.length > 0 && (
-              <div className="px-5 py-2 bg-purple-50 border-t border-purple-100">
+              <div className="px-5 py-2 bg-[var(--alo-brand-pale)] border-t border-[var(--alo-border)]">
                 <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-1 text-[11px] font-bold text-purple-700">
+                  <div className="flex items-center gap-1 text-[11px] font-bold text-[var(--alo-brand)]">
                     <Sparkles className="w-3 h-3" /> AI Suggested Replies
                   </div>
                   <button onClick={() => setShowAi(false)} className="text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]">
@@ -509,7 +509,7 @@ export default function EmployeeOmnichannelInbox() {
                     <button
                       key={i}
                       onClick={() => setMessageInput(s)}
-                      className="text-[11px] px-3 py-1.5 bg-white border border-purple-200 text-purple-700 rounded-full hover:bg-purple-50 transition max-w-xs truncate"
+                      className="text-[11px] px-3 py-1.5 bg-white border border-[var(--alo-border)] text-[var(--alo-brand)] rounded-full hover:bg-[var(--alo-brand-pale)] transition max-w-xs truncate"
                     >
                       {s.substring(0, 70)}{s.length > 70 ? '...' : ''}
                     </button>
@@ -548,10 +548,10 @@ export default function EmployeeOmnichannelInbox() {
               {selectedFile && (
                 <div className="mb-2 flex items-center justify-between gap-2 text-[11px] text-[var(--alo-body)]">
                   <span className="truncate">Private attachment: {selectedFile.name}</span>
-                  <button type="button" onClick={() => setSelectedFile(null)} className="text-rose-600 hover:underline">Remove</button>
+                  <button type="button" onClick={() => setSelectedFile(null)} className="text-crm-warning-text hover:underline">Remove</button>
                 </div>
               )}
-              {sendError && <p role="alert" className="mb-2 text-[11px] text-rose-600">{sendError}</p>}
+              {sendError && <p role="alert" className="mb-2 text-[11px] text-crm-warning-text">{sendError}</p>}
               <div className="flex items-center gap-2 mb-2">
                 <button
                   onClick={() => setIsInternalNote(false)}
@@ -564,13 +564,13 @@ export default function EmployeeOmnichannelInbox() {
                 <button
                   onClick={() => { setIsInternalNote(true); setSelectedFile(null); }}
                   className={`text-[11px] font-semibold px-3 py-1 rounded-full transition flex items-center gap-1 ${
-                    isInternalNote ? 'bg-amber-500 text-white' : 'bg-[var(--alo-page)] border border-[var(--alo-border)] text-[var(--alo-text-muted)]'
+                    isInternalNote ? 'bg-[var(--alo-warning)] text-white' : 'bg-[var(--alo-page)] border border-[var(--alo-border)] text-[var(--alo-text-muted)]'
                   }`}
                 >
                   <Lock className="w-2.5 h-2.5" /> Internal Note
                 </button>
                 {aiLoading && (
-                  <span className="text-[11px] text-purple-500 flex items-center gap-1 ml-auto">
+                  <span className="text-[11px] text-[var(--alo-brand)] flex items-center gap-1 ml-auto">
                     <Sparkles className="w-3 h-3 animate-pulse" /> Getting AI suggestions...
                   </span>
                 )}
@@ -594,7 +594,7 @@ export default function EmployeeOmnichannelInbox() {
                   onKeyDown={(e) => { if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault(); sendMessage(); } }}
                   className={`flex-1 text-xs resize-none p-3 rounded-xl border focus:outline-none focus:ring-2 transition ${
                     isInternalNote
-                      ? 'bg-amber-50 border-amber-200 focus:ring-amber-300 focus:border-amber-400'
+                      ? 'bg-crm-warning-bg border-crm-warning-border focus:ring-amber-300 focus:border-crm-warning-border'
                       : 'bg-[var(--alo-page)] border-[var(--alo-border)] focus:ring-[var(--alo-brand)]/20 focus:border-[var(--alo-brand)]'
                   }`}
                 />
@@ -706,10 +706,10 @@ export default function EmployeeOmnichannelInbox() {
             <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] border border-[var(--alo-border)] rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
               <Tag className="w-3 h-3" /> Add Tag
             </button>
-            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-crm-warning-bg hover:bg-crm-warning-bg border border-crm-warning-border text-crm-warning-text rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
               <AlertTriangle className="w-3 h-3" /> Escalate
             </button>
-            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[var(--alo-surface-muted)] hover:bg-slate-200 border border-[var(--alo-border)] text-[var(--alo-text-muted)] rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
+            <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="w-full py-2 bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] border border-[var(--alo-border)] text-[var(--alo-text-muted)] rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
               <Clock className="w-3 h-3" /> Snooze
             </button>
           </div>

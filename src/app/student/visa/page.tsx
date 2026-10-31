@@ -112,7 +112,7 @@ export default function StudentVisaReadinessPage() {
                     {item.status === 'APPROVED' || item.status === 'approved' ? <div className="w-7 h-7 rounded-full bg-crm-success-bg text-crm-success-text flex items-center justify-center"><Check className="w-4 h-4" /></div> : item.status === 'PENDING_REVIEW' || item.status === 'under_review' ? <div className="w-7 h-7 rounded-full bg-crm-warning-bg text-crm-warning-text flex items-center justify-center"><Clock className="w-4 h-4" /></div> : <div className="w-7 h-7 rounded-full bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] flex items-center justify-center"><FileText className="w-4 h-4" /></div>}
                     <span className="text-sm text-[var(--alo-body)]">{item.item || item.documentName}</span>
                   </div>
-                  <Badge className={item.status === 'APPROVED' || item.status === 'approved' ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : 'bg-gray-500/20 text-[var(--alo-text-muted)] border-gray-500/30'}>{(item.status || 'NOT_UPLOADED').replace(/_/g, ' ').toUpperCase()}</Badge>
+                  <Badge className={item.status === 'APPROVED' || item.status === 'approved' ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : 'bg-[var(--alo-page)]/20 text-[var(--alo-text-muted)] border-[var(--alo-border)]/30'}>{(item.status || 'NOT_UPLOADED').replace(/_/g, ' ').toUpperCase()}</Badge>
                 </div>
               ))}
             </CardContent>

@@ -25,9 +25,9 @@ const todayDate = today.getDate();
 
 const statusLabel: Record<DayStatus, string> = { P: 'Present', A: 'Absent', L: 'Late', H: 'Holiday' };
 const statusColor: Record<DayStatus, string> = {
-  P: 'bg-emerald-100 text-emerald-700',
-  A: 'bg-red-100 text-red-700',
-  L: 'bg-amber-100 text-amber-700',
+  P: 'bg-crm-success-bg text-crm-success-text',
+  A: 'bg-crm-danger-bg text-crm-danger-text',
+  L: 'bg-crm-warning-bg text-crm-warning-text',
   H: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
 };
 const statusIcon: Record<DayStatus, React.ElementType> = { P: CheckCircle2, A: XCircle, L: AlertTriangle, H: Calendar };
@@ -160,19 +160,19 @@ export default function EmployeeAttendancePage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-emerald-500" /></div>
+            <div className="w-10 h-10 rounded-lg bg-crm-success-bg flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-crm-success-text" /></div>
             <div><p className="text-xl font-bold text-alo-text">{summary.present}</p><p className="text-xs text-alo-text-muted">Present Days</p></div>
           </CardContent>
         </Card>
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center"><XCircle className="w-5 h-5 text-red-500" /></div>
+            <div className="w-10 h-10 rounded-lg bg-crm-danger-bg flex items-center justify-center"><XCircle className="w-5 h-5 text-crm-danger-text" /></div>
             <div><p className="text-xl font-bold text-alo-text">{summary.absent}</p><p className="text-xs text-alo-text-muted">Absent Days</p></div>
           </CardContent>
         </Card>
         <Card className="bg-white rounded-xl border border-alo-border">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-amber-500" /></div>
+            <div className="w-10 h-10 rounded-lg bg-crm-warning-bg flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-crm-warning-text" /></div>
             <div><p className="text-xl font-bold text-alo-text">{summary.late}</p><p className="text-xs text-alo-text-muted">Late Days</p></div>
           </CardContent>
         </Card>
@@ -191,11 +191,11 @@ export default function EmployeeAttendancePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between p-3 rounded-lg bg-alo-page">
-              <div className="flex items-center gap-2"><LogIn className="w-4 h-4 text-emerald-500" /><span className="text-sm text-alo-text-secondary">Clock In</span></div>
+              <div className="flex items-center gap-2"><LogIn className="w-4 h-4 text-crm-success-text" /><span className="text-sm text-alo-text-secondary">Clock In</span></div>
               <span className="text-sm font-mono font-semibold text-alo-text">{clockInTime || '--:--'}</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-alo-page">
-              <div className="flex items-center gap-2"><LogOut className="w-4 h-4 text-red-500" /><span className="text-sm text-alo-text-secondary">Clock Out</span></div>
+              <div className="flex items-center gap-2"><LogOut className="w-4 h-4 text-crm-danger-text" /><span className="text-sm text-alo-text-secondary">Clock Out</span></div>
               <span className="text-sm font-mono font-semibold text-alo-text">{clockOutTime || '--:--'}</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-alo-page">
@@ -224,7 +224,7 @@ export default function EmployeeAttendancePage() {
               <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2"><Calendar className="w-5 h-5 text-alo-brand" /> Monthly Calendar</CardTitle>
               <div className="flex gap-3 text-[11px]">
                 {(['P', 'A', 'L', 'H'] as DayStatus[]).map((s) => (
-                  <span key={s} className="flex items-center gap-1"><span className={cn('w-2.5 h-2.5 rounded', s === 'P' ? 'bg-emerald-500' : s === 'A' ? 'bg-red-500' : s === 'L' ? 'bg-amber-500' : 'bg-slate-400')} />{statusLabel[s]}</span>
+                  <span key={s} className="flex items-center gap-1"><span className={cn('w-2.5 h-2.5 rounded', s === 'P' ? 'bg-[var(--alo-success)]' : s === 'A' ? 'bg-[var(--alo-error)]' : s === 'L' ? 'bg-[var(--alo-warning)]' : 'bg-[var(--alo-page)]')} />{statusLabel[s]}</span>
                 ))}
               </div>
             </div>
@@ -274,7 +274,7 @@ export default function EmployeeAttendancePage() {
                   </div>
                   <p className="text-2xl font-bold text-alo-text">{w.hours.toFixed(1)}<span className="text-sm font-normal text-alo-text-muted ml-1">hrs</span></p>
                   <div className="w-full h-2 bg-alo-border rounded-full mt-2 overflow-hidden">
-                    <div className={cn('h-full rounded-full transition-all', pct >= 90 ? 'bg-emerald-500' : pct >= 75 ? 'bg-amber-500' : 'bg-red-500')} style={{ width: pct + '%' }} />
+                    <div className={cn('h-full rounded-full transition-all', pct >= 90 ? 'bg-[var(--alo-success)]' : pct >= 75 ? 'bg-[var(--alo-warning)]' : 'bg-[var(--alo-error)]')} style={{ width: pct + '%' }} />
                   </div>
                   <p className="text-[11px] text-alo-text-muted mt-1">{pct.toFixed(0)}% of 45 hrs target</p>
                 </div>

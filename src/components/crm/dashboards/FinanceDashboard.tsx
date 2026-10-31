@@ -74,7 +74,7 @@ export default function FinanceDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <kpi.icon className="w-5 h-5 text-alo-brand" />
-                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
+                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
                   {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}{kpi.change}
                 </span>
               </div>
@@ -118,7 +118,7 @@ export default function FinanceDashboard() {
                         <TableCell className="text-sm font-semibold text-alo-text text-right">{b.revenue}</TableCell>
                         <TableCell className="text-sm text-alo-text-secondary text-right">{b.deposits}</TableCell>
                         <TableCell className="text-sm text-alo-text-secondary text-right">{b.commissions}</TableCell>
-                        <TableCell className="text-sm text-amber-600 text-right">{b.pending}</TableCell>
+                        <TableCell className="text-sm text-crm-warning-text text-right">{b.pending}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -175,8 +175,8 @@ export default function FinanceDashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] text-alo-text-muted">{p.students} students</span>
-                      <span className="text-[11px] text-emerald-600">Paid: {p.paid}</span>
-                      <span className="text-[11px] text-amber-600">Pending: {p.pending}</span>
+                      <span className="text-[11px] text-crm-success-text">Paid: {p.paid}</span>
+                      <span className="text-[11px] text-crm-warning-text">Pending: {p.pending}</span>
                     </div>
                     <Progress value={(parseInt(p.paid.replace(/[^0-9]/g, '')) / parseInt(p.commission.replace(/[^0-9]/g, ''))) * 100} className="h-1.5 mt-1.5" />
                   </div>
@@ -190,7 +190,7 @@ export default function FinanceDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" /> Pending Invoices
+                  <AlertTriangle className="w-4 h-4 text-crm-warning-text" /> Pending Invoices
                 </CardTitle>
                 <Badge variant="warning" className="text-[11px]">8 items</Badge>
               </div>
@@ -198,7 +198,7 @@ export default function FinanceDashboard() {
             <CardContent>
               <div className="space-y-2">
                 {['Stellar Education — Nov commission', 'Global Pathways — Service fee', 'EduBridge BD — Dec deposit'].map((inv, i) => (
-                  <div key={i} className="p-2.5 rounded-lg border border-amber-200 bg-amber-50">
+                  <div key={i} className="p-2.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg">
                     <p className="text-sm text-alo-text">{inv}</p>
                     <div className="flex items-center justify-between mt-1">
                       <Badge variant="warning" className="text-[11px]">Overdue</Badge>

@@ -192,10 +192,10 @@ export default function MasterLanguagePrepLandingView() {
                 </p>
 
                 {leadSubmitted ? (
-                  <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-3">
-                    <CheckCircle2 className="h-10 w-10 text-emerald-600 mx-auto" />
-                    <h4 className="font-bold text-emerald-900 text-base">Request Received!</h4>
-                    <p className="text-xs text-emerald-700">
+                  <div className="p-6 bg-crm-success-bg border border-crm-success-border rounded-2xl text-center space-y-3">
+                    <CheckCircle2 className="h-10 w-10 text-crm-success-text mx-auto" />
+                    <h4 className="font-bold text-crm-success-text text-base">Request Received!</h4>
+                    <p className="text-xs text-crm-success-text">
                       Our Senior Test Prep Advisor will contact you within 2 hours with your study plan.
                     </p>
                   </div>
@@ -468,7 +468,7 @@ export default function MasterLanguagePrepLandingView() {
                     </div>
                     <div className="flex justify-between text-[var(--alo-body)]">
                       <span className="text-[var(--alo-text-muted)] font-medium">Result Timeline:</span>
-                      <span className="font-bold text-emerald-600">{t.quickInfo.resultTime}</span>
+                      <span className="font-bold text-crm-success-text">{t.quickInfo.resultTime}</span>
                     </div>
                     <div className="flex justify-between text-[var(--alo-body)]">
                       <span className="text-[var(--alo-text-muted)] font-medium">Target Score:</span>
@@ -521,7 +521,7 @@ export default function MasterLanguagePrepLandingView() {
                       <a href={`/language-prep/${t.slug}`} className="hover:underline">{t.name}</a>
                     </td>
                     <td className="p-3.5 text-[var(--alo-body)]">{t.quickInfo.duration}</td>
-                    <td className="p-3.5 font-semibold text-emerald-600">{t.quickInfo.resultTime}</td>
+                    <td className="p-3.5 font-semibold text-crm-success-text">{t.quickInfo.resultTime}</td>
                     <td className="p-3.5 text-[var(--alo-body)]">{t.quickInfo.scoreScale}</td>
                     <td className="p-3.5 text-[var(--alo-body)]">{t.quickInfo.format}</td>
                     <td className="p-3.5 text-[var(--alo-body)]">{t.quickInfo.bestFor}</td>
@@ -562,7 +562,7 @@ export default function MasterLanguagePrepLandingView() {
               { step: '08', title: 'Test Day Confidence', desc: 'Final score validation and university admission submission.' },
             ].map((s, idx) => (
               <Card key={idx} className="p-5 bg-white border-[var(--alo-border)] rounded-2xl relative">
-                <span className="text-2xl font-black text-slate-200 absolute top-3 right-4">{s.step}</span>
+                <span className="text-2xl font-black text-[var(--alo-body)] absolute top-3 right-4">{s.step}</span>
                 <h4 className="font-bold text-sm text-[var(--alo-brand)] mb-1.5">{s.title}</h4>
                 <p className="text-[var(--alo-body)] leading-relaxed">{s.desc}</p>
               </Card>

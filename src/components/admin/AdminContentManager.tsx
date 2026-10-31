@@ -240,8 +240,8 @@ export default function AdminContentManager() {
           </div>
         </div>
 
-        {toast && <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl px-4 py-3 text-sm" role="status">{toast}</div>}
-        {error && <div className="bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm" role="alert">{error}</div>}
+        {toast && <div className="bg-crm-success-bg border border-crm-success-border text-crm-success-text rounded-xl px-4 py-3 text-sm" role="status">{toast}</div>}
+        {error && <div className="bg-crm-danger-bg border border-crm-danger-border text-crm-danger-text rounded-xl px-4 py-3 text-sm" role="alert">{error}</div>}
 
         {/* Editor / action panels */}
         {panel === 'create' || panel === 'edit' ? (
@@ -359,8 +359,8 @@ export default function AdminContentManager() {
                     <div className="flex-1 min-w-[220px]">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-sm text-[var(--alo-text)]">{x[meta.nameField] || x.slug}</span>
-                        <Badge className={`text-[11px] ${isPublished ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]'}`}>{x.status || 'UNKNOWN'}</Badge>
-                        <Badge className={`text-[11px] ${/verified/i.test(String(x.verificationStatus || '')) && !/un|needs/i.test(String(x.verificationStatus || '')) ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}>{x.verificationStatus || 'unverified'}</Badge>
+                        <Badge className={`text-[11px] ${isPublished ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]'}`}>{x.status || 'UNKNOWN'}</Badge>
+                        <Badge className={`text-[11px] ${/verified/i.test(String(x.verificationStatus || '')) && !/un|needs/i.test(String(x.verificationStatus || '')) ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border' : 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border'}`}>{x.verificationStatus || 'unverified'}</Badge>
                       </div>
                       <p className="text-xs text-[var(--alo-text-muted)] mt-1 line-clamp-1">{meta.describe(x)} • /{x.slug}</p>
                     </div>
@@ -369,13 +369,13 @@ export default function AdminContentManager() {
                       <Button size="sm" variant="outline" className=" border-[var(--alo-border)] " onClick={() => patch(x.id, { status: isPublished ? 'DRAFT' : 'PUBLISHED' }, isPublished ? 'Unpublished.' : 'Published.')} aria-label={`Publish or unpublish ${x[meta.nameField]}`}>
                         {isPublished ? <><EyeOff className="w-3.5 h-3.5 mr-1" />Unpublish</> : <><Eye className="w-3.5 h-3.5 mr-1" />Publish</>}
                       </Button>
-                      <Button size="sm" variant="outline" className=" border-emerald-300 text-emerald-700 " onClick={() => patch(x.id, { verificationStatus: 'VERIFIED', lastVerifiedAt: new Date().toISOString() }, 'Marked verified — timestamp recorded.')}>
+                      <Button size="sm" variant="outline" className=" border-crm-success-border text-crm-success-text " onClick={() => patch(x.id, { verificationStatus: 'VERIFIED', lastVerifiedAt: new Date().toISOString() }, 'Marked verified — timestamp recorded.')}>
                         <CheckCircle2 className="w-3.5 h-3.5 mr-1" />Verify
                       </Button>
                       <Button size="sm" variant="outline" className=" border-[var(--alo-border)] " onClick={() => { setPanel('faq'); setActive(x); setForm({}); }}>+ FAQ</Button>
                       <Button size="sm" variant="outline" className=" border-[var(--alo-border)] " onClick={() => { setPanel('related'); setActive(x); setForm({}); }}>+ Related</Button>
                       <Button size="sm" variant="outline" className=" border-[var(--alo-border)] " onClick={() => { setPanel('source'); setActive(x); setForm({}); }}>+ Source</Button>
-                      <Button size="sm" variant="outline" className=" border-red-200 text-red-600 " onClick={() => remove(x.id)} aria-label={`Delete ${x[meta.nameField]}`}><Trash2 className="w-3.5 h-3.5" /></Button>
+                      <Button size="sm" variant="outline" className=" border-crm-danger-border text-crm-danger-text " onClick={() => remove(x.id)} aria-label={`Delete ${x[meta.nameField]}`}><Trash2 className="w-3.5 h-3.5" /></Button>
                     </div>
                   </div>
                 );

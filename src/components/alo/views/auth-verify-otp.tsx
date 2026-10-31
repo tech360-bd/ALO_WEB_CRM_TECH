@@ -184,8 +184,8 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
           <Card className="rounded-2xl border-2 border-[var(--alo-border)] shadow-sm">
             <CardContent className="pt-6">
               <div className="space-y-5 text-center">
-                <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-50">
-                  <Icon name="CheckCircle2" className="size-9 text-emerald-600" />
+                <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-crm-success-bg">
+                  <Icon name="CheckCircle2" className="size-9 text-crm-success-text" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-[var(--alo-brand)]">{approvalRequired ? "Email verified — approval pending" : "Email Verified!"}</h1>
@@ -271,7 +271,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                   />
                 </div>
                 {email && !validateEmail(email) && (
-                  <p className="text-xs text-red-600">Please enter a valid email address.</p>
+                  <p className="text-xs text-crm-danger-text">Please enter a valid email address.</p>
                 )}
               </div>
 
@@ -306,7 +306,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
               {error && (
                 <div
                   role="alert"
-                  className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+                  className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-sm text-crm-danger-text"
                 >
                   <Icon name="AlertCircle" className="mt-0.5 size-4 shrink-0" />
                   <span>{error}</span>

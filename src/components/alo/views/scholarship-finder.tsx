@@ -413,13 +413,13 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                           {s.country || "Global"}
                         </Badge>
                         {dl.near && !dl.overdue && (
-                          <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-100">
+                          <Badge className="ml-auto bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                             <Icon name="Clock" className="mr-1 size-3" />
                             {dl.days}d left
                           </Badge>
                         )}
                         {dl.overdue && (
-                          <Badge variant="outline" className="ml-auto border-rose-200 text-rose-600">
+                          <Badge variant="outline" className="ml-auto border-crm-warning-border text-crm-warning-text">
                             <Icon name="AlertCircle" className="mr-1 size-3" />
                             Closed
                           </Badge>
@@ -448,16 +448,16 @@ export function ScholarshipFinder({ onNavigate }: ScholarshipFinderProps) {
                       <div className="mt-3 flex items-center gap-2 text-sm">
                         <Icon
                           name="CalendarDays"
-                          className={cn("size-4", dl.near && !dl.overdue ? "text-amber-600" : "text-muted-foreground")}
+                          className={cn("size-4", dl.near && !dl.overdue ? "text-crm-warning-text" : "text-muted-foreground")}
                         />
-                        <span className={cn(dl.near && !dl.overdue ? "font-semibold text-amber-700" : "text-foreground")}>
+                        <span className={cn(dl.near && !dl.overdue ? "font-semibold text-crm-warning-text" : "text-foreground")}>
                           {s.deadline || "Rolling intake"}
                         </span>
                       </div>
 
                       {/* Verification */}
                       <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <Icon name="ShieldCheck" className="size-3.5 text-emerald-600" />
+                        <Icon name="ShieldCheck" className="size-3.5 text-crm-success-text" />
                         <span>
                           Last verified <span className="font-medium text-foreground">{fmtDate(s.lastVerifiedAt)}</span>
                         </span>

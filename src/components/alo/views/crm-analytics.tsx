@@ -6,10 +6,10 @@ import { Icon, PageHeader, EmptyState, StatCard, MiniBar } from "@/components/al
 
 const STATUS_COLORS: Record<string, string> = {
   NEW: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
-  CONTACTED: "bg-amber-100 text-amber-700",
-  QUALIFIED: "bg-violet-100 text-violet-700",
-  CONVERTED: "bg-emerald-100 text-emerald-700",
-  LOST: "bg-rose-100 text-rose-700",
+  CONTACTED: "bg-crm-warning-bg text-crm-warning-text",
+  QUALIFIED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  CONVERTED: "bg-crm-success-bg text-crm-success-text",
+  LOST: "bg-crm-warning-bg text-crm-warning-text",
   DUPLICATE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
 
@@ -179,7 +179,7 @@ export function CrmAnalytics() {
         <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-5">
             <div className="mb-4 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-crm-success-bg text-crm-success-text">
                 <Icon name="ClipboardList" className="size-4" />
               </div>
               <h3 className="font-bold text-[var(--alo-text)]">Applications by Stage</h3>
@@ -206,7 +206,7 @@ export function CrmAnalytics() {
         <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-5">
             <div className="mb-4 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-violet-100 text-violet-700">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                 <Icon name="BarChart3" className="size-4" />
               </div>
               <h3 className="font-bold text-[var(--alo-text)]">Marketing Performance</h3>
@@ -252,7 +252,7 @@ export function CrmAnalytics() {
         <Card className="rounded-2xl border border-[var(--alo-brand-border)] bg-white">
           <CardContent className="p-5">
             <div className="mb-4 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-violet-100 text-violet-700">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                 <Icon name="Bot" className="size-4" />
               </div>
               <h3 className="font-bold text-[var(--alo-text)]">AI Agents by Department</h3>
@@ -263,9 +263,9 @@ export function CrmAnalytics() {
                   key={dept}
                   className="flex items-center gap-2 rounded-lg border border-[var(--alo-brand-border)] bg-[var(--alo-page)] px-3 py-2"
                 >
-                  <Icon name="Bot" className="size-4 text-violet-600" />
+                  <Icon name="Bot" className="size-4 text-[var(--alo-brand)]" />
                   <span className="text-sm font-medium text-[var(--alo-text)]">{dept}</span>
-                  <Badge className="bg-violet-100 text-violet-700">{count as number}</Badge>
+                  <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{count as number}</Badge>
                 </div>
               ))}
             </div>

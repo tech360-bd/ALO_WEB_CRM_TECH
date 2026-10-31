@@ -32,18 +32,18 @@ import {
 } from 'lucide-react';
 
 const healthBreakdown = [
-  { label: 'Indexation', score: 85, icon: Database, color: 'text-emerald-600' },
-  { label: 'Crawlability', score: 90, icon: Globe, color: 'text-emerald-600' },
-  { label: 'Performance', score: 68, icon: Zap, color: 'text-amber-600' },
-  { label: 'Mobile', score: 82, icon: Smartphone, color: 'text-emerald-600' },
-  { label: 'Structured Data', score: 55, icon: FileCode, color: 'text-amber-600' },
-  { label: 'Canonicalization', score: 78, icon: Link2, color: 'text-amber-600' },
+  { label: 'Indexation', score: 85, icon: Database, color: 'text-crm-success-text' },
+  { label: 'Crawlability', score: 90, icon: Globe, color: 'text-crm-success-text' },
+  { label: 'Performance', score: 68, icon: Zap, color: 'text-crm-warning-text' },
+  { label: 'Mobile', score: 82, icon: Smartphone, color: 'text-crm-success-text' },
+  { label: 'Structured Data', score: 55, icon: FileCode, color: 'text-crm-warning-text' },
+  { label: 'Canonicalization', score: 78, icon: Link2, color: 'text-crm-warning-text' },
 ];
 
 const severitySummary = [
-  { level: 'Critical (P0)', count: 4, icon: AlertCircle, color: 'bg-red-100 text-red-800 border-red-200', accent: 'bg-red-500' },
-  { level: 'Warning (P1)', count: 12, icon: AlertTriangle, color: 'bg-amber-100 text-amber-800 border-amber-200', accent: 'bg-amber-500' },
-  { level: 'Info (P2)', count: 8, icon: Info, color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]', accent: 'bg-blue-500' },
+  { level: 'Critical (P0)', count: 4, icon: AlertCircle, color: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border', accent: 'bg-[var(--alo-error)]' },
+  { level: 'Warning (P1)', count: 12, icon: AlertTriangle, color: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border', accent: 'bg-[var(--alo-warning)]' },
+  { level: 'Info (P2)', count: 8, icon: Info, color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]', accent: 'bg-[var(--alo-brand)]' },
 ];
 
 const issues = [
@@ -99,22 +99,22 @@ const robotsData = {
 };
 
 const sevBadge = (s: string) => {
-  if (s === 'P0') return 'bg-red-100 text-red-800 border-red-200';
-  if (s === 'P1') return 'bg-amber-100 text-amber-800 border-amber-200';
+  if (s === 'P0') return 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border';
+  if (s === 'P1') return 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border';
   return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]';
 };
 
 const statusBadge = (s: string) => {
-  if (s === 'Open') return 'bg-red-100 text-red-800';
-  if (s === 'Fixed') return 'bg-emerald-100 text-emerald-800';
-  if (s === 'In Progress') return 'bg-amber-100 text-amber-800';
+  if (s === 'Open') return 'bg-crm-danger-bg text-crm-danger-text';
+  if (s === 'Fixed') return 'bg-crm-success-bg text-crm-success-text';
+  if (s === 'In Progress') return 'bg-crm-warning-bg text-crm-warning-text';
   return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
 };
 
 const vitalColor = (s: string) => {
-  if (s === 'good') return 'bg-emerald-500';
-  if (s === 'needs-improvement') return 'bg-amber-500';
-  return 'bg-red-500';
+  if (s === 'good') return 'bg-[var(--alo-success)]';
+  if (s === 'needs-improvement') return 'bg-[var(--alo-warning)]';
+  return 'bg-[var(--alo-error)]';
 };
 
 export default function CrmSeoTechnicalAudit() { return <SeoEvidencePanel mode="technical"/>; }
@@ -151,7 +151,7 @@ function LegacyUnverifiedCrmSeoTechnicalAudit() {
                 <div className="relative">
                   <svg width="140" height="140" className="-rotate-90">
                     <circle cx="70" cy="70" r="54" stroke="currentColor" strokeWidth="10" fill="none" className="text-muted/30" />
-                    <circle cx="70" cy="70" r="54" stroke="currentColor" strokeWidth="10" fill="none" className="text-emerald-500" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" />
+                    <circle cx="70" cy="70" r="54" stroke="currentColor" strokeWidth="10" fill="none" className="text-crm-success-text" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-3xl font-bold">{overallScore}</span>
@@ -249,11 +249,11 @@ function LegacyUnverifiedCrmSeoTechnicalAudit() {
                       </div>
                       <div className="w-full space-y-1">
                         <div className="flex justify-between text-xs text-muted-foreground"><span>Score</span><span>{v.pct}%</span></div>
-                        <Progress value={v.pct} className={`h-2.5 ${v.status === 'good' ? '[&>div]:bg-emerald-500' : v.status === 'needs-improvement' ? '[&>div]:bg-amber-500' : '[&>div]:bg-red-500'}`} />
+                        <Progress value={v.pct} className={`h-2.5 ${v.status === 'good' ? '[&>div]:bg-[var(--alo-success)]' : v.status === 'needs-improvement' ? '[&>div]:bg-[var(--alo-warning)]' : '[&>div]:bg-[var(--alo-error)]'}`} />
                       </div>
                       <div className="text-xs space-y-1">
                         <p className="text-muted-foreground">Target: <span className="font-semibold text-foreground">{v.target}</span></p>
-                        <Badge variant="outline" className={v.status === 'good' ? 'bg-emerald-100 text-emerald-800' : v.status === 'needs-improvement' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}>{v.status.replace('-', ' ')}</Badge>
+                        <Badge variant="outline" className={v.status === 'good' ? 'bg-crm-success-bg text-crm-success-text' : v.status === 'needs-improvement' ? 'bg-crm-warning-bg text-crm-warning-text' : 'bg-crm-danger-bg text-crm-danger-text'}>{v.status.replace('-', ' ')}</Badge>
                       </div>
                     </CardContent>
                   </Card>
@@ -269,9 +269,9 @@ function LegacyUnverifiedCrmSeoTechnicalAudit() {
             <CardContent className="space-y-6">
               <div className="grid gap-4 sm:grid-cols-4">
                 <div className="rounded-lg border p-4 text-center"><p className="text-2xl font-bold">{sitemapData.totalUrls}</p><p className="text-xs text-muted-foreground">Total URLs</p></div>
-                <div className="rounded-lg border p-4 text-center"><p className="text-2xl font-bold text-emerald-600">{sitemapData.indexed}</p><p className="text-xs text-muted-foreground">Indexed</p></div>
-                <div className="rounded-lg border p-4 text-center"><p className="text-2xl font-bold text-amber-600">{sitemapData.notIndexed}</p><p className="text-xs text-muted-foreground">Not Indexed</p></div>
-                <div className="rounded-lg border p-4 text-center"><p className="text-sm font-bold text-emerald-600 flex items-center justify-center gap-1"><CheckCircle2 className="h-4 w-4" />{sitemapData.status}</p><p className="text-xs text-muted-foreground">Status</p></div>
+                <div className="rounded-lg border p-4 text-center"><p className="text-2xl font-bold text-crm-success-text">{sitemapData.indexed}</p><p className="text-xs text-muted-foreground">Indexed</p></div>
+                <div className="rounded-lg border p-4 text-center"><p className="text-2xl font-bold text-crm-warning-text">{sitemapData.notIndexed}</p><p className="text-xs text-muted-foreground">Not Indexed</p></div>
+                <div className="rounded-lg border p-4 text-center"><p className="text-sm font-bold text-crm-success-text flex items-center justify-center gap-1"><CheckCircle2 className="h-4 w-4" />{sitemapData.status}</p><p className="text-xs text-muted-foreground">Status</p></div>
               </div>
               <Separator />
               <div className="space-y-2">
@@ -286,7 +286,7 @@ function LegacyUnverifiedCrmSeoTechnicalAudit() {
                 <h4 className="text-sm font-semibold">Issues Found</h4>
                 <ul className="space-y-1">
                   {sitemapData.errors.map((e, i) => (
-                    <li key={i} className="text-sm text-amber-700 flex items-center gap-2"><AlertTriangle className="h-3.5 w-3.5" />{e}</li>
+                    <li key={i} className="text-sm text-crm-warning-text flex items-center gap-2"><AlertTriangle className="h-3.5 w-3.5" />{e}</li>
                   ))}
                 </ul>
               </div>
@@ -311,9 +311,9 @@ function LegacyUnverifiedCrmSeoTechnicalAudit() {
                 <h4 className="text-sm font-semibold">Rules</h4>
                 {robotsData.rules.map((rule, i) => (
                   <div key={i} className="rounded-lg border p-3 font-mono text-xs space-y-1">
-                    <p><span className="text-emerald-600 font-semibold">User-agent:</span> {rule.userAgent}</p>
-                    {rule.allow.map((a, j) => <p key={j}><span className="text-emerald-600 font-semibold">Allow:</span> {a}</p>)}
-                    {rule.disallow.map((d, j) => <p key={j}><span className="text-red-600 font-semibold">Disallow:</span> {d}</p>)}
+                    <p><span className="text-crm-success-text font-semibold">User-agent:</span> {rule.userAgent}</p>
+                    {rule.allow.map((a, j) => <p key={j}><span className="text-crm-success-text font-semibold">Allow:</span> {a}</p>)}
+                    {rule.disallow.map((d, j) => <p key={j}><span className="text-crm-danger-text font-semibold">Disallow:</span> {d}</p>)}
                   </div>
                 ))}
               </div>
@@ -328,7 +328,7 @@ function LegacyUnverifiedCrmSeoTechnicalAudit() {
                 <h4 className="text-sm font-semibold">Issues</h4>
                 <ul className="space-y-1">
                   {robotsData.issues.map((e, i) => (
-                    <li key={i} className="text-sm text-amber-700 flex items-center gap-2"><AlertTriangle className="h-3.5 w-3.5" />{e}</li>
+                    <li key={i} className="text-sm text-crm-warning-text flex items-center gap-2"><AlertTriangle className="h-3.5 w-3.5" />{e}</li>
                   ))}
                 </ul>
               </div>

@@ -161,7 +161,7 @@ Marketing Intern - Foodpanda Pakistan (Jun 2024 - Aug 2024)
 
 const CV_TEMPLATES = [
   { id: 'classic', name: 'Classic', color: 'bg-[var(--alo-brand)]', preview: 'Traditional professional layout' },
-  { id: 'modern', name: 'Modern', color: 'bg-slate-900', preview: 'Clean minimalist design' },
+  { id: 'modern', name: 'Modern', color: 'bg-[var(--alo-page)]', preview: 'Clean minimalist design' },
   { id: 'creative', name: 'Creative', color: 'bg-[var(--alo-cta-hover)]', preview: 'Bold with accent colors' },
 ];
 
@@ -182,8 +182,8 @@ const CV_SECTION_CONFIG: { key: CvSection; label: string; icon: React.ElementTyp
 function StatusBadge({ status }: { status: SopStatus }) {
   const config: Record<SopStatus, { className: string }> = {
     Draft: { className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' },
-    'Needs Review': { className: 'bg-amber-100 text-amber-700' },
-    Approved: { className: 'bg-emerald-100 text-emerald-700' },
+    'Needs Review': { className: 'bg-crm-warning-bg text-crm-warning-text' },
+    Approved: { className: 'bg-crm-success-bg text-crm-success-text' },
     Submitted: { className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]' },
   };
   return (
@@ -376,7 +376,7 @@ export default function StudentSopCvStudio() {
                           {sopEditorContent.length} character{sopEditorContent.length !== 1 ? 's' : ''}
                         </span>
                         <span className="text-[var(--alo-placeholder)]">|</span>
-                        <span className={cn(wordCount < 200 ? 'text-amber-600' : 'text-[var(--alo-text-muted)]')}>
+                        <span className={cn(wordCount < 200 ? 'text-crm-warning-text' : 'text-[var(--alo-text-muted)]')}>
                           Target: 500–1000 words
                         </span>
                       </div>
@@ -389,7 +389,7 @@ export default function StudentSopCvStudio() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-purple-200 text-purple-700 hover:bg-purple-50"
+                      className="border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]"
                       onClick={() => setShowAiPanel(!showAiPanel)}
                     >
                       <Sparkles className="w-3.5 h-3.5 mr-1.5" />
@@ -424,11 +424,11 @@ export default function StudentSopCvStudio() {
 
                   {/* AI Panel */}
                   {showAiPanel && (
-                    <Card className="mt-3 border-purple-200 bg-purple-50/30">
+                    <Card className="mt-3 border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/30">
                       <CardContent className="p-4 space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-purple-600" />
+                            <Sparkles className="w-4 h-4 text-[var(--alo-brand)]" />
                             <span className="text-sm font-semibold text-[var(--alo-text)]">AI SOP Assistant</span>
                           </div>
                           <Button
@@ -445,15 +445,15 @@ export default function StudentSopCvStudio() {
                           AI will use your verified profile data, education history, and course requirements to create a personalized draft.
                         </p>
 
-                        <div className="rounded-lg bg-amber-50 border border-amber-200 p-2.5">
-                          <p className="text-[11px] text-amber-800 flex items-start gap-1.5">
+                        <div className="rounded-lg bg-crm-warning-bg border border-crm-warning-border p-2.5">
+                          <p className="text-[11px] text-crm-warning-text flex items-start gap-1.5">
                             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                             Review and personalize before submission. AI-generated content must be edited by you.
                           </p>
                         </div>
 
                         <Button
-                          className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                          className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)] text-white"
                           onClick={handleAiGenerate}
                           disabled={isGenerating}
                         >
@@ -581,7 +581,7 @@ export default function StudentSopCvStudio() {
                       className={cn(
                         'flex-1 p-2 rounded-lg border text-center transition-all',
                         selectedTemplate === t.id
-                          ? 'border-blue-300 bg-[var(--alo-brand-pale)] shadow-sm'
+                          ? 'border-[var(--alo-brand-border)] bg-[var(--alo-brand-pale)] shadow-sm'
                           : 'border-[var(--alo-border)] bg-white hover:border-[var(--alo-border-strong)]'
                       )}
                     >
@@ -612,7 +612,7 @@ export default function StudentSopCvStudio() {
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                     variant="outline"
                     size="sm"
-                    className="border-purple-200 text-purple-700 hover:bg-purple-50"
+                    className="border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]"
                   >
                     <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                     AI Improve CV
@@ -661,7 +661,7 @@ export default function StudentSopCvStudio() {
                                     </Badge>
                                   )}
                                   {(key === 'education' || key === 'experience') && (
-                                    <Badge variant="secondary" className="text-[11px] bg-emerald-50 text-emerald-600 px-1.5">
+                                    <Badge variant="secondary" className="text-[11px] bg-crm-success-bg text-crm-success-text px-1.5">
                                       From profile
                                     </Badge>
                                   )}
@@ -695,7 +695,7 @@ export default function StudentSopCvStudio() {
                                           className="inline-flex items-center gap-1 text-xs bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border border-[var(--alo-border)] rounded-full px-2.5 py-1"
                                         >
                                           {trimmed}
-                                          <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-blue-400 hover:text-[var(--alo-brand)]">
+                                          <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="text-[var(--alo-brand)] hover:text-[var(--alo-brand)]">
                                             <X className="w-3 h-3" />
                                           </button>
                                         </span>

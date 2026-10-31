@@ -77,28 +77,28 @@ const dateRanges: DateRange[] = [
 
 const kpiData: KpiCard[] = [
   { label: 'Total Leads', value: '2,847', change: '+12.5%', trend: 'up', icon: Users, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' },
-  { label: 'Conversion Rate', value: '34.2%', change: '+2.1%', trend: 'up', icon: Target, color: 'text-green-600 bg-green-100' },
+  { label: 'Conversion Rate', value: '34.2%', change: '+2.1%', trend: 'up', icon: Target, color: 'text-crm-success-text bg-crm-success-bg' },
   { label: 'Active Students', value: '1,256', change: '+8.3%', trend: 'up', icon: GraduationCap, color: 'text-[var(--alo-cta-active)] bg-[var(--alo-cta-soft)]' },
-  { label: 'Revenue', value: '$1,234,567', change: '+15.7%', trend: 'up', icon: DollarSign, color: 'text-purple-600 bg-purple-100' },
+  { label: 'Revenue', value: '$1,234,567', change: '+15.7%', trend: 'up', icon: DollarSign, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]' },
 ];
 
 const leadSources: LeadSource[] = [
   { name: 'Website', count: 892, percentage: 31.3, color: 'bg-[var(--alo-brand)]' },
-  { name: 'Social Media', count: 645, percentage: 22.7, color: 'bg-pink-500' },
-  { name: 'Referrals', count: 534, percentage: 18.8, color: 'bg-green-500' },
+  { name: 'Social Media', count: 645, percentage: 22.7, color: 'bg-[var(--alo-error)]' },
+  { name: 'Referrals', count: 534, percentage: 18.8, color: 'bg-[var(--alo-success)]' },
   { name: 'Events/Fairs', count: 398, percentage: 14.0, color: 'bg-[var(--alo-cta)]' },
-  { name: 'Walk-in', count: 234, percentage: 8.2, color: 'bg-purple-500' },
-  { name: 'WhatsApp', count: 144, percentage: 5.1, color: 'bg-emerald-500' },
+  { name: 'Walk-in', count: 234, percentage: 8.2, color: 'bg-[var(--alo-brand-pale)]0' },
+  { name: 'WhatsApp', count: 144, percentage: 5.1, color: 'bg-[var(--alo-success)]' },
 ];
 
 const countryData: CountryData[] = [
   { country: 'United Kingdom', flag: '🇬🇧', students: 856, percentage: 42.3, color: 'bg-[var(--alo-brand)]' },
   { country: 'Australia', flag: '🇦🇺', students: 324, percentage: 16.0, color: 'bg-yellow-500' },
-  { country: 'Canada', flag: '🇨🇦', students: 278, percentage: 13.7, color: 'bg-red-500' },
-  { country: 'USA', flag: '🇺🇸', students: 234, percentage: 11.6, color: 'bg-blue-500' },
-  { country: 'Germany', flag: '🇩🇪', students: 156, percentage: 7.7, color: 'bg-gray-700' },
-  { country: 'New Zealand', flag: '🇳🇿', students: 98, percentage: 4.8, color: 'bg-emerald-600' },
-  { country: 'Ireland', flag: '🇮🇪', students: 78, percentage: 3.9, color: 'bg-green-600' },
+  { country: 'Canada', flag: '🇨🇦', students: 278, percentage: 13.7, color: 'bg-[var(--alo-error)]' },
+  { country: 'USA', flag: '🇺🇸', students: 234, percentage: 11.6, color: 'bg-[var(--alo-brand)]' },
+  { country: 'Germany', flag: '🇩🇪', students: 156, percentage: 7.7, color: 'bg-[var(--alo-page)]' },
+  { country: 'New Zealand', flag: '🇳🇿', students: 98, percentage: 4.8, color: 'bg-[var(--alo-success-dark)]' },
+  { country: 'Ireland', flag: '🇮🇪', students: 78, percentage: 3.9, color: 'bg-[var(--alo-success-dark)]' },
 ];
 
 const monthlyTrends: MonthlyTrend[] = [
@@ -129,11 +129,11 @@ const topUniversities: UniversityRow[] = [
 
 const funnelStages: FunnelStage[] = [
   { label: 'Inquiry', count: 2847, percentage: 100, color: 'bg-[var(--alo-brand)]' },
-  { label: 'Consultation', count: 2134, percentage: 75, color: 'bg-blue-500' },
+  { label: 'Consultation', count: 2134, percentage: 75, color: 'bg-[var(--alo-brand)]' },
   { label: 'Application', count: 1567, percentage: 55, color: 'bg-[var(--alo-cta)]' },
   { label: 'Offer Received', count: 1123, percentage: 39.4, color: 'bg-yellow-500' },
-  { label: 'Visa Approved', count: 974, percentage: 34.2, color: 'bg-green-500' },
-  { label: 'Enrolled', count: 856, percentage: 30.1, color: 'bg-emerald-600' },
+  { label: 'Visa Approved', count: 974, percentage: 34.2, color: 'bg-[var(--alo-success)]' },
+  { label: 'Enrolled', count: 856, percentage: 30.1, color: 'bg-[var(--alo-success-dark)]' },
 ];
 
 function formatRevenue(n: number): string {
@@ -208,9 +208,9 @@ export default function CrmAnalyticsPage() {
                 <div className={`p-2 rounded-lg ${kpi.color}`}>
                   <kpi.icon className="h-4 w-4" />
                 </div>
-                <div className={`flex items-center gap-1 text-xs font-medium ${kpi.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                <div className={`flex items-center gap-1 text-xs font-medium ${kpi.trend === 'up' ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
                   {kpi.trend === 'up' ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-                  <span className="bg-green-50 text-green-600 px-1.5 py-0.5 rounded">{kpi.change}</span>
+                  <span className="bg-crm-success-bg text-crm-success-text px-1.5 py-0.5 rounded">{kpi.change}</span>
                 </div>
               </div>
               <p className="text-2xl font-bold text-[var(--alo-text)] mt-3">{kpi.value}</p>
@@ -321,7 +321,7 @@ export default function CrmAnalyticsPage() {
                 <span className="text-xs text-[var(--alo-text-muted)]">Leads</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-green-500" />
+                <span className="w-3 h-3 rounded-full bg-[var(--alo-success)]" />
                 <span className="text-xs text-[var(--alo-text-muted)]">Conversions</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -370,7 +370,7 @@ export default function CrmAnalyticsPage() {
                         />
                         {/* Conversions bar (green) */}
                         <div
-                          className="w-2.5 bg-green-500 rounded-t transition-all duration-500 opacity-80 hover:opacity-100 cursor-pointer"
+                          className="w-2.5 bg-[var(--alo-success)] rounded-t transition-all duration-500 opacity-80 hover:opacity-100 cursor-pointer"
                           style={{ height: `${(trend.conversions / maxLeads) * 100}%` }}
                           title={`${trend.month}: ${trend.conversions} conversions`}
                         />
@@ -421,12 +421,12 @@ export default function CrmAnalyticsPage() {
                         <Badge variant="outline" className="text-[11px]">{uni.country}</Badge>
                       </td>
                       <td className="px-3 py-2.5 text-center text-sm text-[var(--alo-body)]">{uni.applications}</td>
-                      <td className="px-3 py-2.5 text-center text-sm font-medium text-green-700">{uni.offers}</td>
+                      <td className="px-3 py-2.5 text-center text-sm font-medium text-crm-success-text">{uni.offers}</td>
                       <td className="px-3 py-2.5 text-center">
                         <div className="flex items-center justify-center gap-1.5">
-                          <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div className="w-12 h-1.5 bg-[var(--alo-page)] rounded-full overflow-hidden">
                             <div
-                              className={`h-full rounded-full ${uni.acceptanceRate >= 80 ? 'bg-green-500' : uni.acceptanceRate >= 70 ? 'bg-yellow-500' : 'bg-[var(--alo-cta)]'}`}
+                              className={`h-full rounded-full ${uni.acceptanceRate >= 80 ? 'bg-[var(--alo-success)]' : uni.acceptanceRate >= 70 ? 'bg-yellow-500' : 'bg-[var(--alo-cta)]'}`}
                               style={{ width: `${uni.acceptanceRate}%` }}
                             />
                           </div>
@@ -487,8 +487,8 @@ export default function CrmAnalyticsPage() {
                 <p className="text-lg font-bold text-[var(--alo-cta-active)]">71.7%</p>
                 <p className="text-[11px] text-[var(--alo-text-muted)]">Application to Offer</p>
               </div>
-              <div className="text-center p-2 bg-green-50 rounded-lg">
-                <p className="text-lg font-bold text-green-700">86.7%</p>
+              <div className="text-center p-2 bg-crm-success-bg rounded-lg">
+                <p className="text-lg font-bold text-crm-success-text">86.7%</p>
                 <p className="text-[11px] text-[var(--alo-text-muted)]">Visa Approval</p>
               </div>
             </div>
@@ -501,11 +501,11 @@ export default function CrmAnalyticsPage() {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-green-600" />
+              <DollarSign className="h-4 w-4 text-crm-success-text" />
               Revenue Trend
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Badge className="bg-green-100 text-green-700 text-xs">
+              <Badge className="bg-crm-success-bg text-crm-success-text text-xs">
                 <ArrowUpRight className="h-3 w-3 mr-0.5" />
                 +15.7% vs last period
               </Badge>
@@ -523,7 +523,7 @@ export default function CrmAnalyticsPage() {
                     {formatRevenue(trend.revenue)}
                   </span>
                   <div
-                    className={`w-full rounded-t transition-all duration-500 ${i === monthlyTrends.length - 1 ? 'bg-green-500' : 'bg-green-300 hover:bg-green-400'}`}
+                    className={`w-full rounded-t transition-all duration-500 ${i === monthlyTrends.length - 1 ? 'bg-[var(--alo-success)]' : 'bg-[var(--alo-success)] hover:bg-[var(--alo-success)]'}`}
                     style={{ height: `${height}%` }}
                   />
                   <span className="text-[11px] text-[var(--alo-text-muted)]">{trend.month}</span>

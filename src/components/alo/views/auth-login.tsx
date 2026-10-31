@@ -211,7 +211,7 @@ export function AuthLogin({ onNavigate }: AuthLoginProps) {
               {error && (
                 <div
                   role="alert"
-                  className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+                  className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-sm text-crm-danger-text"
                 >
                   <Icon name="AlertCircle" className="mt-0.5 size-4 shrink-0" />
                   <span>{error}</span>

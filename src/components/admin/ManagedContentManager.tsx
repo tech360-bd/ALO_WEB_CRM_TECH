@@ -217,7 +217,7 @@ export function ManagedContentManager() {
                 </td>
                 <td className="px-4 py-2.5 text-xs text-[var(--alo-body)]">{item.section || "—"}</td>
                 <td className="px-4 py-2.5">
-                  <span className={`text-xs px-2 py-1 rounded-full ${item.status === "published" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>{item.status}</span>
+                  <span className={`text-xs px-2 py-1 rounded-full ${item.status === "published" ? "bg-crm-success-bg text-crm-success-text" : "bg-crm-warning-bg text-crm-warning-text"}`}>{item.status}</span>
                 </td>
                 <td className="px-4 py-2.5 text-xs text-[var(--alo-text-muted)]">
                   {item.publishedAt ? (
@@ -227,12 +227,12 @@ export function ManagedContentManager() {
                 <td className="px-4 py-2.5 text-right space-x-1 whitespace-nowrap">
                   <button onClick={() => openEdit(item)} className="px-2.5 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-lg text-xs font-medium">Edit</button>
                   {item.status === "published" ? (
-                    <button onClick={() => post({ action: "unpublish", id: item.id }, "Unpublished (back to draft)")} disabled={busy} className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg text-xs font-medium">Unpublish</button>
+                    <button onClick={() => post({ action: "unpublish", id: item.id }, "Unpublished (back to draft)")} disabled={busy} className="px-2.5 py-1 bg-crm-warning-bg hover:bg-crm-warning-bg text-crm-warning-text rounded-lg text-xs font-medium">Unpublish</button>
                   ) : (
-                    <button onClick={() => post({ action: "publish", id: item.id }, "Published — now live")} disabled={busy} className="px-2.5 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg text-xs font-semibold">Publish</button>
+                    <button onClick={() => post({ action: "publish", id: item.id }, "Published — now live")} disabled={busy} className="px-2.5 py-1 bg-crm-success-bg hover:bg-crm-success-bg text-crm-success-text rounded-lg text-xs font-semibold">Publish</button>
                   )}
                   <button onClick={() => openHistory(item)} className="px-2.5 py-1 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-lg text-xs font-medium">🕘 History</button>
-                  <button onClick={() => { if (confirm("Delete this item? A revision snapshot is retained, so it can be restored from History.")) post({ action: "delete", id: item.id }, "Deleted (snapshot retained)"); }} disabled={busy} className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-xs font-medium">Delete</button>
+                  <button onClick={() => { if (confirm("Delete this item? A revision snapshot is retained, so it can be restored from History.")) post({ action: "delete", id: item.id }, "Deleted (snapshot retained)"); }} disabled={busy} className="px-2.5 py-1 bg-crm-danger-bg hover:bg-crm-danger-bg text-crm-danger-text rounded-lg text-xs font-medium">Delete</button>
                 </td>
               </tr>
             ))}
@@ -241,7 +241,7 @@ export function ManagedContentManager() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[var(--alo-navy)]/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
             <div className="p-5 border-b flex items-center justify-between">
               <h3 className="font-bold text-[var(--alo-text)]">{editing ? "Edit" : "New"} {activeType} {editing ? "(a revision snapshot is taken before saving)" : "(starts as draft)"}</h3>
@@ -270,7 +270,7 @@ export function ManagedContentManager() {
       )}
 
       {historyFor && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[var(--alo-navy)]/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
             <div className="p-5 border-b flex items-center justify-between">
               <div>
@@ -285,7 +285,7 @@ export function ManagedContentManager() {
                 <div key={rev.id} className="border rounded-xl p-3 flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${rev.kind === "PUBLISHED" ? "bg-green-100 text-green-700" : rev.kind === "ROLLBACK" ? "bg-purple-100 text-purple-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{rev.kind}</span>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${rev.kind === "PUBLISHED" ? "bg-crm-success-bg text-crm-success-text" : rev.kind === "ROLLBACK" ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{rev.kind}</span>
                       <span className="text-sm text-[var(--alo-text)] truncate">{rev.label || "—"}</span>
                     </div>
                     <div className="text-xs text-[var(--alo-text-muted)] mt-1">{new Date(rev.createdAt).toLocaleString()} · by {rev.createdBy?.slice(0, 18)}</div>

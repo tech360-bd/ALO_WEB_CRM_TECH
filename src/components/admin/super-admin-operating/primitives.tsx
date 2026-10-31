@@ -94,7 +94,7 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
       role="alert"
     >
       <p className="text-sm font-medium" style={{ color: TOKENS.danger }}>Could not load this section</p>
-      <p className="mt-1 text-xs text-slate-600">{message}</p>
+      <p className="mt-1 text-xs text-[var(--alo-body)]">{message}</p>
       {onRetry ? (
         <button
           type="button"

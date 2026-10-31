@@ -141,9 +141,9 @@ function formatDate(iso: string | null | undefined): string {
 
 function getTypeBadgeClasses(type: string | null | undefined): string {
   switch (type?.toUpperCase()) {
-    case 'PUBLIC': return 'bg-emerald-100 text-emerald-700';
-    case 'PRIVATE': return 'bg-violet-100 text-violet-700';
-    case 'SPECIALISED': return 'bg-amber-100 text-amber-700';
+    case 'PUBLIC': return 'bg-crm-success-bg text-crm-success-text';
+    case 'PRIVATE': return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]';
+    case 'SPECIALISED': return 'bg-crm-warning-bg text-crm-warning-text';
     default: return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   }
 }
@@ -250,7 +250,7 @@ function CourseCard({ course }: { course: CourseData }) {
             </Badge>
           )}
           {course.scholarshipAvailable && (
-            <Badge className="bg-amber-100 text-amber-700 text-xs font-medium">
+            <Badge className="bg-crm-warning-bg text-crm-warning-text text-xs font-medium">
               <Award className="size-3 mr-1" />
               Scholarship
             </Badge>
@@ -340,7 +340,7 @@ function RelatedUniversityCard({
         )}
         <div className="flex items-center gap-2 flex-wrap">
           {uni.rankingValue && uni.rankingValue > 0 && (
-            <div className="flex items-center gap-1 text-xs text-amber-600">
+            <div className="flex items-center gap-1 text-xs text-crm-warning-text">
               <Trophy className="size-3" />
               <span>
                 {uni.rankingProvider || 'Ranking'} {uni.rankingYear || ''}: #{uni.rankingValue}
@@ -510,8 +510,8 @@ export function UniversityDetailEnhanced({
     return (
       <div className="min-h-screen bg-white flex items-center justify-center p-8">
         <div className="text-center max-w-md">
-          <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-6">
-            <SearchX className="size-10 text-red-300" />
+          <div className="w-20 h-20 rounded-full bg-crm-danger-bg flex items-center justify-center mx-auto mb-6">
+            <SearchX className="size-10 text-crm-danger-text" />
           </div>
           <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Error Loading University</h2>
           <p className="text-[var(--alo-text-muted)] mb-6">{error || 'Unable to load university data.'}</p>
@@ -682,7 +682,7 @@ export function UniversityDetailEnhanced({
             {/* Ranking */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-1.5 mb-1">
-                <Trophy className="size-4 text-amber-500" />
+                <Trophy className="size-4 text-crm-warning-text" />
                 {rankings.length > 0 && rankings[0].value > 0 ? (
                   <span className="text-xl sm:text-2xl font-bold text-[var(--alo-text)]">
                     #{rankings[0].value}
@@ -712,7 +712,7 @@ export function UniversityDetailEnhanced({
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                 <div className="text-center">
-                  <div className="text-lg font-bold text-emerald-600">{eligibilityProfile.eligible}</div>
+                  <div className="text-lg font-bold text-crm-success-text">{eligibilityProfile.eligible}</div>
                   <div className="text-xs text-[var(--alo-text-muted)]">Eligible</div>
                 </div>
                 <div className="text-center">
@@ -720,7 +720,7 @@ export function UniversityDetailEnhanced({
                   <div className="text-xs text-[var(--alo-text-muted)]">Likely Match</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-amber-600">{eligibilityProfile.conditional}</div>
+                  <div className="text-lg font-bold text-crm-warning-text">{eligibilityProfile.conditional}</div>
                   <div className="text-xs text-[var(--alo-text-muted)]">Conditional</div>
                 </div>
                 <div className="text-center">
@@ -874,7 +874,7 @@ export function UniversityDetailEnhanced({
                       <Home className="size-3" />
                       Accommodation
                     </div>
-                    <div className="text-sm font-semibold text-emerald-600">Available</div>
+                    <div className="text-sm font-semibold text-crm-success-text">Available</div>
                   </div>
                 )}
                 {uni.careerSupport && (
@@ -883,7 +883,7 @@ export function UniversityDetailEnhanced({
                       <Briefcase className="size-3" />
                       Career Support
                     </div>
-                    <div className="text-sm font-semibold text-emerald-600">Available</div>
+                    <div className="text-sm font-semibold text-crm-success-text">Available</div>
                   </div>
                 )}
                 {uni.employabilityRate && (
@@ -955,11 +955,11 @@ export function UniversityDetailEnhanced({
             <div className="space-y-4">
               {uni.scholarshipAvailable ? (
                 <>
-                  <Card className="border-emerald-200 bg-emerald-50/50">
+                  <Card className="border-crm-success-border bg-crm-success-bg/50">
                     <CardContent className="p-5">
                       <div className="flex items-start gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                          <Award className="size-5 text-emerald-600" />
+                        <div className="h-10 w-10 rounded-xl bg-crm-success-bg flex items-center justify-center flex-shrink-0">
+                          <Award className="size-5 text-crm-success-text" />
                         </div>
                         <div>
                           <h3 className="font-semibold text-[var(--alo-text)] mb-1">
@@ -1056,11 +1056,11 @@ export function UniversityDetailEnhanced({
               ) : (
                 <div className="space-y-3">
                   {rankings.map((r, idx) => (
-                    <Card key={idx} className="border-amber-200/50 bg-amber-50/30">
+                    <Card key={idx} className="border-crm-warning-border/50 bg-crm-warning-bg/30">
                       <CardContent className="p-5">
                         <div className="flex items-start gap-4">
-                          <div className="h-14 w-14 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-                            <span className="text-xl font-bold text-amber-700">#{r.value}</span>
+                          <div className="h-14 w-14 rounded-xl bg-crm-warning-bg flex items-center justify-center flex-shrink-0">
+                            <span className="text-xl font-bold text-crm-warning-text">#{r.value}</span>
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-[var(--alo-text)] mb-1">
@@ -1128,7 +1128,7 @@ export function UniversityDetailEnhanced({
                         {step.step}
                       </div>
                       {idx < APPLY_STEPS.length - 1 && (
-                        <div className="w-0.5 h-full bg-slate-200 my-1" />
+                        <div className="w-0.5 h-full bg-[var(--alo-page)] my-1" />
                       )}
                     </div>
                     {/* Content */}

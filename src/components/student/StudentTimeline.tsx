@@ -86,9 +86,9 @@ export default function StudentTimeline() {
               return (
                 <section key={stage}>
                   <h2 className="mb-3 flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-[var(--alo-text-muted)]">
-                    <span className="h-px flex-1 bg-slate-200" aria-hidden="true" />
+                    <span className="h-px flex-1 bg-[var(--alo-page)]" aria-hidden="true" />
                     {stageLabel(stage)}
-                    <span className="h-px flex-1 bg-slate-200" aria-hidden="true" />
+                    <span className="h-px flex-1 bg-[var(--alo-page)]" aria-hidden="true" />
                   </h2>
 
                   <PortalCard>

@@ -21,28 +21,28 @@ import {
 const SOCIAL_PLATFORMS = [
   { id: 'facebook', name: 'Facebook', mau: '3.07B', category: 'general', priority: 'critical', color: 'bg-[var(--alo-brand)]', icon: Facebook, bestFor: 'General brand presence', formats: ['Text', 'Images', 'Video', 'Reels', 'Stories', 'Groups'] },
   { id: 'instagram', name: 'Instagram', mau: '3B', category: 'visual', priority: 'critical', color: 'bg-gradient-to-r from-purple-600 to-pink-500', icon: Instagram, bestFor: 'Visual storytelling', formats: ['Reels', 'Stories', 'Posts', 'Lives'] },
-  { id: 'whatsapp', name: 'WhatsApp', mau: '3B', category: 'messaging', priority: 'critical', color: 'bg-green-600', icon: MessageCircle, bestFor: 'Customer support', formats: ['Messaging', 'Voice notes', 'Catalogues'] },
-  { id: 'youtube', name: 'YouTube', mau: '2.6B', category: 'video', priority: 'critical', color: 'bg-red-600', icon: Youtube, bestFor: 'Video content and SEO', formats: ['Long-form', 'Shorts', 'Live'] },
-  { id: 'tiktok', name: 'TikTok', mau: '1.9B', category: 'video', priority: 'high', color: 'bg-gray-900', icon: Music, bestFor: 'Short-form video', formats: ['Short video', 'Duets', 'Lives'] },
-  { id: 'wechat', name: 'WeChat', mau: '1.4B', category: 'china', priority: 'medium', color: 'bg-green-500', icon: MessageSquare, bestFor: 'Chinese market', formats: ['Messaging', 'Mini apps'] },
-  { id: 'telegram', name: 'Telegram', mau: '1B', category: 'messaging', priority: 'high', color: 'bg-blue-500', icon: Send, bestFor: 'Broadcast', formats: ['Channels', 'Chats', 'Bots'] },
+  { id: 'whatsapp', name: 'WhatsApp', mau: '3B', category: 'messaging', priority: 'critical', color: 'bg-[var(--alo-success-dark)]', icon: MessageCircle, bestFor: 'Customer support', formats: ['Messaging', 'Voice notes', 'Catalogues'] },
+  { id: 'youtube', name: 'YouTube', mau: '2.6B', category: 'video', priority: 'critical', color: 'bg-[var(--alo-error)]', icon: Youtube, bestFor: 'Video content and SEO', formats: ['Long-form', 'Shorts', 'Live'] },
+  { id: 'tiktok', name: 'TikTok', mau: '1.9B', category: 'video', priority: 'high', color: 'bg-[var(--alo-page)]', icon: Music, bestFor: 'Short-form video', formats: ['Short video', 'Duets', 'Lives'] },
+  { id: 'wechat', name: 'WeChat', mau: '1.4B', category: 'china', priority: 'medium', color: 'bg-[var(--alo-success)]', icon: MessageSquare, bestFor: 'Chinese market', formats: ['Messaging', 'Mini apps'] },
+  { id: 'telegram', name: 'Telegram', mau: '1B', category: 'messaging', priority: 'high', color: 'bg-[var(--alo-brand)]', icon: Send, bestFor: 'Broadcast', formats: ['Channels', 'Chats', 'Bots'] },
   { id: 'snapchat', name: 'Snapchat', mau: '932M', category: 'visual', priority: 'medium', color: 'bg-yellow-400', icon: Ghost, bestFor: 'Gen Z engagement', formats: ['Snaps', 'Stories', 'AR filters'] },
   { id: 'reddit', name: 'Reddit', mau: '765M', category: 'community', priority: 'medium', color: 'bg-[var(--alo-cta-hover)]', icon: MessageSquare, bestFor: 'Community insights', formats: ['Text', 'Links', 'Comments'] },
-  { id: 'douyin', name: 'Douyin', mau: '728M', category: 'china', priority: 'low', color: 'bg-black', icon: Music, bestFor: 'Short video e-commerce', formats: ['Short videos', 'Livestream'] },
+  { id: 'douyin', name: 'Douyin', mau: '728M', category: 'china', priority: 'low', color: 'bg-[var(--alo-navy)]', icon: Music, bestFor: 'Short video e-commerce', formats: ['Short videos', 'Livestream'] },
   { id: 'kuaishou', name: 'Kuaishou', mau: '715M', category: 'china', priority: 'low', color: 'bg-[var(--alo-cta)]', icon: Video, bestFor: 'Live commerce', formats: ['Short/long video'] },
-  { id: 'weibo', name: 'Weibo', mau: '588M', category: 'china', priority: 'low', color: 'bg-red-500', icon: Hash, bestFor: 'Trend-driven China', formats: ['Images', 'Hashtags'] },
-  { id: 'pinterest', name: 'Pinterest', mau: '578M', category: 'visual', priority: 'medium', color: 'bg-red-600', icon: Pin, bestFor: 'Product discovery', formats: ['Pins', 'Boards', 'Idea Pins'] },
-  { id: 'x_twitter', name: 'X (Twitter)', mau: '557M', category: 'general', priority: 'high', color: 'bg-black', icon: Twitter, bestFor: 'Real-time updates', formats: ['Text', 'Images', 'Video'] },
-  { id: 'qq', name: 'QQ', mau: '554M', category: 'china', priority: 'low', color: 'bg-blue-400', icon: MessageCircle, bestFor: 'File sharing', formats: ['Chat', 'Games'] },
-  { id: 'threads', name: 'Threads', mau: '400M', category: 'general', priority: 'high', color: 'bg-black', icon: AtSign, bestFor: 'Conversational', formats: ['Text', 'Carousels'] },
-  { id: 'quora', name: 'Quora', mau: '400M', category: 'community', priority: 'high', color: 'bg-red-700', icon: HelpCircle, bestFor: 'Educational SEO', formats: ['Q&A', 'Text'] },
+  { id: 'weibo', name: 'Weibo', mau: '588M', category: 'china', priority: 'low', color: 'bg-[var(--alo-error)]', icon: Hash, bestFor: 'Trend-driven China', formats: ['Images', 'Hashtags'] },
+  { id: 'pinterest', name: 'Pinterest', mau: '578M', category: 'visual', priority: 'medium', color: 'bg-[var(--alo-error)]', icon: Pin, bestFor: 'Product discovery', formats: ['Pins', 'Boards', 'Idea Pins'] },
+  { id: 'x_twitter', name: 'X (Twitter)', mau: '557M', category: 'general', priority: 'high', color: 'bg-[var(--alo-navy)]', icon: Twitter, bestFor: 'Real-time updates', formats: ['Text', 'Images', 'Video'] },
+  { id: 'qq', name: 'QQ', mau: '554M', category: 'china', priority: 'low', color: 'bg-[var(--alo-brand)]', icon: MessageCircle, bestFor: 'File sharing', formats: ['Chat', 'Games'] },
+  { id: 'threads', name: 'Threads', mau: '400M', category: 'general', priority: 'high', color: 'bg-[var(--alo-navy)]', icon: AtSign, bestFor: 'Conversational', formats: ['Text', 'Carousels'] },
+  { id: 'quora', name: 'Quora', mau: '400M', category: 'community', priority: 'high', color: 'bg-[var(--alo-error)]', icon: HelpCircle, bestFor: 'Educational SEO', formats: ['Q&A', 'Text'] },
   { id: 'linkedin', name: 'LinkedIn', mau: '450M', category: 'professional', priority: 'critical', color: 'bg-[var(--alo-brand-hover)]', icon: Linkedin, bestFor: 'B2B marketing', formats: ['Articles', 'Carousels', 'Video'] },
-  { id: 'xiaohongshu', name: 'RedNote', mau: '350M', category: 'china', priority: 'low', color: 'bg-red-500', icon: BookOpen, bestFor: 'Reviews lifestyle', formats: ['Photos', 'Mini vlogs'] },
-  { id: 'discord', name: 'Discord', mau: '259M', category: 'community', priority: 'medium', color: 'bg-indigo-500', icon: MessageSquare, bestFor: 'Private communities', formats: ['Text', 'Voice', 'Video'] },
-  { id: 'twitch', name: 'Twitch', mau: '240M', category: 'video', priority: 'low', color: 'bg-purple-600', icon: Video, bestFor: 'Livestream', formats: ['Live video', 'Chat'] },
+  { id: 'xiaohongshu', name: 'RedNote', mau: '350M', category: 'china', priority: 'low', color: 'bg-[var(--alo-error)]', icon: BookOpen, bestFor: 'Reviews lifestyle', formats: ['Photos', 'Mini vlogs'] },
+  { id: 'discord', name: 'Discord', mau: '259M', category: 'community', priority: 'medium', color: 'bg-[var(--alo-brand)]', icon: MessageSquare, bestFor: 'Private communities', formats: ['Text', 'Voice', 'Video'] },
+  { id: 'twitch', name: 'Twitch', mau: '240M', category: 'video', priority: 'low', color: 'bg-[var(--alo-brand)]', icon: Video, bestFor: 'Livestream', formats: ['Live video', 'Chat'] },
   { id: 'tumblr', name: 'Tumblr', mau: '95M', category: 'community', priority: 'low', color: 'bg-[var(--alo-brand-deep)]', icon: ImageIcon, bestFor: 'Creative expression', formats: ['Text', 'GIFs', 'Images'] },
-  { id: 'bluesky', name: 'Bluesky', mau: '5.2M', category: 'emerging', priority: 'medium', color: 'bg-blue-500', icon: Cloud, bestFor: 'Decentralized', formats: ['Text posts', 'Replies'] },
-  { id: 'mastodon', name: 'Mastodon', mau: '1M', category: 'emerging', priority: 'low', color: 'bg-indigo-500', icon: Server, bestFor: 'Federated communities', formats: ['Text', 'Media'] },
+  { id: 'bluesky', name: 'Bluesky', mau: '5.2M', category: 'emerging', priority: 'medium', color: 'bg-[var(--alo-brand)]', icon: Cloud, bestFor: 'Decentralized', formats: ['Text posts', 'Replies'] },
+  { id: 'mastodon', name: 'Mastodon', mau: '1M', category: 'emerging', priority: 'low', color: 'bg-[var(--alo-brand)]', icon: Server, bestFor: 'Federated communities', formats: ['Text', 'Media'] },
 ];
 
 interface GeneratedContent {
@@ -201,7 +201,7 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className="bg-purple-50 text-purple-700 border-purple-200">
+          <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]">
             <Bot className="w-3 h-3 mr-1" />Own AI Agent v2.0
           </Badge>
           <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]">
@@ -237,11 +237,11 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
         <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-[var(--alo-brand)]">{SOCIAL_PLATFORMS.length}</p><p className="text-[11px] text-[var(--alo-text-muted)]">Platforms</p></CardContent></Card>
-        <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-purple-600">12.5B+</p><p className="text-[11px] text-[var(--alo-text-muted)]">Combined MAU</p></CardContent></Card>
-        <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-green-600">{SOCIAL_PLATFORMS.filter(p => p.priority === 'critical').length}</p><p className="text-[11px] text-[var(--alo-text-muted)]">Critical</p></CardContent></Card>
+        <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-[var(--alo-brand)]">12.5B+</p><p className="text-[11px] text-[var(--alo-text-muted)]">Combined MAU</p></CardContent></Card>
+        <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-crm-success-text">{SOCIAL_PLATFORMS.filter(p => p.priority === 'critical').length}</p><p className="text-[11px] text-[var(--alo-text-muted)]">Critical</p></CardContent></Card>
         <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-[var(--alo-cta-active)]">{selectedPlatforms.length}</p><p className="text-[11px] text-[var(--alo-text-muted)]">Selected</p></CardContent></Card>
-        <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-red-600">{inboxMessages.filter(m => m.unread).length}</p><p className="text-[11px] text-[var(--alo-text-muted)]">Unread Inbox</p></CardContent></Card>
-        <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-indigo-600">{generatedContents.length}</p><p className="text-[11px] text-[var(--alo-text-muted)]">Generated</p></CardContent></Card>
+        <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-crm-danger-text">{inboxMessages.filter(m => m.unread).length}</p><p className="text-[11px] text-[var(--alo-text-muted)]">Unread Inbox</p></CardContent></Card>
+        <Card><CardContent className="p-3 text-center"><p className="text-lg font-bold text-[var(--alo-brand)]">{generatedContents.length}</p><p className="text-[11px] text-[var(--alo-text-muted)]">Generated</p></CardContent></Card>
       </div>
 
       {/* Tabs */}
@@ -274,7 +274,7 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
                   const Icon = platform.icon;
                   const isSelected = selectedPlatforms.includes(platform.id);
                   return (
-                    <Card key={platform.id} className={`border transition-all cursor-pointer ${isSelected ? 'border-blue-400 bg-[var(--alo-brand-pale)]/50 shadow-md' : 'border-[var(--alo-border)] hover:border-[var(--alo-border-strong)] hover:shadow-sm'}`} onClick={() => togglePlatform(platform.id)}>
+                    <Card key={platform.id} className={`border transition-all cursor-pointer ${isSelected ? 'border-[var(--alo-brand-border)] bg-[var(--alo-brand-pale)]/50 shadow-md' : 'border-[var(--alo-border)] hover:border-[var(--alo-border-strong)] hover:shadow-sm'}`} onClick={() => togglePlatform(platform.id)}>
                       <CardContent className="p-3">
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
@@ -282,7 +282,7 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
                             <div><p className="text-xs font-bold text-[var(--alo-text)]">{platform.name}</p><p className="text-[11px] text-[var(--alo-text-muted)]">{platform.mau} MAU</p></div>
                           </div>
                           <div className="flex flex-col items-end gap-1">
-                            <Badge className={`text-[11px] ${platform.priority === 'critical' ? 'bg-red-100 text-red-700' : platform.priority === 'high' ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]' : platform.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>{platform.priority}</Badge>
+                            <Badge className={`text-[11px] ${platform.priority === 'critical' ? 'bg-crm-danger-bg text-crm-danger-text' : platform.priority === 'high' ? 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]' : platform.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>{platform.priority}</Badge>
                             {isSelected && <CheckCircle className="w-4 h-4 text-[var(--alo-brand)]" />}
                           </div>
                         </div>
@@ -304,7 +304,7 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
         {/* AI Content Generator Tab */}
         <TabsContent value="generate" className="mt-4 space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Wand2 className="w-4 h-4 text-purple-600" />AI Content Generator — Own AI Agent (24 Platforms)</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Wand2 className="w-4 h-4 text-[var(--alo-brand)]" />AI Content Generator — Own AI Agent (24 Platforms)</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="space-y-3">
@@ -344,7 +344,7 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
                           <CardHeader className="pb-2"><div className="flex items-center justify-between"><div className="flex items-center gap-2"><div className={`w-6 h-6 rounded ${platform?.color} flex items-center justify-center`}><Icon className="w-3 h-3 text-white" /></div><span className="text-xs font-bold">{platform?.name}</span><Badge variant="secondary" className="text-[11px]">{platform?.mau}</Badge></div><Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => navigator.clipboard.writeText(item.content)}><Copy className="w-3 h-3" /></Button></div></CardHeader>
                           <CardContent className="pt-0 space-y-2">
                             <p className="text-xs text-[var(--alo-text)] whitespace-pre-wrap">{item.content}</p>
-                            {item.hashtags && item.hashtags.length > 0 && <div className="flex flex-wrap gap-1">{item.hashtags.map((tag: string, i: number) => <Badge key={i} className="text-[11px] bg-purple-50 text-purple-700">{tag}</Badge>)}</div>}
+                            {item.hashtags && item.hashtags.length > 0 && <div className="flex flex-wrap gap-1">{item.hashtags.map((tag: string, i: number) => <Badge key={i} className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{tag}</Badge>)}</div>}
                             {item.cta && <p className="text-[11px] text-[var(--alo-brand)] font-medium">CTA: {item.cta}</p>}
                             {item.bestPostingTime && <p className="text-[11px] text-[var(--alo-text-muted)]">Best time: {item.bestPostingTime}</p>}
                             {item.imagePrompt && <p className="text-[11px] text-[var(--alo-text-muted)] italic">Image: {item.imagePrompt.slice(0, 80)}...</p>}
@@ -374,14 +374,14 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2"><span className="text-xs font-semibold">{msg.sender}</span><Badge className="text-[11px]">{platform?.name}</Badge>{msg.unread && <span className="w-2 h-2 bg-[var(--alo-brand)] rounded-full" />}<span className="text-[11px] text-[var(--alo-text-muted)] ml-auto">{msg.time}</span></div>
                         <p className="text-xs text-[var(--alo-body)] mt-1">{msg.message}</p>
-                        <div className="flex items-center gap-2 mt-2"><Badge className={`text-[11px] ${msg.leadScore > 80 ? 'bg-green-100 text-green-700' : msg.leadScore > 60 ? 'bg-yellow-100 text-yellow-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>Lead Score: {msg.leadScore}</Badge><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-6 text-[11px]"><Bot className="w-3 h-3 mr-1" />AI Reply</Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-6 text-[11px]">View</Button></div>
+                        <div className="flex items-center gap-2 mt-2"><Badge className={`text-[11px] ${msg.leadScore > 80 ? 'bg-crm-success-bg text-crm-success-text' : msg.leadScore > 60 ? 'bg-yellow-100 text-yellow-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>Lead Score: {msg.leadScore}</Badge><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-6 text-[11px]"><Bot className="w-3 h-3 mr-1" />AI Reply</Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-6 text-[11px]">View</Button></div>
                       </div>
                     </div>
                   );
                 })}
               </div>
-              <div className="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-100">
-                <p className="text-xs text-purple-800 flex items-center gap-1"><Bot className="w-3 h-3" />Own AI Agent manages inbox: auto reply suggestions, lead scoring, intent detection, escalation to human counselor when needed. No external SaaS.</p>
+              <div className="mt-4 p-3 bg-[var(--alo-brand-pale)] rounded-lg border border-[var(--alo-border)]">
+                <p className="text-xs text-[var(--alo-brand)] flex items-center gap-1"><Bot className="w-3 h-3" />Own AI Agent manages inbox: auto reply suggestions, lead scoring, intent detection, escalation to human counselor when needed. No external SaaS.</p>
               </div>
             </CardContent>
           </Card>
@@ -394,8 +394,8 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
             <CardContent>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                 <Card className="bg-[var(--alo-brand-pale)] border-[var(--alo-border)]"><CardContent className="p-3 text-center"><p className="text-lg font-bold text-[var(--alo-brand)]">12.5B+</p><p className="text-[11px] text-[var(--alo-brand)]">Total Reach Potential</p></CardContent></Card>
-                <Card className="bg-green-50 border-green-200"><CardContent className="p-3 text-center"><p className="text-lg font-bold text-green-700">85%</p><p className="text-[11px] text-green-600">AI Response Accuracy</p></CardContent></Card>
-                <Card className="bg-purple-50 border-purple-200"><CardContent className="p-3 text-center"><p className="text-lg font-bold text-purple-700">24</p><p className="text-[11px] text-purple-600">Platforms Covered</p></CardContent></Card>
+                <Card className="bg-crm-success-bg border-crm-success-border"><CardContent className="p-3 text-center"><p className="text-lg font-bold text-crm-success-text">85%</p><p className="text-[11px] text-crm-success-text">AI Response Accuracy</p></CardContent></Card>
+                <Card className="bg-[var(--alo-brand-pale)] border-[var(--alo-border)]"><CardContent className="p-3 text-center"><p className="text-lg font-bold text-[var(--alo-brand)]">24</p><p className="text-[11px] text-[var(--alo-brand)]">Platforms Covered</p></CardContent></Card>
                 <Card className="bg-[var(--alo-cta-soft)] border-[var(--alo-cta)]/25"><CardContent className="p-3 text-center"><p className="text-lg font-bold text-[var(--alo-cta-active)]">100%</p><p className="text-[11px] text-[var(--alo-cta-active)]">Own AI, No SaaS</p></CardContent></Card>
               </div>
               <div className="space-y-3">
@@ -434,7 +434,7 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
         {/* AI Agent Tab */}
         <TabsContent value="agent" className="mt-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Bot className="w-4 h-4 text-purple-600" />ALO Social Media AI Agent — Own AI (Groq/ZAI/OpenRouter), No SaaS, 24 Platforms</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><Bot className="w-4 h-4 text-[var(--alo-brand)]" />ALO Social Media AI Agent — Own AI (Groq/ZAI/OpenRouter), No SaaS, 24 Platforms</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="space-y-3">
@@ -449,7 +449,7 @@ export default function SocialMediaManagementHub({ portal = 'admin' }: { portal?
                       'Own AI — uses src/lib/ai.ts generateText with Groq/ZAI/OpenRouter fallback, no external SaaS',
                       'Platform-specific optimization: character limits, hashtags, best posting times, content tips',
                       'Unified inbox management across all 24 platforms with AI auto-replies'
-                    ].map((cap, i) => <li key={i} className="text-[11px] text-[var(--alo-body)] flex gap-2"><CheckCircle className="w-3 h-3 text-green-600 mt-0.5 shrink-0" />{cap}</li>)}
+                    ].map((cap, i) => <li key={i} className="text-[11px] text-[var(--alo-body)] flex gap-2"><CheckCircle className="w-3 h-3 text-crm-success-text mt-0.5 shrink-0" />{cap}</li>)}
                   </ul>
                 </div>
                 <div className="space-y-3">

@@ -124,7 +124,7 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
         <ul className="space-y-5">
           {BULLET_POINTS.map((point) => (
             <li key={point} className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-emerald-300 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="w-5 h-5 text-crm-success-text mt-0.5 flex-shrink-0" />
               <span className="text-white/90 text-[15px] leading-relaxed">
                 {point}
               </span>
@@ -167,8 +167,8 @@ export default function LoginPage({ initialPortal }: LoginPageProps) {
             <div
               className={`flex items-start gap-3 rounded-lg border p-4 mb-6 ${
                 errorInfo.variant === 'error'
-                  ? 'bg-red-50 border-red-200 text-red-800'
-                  : 'bg-amber-50 border-amber-200 text-amber-800'
+                  ? 'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text'
+                  : 'bg-crm-warning-bg border-crm-warning-border text-crm-warning-text'
               }`}
               role="alert"
             >

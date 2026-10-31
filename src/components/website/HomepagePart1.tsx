@@ -162,7 +162,7 @@ function HeroSection() {
             Study Abroad
           </Badge>
 
-          <h1 className="font-heading text-[34px] font-extrabold leading-[1.1] tracking-tight text-[var(--alo-text)] md:text-[46px]">
+          <h1 className="font-heading text-[34px] font-extrabold leading-[1.1] tracking-tight text-[var(--alo-text)] md:text-[56px]">
             Your Future Starts Here
           </h1>
 
@@ -225,9 +225,9 @@ function HeroSection() {
                     onError={() => setImgErrors(prev => new Set([...prev, slide.name]))}
                   />
                 ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[var(--alo-brand-light)]">
-                    <span className="text-7xl" aria-hidden="true">{slide.flag}</span>
-                    <span className="font-heading text-2xl font-bold text-[var(--alo-brand)]">{slide.name}</span>
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-[20px] bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] p-6 text-center">
+                    <span className="font-heading text-2xl font-bold text-[var(--alo-text)]">{slide.name}</span>
+                    <p className="text-sm text-[var(--alo-body)]">{slide.heroSubtitle || slide.heroCity}</p>
                   </div>
                 )}
               </motion.div>

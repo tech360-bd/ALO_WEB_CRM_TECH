@@ -160,13 +160,13 @@ export function PortalLoading({ rows = 4, label }: { rows?: number; label?: stri
 
 export function PortalError({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
-    <div className="flex flex-col items-start gap-3 rounded-2xl border border-red-200 bg-red-50 px-5 py-5 sm:flex-row sm:items-center">
-      <AlertCircle className="h-5 w-5 shrink-0 text-red-600" aria-hidden="true" />
+    <div className="flex flex-col items-start gap-3 rounded-2xl border border-crm-danger-border bg-crm-danger-bg px-5 py-5 sm:flex-row sm:items-center">
+      <AlertCircle className="h-5 w-5 shrink-0 text-crm-danger-text" aria-hidden="true" />
       <div className="min-w-0 flex-1">
-        <p className="text-[14px] font-semibold text-red-900">We could not load this</p>
-        <p className="mt-0.5 text-[13px] leading-relaxed text-red-800">{message}</p>
+        <p className="text-[14px] font-semibold text-crm-danger-text">We could not load this</p>
+        <p className="mt-0.5 text-[13px] leading-relaxed text-crm-danger-text">{message}</p>
       </div>
-      <Button variant="outline" className=" shrink-0 rounded-button border-red-300 bg-white px-4 text-[13px] font-semibold text-red-700" onClick={onRetry}>
+      <Button variant="outline" className=" shrink-0 rounded-button border-crm-danger-border bg-white px-4 text-[13px] font-semibold text-crm-danger-text" onClick={onRetry}>
         <RefreshCw className="mr-2 h-3.5 w-3.5" aria-hidden="true" />
         Try Again
       </Button>
@@ -194,15 +194,15 @@ export function PortalEmpty({
 }
 
 const STATUS_TONE: Record<string, string> = {
-  pending: 'border-amber-200 bg-amber-50 text-amber-800',
-  PENDING: 'border-amber-200 bg-amber-50 text-amber-800',
+  pending: 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text',
+  PENDING: 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text',
   in_progress: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   IN_PROGRESS: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
-  paid: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  completed: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  COMPLETED: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  failed: 'border-red-200 bg-red-50 text-red-800',
-  overdue: 'border-red-200 bg-red-50 text-red-800',
+  paid: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
+  completed: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
+  COMPLETED: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
+  failed: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text',
+  overdue: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text',
   refunded: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]',
 };
 
@@ -221,7 +221,7 @@ export function StatusBadge({ value }: { value: string }) {
 }
 
 const PRIORITY_TONE: Record<string, string> = {
-  URGENT: 'border-red-200 bg-red-50 text-red-800',
+  URGENT: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text',
   HIGH: 'border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   MEDIUM: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
   LOW: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]',

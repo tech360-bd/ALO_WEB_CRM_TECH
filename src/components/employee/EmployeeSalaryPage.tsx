@@ -73,7 +73,7 @@ export default function EmployeeSalaryPage() {
     { label: 'Provident fund deduction', amount: current.pfDeduction, kind: 'deduction' },
   ].filter((item) => item.amount !== 0) : [];
 
-  if (error) return <div role="alert" className="p-6 text-red-700">{error}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
+  if (error) return <div role="alert" className="p-6 text-crm-danger-text">{error}<Button variant="outline" onClick={() => window.location.reload()}>Retry</Button></div>;
 
 
   const download = async (record: SalaryRecord) => {
@@ -97,13 +97,13 @@ export default function EmployeeSalaryPage() {
         <Button variant="outline" onClick={() => void loadSalary()} disabled={loading}><RefreshCw className="mr-2 h-4 w-4" />Refresh</Button>
       </div>
 
-      {error && <Card role="alert" className="border-red-200"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-red-700"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void loadSalary()}>Retry</Button></CardContent></Card>}
+      {error && <Card role="alert" className="border-crm-danger-border"><CardContent className="flex items-center justify-between gap-3 p-4 text-sm text-crm-danger-text"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void loadSalary()}>Retry</Button></CardContent></Card>}
 
       {!error && <>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          <SummaryCard icon={<Wallet className="h-5 w-5 text-emerald-600" />} label="Current net salary" value={current ? formatMoney(current.netSalary) : 'Not available'} caption={current?.period ? `Effective ${current.period}` : 'No approved payroll'} />
+          <SummaryCard icon={<Wallet className="h-5 w-5 text-crm-success-text" />} label="Current net salary" value={current ? formatMoney(current.netSalary) : 'Not available'} caption={current?.period ? `Effective ${current.period}` : 'No approved payroll'} />
           <SummaryCard icon={<TrendingUp className="h-5 w-5 text-[var(--alo-brand)]" />} label="Gross salary" value={current ? formatMoney(current.grossSalary) : 'Not available'} caption="Latest approved payroll" />
-          <SummaryCard icon={<CreditCard className="h-5 w-5 text-red-600" />} label="Recorded deductions" value={current ? formatMoney(deductions) : 'Not available'} caption="Tax and provident fund" />
+          <SummaryCard icon={<CreditCard className="h-5 w-5 text-crm-danger-text" />} label="Recorded deductions" value={current ? formatMoney(deductions) : 'Not available'} caption="Tax and provident fund" />
           <SummaryCard icon={<PiggyBank className="h-5 w-5 text-alo-brand" />} label="Paid commissions" value={formatMoney(salary?.commissions.summary.totalPaid || 0)} caption={`${salary?.commissions.summary.count || 0} commission records`} />
         </div>
 
@@ -113,7 +113,7 @@ export default function EmployeeSalaryPage() {
           </CardHeader>
           {expanded && <CardContent className="pt-4">
             {!current ? <p className="py-6 text-center text-sm text-alo-text-muted">No approved payroll is available.</p> : <>
-              <div className="space-y-2">{breakdown.map((item) => <div key={item.label} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-alo-page/50"><div className="flex items-center gap-3"><div className={`h-2 w-2 rounded-full ${item.kind === 'earning' ? 'bg-emerald-500' : 'bg-red-500'}`} /><span className="text-sm text-alo-text">{item.label}</span></div><span className={`text-sm font-semibold ${item.kind === 'earning' ? 'text-emerald-600' : 'text-red-600'}`}>{item.kind === 'deduction' ? '−' : ''}{formatMoney(item.amount)}</span></div>)}</div>
+              <div className="space-y-2">{breakdown.map((item) => <div key={item.label} className="flex items-center justify-between rounded-lg px-3 py-2.5 hover:bg-alo-page/50"><div className="flex items-center gap-3"><div className={`h-2 w-2 rounded-full ${item.kind === 'earning' ? 'bg-[var(--alo-success)]' : 'bg-[var(--alo-error)]'}`} /><span className="text-sm text-alo-text">{item.label}</span></div><span className={`text-sm font-semibold ${item.kind === 'earning' ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>{item.kind === 'deduction' ? '−' : ''}{formatMoney(item.amount)}</span></div>)}</div>
               <div className="mt-3 flex items-center justify-between border-t-2 border-alo-border px-3 pt-3"><span className="text-base font-bold text-alo-text">Net salary</span><span className="text-xl font-bold text-alo-brand">{formatMoney(current.netSalary)}</span></div>
             </>}
           </CardContent>}
@@ -122,7 +122,7 @@ export default function EmployeeSalaryPage() {
         <Card className="rounded-xl border border-alo-border bg-white">
           <CardHeader className="pb-0"><CardTitle className="text-base font-semibold text-alo-text">Approved payslips</CardTitle></CardHeader>
           <CardContent className="pt-4">
-            {history.length === 0 ? <p className="py-8 text-center text-sm text-alo-text-muted">No salary history is available.</p> : <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-alo-border"><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Payroll period</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Gross salary</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Deductions</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Net salary</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Download</th></tr></thead><tbody>{history.map((record) => <tr key={record.id} className="border-b border-alo-border/50"><td className="px-3 py-2.5 font-medium text-alo-text">{record.period || 'Not specified'}</td><td className="px-3 py-2.5 text-alo-text-secondary">{formatMoney(record.grossSalary)}</td><td className="px-3 py-2.5 text-red-500">{formatMoney(record.grossSalary - record.netSalary)}</td><td className="px-3 py-2.5 font-semibold text-alo-text">{formatMoney(record.netSalary)}</td><td className="px-3 py-2.5"><Button variant="outline" size="sm" disabled={downloading === record.id} onClick={() => void download(record)}><Download className="mr-1 h-4 w-4" />Payslip</Button></td></tr>)}</tbody></table></div>}
+            {history.length === 0 ? <p className="py-8 text-center text-sm text-alo-text-muted">No salary history is available.</p> : <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-alo-border"><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Payroll period</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Gross salary</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Deductions</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Net salary</th><th className="px-3 py-2.5 text-left text-xs font-medium text-alo-text-muted">Download</th></tr></thead><tbody>{history.map((record) => <tr key={record.id} className="border-b border-alo-border/50"><td className="px-3 py-2.5 font-medium text-alo-text">{record.period || 'Not specified'}</td><td className="px-3 py-2.5 text-alo-text-secondary">{formatMoney(record.grossSalary)}</td><td className="px-3 py-2.5 text-crm-danger-text">{formatMoney(record.grossSalary - record.netSalary)}</td><td className="px-3 py-2.5 font-semibold text-alo-text">{formatMoney(record.netSalary)}</td><td className="px-3 py-2.5"><Button variant="outline" size="sm" disabled={downloading === record.id} onClick={() => void download(record)}><Download className="mr-1 h-4 w-4" />Payslip</Button></td></tr>)}</tbody></table></div>}
             <p className="mt-3 text-xs text-alo-text-muted">Only approved or paid payroll is shown. Downloading a payslip creates an access audit record.</p>
           </CardContent>
         </Card>

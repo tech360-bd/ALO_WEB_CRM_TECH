@@ -108,18 +108,18 @@ interface StaleRule {
 }
 
 const STATUS_STYLE: Record<RuleStatus, string> = {
-  ACTIVE: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  ACTIVE: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
   PENDING_APPROVAL: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]',
   DRAFT: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
   SUPERSEDED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] border-[var(--alo-border)]',
-  REJECTED: 'bg-red-100 text-red-800 border-red-200',
-  EXPIRED: 'bg-amber-100 text-amber-800 border-amber-200',
+  REJECTED: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+  EXPIRED: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
 };
 
 const SEVERITY_STYLE: Record<string, string> = {
-  CRITICAL: 'bg-red-100 text-red-800 border-red-200',
+  CRITICAL: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
   URGENT: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25',
-  WARNING: 'bg-amber-100 text-amber-800 border-amber-200',
+  WARNING: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
   INFO: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)] border-[var(--alo-border)]',
 };
 
@@ -590,7 +590,7 @@ export default function RuleVersionsPage() {
 
           {/* What is in force */}
           {(resolved || resolveNote) && (
-            <Card className={`rounded-2xl border-2 ${resolved?.authoritative ? 'border-emerald-200' : 'border-amber-300'}`}>
+            <Card className={`rounded-2xl border-2 ${resolved?.authoritative ? 'border-crm-success-border' : 'border-crm-warning-border'}`}>
               <CardHeader>
                 <CardTitle className="text-sm font-bold">
                   {resolved ? `In force: v${resolved.versionNumber}` : 'Nothing in force'}
@@ -616,7 +616,7 @@ export default function RuleVersionsPage() {
                       )}
                     </div>
                     {resolved.advisory && (
-                      <p className="flex items-start gap-1.5 rounded-lg border border-amber-300 bg-amber-50 p-2.5 font-semibold text-amber-900">
+                      <p className="flex items-start gap-1.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg p-2.5 font-semibold text-crm-warning-text">
                         <ShieldAlert className="mt-0.5 size-3.5 shrink-0" />
                         {resolved.advisory}
                       </p>
@@ -644,7 +644,7 @@ export default function RuleVersionsPage() {
                 Full history — {history.length} version{history.length === 1 ? '' : 's'}, all retained
               </p>
               {[...history].reverse().map((version) => (
-                <Card key={version.id} className={`rounded-2xl border-2 ${version.status === 'ACTIVE' ? 'border-emerald-200' : 'border-[var(--alo-border)]'}`}>
+                <Card key={version.id} className={`rounded-2xl border-2 ${version.status === 'ACTIVE' ? 'border-crm-success-border' : 'border-[var(--alo-border)]'}`}>
                   <CardContent className="space-y-2 pt-4 pb-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0">
@@ -674,7 +674,7 @@ export default function RuleVersionsPage() {
                       </p>
                     )}
                     {version.rejectionReason && (
-                      <p className="rounded-lg bg-red-50 p-2 text-[11px] text-red-800">
+                      <p className="rounded-lg bg-crm-danger-bg p-2 text-[11px] text-crm-danger-text">
                         <strong className="font-semibold">Rejected:</strong> {version.rejectionReason}
                       </p>
                     )}
@@ -775,7 +775,7 @@ export default function RuleVersionsPage() {
                         {alert.affectedWorkflows.length > 0 && `, workflows: ${alert.affectedWorkflows.join(', ')}`}
                       </p>
                       {alert.impactCount === 0 && (
-                        <p className="mt-1 text-amber-800">
+                        <p className="mt-1 text-crm-warning-text">
                           No affected records were identified. That is an absence of analysis, not proof
                           of no impact.
                         </p>
@@ -847,10 +847,10 @@ export default function RuleVersionsPage() {
           </div>
 
           {neverVerified > 0 && (
-            <Card className="rounded-2xl border-2 border-amber-300 bg-amber-50">
+            <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg">
               <CardContent className="flex items-start gap-3 pt-5 pb-5">
-                <Bell className="mt-0.5 size-5 shrink-0 text-amber-700" />
-                <p className="text-xs text-amber-900">
+                <Bell className="mt-0.5 size-5 shrink-0 text-crm-warning-text" />
+                <p className="text-xs text-crm-warning-text">
                   <strong className="font-bold">{neverVerified}</strong> active rule(s) have NEVER been
                   verified against a source. They are being used for advice without provenance.
                 </p>
@@ -890,7 +890,7 @@ export default function RuleVersionsPage() {
                           {rule.daysSinceVerified === null ? 'never' : `${rule.daysSinceVerified}d ago`}
                         </td>
                         <td className="p-2">
-                          <Badge variant="outline" className={rule.authoritative ? 'border-emerald-200 bg-emerald-50 text-[11px] text-emerald-800' : 'border-red-200 bg-red-50 text-[11px] text-red-700'}>
+                          <Badge variant="outline" className={rule.authoritative ? 'border-crm-success-border bg-crm-success-bg text-[11px] text-crm-success-text' : 'border-crm-danger-border bg-crm-danger-bg text-[11px] text-crm-danger-text'}>
                             {rule.authoritative ? 'yes' : 'NO'}
                           </Badge>
                         </td>

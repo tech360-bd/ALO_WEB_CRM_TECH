@@ -484,7 +484,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
         >
           {c.university?.name || 'N/A'}
           {c.university?.rankingValue && (
-            <span className={`ml-1 text-xs font-bold ${c.university.rankingValue === bestRanking ? 'text-emerald-600' : 'text-amber-600'}`}>
+            <span className={`ml-1 text-xs font-bold ${c.university.rankingValue === bestRanking ? 'text-crm-success-text' : 'text-crm-warning-text'}`}>
               #{c.university.rankingValue}
               {c.university.rankingValue === bestRanking && ' ★'}
             </span>
@@ -526,9 +526,9 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
         if (c.tuitionFee == null) return <span className="text-sm text-[var(--alo-text-muted)]">N/A</span>;
         const isBest = c.tuitionFee === bestFee;
         return (
-          <span className={`text-sm font-medium ${isBest ? 'text-emerald-600' : 'text-[var(--alo-text)]'}`}>
+          <span className={`text-sm font-medium ${isBest ? 'text-crm-success-text' : 'text-[var(--alo-text)]'}`}>
             {c.tuitionCurrency || 'GBP'} {c.tuitionFee.toLocaleString()}{c.tuitionPeriod ? `/${c.tuitionPeriod}` : ''}
-            {isBest && <span className="ml-1 text-[11px] text-emerald-500">LOWEST</span>}
+            {isBest && <span className="ml-1 text-[11px] text-crm-success-text">LOWEST</span>}
           </span>
         );
       },
@@ -545,8 +545,8 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
         if (c.ieltsMin == null) return <span className="text-sm text-[var(--alo-text-muted)]">N/A</span>;
         const isBest = c.ieltsMin === lowestIelts;
         return (
-          <span className={`text-sm font-medium ${isBest ? 'text-emerald-600' : 'text-[var(--alo-body)]'}`}>
-            {c.ieltsMin}{isBest && <span className="ml-1 text-[11px] text-emerald-500">LOWEST</span>}
+          <span className={`text-sm font-medium ${isBest ? 'text-crm-success-text' : 'text-[var(--alo-body)]'}`}>
+            {c.ieltsMin}{isBest && <span className="ml-1 text-[11px] text-crm-success-text">LOWEST</span>}
           </span>
         );
       },
@@ -561,7 +561,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
       key: 'applicationFee', label: 'Application Fee', icon: DollarSign,
       render: (c) => c.applicationFee != null
         ? <span className="text-sm text-[var(--alo-body)]">{c.applicationFeeCurrency || c.tuitionCurrency || 'GBP'} {c.applicationFee.toLocaleString()}</span>
-        : <span className="text-sm text-emerald-600">Free</span>,
+        : <span className="text-sm text-crm-success-text">Free</span>,
     },
     {
       key: 'deadline', label: 'Deadline', icon: Calendar,
@@ -599,19 +599,19 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
     {
       key: 'workExp', label: 'Work Exp. Required', icon: Briefcase,
       render: (c) => c.workExperienceRequired
-        ? <Badge className="bg-amber-100 text-amber-700 text-xs">Required</Badge>
+        ? <Badge className="bg-crm-warning-bg text-crm-warning-text text-xs">Required</Badge>
         : <span className="text-sm text-[var(--alo-text-muted)]">No</span>,
     },
     {
       key: 'placement', label: 'Placement', icon: Award,
       render: (c) => c.placementAvailable
-        ? <Badge className="bg-emerald-100 text-emerald-700 text-xs">Available</Badge>
+        ? <Badge className="bg-crm-success-bg text-crm-success-text text-xs">Available</Badge>
         : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span>,
     },
     {
       key: 'scholarship', label: 'Scholarship', icon: Award,
       render: (c) => c.scholarshipAvailable
-        ? <Badge className="bg-emerald-100 text-emerald-700 text-xs">Available</Badge>
+        ? <Badge className="bg-crm-success-bg text-crm-success-text text-xs">Available</Badge>
         : <span className="text-sm text-[var(--alo-text-muted)]">None listed</span>,
     },
     {
@@ -649,10 +649,10 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
     { key: 'type', label: 'Type', icon: Building2, render: (u: UniversityCompareData) => <span className="text-sm text-[var(--alo-body)]">{u.institutionType || 'N/A'}</span> },
     { key: 'courses', label: 'Courses', icon: BookOpen, render: (u: UniversityCompareData) => <span className="text-sm text-[var(--alo-body)]">{u.courseCount || 'N/A'} courses listed</span> },
     { key: 'scholarship', label: 'Scholarships', icon: Award, render: (u: UniversityCompareData) => u.scholarshipAvailable
-      ? <Badge className="bg-emerald-100 text-emerald-700 text-xs">Available</Badge>
+      ? <Badge className="bg-crm-success-bg text-crm-success-text text-xs">Available</Badge>
       : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span> },
     { key: 'accommodation', label: 'Accommodation', icon: Building2, render: (u: UniversityCompareData) => u.accommodationAvailable
-      ? <Badge className="bg-emerald-100 text-emerald-700 text-xs">Available</Badge>
+      ? <Badge className="bg-crm-success-bg text-crm-success-text text-xs">Available</Badge>
       : <span className="text-sm text-[var(--alo-text-muted)]">N/A</span> },
     { key: 'employability', label: 'Employability', icon: Briefcase, render: (u: UniversityCompareData) => u.employabilityRate
       ? <span className="text-sm font-medium text-[var(--alo-text)]">{u.employabilityRate}%</span>
@@ -726,7 +726,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
             <UniversitySearch onSelect={handleAddUniversity} disabled={universities.length >= MAX_ITEMS} />
           )}
           {items.length >= MAX_ITEMS && (
-            <p className="text-xs text-amber-600 mt-1.5">
+            <p className="text-xs text-crm-warning-text mt-1.5">
               Maximum {MAX_ITEMS} items reached. Remove one to add another.
             </p>
           )}
@@ -770,7 +770,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                       <th key={course.id} className="text-left p-4 min-w-[220px] relative">
                         <button
                           onClick={() => handleRemoveCourse(course.id)}
-                          className="absolute top-2 right-2 text-[var(--alo-text-muted)] hover:text-red-500 transition-colors z-10"
+                          className="absolute top-2 right-2 text-[var(--alo-text-muted)] hover:text-crm-danger-text transition-colors z-10"
                           aria-label={`Remove ${course.title}`}
                           disabled={removing === course.id}
                         >
@@ -889,7 +889,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
             <Button
               variant="outline"
               size="lg"
-              className="border-red-300 text-red-600 hover:bg-red-50 px-6"
+              className="border-crm-danger-border text-crm-danger-text hover:bg-crm-danger-bg px-6"
               onClick={handleClearAll}
             >
               <Trash2 className="size-5 mr-2" />
@@ -914,7 +914,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
                       <th key={uni.id} className="text-left p-4 min-w-[200px] relative">
                         <button
                           onClick={() => handleRemoveUniversity(uni.id)}
-                          className="absolute top-2 right-2 text-[var(--alo-text-muted)] hover:text-red-500 transition-colors z-10"
+                          className="absolute top-2 right-2 text-[var(--alo-text-muted)] hover:text-crm-danger-text transition-colors z-10"
                           aria-label={`Remove ${uni.name}`}
                         >
                           <X className="size-4" />
@@ -1009,7 +1009,7 @@ export function CourseCompareEnhanced({ courseIds }: { courseIds?: string[] }) {
             <Button
               variant="outline"
               size="lg"
-              className="border-red-300 text-red-600 hover:bg-red-50 px-6"
+              className="border-crm-danger-border text-crm-danger-text hover:bg-crm-danger-bg px-6"
               onClick={handleClearAll}
             >
               <Trash2 className="size-5 mr-2" />

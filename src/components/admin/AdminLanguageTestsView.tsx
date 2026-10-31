@@ -180,7 +180,7 @@ export default function AdminLanguageTestsView() {
                       <div className="flex items-center gap-2">
                         <h3 className="font-bold text-sm">{t.name}</h3>
                         {t.isPopular && <Badge className="bg-[var(--alo-cta)] text-white text-[11px]">Popular</Badge>}
-                        {t.verificationStatus === 'verified' ? <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">Verified</Badge> : <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-[11px]">{t.verificationStatus || 'pending'}</Badge>}
+                        {t.verificationStatus === 'verified' ? <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]">Verified</Badge> : <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]">{t.verificationStatus || 'pending'}</Badge>}
                       </div>
                       <p className="text-[11px] text-[var(--alo-text-muted)] font-mono mt-1">/{t.slug} • {t.provider}</p>
                       <p className="text-[11px] text-[var(--alo-body)] mt-1 line-clamp-2">{t.description?.slice(0,100)}</p>
@@ -196,9 +196,9 @@ export default function AdminLanguageTestsView() {
             </div>
           )}
 
-          <Card className="p-4 bg-amber-50 border-amber-200 rounded-2xl">
-            <h4 className="font-bold text-xs text-amber-900 flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5" /> Verification Rule</h4>
-            <p className="text-[11px] text-amber-800 mt-1.5 leading-relaxed">
+          <Card className="p-4 bg-crm-warning-bg border-crm-warning-border rounded-2xl">
+            <h4 className="font-bold text-xs text-crm-warning-text flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5" /> Verification Rule</h4>
+            <p className="text-[11px] text-crm-warning-text mt-1.5 leading-relaxed">
               Every factual field must have source_url, source_name, verified_by, verification_status, last_verified_at. If not verified: hide or show "Check official provider information" — Do not invent pricing, result time, acceptance, requirements.
             </p>
           </Card>
@@ -277,7 +277,7 @@ export default function AdminLanguageTestsView() {
                     <div><label className="font-semibold">Cost Summary — If not verified, use "Check current provider information"</label><Input value={formData.costSummary} onChange={e => setFormData({ ...formData, costSummary: e.target.value })} className="mt-1 h-9 rounded-xl border-[var(--alo-border)]" placeholder="Check current provider information" /></div>
                     <div><label className="font-semibold">Validity Summary</label><Input value={formData.validitySummary} onChange={e => setFormData({ ...formData, validitySummary: e.target.value })} className="mt-1 h-9 rounded-xl border-[var(--alo-border)]" placeholder="2 years" /></div>
                     <div><label className="font-semibold">Acceptance Summary — Disclaimer: Acceptance varies</label><textarea value={formData.acceptanceSummary} onChange={e => setFormData({ ...formData, acceptanceSummary: e.target.value })} rows={3} className="w-full mt-1 p-2 rounded-xl border border-[var(--alo-border)] bg-white" placeholder="Widely accepted for UK, Canada, Australia..." /></div>
-                    <p className="text-[11px] text-amber-700 p-2 rounded-lg bg-amber-50 border border-amber-100">Do not claim universal acceptance. Always disclaimer: Acceptance varies by university, course and visa route.</p>
+                    <p className="text-[11px] text-crm-warning-text p-2 rounded-lg bg-crm-warning-bg border border-crm-warning-border">Do not claim universal acceptance. Always disclaimer: Acceptance varies by university, course and visa route.</p>
                   </div>
                 )}
 
@@ -341,7 +341,7 @@ export default function AdminLanguageTestsView() {
                         <option value="pending">Pending</option><option value="verified">Verified</option><option value="outdated">Outdated</option><option value="requires_verification">Requires Verification</option>
                       </select>
                     </div>
-                    <p className="text-[11px] text-amber-700 p-2 rounded-lg bg-amber-50 border border-amber-100">If verificationStatus != verified, public UI must show "Check current provider information" or "Information requires verification" — never invent data.</p>
+                    <p className="text-[11px] text-crm-warning-text p-2 rounded-lg bg-crm-warning-bg border border-crm-warning-border">If verificationStatus != verified, public UI must show "Check current provider information" or "Information requires verification" — never invent data.</p>
                   </div>
                 )}
 
@@ -349,9 +349,9 @@ export default function AdminLanguageTestsView() {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2"><input type="checkbox" checked={formData.isPublished} onChange={e => setFormData({ ...formData, isPublished: e.target.checked })} /><label className="font-semibold">Is Published (visible on public site)</label></div>
                     <div><label className="font-semibold">Sort Order</label><Input type="number" value={formData.sortOrder} onChange={e => setFormData({ ...formData, sortOrder: e.target.value })} className="mt-1 h-9 rounded-xl border-[var(--alo-border)]" placeholder="0 = first" /></div>
-                    <Card className="p-4 bg-emerald-50 border-emerald-200 rounded-xl">
-                      <h4 className="font-bold text-xs text-emerald-900">Publish Checklist</h4>
-                      <ul className="text-[11px] text-emerald-800 mt-2 space-y-1 list-disc pl-4">
+                    <Card className="p-4 bg-crm-success-bg border-crm-success-border rounded-xl">
+                      <h4 className="font-bold text-xs text-crm-success-text">Publish Checklist</h4>
+                      <ul className="text-[11px] text-crm-success-text mt-2 space-y-1 list-disc pl-4">
                         <li>Basic information is complete</li>
                         <li>Source URL + Name + Verified By + Last Verified At + Status</li>
                         <li>SEO Title: {'{Test Name} Preparation | Requirements, Format & Study Abroad Guidance | ALO Education'}</li>

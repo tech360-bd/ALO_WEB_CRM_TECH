@@ -22,13 +22,13 @@ interface ReportCard {
 
 const reports: ReportCard[] = [
   { id: '1', title: 'Lead Report', description: 'Lead source analysis, conversion rates, counselor performance, and pipeline trends.', icon: Target, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]', lastGenerated: '2025-06-25 14:30', category: 'Sales' },
-  { id: '2', title: 'Application Report', description: 'Application status breakdown, university-wise stats, and stage conversion funnel.', icon: FileText, color: 'text-purple-600 bg-purple-50', lastGenerated: '2025-06-25 12:00', category: 'Operations' },
-  { id: '3', title: 'Conversion Report', description: 'Lead-to-enrollment conversion rates, bottleneck analysis, and drop-off points.', icon: TrendingUp, color: 'text-emerald-600 bg-emerald-50', lastGenerated: '2025-06-24 18:45', category: 'Sales' },
+  { id: '2', title: 'Application Report', description: 'Application status breakdown, university-wise stats, and stage conversion funnel.', icon: FileText, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]', lastGenerated: '2025-06-25 12:00', category: 'Operations' },
+  { id: '3', title: 'Conversion Report', description: 'Lead-to-enrollment conversion rates, bottleneck analysis, and drop-off points.', icon: TrendingUp, color: 'text-crm-success-text bg-crm-success-bg', lastGenerated: '2025-06-24 18:45', category: 'Sales' },
   { id: '4', title: 'Revenue Report', description: 'Revenue breakdown, payment collection status, and financial projections.', icon: DollarSign, color: 'text-yellow-600 bg-yellow-50', lastGenerated: '2025-06-25 09:15', category: 'Finance' },
-  { id: '5', title: 'Visa Report', description: 'Visa success rates, country-wise breakdown, risk analysis, and processing times.', icon: Plane, color: 'text-cyan-600 bg-cyan-50', lastGenerated: '2025-06-25 11:00', category: 'Operations' },
+  { id: '5', title: 'Visa Report', description: 'Visa success rates, country-wise breakdown, risk analysis, and processing times.', icon: Plane, color: 'text-[var(--alo-info-text)] bg-[var(--alo-info-bg)]', lastGenerated: '2025-06-25 11:00', category: 'Operations' },
   { id: '6', title: 'Counselor Performance', description: 'Individual counselor KPIs, student handling capacity, and success metrics.', icon: Users, color: 'text-[var(--alo-cta-active)] bg-[var(--alo-cta-soft)]', lastGenerated: '2025-06-25 08:00', category: 'HR' },
-  { id: '7', title: 'Branch Report', description: 'Branch-wise comparison, student volume, and revenue contribution.', icon: Building2, color: 'text-rose-600 bg-rose-50', lastGenerated: '2025-06-24 16:30', category: 'Operations' },
-  { id: '8', title: 'Partner Report', description: 'Partner performance, referral volumes, commission summaries, and partner health.', icon: Handshake, color: 'text-indigo-600 bg-indigo-50', lastGenerated: '2025-06-24 14:00', category: 'Partnerships' },
+  { id: '7', title: 'Branch Report', description: 'Branch-wise comparison, student volume, and revenue contribution.', icon: Building2, color: 'text-crm-warning-text bg-crm-warning-bg', lastGenerated: '2025-06-24 16:30', category: 'Operations' },
+  { id: '8', title: 'Partner Report', description: 'Partner performance, referral volumes, commission summaries, and partner health.', icon: Handshake, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)]', lastGenerated: '2025-06-24 14:00', category: 'Partnerships' },
 ];
 
 export default function CrmReportsPage() {

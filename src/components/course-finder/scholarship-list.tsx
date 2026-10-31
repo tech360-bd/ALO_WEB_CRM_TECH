@@ -77,7 +77,7 @@ function ScholarshipCard({ scholarship }: { scholarship: Scholarship }) {
     <Card className="overflow-hidden hover:shadow-md transition-shadow border-[var(--alo-border)]">
       <CardContent className="p-4 flex flex-col gap-3">
         {/* University */}
-        <p className="text-sm font-medium text-emerald-600">
+        <p className="text-sm font-medium text-crm-success-text">
           {COUNTRY_FLAGS[scholarship.country]} {scholarship.universityName}
         </p>
 
@@ -91,7 +91,7 @@ function ScholarshipCard({ scholarship }: { scholarship: Scholarship }) {
 
         {/* Amount */}
         <div className="flex items-center gap-2">
-          <Award className="size-5 text-emerald-500" />
+          <Award className="size-5 text-crm-success-text" />
           <div>
             <span className="text-xl font-bold text-[var(--alo-text)]">
               {scholarship.currency} {scholarship.amount.toLocaleString()}
@@ -104,7 +104,7 @@ function ScholarshipCard({ scholarship }: { scholarship: Scholarship }) {
 
         {/* Enquire */}
         <Button
- className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm mt-1"
+ className="w-full bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white text-sm mt-1"
  onClick={() => toast.success(`Enquiry sent for "${scholarship.scholarshipName}"`)}
         >
           <Send className="size-4 mr-1.5" />
@@ -164,13 +164,13 @@ export function ScholarshipList() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-emerald-600 text-white">
+      <div className="bg-[var(--alo-success-dark)] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           <div className="flex items-center gap-2 mb-1">
             <Award className="size-6" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold">Scholarships</h1>
-          <p className="text-emerald-100 mt-2 text-sm sm:text-base">
+          <p className="text-crm-success-text mt-2 text-sm sm:text-base">
             Find scholarships to fund your international education
           </p>
         </div>

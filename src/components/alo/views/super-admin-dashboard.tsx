@@ -186,20 +186,20 @@ interface ScholarshipPage {
 
 const PROFILE_STATUS_COLORS: Record<string, string> = {
   INCOMPLETE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  SUBMITTED: "bg-amber-100 text-amber-700",
+  SUBMITTED: "bg-crm-warning-bg text-crm-warning-text",
   UNDER_REVIEW: "bg-sky-100 text-sky-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  CORRECTION_REQUIRED: "bg-rose-100 text-rose-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  CORRECTION_REQUIRED: "bg-crm-warning-bg text-crm-warning-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
-  TERMINATED: "bg-slate-200 text-[var(--alo-body)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
   INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
-  TERMINATED: "bg-slate-200 text-[var(--alo-body)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const PROFILE_STATUS_LABELS: Record<string, string> = {
@@ -214,9 +214,9 @@ const PROFILE_STATUS_LABELS: Record<string, string> = {
 };
 
 const AGENT_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  IDLE: "bg-amber-100 text-amber-700",
-  PAUSED: "bg-slate-200 text-[var(--alo-body)]",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  IDLE: "bg-crm-warning-bg text-crm-warning-text",
+  PAUSED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const QUOTA_TYPE_LABELS: Record<string, string> = {
@@ -227,9 +227,9 @@ const QUOTA_TYPE_LABELS: Record<string, string> = {
 };
 
 const QUOTA_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const AUDIT_ACTION_LABELS: Record<string, string> = {
@@ -256,24 +256,24 @@ const AUDIT_ACTION_LABELS: Record<string, string> = {
 
 const AUDIT_ACTION_COLORS: Record<string, string> = {
   LOGIN: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  FAILED_LOGIN: "bg-rose-100 text-rose-700",
+  FAILED_LOGIN: "bg-crm-warning-bg text-crm-warning-text",
   LOGOUT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PROFILE_UPDATE: "bg-sky-100 text-sky-700",
   DOC_UPLOAD: "bg-sky-100 text-sky-700",
-  DOC_APPROVE: "bg-emerald-100 text-emerald-700",
-  DOC_REJECT: "bg-rose-100 text-rose-700",
-  APP_STATUS_CHANGE: "bg-violet-100 text-violet-700",
+  DOC_APPROVE: "bg-crm-success-bg text-crm-success-text",
+  DOC_REJECT: "bg-crm-warning-bg text-crm-warning-text",
+  APP_STATUS_CHANGE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   VISA_STATUS_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
-  MOCK_CREDIT_CHANGE: "bg-amber-100 text-amber-700",
-  PAYMENT_UPDATE: "bg-emerald-100 text-emerald-700",
-  COMMISSION_APPROVE: "bg-emerald-100 text-emerald-700",
-  SALARY_ACCESS: "bg-amber-100 text-amber-700",
-  ROLE_CHANGE: "bg-rose-100 text-rose-700",
-  PERMISSION_CHANGE: "bg-rose-100 text-rose-700",
-  AI_ACTION: "bg-violet-100 text-violet-700",
+  MOCK_CREDIT_CHANGE: "bg-crm-warning-bg text-crm-warning-text",
+  PAYMENT_UPDATE: "bg-crm-success-bg text-crm-success-text",
+  COMMISSION_APPROVE: "bg-crm-success-bg text-crm-success-text",
+  SALARY_ACCESS: "bg-crm-warning-bg text-crm-warning-text",
+  ROLE_CHANGE: "bg-crm-warning-bg text-crm-warning-text",
+  PERMISSION_CHANGE: "bg-crm-warning-bg text-crm-warning-text",
+  AI_ACTION: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   MESSAGE_ACTION: "bg-sky-100 text-sky-700",
   DATA_IMPORT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  PUBLIC_PUBLISH: "bg-emerald-100 text-emerald-700",
+  PUBLIC_PUBLISH: "bg-crm-success-bg text-crm-success-text",
 };
 
 const DOC_STATUS_LABELS: Record<string, string> = {
@@ -506,7 +506,7 @@ function HealthCard({
   latency: string;
 }) {
   return (
-    <Card className="rounded-2xl border-2 border-[var(--alo-border)] hover:border-emerald-300 transition-colors">
+    <Card className="rounded-2xl border-2 border-[var(--alo-border)] hover:border-crm-success-border transition-colors">
       <CardContent className="pt-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -514,12 +514,12 @@ function HealthCard({
             <p className="mt-1 text-sm font-medium text-foreground truncate">{detail}</p>
             <p className="mt-0.5 text-xs text-muted-foreground">p95 · {latency}</p>
           </div>
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-crm-success-bg text-crm-success-text">
             <Icon name={icon} className="size-5" />
           </div>
         </div>
-        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-          <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-crm-success-bg px-2.5 py-1 text-xs font-semibold text-crm-success-text">
+          <span className="size-1.5 rounded-full bg-[var(--alo-success)] animate-pulse" />
           Operational
         </div>
       </CardContent>
@@ -777,8 +777,8 @@ export function SuperAdminDashboard({
         subtitle="Full system control — employees, partners, courses, finance, AI, and security."
         icon="ShieldCheck"
         action={
-          <Badge className="gap-1.5 border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+          <Badge className="gap-1.5 border-crm-success-border bg-crm-success-bg px-3 py-1.5 text-sm font-semibold text-crm-success-text hover:bg-crm-success-bg">
+            <span className="size-2 rounded-full bg-[var(--alo-success)] animate-pulse" />
             All Systems Operational
           </Badge>
         }
@@ -877,7 +877,7 @@ export function SuperAdminDashboard({
           {/* Health cards */}
           <div>
             <div className="mb-3 flex items-center gap-2">
-              <Icon name="HeartPulse" className="size-4 text-emerald-600" />
+              <Icon name="HeartPulse" className="size-4 text-crm-success-text" />
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 System Health
               </h3>
@@ -965,7 +965,7 @@ export function SuperAdminDashboard({
                 <div className="rounded-xl border-2 border-[var(--alo-border)] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-crm-warning-bg text-crm-warning-text">
                         <Icon name="UserCheck" className="size-4" />
                       </div>
                       <div>
@@ -973,7 +973,7 @@ export function SuperAdminDashboard({
                         <p className="text-xs text-muted-foreground">Submitted / Under review</p>
                       </div>
                     </div>
-                    <Badge className="border-0 bg-amber-100 text-amber-700 hover:bg-amber-100">
+                    <Badge className="border-0 bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                       {pendingEmployeeProfiles.length}
                     </Badge>
                   </div>
@@ -994,7 +994,7 @@ export function SuperAdminDashboard({
                 <div className="rounded-xl border-2 border-[var(--alo-border)] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                         <Icon name="Handshake" className="size-4" />
                       </div>
                       <div>
@@ -1002,7 +1002,7 @@ export function SuperAdminDashboard({
                         <p className="text-xs text-muted-foreground">Awaiting activation</p>
                       </div>
                     </div>
-                    <Badge className="border-0 bg-violet-100 text-violet-700 hover:bg-violet-100">
+                    <Badge className="border-0 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                       {accessData?.summary.totalPartners ?? 0}
                     </Badge>
                   </div>
@@ -1021,7 +1021,7 @@ export function SuperAdminDashboard({
                 <div className="rounded-xl border-2 border-[var(--alo-border)] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-crm-warning-bg text-crm-warning-text">
                         <Icon name="PackagePlus" className="size-4" />
                       </div>
                       <div>
@@ -1029,7 +1029,7 @@ export function SuperAdminDashboard({
                         <p className="text-xs text-muted-foreground">Extra seats / image / video</p>
                       </div>
                     </div>
-                    <Badge className="border-0 bg-rose-100 text-rose-700 hover:bg-rose-100">
+                    <Badge className="border-0 bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                       {pendingQuota}
                     </Badge>
                   </div>
@@ -1420,7 +1420,7 @@ export function SuperAdminDashboard({
                               </p>
                             </div>
                           </div>
-                          <Badge className="border-0 bg-amber-100 text-amber-700 hover:bg-amber-100">
+                          <Badge className="border-0 bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                             {b.employees} staff
                           </Badge>
                         </div>
@@ -1438,9 +1438,9 @@ export function SuperAdminDashboard({
                               {totalStudentsForBranch.toLocaleString()}
                             </p>
                           </div>
-                          <div className="col-span-2 rounded-lg bg-emerald-50 p-2">
-                            <p className="text-emerald-700/80">Revenue (share)</p>
-                            <p className="text-sm font-bold text-emerald-700 tabular-nums">
+                          <div className="col-span-2 rounded-lg bg-crm-success-bg p-2">
+                            <p className="text-crm-success-text/80">Revenue (share)</p>
+                            <p className="text-sm font-bold text-crm-success-text tabular-nums">
                               {formatCurrency(totalRevenueForBranch)}
                             </p>
                           </div>
@@ -1523,12 +1523,12 @@ export function SuperAdminDashboard({
                         </div>
                       </div>
                       {c.verificationStatus === "VERIFIED" ? (
-                        <Badge className="border-0 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                        <Badge className="border-0 bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
                           <Icon name="CheckCircle2" className="mr-1 size-3" />
                           Verified
                         </Badge>
                       ) : (
-                        <Badge className="border-0 bg-amber-100 text-amber-700 hover:bg-amber-100">
+                        <Badge className="border-0 bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                           <Icon name="Clock" className="mr-1 size-3" />
                           Review
                         </Badge>
@@ -1675,7 +1675,7 @@ export function SuperAdminDashboard({
                       >
                         <div className="flex items-center justify-between">
                           <p className="text-sm font-semibold text-foreground">{dept}</p>
-                          <Badge className="border-0 bg-violet-100 text-violet-700 hover:bg-violet-100">
+                          <Badge className="border-0 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                             {info.count} agent{info.count !== 1 ? "s" : ""}
                           </Badge>
                         </div>
@@ -1686,7 +1686,7 @@ export function SuperAdminDashboard({
                           <span>{info.active} active</span>
                           <span>{info.jobs.toLocaleString()} jobs</span>
                           {info.pending > 0 && (
-                            <span className="font-medium text-amber-700">{info.pending} pending</span>
+                            <span className="font-medium text-crm-warning-text">{info.pending} pending</span>
                           )}
                         </div>
                       </div>
@@ -1702,12 +1702,12 @@ export function SuperAdminDashboard({
             description="Non-negotiable rules enforced across all AI agents"
             icon="ShieldAlert"
           >
-            <div className="rounded-xl border-2 border-amber-200 bg-amber-50 p-4">
+            <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg p-4">
               <div className="mb-3 flex items-start gap-2">
-                <Icon name="AlertTriangle" className="mt-0.5 size-5 text-amber-600 shrink-0" />
+                <Icon name="AlertTriangle" className="mt-0.5 size-5 text-crm-warning-text shrink-0" />
                 <div>
-                  <p className="text-sm font-bold text-amber-900">AI must NOT</p>
-                  <p className="text-xs text-amber-800">
+                  <p className="text-sm font-bold text-crm-warning-text">AI must NOT</p>
+                  <p className="text-xs text-crm-warning-text">
                     These rules are enforced in the AI Command Center safety layer. Violations are
                     audit-logged.
                   </p>
@@ -1715,8 +1715,8 @@ export function SuperAdminDashboard({
               </div>
               <ul className="space-y-1.5">
                 {AI_SAFETY_RULES.map((rule, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs text-amber-900">
-                    <Icon name="X" className="mt-0.5 size-3.5 text-rose-600 shrink-0" />
+                  <li key={i} className="flex items-start gap-2 text-xs text-crm-warning-text">
+                    <Icon name="X" className="mt-0.5 size-3.5 text-crm-warning-text shrink-0" />
                     <span>{rule}</span>
                   </li>
                 ))}
@@ -1823,9 +1823,9 @@ export function SuperAdminDashboard({
           {/* Inline SensitiveField demo — revenue figure */}
           <div className="mt-5 rounded-xl border-2 border-[var(--alo-border)] bg-white p-4">
             <div className="mb-2 flex items-center gap-2">
-              <Icon name="DollarSign" className="size-4 text-emerald-600" />
+              <Icon name="DollarSign" className="size-4 text-crm-success-text" />
               <p className="text-sm font-semibold text-foreground">Revenue Snapshot</p>
-              <Badge className="ml-auto border-0 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+              <Badge className="ml-auto border-0 bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
                 Privacy-protected
               </Badge>
             </div>

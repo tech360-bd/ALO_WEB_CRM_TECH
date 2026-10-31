@@ -31,7 +31,7 @@ export default function CreateApplicationPage() {
     <div className="p-4 md:p-6 bg-white min-h-screen">
       <div className="max-w-3xl mx-auto space-y-4">
         <div><h1 className="text-xl font-bold text-[var(--alo-text)]">Create Application</h1><p className="text-sm text-[var(--alo-text-muted)]">Direct/Student Self/Partner/Manual Import/Referral/Event/Course Finder, audit logged</p><div className="flex gap-2 mt-2"><Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-[11px]"></Badge><Badge className="bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)] text-[11px]">10 SOURCES NORMALIZED</Badge></div></div>
-        {msg && <div className={`p-3 rounded-xl border text-sm flex gap-2 ${msg.type==='success'?'bg-emerald-50 border-emerald-200 text-emerald-700':'bg-red-50 border-red-200 text-red-700'}`}>{msg.type==='success'?<CheckCircle2 className="w-4 h-4"/>:<AlertTriangle className="w-4 h-4"/>}{msg.text}</div>}
+        {msg && <div className={`p-3 rounded-xl border text-sm flex gap-2 ${msg.type==='success'?'bg-crm-success-bg border-crm-success-border text-crm-success-text':'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text'}`}>{msg.type==='success'?<CheckCircle2 className="w-4 h-4"/>:<AlertTriangle className="w-4 h-4"/>}{msg.text}</div>}
         <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl">
           <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm">Application Details — Required Fields</CardTitle></CardHeader>
           <CardContent className="p-4">

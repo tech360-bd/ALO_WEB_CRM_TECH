@@ -268,9 +268,9 @@ export default function MasterSuperAdminDashboard() {
 
       {/* ── ACTING-AS BANNER ── */}
       {actingAsRole && (
-        <div className="flex items-center justify-between rounded-xl border border-amber-600 bg-amber-500 p-3.5 text-xs font-bold text-slate-950 shadow-md">
+        <div className="flex items-center justify-between rounded-xl border border-crm-warning-border bg-[var(--alo-warning)] p-3.5 text-xs font-bold text-[var(--alo-text)] shadow-md">
           <div className="flex items-center gap-2">
-            <UserCheck className="h-4 w-4 text-slate-950" />
+            <UserCheck className="h-4 w-4 text-[var(--alo-text)]" />
             <span>
               Acting as: <strong>{actingAsRole}</strong> ({actingAsName}) — session expires in 30 minutes
             </span>
@@ -311,7 +311,7 @@ export default function MasterSuperAdminDashboard() {
               placeholder="Filter employees by name, ID or department"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              className="h-8 w-48 rounded-lg border border-slate-700 bg-slate-800 pl-8 pr-3 text-xs text-white placeholder-slate-400 focus:border-[var(--alo-cta)] focus:outline-none sm:w-64"
+              className="h-8 w-48 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] pl-8 pr-3 text-xs text-white placeholder-slate-400 focus:border-[var(--alo-cta)] focus:outline-none sm:w-64"
             />
           </div>
 
@@ -331,8 +331,8 @@ export default function MasterSuperAdminDashboard() {
  size="sm"
  className={` font-bold ${
  lockdown?.active
- ? 'bg-red-600 text-white hover:bg-red-700'
- : 'border border-slate-700 bg-slate-800 text-orange-400 hover:bg-slate-700'
+ ? 'bg-[var(--alo-error)] text-white hover:bg-[var(--alo-error)]'
+ : 'border border-[var(--alo-border)] bg-[var(--alo-page)] text-orange-400 hover:bg-[var(--alo-page)]'
  }`}
  onClick={() => setActiveTab('employees')}
           >
@@ -353,7 +353,7 @@ export default function MasterSuperAdminDashboard() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className={lockdown?.active ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}>
+            <Badge className={lockdown?.active ? 'bg-crm-danger-bg text-crm-danger-text' : 'bg-crm-success-bg text-crm-success-text'}>
               {lockdown?.active ? 'ACTIVE' : 'INACTIVE'}
             </Badge>
             {lockdown?.active && (
@@ -395,7 +395,7 @@ export default function MasterSuperAdminDashboard() {
       {/* ── QUICK ACTIONS ── */}
       <div className="scrollbar-none flex items-center gap-2 overflow-x-auto pb-2">
         <Button variant="outline" size="sm" className=" border-[var(--alo-border)] bg-white " onClick={() => setActiveTab('employees')}>
-          <Users className="mr-1 h-3.5 w-3.5 text-indigo-600" /> Employee control
+          <Users className="mr-1 h-3.5 w-3.5 text-[var(--alo-brand)]" /> Employee control
         </Button>
         <Button variant="outline" size="sm" className=" border-[var(--alo-border)] bg-white " onClick={() => setActiveTab('ai-command')}>
           <Bot className="mr-1 h-3.5 w-3.5 text-[var(--alo-cta-active)]" /> AI Command Center
@@ -404,8 +404,8 @@ export default function MasterSuperAdminDashboard() {
 
       {/* ── KPI CARDS ── */}
       {metricsState.error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
               <p className="font-medium">{metricsState.error}</p>
@@ -447,7 +447,7 @@ export default function MasterSuperAdminDashboard() {
 
           <CardContent className="p-0">
             {employeeState.error && (
-              <div className="flex items-start gap-2 p-4 text-sm text-red-700">
+              <div className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <div>
                   <p className="font-medium">{employeeState.error}</p>
@@ -506,7 +506,7 @@ export default function MasterSuperAdminDashboard() {
                         <Badge
                           className={`text-[11px] ${
                             employee.status === 'active'
-                              ? 'bg-emerald-100 text-emerald-800'
+                              ? 'bg-crm-success-bg text-crm-success-text'
                               : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'
                           }`}
                         >
@@ -518,12 +518,12 @@ export default function MasterSuperAdminDashboard() {
                       </TableCell>
                       <TableCell className="text-right">
                         {actingAsName === employee.name ? (
-                          <span className="text-[11px] text-amber-700">In session</span>
+                          <span className="text-[11px] text-crm-warning-text">In session</span>
                         ) : (
                           <Button
  size="sm"
  variant="ghost"
- className="h-7 text-indigo-600 hover:bg-indigo-50"
+ className="h-7 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]"
  disabled={actingAsBusy || Boolean(actingAsName)}
  onClick={() => {
                               setActingAsReason(

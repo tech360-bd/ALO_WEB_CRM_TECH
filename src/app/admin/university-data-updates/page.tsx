@@ -36,16 +36,16 @@ export default function AdminUniversityDataUpdatesPage() {
               <Card key={u.id} className="p-5 bg-white border-[var(--alo-border)] rounded-2xl">
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex-1">
-                    <div className="flex gap-2 mb-2"><Badge className="bg-amber-50 text-amber-700 border-amber-200 text-[11px]">{u.status||'unknown'}</Badge><Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">{u.entityType||u.targetType} — {u.fieldName}</Badge><Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">Confidence {typeof (u.confidence??u.aiConfidence)==='number' && (u.confidence??u.aiConfidence)>0 ? (u.confidence??u.aiConfidence) : 'not scored'}</Badge></div>
+                    <div className="flex gap-2 mb-2"><Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]">{u.status||'unknown'}</Badge><Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">{u.entityType||u.targetType} — {u.fieldName}</Badge><Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">Confidence {typeof (u.confidence??u.aiConfidence)==='number' && (u.confidence??u.aiConfidence)>0 ? (u.confidence??u.aiConfidence) : 'not scored'}</Badge></div>
                     <p className="font-semibold text-sm">{u.entityName||u.targetName} — {u.fieldName}</p>
                     <div className="grid sm:grid-cols-2 gap-3 mt-3 text-xs">
-                      <div className="bg-red-50 border border-red-200 rounded-xl p-3"><p className="text-red-800 font-semibold">OLD VALUE</p><p className="text-red-700 mt-1 break-all">{u.oldValue||'N/A'}</p></div>
-                      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3"><p className="text-emerald-800 font-semibold">NEW VALUE</p><p className="text-emerald-700 mt-1 break-all">{u.newValue||'N/A'}</p></div>
+                      <div className="bg-crm-danger-bg border border-crm-danger-border rounded-xl p-3"><p className="text-crm-danger-text font-semibold">OLD VALUE</p><p className="text-crm-danger-text mt-1 break-all">{u.oldValue||'N/A'}</p></div>
+                      <div className="bg-crm-success-bg border border-crm-success-border rounded-xl p-3"><p className="text-crm-success-text font-semibold">NEW VALUE</p><p className="text-crm-success-text mt-1 break-all">{u.newValue||'N/A'}</p></div>
                     </div>
                     <p className="text-[11px] text-[var(--alo-text-muted)] mt-3">Source: {u.sourceUrl ? <a href={u.sourceUrl} target="_blank" className="text-[var(--alo-brand)] underline break-all">{u.sourceUrl}</a> : 'No source recorded'} • Evidence: {u.evidence||u.evidenceUrl||'none recorded'}</p>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-emerald-600 text-white ">Approve</Button>
+                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[var(--alo-success-dark)] text-white ">Approve</Button>
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] ">Reject</Button>
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="border-[var(--alo-border)] ">Edit</Button>
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[var(--alo-brand)] text-white ">Approve & Publish</Button>

@@ -62,7 +62,7 @@ export default function EmployeeReportsPage() {
       <div className="flex flex-wrap items-end justify-between gap-3"><div><h1 className="text-2xl font-bold text-alo-text">Reports &amp; Activity</h1><p className="text-sm text-alo-text-muted">Your real assigned workload and employee activity records.</p></div><Button variant="outline" onClick={() => void loadReports()} disabled={loading}><RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />Refresh</Button></div>
 
       {loading && <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" aria-live="polite">{[0, 1, 2, 3].map((key) => <Skeleton key={key} className="h-28 rounded-xl" />)}</div>}
-      {!loading && error && <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><span className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" />{error}</span><Button variant="outline" onClick={() => void loadReports()}>Retry</Button></div>}
+      {!loading && error && <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-crm-danger-border bg-crm-danger-bg p-4 text-sm text-crm-danger-text"><span className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" />{error}</span><Button variant="outline" onClick={() => void loadReports()}>Retry</Button></div>}
       {!loading && !error && data && <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <MetricCard label="Tasks" value={taskStats?.total ?? '—'} detail={`${taskStats?.completed ?? 0} completed · ${taskStats?.pending ?? 0} pending`} icon={Activity} />

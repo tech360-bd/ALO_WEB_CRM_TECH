@@ -278,7 +278,7 @@ export default function FundingPanel() {
           <Button onClick={addDeadline} disabled={busy || draft.title.trim().length < 3}>
             {busy ? 'Saving…' : 'Add deadline'}
           </Button>
-          {actionError && <p className="mt-2 text-xs text-red-700">{actionError}</p>}
+          {actionError && <p className="mt-2 text-xs text-crm-danger-text">{actionError}</p>}
         </div>
       </Card>
     </div>

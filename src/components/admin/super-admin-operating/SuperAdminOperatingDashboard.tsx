@@ -147,7 +147,7 @@ function ReasonDialog({ request, onClose }: { request: ReasonRequest | null; onC
   const tooShort = reason.trim().length < minLen;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--alo-page)]/40 p-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-lg rounded-2xl border bg-white p-5 shadow-xl" style={{ borderColor: TOKENS.border }}>
         <h3 className="text-base font-semibold" style={{ color: TOKENS.text }}>{request.title}</h3>
         <p className="mt-1 text-xs leading-relaxed text-[var(--alo-text-muted)]">{request.description}</p>
@@ -578,7 +578,7 @@ export default function SuperAdminOperatingDashboard() {
                 <p className="text-sm font-bold">
                   SUPER ADMIN ACTING AS: {acting.data.actingAs?.role} / {acting.data.actingAs?.name}
                 </p>
-                <p className="mt-0.5 text-xs text-slate-600">
+                <p className="mt-0.5 text-xs text-[var(--alo-body)]">
                   Real actor: {acting.data.realActor?.name} · Every action is written to the audit log ·
                   Session expires {acting.data.actingAs?.expiresAt ? new Date(acting.data.actingAs.expiresAt).toLocaleTimeString() : '—'} ·
                   RBAC, finance approvals and settings are blocked in this mode.
@@ -1018,7 +1018,7 @@ export default function SuperAdminOperatingDashboard() {
                             <StatusPill tone={event.severity === 'critical' || event.severity === 'high' ? 'critical' : 'attention'}>
                               {event.severity}
                             </StatusPill>{' '}
-                            <span className="text-slate-600">{event.eventType}</span>
+                            <span className="text-[var(--alo-body)]">{event.eventType}</span>
                           </li>
                         ))}
                       </ul>
@@ -1083,7 +1083,7 @@ export default function SuperAdminOperatingDashboard() {
                   <summary className="cursor-pointer text-xs font-semibold" style={{ color: TOKENS.primary }}>
                     Agent protection policies ({agents.data.policies.length})
                   </summary>
-                  <ul className="mt-2 grid grid-cols-1 gap-1 text-[11px] text-slate-600 sm:grid-cols-2">
+                  <ul className="mt-2 grid grid-cols-1 gap-1 text-[11px] text-[var(--alo-body)] sm:grid-cols-2">
                     {agents.data.policies.map((policy) => <li key={policy}>• {policy}</li>)}
                   </ul>
                 </details>

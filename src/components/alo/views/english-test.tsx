@@ -156,16 +156,16 @@ const TEST_SECTIONS: Record<string, { name: string; icon: string }[]> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   IN_PROGRESS: "bg-sky-100 text-sky-700",
-  COMPLETED: "bg-emerald-100 text-emerald-700",
+  COMPLETED: "bg-crm-success-bg text-crm-success-text",
 };
 
 function scoreColor(score?: number | null) {
   if (score == null) return "text-muted-foreground";
-  if (score >= 7) return "text-emerald-600";
-  if (score >= 6) return "text-amber-600";
-  return "text-rose-600";
+  if (score >= 7) return "text-crm-success-text";
+  if (score >= 6) return "text-crm-warning-text";
+  return "text-crm-warning-text";
 }
 
 function parseWeakAreas(raw: string | null): string[] {
@@ -453,8 +453,8 @@ export function EnglishTestView() {
                             <Badge
                               className={
                                 m.isFree
-                                  ? "bg-emerald-100 text-emerald-700"
-                                  : "bg-amber-100 text-amber-700"
+                                  ? "bg-crm-success-bg text-crm-success-text"
+                                  : "bg-crm-warning-bg text-crm-warning-text"
                               }
                             >
                               {m.isFree ? "Free" : "Paid"}
@@ -504,7 +504,7 @@ export function EnglishTestView() {
                                 {weak.slice(0, 3).map((w, i) => (
                                   <span
                                     key={i}
-                                    className="rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-medium text-rose-700"
+                                    className="rounded-full bg-crm-warning-bg px-2 py-0.5 text-[11px] font-medium text-crm-warning-text"
                                   >
                                     {w}
                                   </span>
@@ -610,7 +610,7 @@ export function EnglishTestView() {
                     <li key={i} className="flex items-start gap-2">
                       <Icon
                         name="CircleCheck"
-                        className="mt-0.5 size-4 shrink-0 text-emerald-500"
+                        className="mt-0.5 size-4 shrink-0 text-crm-success-text"
                       />
                       <span className="text-foreground/80">{tip}</span>
                     </li>
@@ -915,13 +915,13 @@ function MockExamDialog({
               name="Timer"
               className={cn(
                 "size-4",
-                secondsLeft < 60 ? "text-rose-500" : "text-[var(--alo-brand)]"
+                secondsLeft < 60 ? "text-crm-warning-text" : "text-[var(--alo-brand)]"
               )}
             />
             <span
               className={cn(
                 "font-mono text-lg font-bold tabular-nums",
-                secondsLeft < 60 ? "text-rose-500" : "text-foreground"
+                secondsLeft < 60 ? "text-crm-warning-text" : "text-foreground"
               )}
             >
               {fmtTimer(secondsLeft)}
@@ -934,7 +934,7 @@ function MockExamDialog({
                 className={cn(
                   "flex size-7 items-center justify-center rounded-md border-2 text-xs font-semibold",
                   answers[i] !== null
-                    ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                    ? "border-crm-success-border bg-crm-success-bg text-crm-success-text"
                     : "border-border bg-background text-muted-foreground"
                 )}
               >
@@ -942,7 +942,7 @@ function MockExamDialog({
               </span>
             ))}
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-emerald-600">
+          <div className="flex items-center gap-1.5 text-xs text-crm-success-text">
             <Icon name="CloudCheck" className="size-3.5" />
             Autosaved
           </div>
@@ -950,15 +950,15 @@ function MockExamDialog({
 
         {submitted ? (
           <div className="space-y-4">
-            <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-4 text-center">
+            <div className="rounded-2xl border-2 border-crm-success-border bg-crm-success-bg p-4 text-center">
               <Icon
                 name="CircleCheck"
-                className="mx-auto size-10 text-emerald-500"
+                className="mx-auto size-10 text-crm-success-text"
               />
               <p className="mt-2 text-sm text-muted-foreground">
                 Your estimated score
               </p>
-              <p className="text-3xl font-bold text-emerald-600">
+              <p className="text-3xl font-bold text-crm-success-text">
                 Band {estimatedBand}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -975,8 +975,8 @@ function MockExamDialog({
                     className={cn(
                       "rounded-lg border p-2.5 text-sm",
                       correct
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-rose-200 bg-rose-50"
+                        ? "border-crm-success-border bg-crm-success-bg"
+                        : "border-crm-warning-border bg-crm-warning-bg"
                     )}
                   >
                     <div className="flex items-start gap-2">
@@ -984,7 +984,7 @@ function MockExamDialog({
                         name={correct ? "CircleCheck" : "CircleX"}
                         className={cn(
                           "mt-0.5 size-4 shrink-0",
-                          correct ? "text-emerald-500" : "text-rose-500"
+                          correct ? "text-crm-success-text" : "text-crm-warning-text"
                         )}
                       />
                       <div>

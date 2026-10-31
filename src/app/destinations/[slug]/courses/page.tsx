@@ -104,7 +104,7 @@ export default async function CountryCoursesPage({ params }: { params: Promise<{
                         <span className="text-[var(--alo-text-muted)] flex items-center gap-1">
                           <DollarSign className="w-3.5 h-3.5" /> Tuition Fee:
                         </span>
-                        <span className="font-bold text-emerald-600">
+                        <span className="font-bold text-crm-success-text">
                           {primaryIntake.tuitionCurrency} {primaryIntake.yearlyTuition?.toLocaleString()}
                         </span>
                       </div>

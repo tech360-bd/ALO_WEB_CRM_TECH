@@ -90,7 +90,7 @@ function EligibilityIndicator({ course, student }: { course: Course; student: ty
 
   if (ieltsOk && pteOk) {
     return (
-      <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md text-xs font-medium">
+      <div className="flex items-center gap-1.5 text-crm-success-text bg-crm-success-bg px-2.5 py-1 rounded-md text-xs font-medium">
         <UserCheck className="size-3.5" />
         Eligible
       </div>
@@ -101,7 +101,7 @@ function EligibilityIndicator({ course, student }: { course: Course; student: ty
   if (!pteOk) issues.push(`PTE ${course.pteMin} req.`);
 
   return (
-    <div className="flex items-center gap-1.5 text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md text-xs font-medium">
+    <div className="flex items-center gap-1.5 text-crm-warning-text bg-crm-warning-bg px-2.5 py-1 rounded-md text-xs font-medium">
       <UserX className="size-3.5" />
       {issues.join(', ')}
     </div>
@@ -121,7 +121,7 @@ function CommissionPanel({ course, canView }: { course: Course; canView: boolean
       </div>
       <div className="text-center">
         <p className="text-[11px] uppercase tracking-wider text-[var(--alo-text-muted)] font-medium">Increased</p>
-        <p className="text-sm font-semibold text-emerald-600 mt-0.5">
+        <p className="text-sm font-semibold text-crm-success-text mt-0.5">
           {course.commissionIncreased != null ? `${course.commissionIncreased}%` : '—'}
         </p>
       </div>
@@ -152,7 +152,7 @@ function NotesPanel({ course, canView }: { course: Course; canView: boolean }) {
       </CollapsibleTrigger>
       <CollapsibleContent>
         <textarea
-          className="w-full mt-1 text-xs border border-[var(--alo-border)] rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 min-h-[60px]"
+          className="w-full mt-1 text-xs border border-[var(--alo-border)] rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-crm-success-border min-h-[60px]"
           placeholder="Add internal notes about this course..."
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -176,11 +176,11 @@ function ProCourseCard({
   onApply: (c: Course) => void;
 }) {
   const levelColors: Record<string, string> = {
-    Undergraduate: 'bg-emerald-100 text-emerald-800',
-    Postgraduate: 'bg-amber-100 text-amber-800',
+    Undergraduate: 'bg-crm-success-bg text-crm-success-text',
+    Postgraduate: 'bg-crm-warning-bg text-crm-warning-text',
     Foundation: 'bg-sky-100 text-sky-800',
-    Diploma: 'bg-violet-100 text-violet-800',
-    PhD: 'bg-rose-100 text-rose-800',
+    Diploma: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+    PhD: 'bg-crm-warning-bg text-crm-warning-text',
   };
 
   const canViewCommission = role === 'admin' || role === 'manager';
@@ -192,14 +192,14 @@ function ProCourseCard({
         {/* Top Row: University + Verified Badge */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-emerald-600 truncate">
+            <p className="text-sm font-medium text-crm-success-text truncate">
               {COUNTRY_FLAGS[course.country]} {course.universityName}
             </p>
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             {/* Verification Badge */}
             {course.sourceVerified ? (
-              <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 text-[11px] gap-1 px-1.5">
+              <Badge variant="secondary" className="bg-crm-success-bg text-crm-success-text text-[11px] gap-1 px-1.5">
                 <ShieldCheck className="size-3" />
                 Verified
               </Badge>
@@ -245,7 +245,7 @@ function ProCourseCard({
 
         {/* Scholarship */}
         {course.hasScholarship && (
-          <Badge className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs w-fit">
+          <Badge className="bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)] text-xs w-fit">
             <Award className="size-3" />
             Scholarship Available
           </Badge>
@@ -291,7 +291,7 @@ function ProCourseCard({
         <div className="flex gap-2 pt-1">
           <Button
  size="sm"
- className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="flex-1 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
  onClick={() => onShortlist(course)}
           >
             <ListPlus className="size-3 mr-1" />
@@ -299,7 +299,7 @@ function ProCourseCard({
           </Button>
           <Button
  size="sm"
- className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="flex-1 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
  onClick={() => onApply(course)}
           >
             <FilePlus2 className="size-3 mr-1" />
@@ -452,7 +452,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
               <Checkbox
                 checked={filters.countries.includes(country)}
                 onCheckedChange={() => toggleCountry(country)}
-                className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                className="data-[state=checked]:bg-[var(--alo-success-dark)] data-[state=checked]:border-crm-success-border"
               />
               <span className="text-sm text-[var(--alo-body)]">{COUNTRY_FLAGS[country]} {country}</span>
             </label>
@@ -468,7 +468,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
               <Checkbox
                 checked={filters.studyLevels.includes(level)}
                 onCheckedChange={() => toggleLevel(level)}
-                className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                className="data-[state=checked]:bg-[var(--alo-success-dark)] data-[state=checked]:border-crm-success-border"
               />
               <span className="text-sm text-[var(--alo-body)]">{level}</span>
             </label>
@@ -494,7 +494,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
           min={0} max={100000} step={5000}
           value={filters.tuitionRange}
           onValueChange={(v) => setFilters({ ...filters, tuitionRange: v as [number, number] })}
-          className="[&_[data-slot=slider-range]]:bg-emerald-600 [&_[data-slot=slider-thumb]]:border-emerald-600"
+          className="[&_[data-slot=slider-range]]:bg-[var(--alo-success-dark)] [&_[data-slot=slider-thumb]]:border-crm-success-border"
         />
         <div className="flex justify-between text-xs text-[var(--alo-text-muted)]">
           <span>${(filters.tuitionRange[0] / 1000).toFixed(0)}k</span>
@@ -508,7 +508,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
           min={0} max={9} step={0.5}
           value={[filters.ieltsMin]}
           onValueChange={(v) => setFilters({ ...filters, ieltsMin: v[0] })}
-          className="[&_[data-slot=slider-range]]:bg-emerald-600 [&_[data-slot=slider-thumb]]:border-emerald-600"
+          className="[&_[data-slot=slider-range]]:bg-[var(--alo-success-dark)] [&_[data-slot=slider-thumb]]:border-crm-success-border"
         />
         <div className="flex justify-between text-xs text-[var(--alo-text-muted)]">
           <span>0</span>
@@ -522,7 +522,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
         <Switch
           checked={filters.scholarshipOnly}
           onCheckedChange={(v) => setFilters({ ...filters, scholarshipOnly: v })}
-          className="data-[state=checked]:bg-emerald-600"
+          className="data-[state=checked]:bg-[var(--alo-success-dark)]"
         />
       </div>
     </div>
@@ -552,7 +552,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
               variant={currentPage === page ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentPage(page)}
-              className={currentPage === page ? 'h-8 w-8 p-0 bg-emerald-600 hover:bg-emerald-700 text-white' : 'h-8 w-8 p-0'}
+              className={currentPage === page ? 'h-8 w-8 p-0 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white' : 'h-8 w-8 p-0'}
             >
               {page}
             </Button>
@@ -571,7 +571,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
       <div className="border-b border-[var(--alo-border)] bg-[var(--alo-blue-soft)] text-[var(--alo-text)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <div className="flex items-center gap-2 mb-1">
-            <Badge className="bg-emerald-600 text-white text-[11px] uppercase tracking-wider">
+            <Badge className="bg-[var(--alo-success-dark)] text-white text-[11px] uppercase tracking-wider">
               CRM Pro
             </Badge>
             <span className="text-xs text-[var(--alo-text-muted)]">Role: {role}</span>
@@ -589,7 +589,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
                 placeholder="Search courses..."
                 value={filters.search}
                 onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
-                className="pl-10 h-10 bg-slate-800 border-slate-700 text-white placeholder:text-[var(--alo-text-muted)] focus-visible:ring-emerald-500"
+                className="pl-10 h-10 bg-[var(--alo-page)] border-[var(--alo-border)] text-white placeholder:text-[var(--alo-text-muted)] focus-visible:ring-emerald-500"
               />
               {filters.search && (
                 <button onClick={() => setFilters((prev) => ({ ...prev, search: '' }))} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] hover:text-[var(--alo-placeholder)]">
@@ -600,7 +600,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
 
             {/* Student Selector */}
             <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
-              <SelectTrigger className="w-full sm:w-64 bg-slate-800 border-slate-700 text-white">
+              <SelectTrigger className="w-full sm:w-64 bg-[var(--alo-page)] border-[var(--alo-border)] text-white">
                 <SelectValue placeholder="Select student..." />
               </SelectTrigger>
               <SelectContent>
@@ -621,7 +621,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
             <Button
  size="sm"
  variant="outline"
- className="border-slate-600 text-[var(--alo-placeholder)] hover:bg-slate-800 hover:text-white "
+ className="border-[var(--alo-border)] text-[var(--alo-placeholder)] hover:bg-[var(--alo-page)] hover:text-white "
  onClick={handleExport}
  >
               <Download className="size-3.5 mr-1.5" />
@@ -643,7 +643,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
           {/* Mobile Filter Sheet */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-[var(--alo-success-dark)] text-white border-crm-success-border hover:bg-[var(--alo-success-dark)] hover:text-white">
                 <SlidersHorizontal className="size-5" />
               </Button>
             </SheetTrigger>
@@ -663,7 +663,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
                 )}
               </p>
               {selectedStudent && (
-                <Badge variant="outline" className="text-xs border-emerald-200 text-emerald-700 bg-emerald-50">
+                <Badge variant="outline" className="text-xs border-crm-success-border text-crm-success-text bg-crm-success-bg">
                   <UserCheck className="size-3 mr-1" />
                   {selectedStudent.name} — IELTS {selectedStudent.ieltsScore}
                 </Badge>
@@ -683,7 +683,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
                 </div>
                 <h3 className="text-lg font-semibold text-[var(--alo-body)]">No courses found</h3>
                 <p className="text-sm text-[var(--alo-text-muted)] mt-1">Try adjusting your filters.</p>
-                <Button variant="outline" onClick={handleResetFilters} className="mt-4 text-emerald-600 border-emerald-600 hover:bg-emerald-50">
+                <Button variant="outline" onClick={handleResetFilters} className="mt-4 text-crm-success-text border-crm-success-border hover:bg-crm-success-bg">
                   Clear filters
                 </Button>
               </div>

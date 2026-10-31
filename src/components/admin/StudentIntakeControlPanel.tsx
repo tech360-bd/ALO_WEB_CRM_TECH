@@ -35,7 +35,7 @@ export default function StudentIntakeControlPanel() {
       <CardHeader className="pb-3 border-b border-[var(--alo-border)]">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-bold flex items-center gap-2"><Bot className="w-5 h-5 text-[var(--alo-cta)]" />Secure General Intake — Website / WhatsApp / Facebook</CardTitle>
-          <Badge className={health?.officeHours ? 'bg-emerald-500 text-[var(--alo-text)]' : 'bg-amber-500 text-[var(--alo-text)]'}>
+          <Badge className={health?.officeHours ? 'bg-[var(--alo-success)] text-[var(--alo-text)]' : 'bg-[var(--alo-warning)] text-[var(--alo-text)]'}>
             {health?.officeHours ? 'During office hours' : 'Outside office hours'}
           </Badge>
         </div>
@@ -54,7 +54,7 @@ export default function StudentIntakeControlPanel() {
           <p className="text-[11px] text-[var(--alo-placeholder)]">Webhooks: <code className="bg-[var(--alo-surface-muted)] px-1 rounded">POST /api/whatsapp/webhook</code> and <code className="bg-[var(--alo-surface-muted)] px-1 rounded">POST /api/facebook/webhook</code> (Messenger) → shared safe general-intake handler.</p>
           <p className="text-[11px] text-[var(--alo-placeholder)] mt-1">This public chat does not accept files or verify voice transcripts. Use the authenticated Student Portal Documents area or an authorized staff workflow; never send private documents here.</p>
         </div>
-        <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[11px] text-amber-900">
+        <p className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-3 text-[11px] text-crm-warning-text">
           Public intake replies are rule-based and are not a substitute for current university or government requirements. AI-generated staff replies remain drafts for human review; this panel does not send test or customer messages.
         </p>
         <div className="flex gap-2">

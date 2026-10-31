@@ -154,9 +154,9 @@ export default function CourseComparePage() {
         <p className="text-sm text-[var(--alo-body)] max-w-3xl">Compare up to {COMPARE_MAX} courses side by side. Only courses whose details ALO Education has verified against official sources are shown. Fees, intakes and requirements can change, so check the source links and last-verified dates.</p>
       </header>
 
-      {error && <div role="alert" className="p-3 bg-red-50 border border-red-200 text-red-800 text-sm rounded-xl flex items-center gap-2"><AlertCircle className="w-4 h-4" aria-hidden="true" />{error}</div>}
+      {error && <div role="alert" className="p-3 bg-crm-danger-bg border border-crm-danger-border text-crm-danger-text text-sm rounded-xl flex items-center gap-2"><AlertCircle className="w-4 h-4" aria-hidden="true" />{error}</div>}
       {unavailable.length > 0 && (
-        <div role="status" className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-sm rounded-xl">
+        <div role="status" className="p-3 bg-crm-warning-bg border border-crm-warning-border text-crm-warning-text text-sm rounded-xl">
           {unavailable.length} selected course{unavailable.length === 1 ? ' is' : 's are'} not currently available to compare (not found, or not verified and published).{' '}
           <button type="button" className="underline" onClick={() => { const next = writeCompareList(ids.filter((x) => !unavailable.includes(x))); setIds(next); }}>Remove from list</button>
         </div>
@@ -182,7 +182,7 @@ export default function CourseComparePage() {
                   {courses.map((c) => (
                     <th key={c.courseId} scope="col" className="p-3 text-left align-top">
                       <Link href={`/course/${encodeURIComponent(c.slug)}`} className="font-semibold text-[var(--alo-text)] hover:underline">{c.courseTitle}</Link>
-                      <div><button type="button" className="text-xs text-red-700 underline mt-1" onClick={() => remove(c.identifier)}>Remove</button></div>
+                      <div><button type="button" className="text-xs text-crm-danger-text underline mt-1" onClick={() => remove(c.identifier)}>Remove</button></div>
                     </th>
                   ))}
                 </tr>
@@ -237,7 +237,7 @@ export default function CourseComparePage() {
                 <input className="w-full border border-[var(--alo-border-strong)] rounded-lg px-2 py-2" inputMode="decimal" value={testScore} onChange={(e) => setTestScore(e.target.value)} /></label>
             </div>
             <Button onClick={() => void checkEligibility()} disabled={eligBusy}>{eligBusy ? 'Checking…' : 'Check eligibility'}</Button>
-            {eligError && <p role="alert" className="text-sm text-red-700">{eligError}</p>}
+            {eligError && <p role="alert" className="text-sm text-crm-danger-text">{eligError}</p>}
             <ul className="text-xs text-[var(--alo-text-muted)] list-disc pl-5 space-y-1">
               {ELIGIBILITY_DISCLAIMERS.map((d) => <li key={d}>{d}</li>)}
             </ul>

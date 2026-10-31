@@ -103,10 +103,10 @@ const STATUS_META: Record<
   ELIGIBLE: {
     label: "Eligible",
     icon: "CheckCircle",
-    bg: "bg-emerald-50",
-    text: "text-emerald-700",
-    border: "border-emerald-200",
-    dot: "bg-emerald-500",
+    bg: "bg-crm-success-bg",
+    text: "text-crm-success-text",
+    border: "border-crm-success-border",
+    dot: "bg-[var(--alo-success)]",
   },
   LIKELY_ELIGIBLE: {
     label: "Likely Eligible",
@@ -119,18 +119,18 @@ const STATUS_META: Record<
   NEED_REVIEW: {
     label: "Need Review",
     icon: "AlertCircle",
-    bg: "bg-amber-50",
-    text: "text-amber-700",
-    border: "border-amber-200",
-    dot: "bg-amber-500",
+    bg: "bg-crm-warning-bg",
+    text: "text-crm-warning-text",
+    border: "border-crm-warning-border",
+    dot: "bg-[var(--alo-warning)]",
   },
   NOT_ELIGIBLE: {
     label: "Not Eligible",
     icon: "XCircle",
-    bg: "bg-rose-50",
-    text: "text-rose-700",
-    border: "border-rose-200",
-    dot: "bg-rose-500",
+    bg: "bg-crm-warning-bg",
+    text: "text-crm-warning-text",
+    border: "border-crm-warning-border",
+    dot: "bg-crm-warning-bg0",
   },
   MISSING_INFO: {
     label: "Missing Info",
@@ -138,7 +138,7 @@ const STATUS_META: Record<
     bg: "bg-[var(--alo-surface-muted)]",
     text: "text-[var(--alo-body)]",
     border: "border-[var(--alo-border)]",
-    dot: "bg-slate-500",
+    dot: "bg-[var(--alo-page)]0",
   },
 };
 
@@ -537,10 +537,10 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
               className={cn(
                 "h-9 px-3 text-xs font-semibold",
                 profileCompletion >= 80
-                  ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-50"
+                  ? "bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg"
                   : profileCompletion >= 50
-                  ? "bg-amber-50 text-amber-700 hover:bg-amber-50"
-                  : "bg-rose-50 text-rose-700 hover:bg-rose-50",
+                  ? "bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg"
+                  : "bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg",
               )}
             >
               <Icon name="Gauge" className="mr-1.5 size-3.5" />
@@ -596,7 +596,7 @@ export function StudentCourseFinder({ onNavigate }: StudentCourseFinderProps) {
               </div>
               <Progress value={profileCompletion} className="h-2" />
               {profileCompletion < 80 && (
-                <p className="mt-1.5 text-[11px] text-amber-600">
+                <p className="mt-1.5 text-[11px] text-crm-warning-text">
                   <Icon name="Info" className="mr-1 inline size-3" />
                   Higher completion improves eligibility accuracy. Update the profile to unlock stronger matches.
                 </p>
@@ -1125,14 +1125,14 @@ function EligibilityCourseCard({
 
         {/* Missing requirements */}
         {missing.length > 0 && (
-          <div className="mt-3 rounded-lg bg-amber-50 p-2.5">
-            <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-amber-700">
+          <div className="mt-3 rounded-lg bg-crm-warning-bg p-2.5">
+            <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-crm-warning-text">
               <Icon name="AlertTriangle" className="size-3" />
               Missing info ({result.missing.length})
             </p>
             <ul className="space-y-1">
               {missing.map((m, i) => (
-                <li key={i} className="flex items-start gap-1.5 text-xs text-amber-700/90">
+                <li key={i} className="flex items-start gap-1.5 text-xs text-crm-warning-text/90">
                   <Icon name="Dot" className="size-3 shrink-0" />
                   <span>{m}</span>
                 </li>
@@ -1159,8 +1159,8 @@ function EligibilityCourseCard({
  className={cn(
  "",
  isShortlisted
- ? "bg-rose-500 text-white hover:bg-rose-600"
- : "border-rose-200 text-rose-600 hover:bg-rose-50",
+ ? "bg-crm-warning-bg0 text-white hover:bg-[var(--alo-error)]"
+ : "border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg",
  )}
  size="sm"
  >

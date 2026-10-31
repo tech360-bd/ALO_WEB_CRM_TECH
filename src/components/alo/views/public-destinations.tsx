@@ -126,8 +126,8 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                     "flex size-8 items-center justify-center rounded-lg",
                     s.accent === "blue" && "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
                     s.accent === "orange" && "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
-                    s.accent === "emerald" && "bg-emerald-50 text-emerald-600",
-                    s.accent === "violet" && "bg-violet-50 text-violet-600",
+                    s.accent === "emerald" && "bg-crm-success-bg text-crm-success-text",
+                    s.accent === "violet" && "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
                   )}>
                     <Icon name={s.icon} className="size-4" />
                   </div>
@@ -184,7 +184,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                       </div>
                     </div>
                     {c.verificationStatus === "VERIFIED" && (
-                      <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-[11px] text-emerald-700">
+                      <Badge variant="outline" className="border-crm-success-border bg-crm-success-bg text-[11px] text-crm-success-text">
                         <Icon name="ShieldCheck" className="mr-1 size-3" />
                         Source reviewed
                       </Badge>
@@ -214,7 +214,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                   </div>
 
                   <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Icon name="ShieldCheck" className="size-3.5 text-emerald-600" />
+                    <Icon name="ShieldCheck" className="size-3.5 text-crm-success-text" />
                     Last reviewed: <span className="font-semibold text-foreground">{fmtDate(c.lastVerifiedAt)}</span>
                   </div>
 
@@ -272,7 +272,7 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
                   <Button
                     onClick={handleWhatsApp}
                     variant="outline"
-                    className="border-emerald-500 text-emerald-700 hover:bg-emerald-50"
+                    className="border-crm-success-border text-crm-success-text hover:bg-crm-success-bg"
                   >
                     <Icon name="Whatsapp" className="mr-2 size-4" />
                     {ALO_CONTACT.hasWhatsApp ? `WhatsApp ${ALO_CONTACT.whatsappDisplay}` : "Contact ALO Education"}

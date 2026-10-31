@@ -128,7 +128,7 @@ export default function SEOBlogManagerView() {
           </form>
 
           {auditError ? (
-            <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-2 text-xs text-red-700">
+            <p role="alert" className="rounded-lg border border-crm-danger-border bg-crm-danger-bg p-2 text-xs text-crm-danger-text">
               {auditError}
             </p>
           ) : null}
@@ -136,13 +136,13 @@ export default function SEOBlogManagerView() {
           {report ? (
             <div className="space-y-3 border-t pt-4">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
+                <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border">
                   {report.summary.passed} PASS
                 </Badge>
-                <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border">
                   {report.summary.warnings} WARN
                 </Badge>
-                <Badge className="bg-red-100 text-red-800 border-red-200">
+                <Badge className="bg-crm-danger-bg text-crm-danger-text border-crm-danger-border">
                   {report.summary.failed} FAIL
                 </Badge>
                 <span className="text-[11px] text-[var(--alo-text-muted)]">

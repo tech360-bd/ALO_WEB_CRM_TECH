@@ -55,7 +55,7 @@ export default function RolesManagementPage() {
   };
 
   if (loading) return <div className="p-8 text-center text-[var(--alo-text-muted)]">Loading RBAC matrix...</div>;
-  if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+  if (error) return <div className="p-8 text-center text-crm-danger-text">Error: {error}</div>;
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -102,7 +102,7 @@ export default function RolesManagementPage() {
                           className={`inline-flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
                             isGranted
                               ? "bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] hover:bg-[var(--alo-brand)]/20"
-                              : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] hover:bg-gray-200"
+                              : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] hover:bg-[var(--alo-page)]"
                           } ${role.isSystem ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                           title={role.isSystem ? "System roles cannot be modified" : "Click to toggle"}
                         >

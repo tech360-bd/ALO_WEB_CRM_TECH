@@ -113,7 +113,7 @@ export default function WhatsAppNumbersAdminPage() {
         </div>
         <div className="flex gap-2">
           {stats && stats.total < stats.expected && (
-            <Button onClick={initializePool} disabled={initializing} variant="outline" className="border-crm-warning-border text-amber-200">
+            <Button onClick={initializePool} disabled={initializing} variant="outline" className="border-crm-warning-border text-crm-warning-text">
               {initializing ? 'Initializing…' : 'Initialize configured sender records'}
             </Button>
           )}

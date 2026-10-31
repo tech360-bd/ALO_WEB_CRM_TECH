@@ -156,11 +156,11 @@ export default function OAuthIntegrationWizard() {
   const getStatus = (providerId: string) => integrations[providerId]?.status || 'disconnected';
 
   const statusConfig: Record<string, { label: string; className: string; icon: React.ReactNode }> = {
-    connected: { label: 'Connected', className: 'bg-emerald-100 text-emerald-700', icon: <CheckCircle2 className="w-3 h-3" /> },
+    connected: { label: 'Connected', className: 'bg-crm-success-bg text-crm-success-text', icon: <CheckCircle2 className="w-3 h-3" /> },
     connecting: { label: 'Connecting', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', icon: <RefreshCw className="w-3 h-3 animate-spin" /> },
     disconnected: { label: 'Not Connected', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]', icon: <WifiOff className="w-3 h-3" /> },
-    expired: { label: 'Token Expired', className: 'bg-red-100 text-red-600', icon: <AlertTriangle className="w-3 h-3" /> },
-    error: { label: 'Error', className: 'bg-red-100 text-red-600', icon: <AlertCircle className="w-3 h-3" /> },
+    expired: { label: 'Token Expired', className: 'bg-crm-danger-bg text-crm-danger-text', icon: <AlertTriangle className="w-3 h-3" /> },
+    error: { label: 'Error', className: 'bg-crm-danger-bg text-crm-danger-text', icon: <AlertCircle className="w-3 h-3" /> },
   };
 
   const filteredProviders = activeCategory === 'All'
@@ -198,8 +198,8 @@ export default function OAuthIntegrationWizard() {
           {oauthNotice && (
             <div className={`mt-4 flex items-start gap-3 p-3 rounded-xl text-xs border ${
               oauthNotice.type === 'success'
-                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                : 'bg-red-50 text-red-700 border-red-200'
+                ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border'
+                : 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border'
             }`}>
               {oauthNotice.type === 'success' ? (
                 <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
@@ -242,7 +242,7 @@ export default function OAuthIntegrationWizard() {
               <div
                 key={provider.id}
                 className={`bg-white border rounded-2xl p-5 space-y-4 hover:shadow-md transition-all ${
-                  status === 'connected' ? 'border-emerald-200' : 'border-[var(--alo-border)]'
+                  status === 'connected' ? 'border-crm-success-border' : 'border-[var(--alo-border)]'
                 }`}
               >
                 {/* Provider header */}
@@ -298,7 +298,7 @@ export default function OAuthIntegrationWizard() {
                     disabled={isConnecting}
                     className={`w-full py-2.5 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition ${
                       status === 'connected'
-                        ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
+                        ? 'bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg border border-crm-success-border'
                         : 'bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] shadow-sm'
                     } disabled:opacity-50`}
                   >

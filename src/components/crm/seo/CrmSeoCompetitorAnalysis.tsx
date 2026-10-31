@@ -87,20 +87,20 @@ const backlinkData = [
 ];
 
 const statusColor = (s: string) => {
-  if (s === 'Have') return 'bg-emerald-100 text-emerald-800';
-  if (s === 'Missing') return 'bg-red-100 text-red-800';
-  return 'bg-amber-100 text-amber-800';
+  if (s === 'Have') return 'bg-crm-success-bg text-crm-success-text';
+  if (s === 'Missing') return 'bg-crm-danger-bg text-crm-danger-text';
+  return 'bg-crm-warning-bg text-crm-warning-text';
 };
 
 const priorityColor = (p: string) => {
-  if (p === 'High') return 'bg-red-100 text-red-800';
-  if (p === 'Medium') return 'bg-amber-100 text-amber-800';
+  if (p === 'High') return 'bg-crm-danger-bg text-crm-danger-text';
+  if (p === 'Medium') return 'bg-crm-warning-bg text-crm-warning-text';
   return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
 };
 
 function CheckIcon({ val }: { val: boolean }) {
   return val ? (
-    <span className="text-emerald-600 font-semibold text-sm">&#10003;</span>
+    <span className="text-crm-success-text font-semibold text-sm">&#10003;</span>
   ) : (
     <span className="text-[var(--alo-placeholder)] text-sm">&#8212;</span>
   );
@@ -119,9 +119,9 @@ function LegacyUnverifiedCrmSeoCompetitorAnalysis() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-emerald-600">#3</p><p className="text-xs text-muted-foreground">ALO Traffic Rank</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-crm-success-text">#3</p><p className="text-xs text-muted-foreground">ALO Traffic Rank</p></CardContent></Card>
         <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold">3 / 8</p><p className="text-xs text-muted-foreground">Unique AI Tools Lead</p></CardContent></Card>
-        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-amber-600">4</p><p className="text-xs text-muted-foreground">Missing Content Types</p></CardContent></Card>
+        <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold text-crm-warning-text">4</p><p className="text-xs text-muted-foreground">Missing Content Types</p></CardContent></Card>
         <Card><CardContent className="p-4 text-center"><p className="text-2xl font-bold">10</p><p className="text-xs text-muted-foreground">Quick-Win Keywords</p></CardContent></Card>
       </div>
 
@@ -157,7 +157,7 @@ function LegacyUnverifiedCrmSeoCompetitorAnalysis() {
                   </TableRow></TableHeader>
                   <TableBody>
                     {matrixData.map((row) => (
-                      <TableRow key={row.name} className={row.name === 'ALO' ? 'bg-emerald-50 font-semibold' : ''}>
+                      <TableRow key={row.name} className={row.name === 'ALO' ? 'bg-crm-success-bg font-semibold' : ''}>
                         <TableCell className="sticky left-0 bg-background z-10 font-medium">{row.name}</TableCell>
                         <TableCell className="text-right">{row.indexed}</TableCell>
                         <TableCell className="text-right">{row.traffic}</TableCell>
@@ -196,14 +196,14 @@ function LegacyUnverifiedCrmSeoCompetitorAnalysis() {
                       <span className="text-sm text-muted-foreground">{total} total keywords</span>
                     </div>
                     <div className="flex h-7 w-full rounded-full overflow-hidden bg-muted text-xs">
-                      <div className="bg-emerald-500 flex items-center justify-center text-white font-medium" style={{ width: `${aloPct}%` }}>{row.aloOnly}</div>
-                      <div className="bg-amber-500 flex items-center justify-center text-white font-medium" style={{ width: `${sharedPct}%` }}>{row.shared}</div>
-                      <div className="bg-rose-400 flex items-center justify-center text-white font-medium" style={{ width: `${compPct}%` }}>{row.compOnly}</div>
+                      <div className="bg-[var(--alo-success)] flex items-center justify-center text-white font-medium" style={{ width: `${aloPct}%` }}>{row.aloOnly}</div>
+                      <div className="bg-[var(--alo-warning)] flex items-center justify-center text-white font-medium" style={{ width: `${sharedPct}%` }}>{row.shared}</div>
+                      <div className="bg-[var(--alo-error)] flex items-center justify-center text-white font-medium" style={{ width: `${compPct}%` }}>{row.compOnly}</div>
                     </div>
                     <div className="flex gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-emerald-500" />ALO Only ({row.aloOnly})</span>
-                      <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-amber-500" />Shared ({row.shared})</span>
-                      <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-rose-400" />{row.competitor} Only ({row.compOnly})</span>
+                      <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-[var(--alo-success)]" />ALO Only ({row.aloOnly})</span>
+                      <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-[var(--alo-warning)]" />Shared ({row.shared})</span>
+                      <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-sm bg-[var(--alo-error)]" />{row.competitor} Only ({row.compOnly})</span>
                     </div>
                   </div>
                 );
@@ -212,7 +212,7 @@ function LegacyUnverifiedCrmSeoCompetitorAnalysis() {
             <div className="mt-4 rounded-lg border p-4 bg-muted/50">
               <div className="flex items-center justify-between font-medium text-sm">
                 <span>Summary: ALO has the most unique keyword coverage vs smaller competitors, but significant overlap opportunity with IDP & Mentors.</span>
-                <Badge variant="outline" className="bg-emerald-100 text-emerald-800">+145 avg unique keywords</Badge>
+                <Badge variant="outline" className="bg-crm-success-bg text-crm-success-text">+145 avg unique keywords</Badge>
               </div>
             </div>
           </Card>
@@ -259,7 +259,7 @@ function LegacyUnverifiedCrmSeoCompetitorAnalysis() {
               <div className="mt-4 rounded-lg border p-4 bg-muted/50">
                 <div className="flex items-center justify-between font-medium text-sm">
                   <span>ALO is missing 4 high-priority content types. Creating Germany & Japan destination pages and a University Comparison Tool would close the biggest gaps.</span>
-                  <Badge variant="outline" className="bg-red-100 text-red-800">4 Missing (High)</Badge>
+                  <Badge variant="outline" className="bg-crm-danger-bg text-crm-danger-text">4 Missing (High)</Badge>
                 </div>
               </div>
             </CardContent>
@@ -268,14 +268,14 @@ function LegacyUnverifiedCrmSeoCompetitorAnalysis() {
 
         <TabsContent value="opportunities">
           <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><TrendingUp className="h-5 w-5 text-emerald-600" />ALO Can Win Here</CardTitle><CardDescription>Realistic keyword opportunities where ALO can gain top positions.</CardDescription></CardHeader>
+            <CardHeader><CardTitle className="flex items-center gap-2"><TrendingUp className="h-5 w-5 text-crm-success-text" />ALO Can Win Here</CardTitle><CardDescription>Realistic keyword opportunities where ALO can gain top positions.</CardDescription></CardHeader>
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-h-96 overflow-y-auto">
                 {opportunities.map((opp, i) => (
                   <div key={i} className="rounded-xl border p-4 space-y-3 hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between gap-2">
                       <h4 className="font-semibold text-sm leading-tight">{opp.keyword}</h4>
-                      <Badge variant="outline" className="bg-emerald-100 text-emerald-800 shrink-0">{opp.potential}</Badge>
+                      <Badge variant="outline" className="bg-crm-success-bg text-crm-success-text shrink-0">{opp.potential}</Badge>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1"><Search className="h-3 w-3" />{opp.monthlyVol}/mo</div>
@@ -311,7 +311,7 @@ function LegacyUnverifiedCrmSeoCompetitorAnalysis() {
                     {backlinkData.map((row) => {
                       const diff = row.name === 'ALO' ? 0 : row.total - 2840;
                       return (
-                        <TableRow key={row.name} className={row.name === 'ALO' ? 'bg-emerald-50 font-semibold' : ''}>
+                        <TableRow key={row.name} className={row.name === 'ALO' ? 'bg-crm-success-bg font-semibold' : ''}>
                           <TableCell className="font-medium">{row.name}</TableCell>
                           <TableCell className="text-right">{row.total.toLocaleString()}</TableCell>
                           <TableCell className="text-right">{row.referring.toLocaleString()}</TableCell>
@@ -322,9 +322,9 @@ function LegacyUnverifiedCrmSeoCompetitorAnalysis() {
                             {row.name === 'ALO' ? (
                               <span className="text-muted-foreground">&#8212;</span>
                             ) : diff > 0 ? (
-                              <span className="flex items-center justify-end gap-1 text-rose-600"><ArrowUpRight className="h-3.5 w-3.5" />+{diff.toLocaleString()}</span>
+                              <span className="flex items-center justify-end gap-1 text-crm-warning-text"><ArrowUpRight className="h-3.5 w-3.5" />+{diff.toLocaleString()}</span>
                             ) : (
-                              <span className="flex items-center justify-end gap-1 text-emerald-600"><ArrowDownRight className="h-3.5 w-3.5" />{diff.toLocaleString()}</span>
+                              <span className="flex items-center justify-end gap-1 text-crm-success-text"><ArrowDownRight className="h-3.5 w-3.5" />{diff.toLocaleString()}</span>
                             )}
                           </TableCell>
                         </TableRow>
@@ -337,7 +337,7 @@ function LegacyUnverifiedCrmSeoCompetitorAnalysis() {
             <div className="mt-4 rounded-lg border p-4 bg-muted/50">
               <div className="flex items-center justify-between font-medium text-sm">
                 <span>ALO needs ~5,400 more referring domains to match Mentors, and ~15,600 to match IDP. Focus on .edu and local BD directories for quick wins.</span>
-                <Badge variant="outline" className="bg-amber-100 text-amber-800">Gap: -2,080 domains</Badge>
+                <Badge variant="outline" className="bg-crm-warning-bg text-crm-warning-text">Gap: -2,080 domains</Badge>
               </div>
             </div>
           </Card>

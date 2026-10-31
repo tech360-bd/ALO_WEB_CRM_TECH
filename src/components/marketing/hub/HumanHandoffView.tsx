@@ -74,16 +74,16 @@ const CHANNEL_LABELS: Record<string, string> = {
 };
 
 const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
-  high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
-  medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
+  high: { label: 'High', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  medium: { label: 'Medium', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
   low: { label: 'Low', cls: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
   normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
 
 const ESCALATION_STATUS: Record<string, { label: string; cls: string }> = {
-  OPEN: { label: 'Open', cls: 'bg-red-100 text-red-700 border-red-200' },
-  ACKNOWLEDGED: { label: 'Acknowledged', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
-  RESOLVED: { label: 'Resolved', cls: 'bg-green-100 text-green-700 border-green-200' },
+  OPEN: { label: 'Open', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  ACKNOWLEDGED: { label: 'Acknowledged', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  RESOLVED: { label: 'Resolved', cls: 'bg-crm-success-bg text-crm-success-text border-crm-success-border' },
   CLOSED: { label: 'Closed', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
 
@@ -336,7 +336,7 @@ export default function HumanHandoffView() {
               <p className="text-muted-foreground text-xs">Open escalations</p>
               <p className="text-2xl font-bold">{openEscalations}</p>
             </div>
-            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <AlertTriangle className="h-5 w-5 text-crm-danger-text" />
           </CardContent>
         </Card>
         <Card>
@@ -487,7 +487,7 @@ export default function HumanHandoffView() {
                         <Badge variant="outline" className="text-[11px]">AI was handling</Badge>
                       ) : null}
                       {thread.escalatedToName ? (
-                        <Badge variant="outline" className="bg-red-100 text-red-700 text-[11px]">
+                        <Badge variant="outline" className="bg-crm-danger-bg text-crm-danger-text text-[11px]">
                           Escalated to {thread.escalatedToName}
                         </Badge>
                       ) : null}
@@ -624,7 +624,7 @@ export default function HumanHandoffView() {
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
-                          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+                          <AlertTriangle className="h-4 w-4 shrink-0 text-crm-warning-text" />
                           <p className="font-medium">
                             {escalation.type.replace(/_/g, ' ')}
                           </p>

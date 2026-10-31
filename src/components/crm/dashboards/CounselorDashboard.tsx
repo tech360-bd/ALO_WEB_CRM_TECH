@@ -120,8 +120,8 @@ export default function CounselorDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <kpi.icon className="w-5 h-5 text-alo-brand" />
-                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-red-600" />}{kpi.change}
+                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
+                  {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-crm-danger-text" />}{kpi.change}
                 </span>
               </div>
               <p className="text-2xl font-bold text-alo-text">{kpi.value}</p>
@@ -182,7 +182,7 @@ export default function CounselorDashboard() {
                   todayFollowups.map((f: any) => (
                     <div key={f.id || f.student} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-alo-brand-light/20 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className={`w-2 h-2 rounded-full ${f.status === 'done' ? 'bg-emerald-500' : 'bg-amber-400'}`} />
+                        <div className={`w-2 h-2 rounded-full ${f.status === 'done' ? 'bg-[var(--alo-success)]' : 'bg-[var(--alo-warning)]'}`} />
                         <div>
                           <p className="text-sm font-medium text-alo-text">{f.student}</p>
                           <p className="text-[11px] text-alo-text-muted">{f.type} · {f.time}</p>
@@ -218,7 +218,7 @@ export default function CounselorDashboard() {
               <div className="space-y-2">
                 {aiActions.map((a, i) => (
                   <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-lg border border-alo-border hover:bg-alo-brand-light/20 transition-colors">
-                    <span className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${a.priority === 'high' ? 'bg-red-500' : 'bg-amber-400'}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${a.priority === 'high' ? 'bg-[var(--alo-error)]' : 'bg-[var(--alo-warning)]'}`} />
                     <p className="text-xs text-alo-text flex-1 leading-relaxed">{a.action}</p>
                     <ChevronRight className="w-3.5 h-3.5 text-alo-text-muted shrink-0 mt-0.5" />
                   </div>
@@ -232,7 +232,7 @@ export default function CounselorDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Application-Ready
+                  <CheckCircle2 className="w-4 h-4 text-crm-success-text" /> Application-Ready
                 </CardTitle>
                 <Badge variant="success" className="text-[11px]">{applicationReady.length}</Badge>
               </div>
@@ -244,7 +244,7 @@ export default function CounselorDashboard() {
                     <div key={s.id || s.name} className="p-2.5 rounded-lg border border-alo-border hover:bg-alo-brand-light/20 transition-colors">
                       <div className="flex items-center justify-between mb-0.5">
                         <p className="text-sm font-medium text-alo-text truncate">{s.name}</p>
-                        {s.docsReady ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> : <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
+                        {s.docsReady ? <CheckCircle2 className="w-3.5 h-3.5 text-crm-success-text shrink-0" /> : <Clock className="w-3.5 h-3.5 text-crm-warning-text shrink-0" />}
                       </div>
                       <p className="text-[11px] text-alo-text-muted truncate">{s.university} · {s.country}</p>
                     </div>

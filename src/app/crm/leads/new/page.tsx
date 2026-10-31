@@ -157,7 +157,7 @@ export default function ManualLeadPage() {
                   }`}
                 >
                   <span className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                    isActive ? 'bg-white/20 text-white' : captured ? 'bg-green-100 text-green-700' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]'
+                    isActive ? 'bg-white/20 text-white' : captured ? 'bg-crm-success-bg text-crm-success-text' : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]'
                   }`}>
                     {!isActive && captured ? <CheckCircle2 className="size-3.5" /> : index + 1}
                   </span>
@@ -176,7 +176,7 @@ export default function ManualLeadPage() {
               </h2>
               <p className="mt-1 text-sm text-[var(--alo-body)]">{section.description}</p>
               {section.requiredForApplication && (
-                <p className="mt-1 text-xs font-semibold text-amber-700">Required before the student can apply.</p>
+                <p className="mt-1 text-xs font-semibold text-crm-warning-text">Required before the student can apply.</p>
               )}
             </div>
             {section.repeatable && (
@@ -197,7 +197,7 @@ export default function ManualLeadPage() {
                   <span className="truncate text-[var(--alo-body)]">
                     Row {index + 2}: {Object.values(row).filter(Boolean).slice(0, 3).join(' · ') || 'empty'}
                   </span>
-                  <button type="button" onClick={() => removeRow(section.key, index)} className="font-semibold text-red-600">
+                  <button type="button" onClick={() => removeRow(section.key, index)} className="font-semibold text-crm-danger-text">
                     Remove
                   </button>
                 </li>
@@ -315,7 +315,7 @@ export default function ManualLeadPage() {
           </p>
 
           {result && (
-            <div className={`mt-4 rounded-xl border p-4 text-sm ${result.ok ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-red-200 bg-red-50 text-red-800'}`}>
+            <div className={`mt-4 rounded-xl border p-4 text-sm ${result.ok ? 'border-crm-success-border bg-crm-success-bg text-crm-success-text' : 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text'}`}>
               <p className="flex items-start gap-2 font-semibold">
                 {result.ok ? <CheckCircle2 className="mt-0.5 size-4" /> : <AlertTriangle className="mt-0.5 size-4" />}
                 {result.message}
@@ -331,7 +331,7 @@ export default function ManualLeadPage() {
                 </div>
               )}
               {result.ok && (
-                <p className="mt-2 flex items-center gap-1 text-[11px] text-emerald-800">
+                <p className="mt-2 flex items-center gap-1 text-[11px] text-crm-success-text">
                   <Mail className="size-3" /> Verification and welcome emails use the address captured in Lead Information.
                 </p>
               )}

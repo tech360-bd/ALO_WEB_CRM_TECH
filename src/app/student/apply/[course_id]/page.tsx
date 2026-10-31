@@ -70,14 +70,14 @@ export default function StudentApplyPage() {
             </div>
             <Button onClick={handleApply} disabled={applying} className="w-full mt-6 bg-[var(--alo-cta)] text-white h-12 font-bold">{applying ? 'Creating Application Draft...' : 'Apply Now — Creates Draft + Checklist + Timeline + Notify Counselor'}</Button>
             {result && (
-              <div className={`mt-4 p-4 rounded-xl border text-xs ${result.success ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+              <div className={`mt-4 p-4 rounded-xl border text-xs ${result.success ? 'bg-crm-success-bg border-crm-success-border text-crm-success-text' : 'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text'}`}>
                 {result.success ? <><CheckCircle2 className="w-4 h-4 inline mr-1" />Application draft created: {result.data?.applicationCode || result.data?.id} — linked student_id/course_id/university_id/intake_id, document checklist created, timeline entry created, counselor notified.</> : <><AlertTriangle className="w-4 h-4 inline mr-1" />{result.error || 'Failed'}</>}
                 {result.success && <Link href="/student/applications" className="block mt-3"><Button className="bg-[var(--alo-brand)] text-white w-full">View My Applications</Button></Link>}
               </div>
             )}
           </Card>
         ) : (
-          <Card className="p-8 bg-white border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" /><p className="text-sm">Course not found — check with counselor.</p></Card>
+          <Card className="p-8 bg-white border-[var(--alo-border)] rounded-2xl text-center"><AlertTriangle className="w-8 h-8 text-crm-warning-text mx-auto mb-2" /><p className="text-sm">Course not found — check with counselor.</p></Card>
         )}
 
         <Card className="p-6 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl"><h4 className="font-bold text-sm mb-2">Document Checklist Preview</h4><ul className="text-xs text-[var(--alo-body)] list-disc list-inside space-y-1"><li>Passport</li><li>Academic certificates</li><li>Academic transcripts</li><li>English test</li><li>CV</li><li>SOP</li><li>Recommendation letters</li><li>Portfolio (if required)</li><li>Work experience (if required)</li></ul><p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Do not claim document mandatory unless DB/source says so.</p></Card>

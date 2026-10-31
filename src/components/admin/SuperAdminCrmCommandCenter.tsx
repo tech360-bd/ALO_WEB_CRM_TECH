@@ -78,17 +78,17 @@ export function SuperAdminCrmCommandCenter() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {[
             { label: "Leads", value: c.leads, icon: "Target", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
-            { label: "Students", value: c.students, icon: "GraduationCap", color: "bg-green-50 text-green-700 border-green-200" },
-            { label: "Applications", value: c.applications, icon: "FileEdit", color: "bg-purple-50 text-purple-700 border-purple-200" },
-            { label: "Visa Cases", value: c.visaCases, icon: "Stamp", color: "bg-amber-50 text-amber-700 border-amber-200" },
-            { label: "Docs Pending", value: c.documentsPending, icon: "FileText", color: "bg-red-50 text-red-700 border-red-200" },
+            { label: "Students", value: c.students, icon: "GraduationCap", color: "bg-crm-success-bg text-crm-success-text border-crm-success-border" },
+            { label: "Applications", value: c.applications, icon: "FileEdit", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+            { label: "Visa Cases", value: c.visaCases, icon: "Stamp", color: "bg-crm-warning-bg text-crm-warning-text border-crm-warning-border" },
+            { label: "Docs Pending", value: c.documentsPending, icon: "FileText", color: "bg-crm-danger-bg text-crm-danger-text border-crm-danger-border" },
             { label: "Employees", value: c.employees, icon: "Users", color: "bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]" },
-            { label: "Partners", value: c.partners, icon: "Handshake", color: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-            { label: "Universities", value: c.universities, icon: "Landmark", color: "bg-cyan-50 text-cyan-700 border-cyan-200" },
-            { label: "Courses", value: c.courses, icon: "BookOpen", color: "bg-pink-50 text-pink-700 border-pink-200" },
+            { label: "Partners", value: c.partners, icon: "Handshake", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]" },
+            { label: "Universities", value: c.universities, icon: "Landmark", color: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] border-[var(--alo-info-border)]" },
+            { label: "Courses", value: c.courses, icon: "BookOpen", color: "bg-crm-danger-bg text-crm-danger-text border-crm-danger-border" },
             { label: "Campaigns", value: c.campaigns, icon: "Megaphone", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25" },
             { label: "Tasks Pending", value: c.tasksPending, icon: "CheckCircle2", color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
-            { label: "SLA Breaches", value: c.slaBreaches, icon: "⏰", color: "bg-red-50 text-red-700 border-red-200" },
+            { label: "SLA Breaches", value: c.slaBreaches, icon: "⏰", color: "bg-crm-danger-bg text-crm-danger-text border-crm-danger-border" },
           ].map(k => (
             <div key={k.label} className={`rounded-xl border p-4 ${k.color}`}>
               <div className="flex items-center justify-between"><NamedIcon name={k.icon} className="size-5" /><span className="text-2xl font-bold">{k.value ?? 0}</span></div>
@@ -142,7 +142,7 @@ export function SuperAdminCrmCommandCenter() {
     if (activeModule==="finance") {
       return (
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-xl border p-4"><h4 className="font-semibold text-sm mb-2">Payments ({data.payments?.length||0})</h4><div className="space-y-1 max-h-[400px] overflow-auto">{(data.payments||[]).map((p:any)=><div key={p.id} className="text-xs border-b py-1 flex justify-between"><span>{p.studentId||p.paymentId} — {p.amount} {p.currency}</span><span className={`px-1.5 py-0.5 rounded text-[11px] ${p.status==="PAID"?"bg-green-100 text-green-700":"bg-amber-100 text-amber-700"}`}>{p.status}</span></div>)}</div></div>
+          <div className="bg-white rounded-xl border p-4"><h4 className="font-semibold text-sm mb-2">Payments ({data.payments?.length||0})</h4><div className="space-y-1 max-h-[400px] overflow-auto">{(data.payments||[]).map((p:any)=><div key={p.id} className="text-xs border-b py-1 flex justify-between"><span>{p.studentId||p.paymentId} — {p.amount} {p.currency}</span><span className={`px-1.5 py-0.5 rounded text-[11px] ${p.status==="PAID"?"bg-crm-success-bg text-crm-success-text":"bg-crm-warning-bg text-crm-warning-text"}`}>{p.status}</span></div>)}</div></div>
           <div className="bg-white rounded-xl border p-4"><h4 className="font-semibold text-sm mb-2">Commissions ({data.commissions?.length||0})</h4><div className="space-y-1 max-h-[400px] overflow-auto">{(data.commissions||[]).map((c:any)=><div key={c.id} className="text-xs border-b py-1">{c.commissionCode} — {c.amount} {c.currency} — {c.status}</div>)}</div></div>
           <div className="bg-white rounded-xl border p-4"><h4 className="font-semibold text-sm mb-2">Payrolls ({data.payrolls?.length||0})</h4><div className="space-y-1 max-h-[400px] overflow-auto">{(data.payrolls||[]).map((p:any)=><div key={p.id} className="text-xs border-b py-1">{p.employeeId} — {p.monthYear} — {p.netPay} — {p.status}</div>)}</div></div>
         </div>
@@ -184,9 +184,9 @@ export function SuperAdminCrmCommandCenter() {
             <tbody>
               {items.map((it:any)=><tr key={it.id} className="border-t hover:bg-[var(--alo-page)]"><td className="px-3 py-2"><div className="font-medium truncate max-w-[180px]">{it.name||it.fullName||it.studentName||it.applicationCode||it.title||it.universityName||it.courseTitle||it.id.slice(0,12)}</div><div className="text-[11px] text-[var(--alo-text-muted)] font-mono">{it.id.slice(0,12)}</div></td><td className="px-3 py-2"><div className="truncate max-w-[280px] text-[var(--alo-body)]">{it.email||it.phone||it.university||it.country||it.destinationCountry||it.courseName||it.status||""} {it.stage?`• ${it.stage}`:""}</div></td><td className="px-3 py-2"><span className="px-2 py-0.5 bg-[var(--alo-surface-muted)] rounded-full text-[11px]">{it.status||it.stage||it.currentStage||"—"}</span></td><td className="px-3 py-2 text-right space-x-1">
                 {activeModule==="leads" && <button disabled={!!actionLoading} onClick={()=>handleAgentAction("assign_lead", { leadId: it.id, counselorId: "super_admin_assign", counselorName: "Super Admin" })} className="px-2 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded text-[11px]">Assign</button>}
-                {activeModule==="applications" && <><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "READY_TO_SUBMIT", note: "Super Admin moved to ready" })} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded text-[11px]">Ready</button><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "SUBMITTED_TO_UNIVERSITY", note: "Super Admin submitted" })} className="px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded text-[11px]">Submit</button></>}
-                {activeModule==="documents" && <><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "APPROVED", reviewerNote: "Super Admin approved" })} className="px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded text-[11px]">Approve</button><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "REJECTED", reviewerNote: "Super Admin rejected — needs review" })} className="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded text-[11px]">Reject</button></>}
-                <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="px-2 py-1 bg-[var(--alo-surface-muted)] hover:bg-slate-200 rounded text-[11px]">View</button>
+                {activeModule==="applications" && <><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "READY_TO_SUBMIT", note: "Super Admin moved to ready" })} className="px-2 py-1 bg-crm-success-bg hover:bg-crm-success-bg text-crm-success-text rounded text-[11px]">Ready</button><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "SUBMITTED_TO_UNIVERSITY", note: "Super Admin submitted" })} className="px-2 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded text-[11px]">Submit</button></>}
+                {activeModule==="documents" && <><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "APPROVED", reviewerNote: "Super Admin approved" })} className="px-2 py-1 bg-crm-success-bg hover:bg-crm-success-bg text-crm-success-text rounded text-[11px]">Approve</button><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "REJECTED", reviewerNote: "Super Admin rejected — needs review" })} className="px-2 py-1 bg-crm-danger-bg hover:bg-crm-danger-bg text-crm-danger-text rounded text-[11px]">Reject</button></>}
+                <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="px-2 py-1 bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] rounded text-[11px]">View</button>
               </td></tr>)}
               {items.length===0 && <tr><td colSpan={4} className="p-8 text-center text-[var(--alo-text-muted)]">No records</td></tr>}
             </tbody>
@@ -205,7 +205,7 @@ export function SuperAdminCrmCommandCenter() {
         </div>
         <div className="flex gap-2">
           <input placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchData()} className="border rounded-lg px-3 py-2 text-sm w-48" />
-          <button onClick={fetchData} className="px-4 py-2 bg-[var(--alo-surface-muted)] hover:bg-slate-200 rounded-lg text-sm">🔍 Search</button>
+          <button onClick={fetchData} className="px-4 py-2 bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] rounded-lg text-sm">🔍 Search</button>
         </div>
       </div>
 

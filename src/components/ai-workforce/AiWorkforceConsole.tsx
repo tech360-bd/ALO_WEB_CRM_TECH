@@ -42,21 +42,21 @@ async function api<T>(path: string, init?: RequestInit): Promise<Envelope<T>> {
 }
 
 const statusTone: Record<string, string> = {
-  ACTIVE: 'bg-emerald-100 text-emerald-800',
-  COMPLETED: 'bg-emerald-100 text-emerald-800',
-  HEALTHY: 'bg-emerald-100 text-emerald-800',
-  DEPLOYED: 'bg-emerald-100 text-emerald-800',
+  ACTIVE: 'bg-crm-success-bg text-crm-success-text',
+  COMPLETED: 'bg-crm-success-bg text-crm-success-text',
+  HEALTHY: 'bg-crm-success-bg text-crm-success-text',
+  DEPLOYED: 'bg-crm-success-bg text-crm-success-text',
   DRAFT: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
   VALIDATED: 'bg-sky-100 text-sky-800',
-  TESTED: 'bg-indigo-100 text-indigo-800',
-  APPROVED: 'bg-violet-100 text-violet-800',
-  PAUSED: 'bg-amber-100 text-amber-800',
-  AWAITING_APPROVAL: 'bg-amber-100 text-amber-800',
-  PENDING: 'bg-amber-100 text-amber-800',
-  DEGRADED: 'bg-amber-100 text-amber-800',
-  FAILED: 'bg-red-100 text-red-800',
-  DISABLED: 'bg-red-100 text-red-800',
-  UNHEALTHY: 'bg-red-100 text-red-800',
+  TESTED: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  APPROVED: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  PAUSED: 'bg-crm-warning-bg text-crm-warning-text',
+  AWAITING_APPROVAL: 'bg-crm-warning-bg text-crm-warning-text',
+  PENDING: 'bg-crm-warning-bg text-crm-warning-text',
+  DEGRADED: 'bg-crm-warning-bg text-crm-warning-text',
+  FAILED: 'bg-crm-danger-bg text-crm-danger-text',
+  DISABLED: 'bg-crm-danger-bg text-crm-danger-text',
+  UNHEALTHY: 'bg-crm-danger-bg text-crm-danger-text',
 };
 
 function StatusBadge({ value }: { value: string }) {
@@ -135,8 +135,8 @@ export default function AiWorkforceConsole() {
       </header>
 
       {error ? (
-        <Card className="border-red-200">
-          <CardContent className="flex items-center gap-2 py-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border">
+          <CardContent className="flex items-center gap-2 py-4 text-sm text-crm-danger-text">
             <AlertTriangle className="h-4 w-4" /> {error}
           </CardContent>
         </Card>
@@ -359,7 +359,7 @@ export default function AiWorkforceConsole() {
                 </tbody>
               </table>
               {((health?.notes as string[] | undefined) ?? []).map((note) => (
-                <p key={note} className="mt-2 flex items-start gap-1.5 text-xs text-amber-700"><TriangleAlert className="mt-0.5 size-3 shrink-0" />{note}</p>
+                <p key={note} className="mt-2 flex items-start gap-1.5 text-xs text-crm-warning-text"><TriangleAlert className="mt-0.5 size-3 shrink-0" />{note}</p>
               ))}
               <Button
                 className="mt-3"
@@ -525,7 +525,7 @@ function TestLab({ agents }: { agents: Json[] }) {
               <StatusBadge value={String(result.status ?? '')} />
               <span>{String(result.durationMs ?? 0)} ms</span>
               <span>runtime {String((result.runtimeKeys as string[] | undefined)?.join(', ') ?? '')}</span>
-              {result.humanReviewRequired ? <Badge className="bg-amber-100 text-amber-800">human review required</Badge> : null}
+              {result.humanReviewRequired ? <Badge className="bg-crm-warning-bg text-crm-warning-text">human review required</Badge> : null}
             </div>
             <pre className="max-h-96 overflow-auto rounded-[12px] border border-[var(--alo-border)] bg-[var(--alo-surface-muted)] p-3 text-[11px] leading-5 text-[var(--alo-text)]">{JSON.stringify(result, null, 2)}</pre>
           </div>

@@ -26,8 +26,8 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function AvailDot({ status }: { status: string }) {
-  const colors: Record<string, string> = { available: 'bg-emerald-500', busy: 'bg-red-500', lunch: 'bg-amber-500' };
-  return <span className={`w-2 h-2 rounded-full ${colors[status] || 'bg-gray-400'}`} />;
+  const colors: Record<string, string> = { available: 'bg-[var(--alo-success)]', busy: 'bg-[var(--alo-error)]', lunch: 'bg-[var(--alo-warning)]' };
+  return <span className={`w-2 h-2 rounded-full ${colors[status] || 'bg-[var(--alo-page)]'}`} />;
 }
 
 export default function FrontDeskDashboard() {
@@ -86,8 +86,8 @@ export default function FrontDeskDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <kpi.icon className="w-5 h-5 text-alo-brand" />
-                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-red-600" />}{kpi.change}
+                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
+                  {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90 text-crm-danger-text" />}{kpi.change}
                 </span>
               </div>
               <p className="text-2xl font-bold text-alo-text">{kpi.value}</p>
@@ -142,7 +142,7 @@ export default function FrontDeskDashboard() {
             <CardContent className="pt-4">
               <div className="space-y-2">
                 {walkIns.map((w) => (
-                  <div key={w.time + w.name} className={`flex items-center justify-between p-3 rounded-lg border ${w.assigned ? 'border-alo-border' : 'border-amber-200 bg-amber-50'}`}>
+                  <div key={w.time + w.name} className={`flex items-center justify-between p-3 rounded-lg border ${w.assigned ? 'border-alo-border' : 'border-crm-warning-border bg-crm-warning-bg'}`}>
                     <div>
                       <p className="text-sm font-medium text-alo-text">{w.name}</p>
                       <p className="text-[11px] text-alo-text-muted">{w.time} · {w.interest}</p>

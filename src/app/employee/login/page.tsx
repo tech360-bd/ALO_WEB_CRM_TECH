@@ -66,7 +66,7 @@ export default function EmployeeLoginPage() {
         </CardHeader>
         <CardContent className="pt-4">
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2 text-xs text-red-700">
+            <div className="mb-4 p-3 rounded-lg bg-crm-danger-bg border border-crm-danger-border flex items-center gap-2 text-xs text-crm-danger-text">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>

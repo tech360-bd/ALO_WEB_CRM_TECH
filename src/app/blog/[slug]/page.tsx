@@ -113,7 +113,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <h3 className="text-lg font-bold text-[var(--alo-text)] mb-4">Tags</h3>
               <div className="flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
-                  <span key={tag} className="bg-[var(--alo-surface-muted)] text-[var(--alo-body)] px-4 py-2 rounded-full text-sm hover:bg-gray-200 cursor-pointer transition-colors">
+                  <span key={tag} className="bg-[var(--alo-surface-muted)] text-[var(--alo-body)] px-4 py-2 rounded-full text-sm hover:bg-[var(--alo-page)] cursor-pointer transition-colors">
                     #{tag}
                   </span>
                 ))}

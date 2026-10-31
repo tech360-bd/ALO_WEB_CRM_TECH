@@ -206,10 +206,10 @@ interface DashboardResponse {
 
 const ACCOUNT_STATUS_COLORS: Record<string, string> = {
   NOT_VERIFIED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border border-[var(--alo-border)]",
-  CONNECTED: "bg-emerald-100 text-emerald-700 border border-emerald-200",
+  CONNECTED: "bg-crm-success-bg text-crm-success-text border border-crm-success-border",
   DISCONNECTED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border border-[var(--alo-border)]",
-  EXPIRED: "bg-amber-100 text-amber-700 border border-amber-200",
-  PERMISSION_ERROR: "bg-rose-100 text-rose-700 border border-rose-200",
+  EXPIRED: "bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border",
+  PERMISSION_ERROR: "bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border",
   RECONNECT_REQUIRED: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border border-[var(--alo-cta)]/25",
 };
 
@@ -226,12 +226,12 @@ const PLATFORM_META: Record<
   string,
   { label: string; icon: string; color: string; bg: string; text: string }
 > = {
-  WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "#10B981", bg: "bg-green-50", text: "text-green-700" },
+  WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", color: "#10B981", bg: "bg-crm-success-bg", text: "text-crm-success-text" },
   FACEBOOK: { label: "Facebook", icon: "Facebook", color: "#1877f2", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
-  INSTAGRAM: { label: "Instagram", icon: "Instagram", color: "#e1306c", bg: "bg-pink-50", text: "text-pink-700" },
-  GMAIL: { label: "Gmail", icon: "Mail", color: "#0284C7", bg: "bg-violet-50", text: "text-violet-700" },
+  INSTAGRAM: { label: "Instagram", icon: "Instagram", color: "#e1306c", bg: "bg-crm-danger-bg", text: "text-crm-danger-text" },
+  GMAIL: { label: "Gmail", icon: "Mail", color: "#0284C7", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
   OUTLOOK: { label: "Outlook", icon: "Mail", color: "#0057B8", bg: "bg-[var(--alo-info-bg)]", text: "text-[var(--alo-brand)]" },
-  SMS_GATEWAY: { label: "SMS Gateway", icon: "MessageSquare", color: "#047857", bg: "bg-emerald-50", text: "text-emerald-700" },
+  SMS_GATEWAY: { label: "SMS Gateway", icon: "MessageSquare", color: "#047857", bg: "bg-crm-success-bg", text: "text-crm-success-text" },
   CALL_CENTER: { label: "Call Center", icon: "Phone", color: "#C93D13", bg: "bg-[var(--alo-cta-soft)]", text: "text-[var(--alo-cta-active)]" },
   TELEGRAM: { label: "Telegram", icon: "Send", color: "#0088cc", bg: "bg-sky-50", text: "text-sky-700" },
   LINKEDIN: { label: "LinkedIn", icon: "Linkedin", color: "#0a66c2", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]" },
@@ -242,38 +242,38 @@ const CHANNEL_META: Record<
   string,
   { label: string; icon: string; bg: string; text: string; dot: string }
 > = {
-  WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", bg: "bg-green-50", text: "text-green-700", dot: "bg-green-500" },
-  FACEBOOK: { label: "Facebook", icon: "Facebook", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]", dot: "bg-blue-500" },
-  INSTAGRAM: { label: "Instagram", icon: "Instagram", bg: "bg-pink-50", text: "text-pink-700", dot: "bg-pink-500" },
-  EMAIL: { label: "Email", icon: "Mail", bg: "bg-violet-50", text: "text-violet-700", dot: "bg-violet-500" },
-  SMS: { label: "SMS", icon: "MessageSquare", bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
+  WHATSAPP: { label: "WhatsApp", icon: "MessageCircle", bg: "bg-crm-success-bg", text: "text-crm-success-text", dot: "bg-[var(--alo-success)]" },
+  FACEBOOK: { label: "Facebook", icon: "Facebook", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]", dot: "bg-[var(--alo-brand-light)]0" },
+  INSTAGRAM: { label: "Instagram", icon: "Instagram", bg: "bg-crm-danger-bg", text: "text-crm-danger-text", dot: "bg-[var(--alo-error)]" },
+  EMAIL: { label: "Email", icon: "Mail", bg: "bg-[var(--alo-brand-pale)]", text: "text-[var(--alo-brand)]", dot: "bg-[var(--alo-brand-pale)]0" },
+  SMS: { label: "SMS", icon: "MessageSquare", bg: "bg-crm-success-bg", text: "text-crm-success-text", dot: "bg-[var(--alo-success)]" },
   PHONE: { label: "Phone", icon: "Phone", bg: "bg-[var(--alo-cta-soft)]", text: "text-[var(--alo-cta-active)]", dot: "bg-[var(--alo-cta)]" },
-  CRM: { label: "CRM", icon: "Activity", bg: "bg-[var(--alo-surface-muted)]", text: "text-[var(--alo-body)]", dot: "bg-slate-500" },
+  CRM: { label: "CRM", icon: "Activity", bg: "bg-[var(--alo-surface-muted)]", text: "text-[var(--alo-body)]", dot: "bg-[var(--alo-page)]0" },
   MESSENGER: { label: "Messenger", icon: "Send", bg: "bg-sky-50", text: "text-sky-700", dot: "bg-sky-500" },
 };
 
 const CALL_TYPE_COLORS: Record<string, string> = {
   INCOMING: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  OUTGOING: "bg-emerald-100 text-emerald-700",
-  MISSED: "bg-rose-100 text-rose-700",
+  OUTGOING: "bg-crm-success-bg text-crm-success-text",
+  MISSED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const DELIVERY_COLORS: Record<string, string> = {
   SENT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  DELIVERED: "bg-emerald-100 text-emerald-700",
-  FAILED: "bg-rose-100 text-rose-700",
-  PENDING: "bg-amber-100 text-amber-700",
+  DELIVERED: "bg-crm-success-bg text-crm-success-text",
+  FAILED: "bg-crm-warning-bg text-crm-warning-text",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const FOLDER_COLORS: Record<string, string> = {
   INBOX: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  SENT: "bg-emerald-100 text-emerald-700",
-  DRAFT: "bg-amber-100 text-amber-700",
+  SENT: "bg-crm-success-bg text-crm-success-text",
+  DRAFT: "bg-crm-warning-bg text-crm-warning-text",
   ARCHIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
-  URGENT: "bg-rose-100 text-rose-700",
+  URGENT: "bg-crm-warning-bg text-crm-warning-text",
   HIGH: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   NORMAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   LOW: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
@@ -281,26 +281,26 @@ const PRIORITY_COLORS: Record<string, string> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   COMMUNICATION: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
-  DOCUMENT: "bg-violet-100 text-violet-700",
-  DEADLINE: "bg-rose-100 text-rose-700",
-  APPLICATION: "bg-emerald-100 text-emerald-700",
-  PAYMENT: "bg-amber-100 text-amber-700",
+  DOCUMENT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  DEADLINE: "bg-crm-warning-bg text-crm-warning-text",
+  APPLICATION: "bg-crm-success-bg text-crm-success-text",
+  PAYMENT: "bg-crm-warning-bg text-crm-warning-text",
   VISA: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
   SYSTEM: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  MARKETING: "bg-pink-100 text-pink-700",
+  MARKETING: "bg-crm-danger-bg text-crm-danger-text",
 };
 
 const CONSENT_COLORS: Record<string, string> = {
-  OPTED_IN: "bg-emerald-100 text-emerald-700",
-  OPTED_OUT: "bg-rose-100 text-rose-700",
+  OPTED_IN: "bg-crm-success-bg text-crm-success-text",
+  OPTED_OUT: "bg-crm-warning-bg text-crm-warning-text",
   UNKNOWN: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const REVIEW_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
   IN_REVIEW: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
 };
 
@@ -631,15 +631,15 @@ export function OmnichannelCommunicationCenter() {
           </div>
           <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
             <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Active</p>
-            <p className="mt-1 text-xl font-bold text-emerald-600">{stats.connectedActive}</p>
+            <p className="mt-1 text-xl font-bold text-crm-success-text">{stats.connectedActive}</p>
           </div>
           <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
             <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Expired / Errors</p>
-            <p className="mt-1 text-xl font-bold text-amber-600">{stats.expiredAccounts}</p>
+            <p className="mt-1 text-xl font-bold text-crm-warning-text">{stats.expiredAccounts}</p>
           </div>
           <div className="rounded-xl border border-[var(--alo-border)] bg-white p-3">
             <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Unread / Pending</p>
-            <p className="mt-1 text-xl font-bold text-rose-600">
+            <p className="mt-1 text-xl font-bold text-crm-warning-text">
               {stats.unreadNotifications + stats.unreadEmails + stats.pendingReview}
             </p>
           </div>
@@ -650,7 +650,7 @@ export function OmnichannelCommunicationCenter() {
       <SectionCard
         title="Auto Lead Creation from Unknown Contacts"
         icon="UserPlus"
-        className="border-emerald-200 bg-emerald-50/40"
+        className="border-crm-success-border bg-crm-success-bg/40"
       >
         <p className="body-text text-[var(--alo-text)]">
           When communication arrives from an unknown contact, the system automatically: identifies
@@ -794,7 +794,7 @@ function ConnectedAccountsTab({
                       <Button
  size="sm"
  variant="outline"
- className=" border-rose-200 text-rose-700 hover:bg-rose-50"
+ className=" border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
  disabled={busyId === acc.id}
  onClick={() => void handleAction(acc)}
                         title="Clears local credentials only; no provider-side revocation is performed"
@@ -937,8 +937,8 @@ function ConnectAccountDialog({
               </SelectContent>
             </Select>
           </div>
-          <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-            <p className="text-xs text-amber-800">
+          <div className="rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2">
+            <p className="text-xs text-crm-warning-text">
               <Icon name="ShieldAlert" className="size-3 inline mr-1" />
               This creates a disconnected configuration placeholder only. OAuth, token storage, and provider verification are not implemented.
             </p>
@@ -1080,7 +1080,7 @@ function UnifiedTimelineTab({ events }: { events: TimelineEvent[] }) {
                       icon: "Activity",
                       bg: "bg-[var(--alo-surface-muted)]",
                       text: "text-[var(--alo-body)]",
-                      dot: "bg-slate-500",
+                      dot: "bg-[var(--alo-page)]0",
                     };
                   return (
                     <li key={idx} className="relative">
@@ -1425,7 +1425,7 @@ function EmailsTab({ emails }: { emails: EmailMsg[] }) {
                     </TableCell>
                     <TableCell>
                       {e.matchedToCRM ? (
-                        <Badge className="bg-emerald-100 text-emerald-700">
+                        <Badge className="bg-crm-success-bg text-crm-success-text">
                           <Icon name="Check" className="size-3 mr-1" /> Matched
                         </Badge>
                       ) : (
@@ -1492,7 +1492,7 @@ function SmsTab({ sms }: { sms: SmsLog[] }) {
                         className={cn(
                           s.direction === "OUTBOUND"
                             ? "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]"
-                            : "bg-emerald-100 text-emerald-700"
+                            : "bg-crm-success-bg text-crm-success-text"
                         )}
                       >
                         {s.direction === "OUTBOUND" ? "Out" : "In"}
@@ -1510,7 +1510,7 @@ function SmsTab({ sms }: { sms: SmsLog[] }) {
                       {s.readStatus ? (
                         <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text-muted)]">Read</Badge>
                       ) : (
-                        <Badge className="bg-amber-100 text-amber-700">Unread</Badge>
+                        <Badge className="bg-crm-warning-bg text-crm-warning-text">Unread</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
@@ -1697,21 +1697,21 @@ function ConsentTab({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
+        <div className="rounded-2xl border border-crm-success-border bg-crm-success-bg/50 p-4">
           <div className="flex items-center justify-between">
-            <p className="badge-text uppercase tracking-wide text-emerald-700">Opted In</p>
-            <Icon name="Check" className="size-5 text-emerald-600" />
+            <p className="badge-text uppercase tracking-wide text-crm-success-text">Opted In</p>
+            <Icon name="Check" className="size-5 text-crm-success-text" />
           </div>
-          <p className="mt-1 text-3xl font-bold text-emerald-700 tabular-nums">{optedIn}</p>
-          <p className="body-text text-emerald-700/80">Can receive marketing</p>
+          <p className="mt-1 text-3xl font-bold text-crm-success-text tabular-nums">{optedIn}</p>
+          <p className="body-text text-crm-success-text/80">Can receive marketing</p>
         </div>
-        <div className="rounded-2xl border border-rose-200 bg-rose-50/50 p-4">
+        <div className="rounded-2xl border border-crm-warning-border bg-crm-warning-bg/50 p-4">
           <div className="flex items-center justify-between">
-            <p className="badge-text uppercase tracking-wide text-rose-700">Opted Out</p>
-            <Icon name="X" className="size-5 text-rose-600" />
+            <p className="badge-text uppercase tracking-wide text-crm-warning-text">Opted Out</p>
+            <Icon name="X" className="size-5 text-crm-warning-text" />
           </div>
-          <p className="mt-1 text-3xl font-bold text-rose-700 tabular-nums">{optedOut}</p>
-          <p className="body-text text-rose-700/80">No marketing contact</p>
+          <p className="mt-1 text-3xl font-bold text-crm-warning-text tabular-nums">{optedOut}</p>
+          <p className="body-text text-[var(--alo-error)]/80">No marketing contact</p>
         </div>
         <div className="rounded-2xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-4">
           <div className="flex items-center justify-between">
@@ -2001,9 +2001,9 @@ function AiClassificationTab({
         <div className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
           <div className="flex items-center justify-between">
             <p className="badge-text uppercase tracking-wide text-[var(--alo-text-muted)]">Not human verified</p>
-            <Icon name="Wand2" className="size-5 text-violet-600" />
+            <Icon name="Wand2" className="size-5 text-[var(--alo-brand)]" />
           </div>
-          <p className="mt-1 text-3xl font-bold text-violet-600 tabular-nums">
+          <p className="mt-1 text-3xl font-bold text-[var(--alo-brand)] tabular-nums">
             {classifications.length - humanVerified}
           </p>
         </div>
@@ -2058,11 +2058,11 @@ function AiClassificationTab({
                     </TableCell>
                     <TableCell>
                       {c.humanVerified ? (
-                        <Badge className="bg-emerald-100 text-emerald-700">
+                        <Badge className="bg-crm-success-bg text-crm-success-text">
                           <Icon name="Check" className="size-3 mr-1" /> Verified
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="border-amber-200 text-amber-700">
+                        <Badge variant="outline" className="border-crm-warning-border text-crm-warning-text">
                           <Icon name="Clock" className="size-3 mr-1" /> Pending
                         </Badge>
                       )}
@@ -2098,9 +2098,9 @@ function AiClassificationTab({
       </SectionCard>
 
       {/* OCR extraction note */}
-      <div className="rounded-xl border border-violet-200 bg-violet-50/40 px-4 py-3">
+      <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/40 px-4 py-3">
         <div className="flex items-start gap-2.5">
-          <Icon name="ScanText" className="size-4 mt-0.5 text-violet-600 shrink-0" />
+          <Icon name="ScanText" className="size-4 mt-0.5 text-[var(--alo-brand)] shrink-0" />
           <p className="body-text text-[var(--alo-text)]">
             <strong>OCR extraction:</strong> AI extracts Full Name, DOB, Gender, Nationality,
             Passport Number, Issue/Expiry Date, Institution, CGPA, Band Score, Account Number, Bank
@@ -2225,7 +2225,7 @@ function RunClassificationDialog({
                 <p className="card-title text-[var(--alo-text)]">AI Result</p>
                 <div className="flex items-center gap-2">
                   <Badge className="bg-[var(--alo-brand)] text-white">{result.detectedType}</Badge>
-                  <Badge className="bg-emerald-100 text-emerald-700">
+                  <Badge className="bg-crm-success-bg text-crm-success-text">
                     {Math.round(result.confidence * 100)}% confidence
                   </Badge>
                 </div>

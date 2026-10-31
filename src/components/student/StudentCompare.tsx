@@ -238,7 +238,7 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
               className="data-[state=checked]:bg-[var(--alo-brand)] data-[state=checked]:border-[var(--alo-brand)]"
             />
           </label>
-          <Button variant="ghost" size="icon-sm" className="text-[var(--alo-text-muted)] hover:text-red-500 h-7 w-7" onClick={onRemove}>
+          <Button variant="ghost" size="icon-sm" className="text-[var(--alo-text-muted)] hover:text-crm-danger-text h-7 w-7" onClick={onRemove}>
             <Trash2 className="size-3.5" />
           </Button>
         </div>
@@ -263,7 +263,7 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
       <div className="flex items-baseline gap-2">
         <span className="text-lg font-bold text-[var(--alo-text)]">{course.tuition}</span>
         {course.scholarship && (
-          <span className="text-xs font-semibold text-emerald-600">Scholarship {course.scholarship}</span>
+          <span className="text-xs font-semibold text-crm-success-text">Scholarship {course.scholarship}</span>
         )}
       </div>
 
@@ -277,7 +277,7 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
           Apply
         </Button>
         <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className=" ">
-          <Bookmark className="size-3 fill-amber-500 text-amber-500 mr-1" />
+          <Bookmark className="size-3 fill-amber-500 text-crm-warning-text mr-1" />
           Saved
         </Button>
       </div>
@@ -375,7 +375,7 @@ export default function StudentCompare() {
             <TabsContent value="shortlist">
               {shortlist.length === 0 ? (
                 <div className="text-center py-20">
-                  <BookmarkX className="size-16 text-slate-200 mx-auto mb-4" />
+                  <BookmarkX className="size-16 text-[var(--alo-text-muted)] mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">No courses shortlisted yet</h3>
                   <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto mb-6">
                     Browse courses and click Shortlist to save them here. You can compare up to 5 courses side by side.
@@ -409,7 +409,7 @@ export default function StudentCompare() {
             <TabsContent value="compare">
               {selectedCourses.length < 2 ? (
                 <div className="text-center py-20">
-                  <GitCompareArrows className="size-16 text-slate-200 mx-auto mb-4" />
+                  <GitCompareArrows className="size-16 text-[var(--alo-text-muted)] mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">
                     {selectedCourses.length === 0
                       ? 'No courses selected for comparison'
@@ -459,7 +459,7 @@ export default function StudentCompare() {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="text-red-500 hover:text-red-600 hover:bg-red-50 h-7 text-[11px] gap-1"
+                                    className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg h-7 text-[11px] gap-1"
                                     onClick={() => removeCourse(course.id)}
                                   >
                                     <Trash2 className="size-3" />
@@ -487,7 +487,7 @@ export default function StudentCompare() {
                                   return (
                                     <TableCell
                                       key={course.id}
-                                      className={`text-center text-sm ${isBest ? 'bg-emerald-50 font-semibold text-emerald-800' : 'text-[var(--alo-body)]'}`}
+                                      className={`text-center text-sm ${isBest ? 'bg-crm-success-bg font-semibold text-crm-success-text' : 'text-[var(--alo-body)]'}`}
                                     >
                                       {row.type === 'visa-risk' ? (
                                         visaRiskBadge(value as string)
@@ -495,13 +495,13 @@ export default function StudentCompare() {
                                         <div className="flex flex-col items-center">
                                           <span>{String(value)}</span>
                                           {isBest && (
-                                            <span className="text-[11px] text-emerald-600 font-medium">Best Ranking</span>
+                                            <span className="text-[11px] text-crm-success-text font-medium">Best Ranking</span>
                                           )}
                                         </div>
                                       ) : row.type === 'currency' && isBest ? (
                                         <div className="flex flex-col items-center">
                                           <span>{String(value)}</span>
-                                          <span className="text-[11px] text-emerald-600 font-medium">Lowest</span>
+                                          <span className="text-[11px] text-crm-success-text font-medium">Lowest</span>
                                         </div>
                                       ) : (
                                         <span>{value === null ? (
@@ -529,12 +529,12 @@ export default function StudentCompare() {
                               return (
                                 <TableCell
                                   key={course.id}
-                                  className={`text-center ${isBest ? 'bg-emerald-50' : ''}`}
+                                  className={`text-center ${isBest ? 'bg-crm-success-bg' : ''}`}
                                 >
                                   <div className={`inline-flex size-12 rounded-full items-center justify-center text-sm font-bold ${
-                                    course.matchScore >= 90 ? 'bg-emerald-500 text-white' :
+                                    course.matchScore >= 90 ? 'bg-[var(--alo-success)] text-white' :
                                     course.matchScore >= 80 ? 'bg-[var(--alo-brand)] text-white' :
-                                    'bg-amber-500 text-white'
+                                    'bg-[var(--alo-warning)] text-white'
                                   }`}>
                                     {course.matchScore}%
                                   </div>

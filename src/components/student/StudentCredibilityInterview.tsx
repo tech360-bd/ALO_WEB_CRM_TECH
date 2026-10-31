@@ -131,7 +131,7 @@ export default function StudentCredibilityInterview() {
                       <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[var(--alo-text-muted)]">Practice score</p>
                       <p className={cn(
                         'mt-1 text-[20px] font-bold leading-none',
-                        interview.overallScore >= 80 ? 'text-emerald-600' : interview.overallScore >= 50 ? 'text-amber-600' : 'text-red-600',
+                        interview.overallScore >= 80 ? 'text-crm-success-text' : interview.overallScore >= 50 ? 'text-crm-warning-text' : 'text-crm-danger-text',
                       )}>
                         {Math.round(interview.overallScore)}
                         <span className="text-[13px] font-medium text-[var(--alo-text-muted)]"> / 100</span>
@@ -149,13 +149,13 @@ export default function StudentCredibilityInterview() {
                   <div className="grid gap-4 border-t border-[var(--alo-border)] px-5 py-4 md:grid-cols-3">
                     {interview.strengths && (
                       <div>
-                        <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-emerald-700">Strengths</p>
+                        <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-crm-success-text">Strengths</p>
                         <p className="mt-1 text-[13px] leading-relaxed text-[var(--alo-body)]">{interview.strengths}</p>
                       </div>
                     )}
                     {interview.weaknesses && (
                       <div>
-                        <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-red-700">Needs work</p>
+                        <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-crm-danger-text">Needs work</p>
                         <p className="mt-1 text-[13px] leading-relaxed text-[var(--alo-body)]">{interview.weaknesses}</p>
                       </div>
                     )}

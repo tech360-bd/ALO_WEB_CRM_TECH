@@ -76,7 +76,7 @@ export default function ApplicationManagerDashboard() {
     return (
       <div className="p-8 bg-[#FFFFFF] min-h-screen flex items-center justify-center">
         <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl p-8 text-center max-w-md space-y-4">
-          <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto" />
+          <AlertTriangle className="w-10 h-10 text-crm-warning-text mx-auto" />
           <h3 className="font-semibold text-[var(--alo-text)]">Failed to load dashboard</h3>
           <p className="text-sm text-[var(--alo-body)]">{error}</p>
           <Button onClick={fetchDashboardData} className="bg-[var(--alo-brand)] text-white">Retry</Button>
@@ -87,21 +87,21 @@ export default function ApplicationManagerDashboard() {
 
   const kpis = [
     { label: 'Total Applications', value: metrics?.totalApplications ?? metrics?.total ?? 0, icon: FileCheck, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand)]/10 border-[var(--alo-brand)]/20' },
-    { label: 'New Today', value: metrics?.newToday ?? 0, icon: Plus, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
+    { label: 'New Today', value: metrics?.newToday ?? 0, icon: Plus, color: 'text-crm-success-text bg-crm-success-bg border-crm-success-border' },
     { label: 'Direct', value: metrics?.direct ?? 0, icon: User, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] border-[var(--alo-border)]' },
-    { label: 'Partner', value: metrics?.partner ?? 0, icon: Handshake, color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
-    { label: 'B2B Total', value: metrics?.b2b ?? metrics?.confidentialB2bCases ?? 0, icon: Building2, color: 'text-rose-600 bg-rose-50 border-rose-200' },
+    { label: 'Partner', value: metrics?.partner ?? 0, icon: Handshake, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] border-[var(--alo-border)]' },
+    { label: 'B2B Total', value: metrics?.b2b ?? metrics?.confidentialB2bCases ?? 0, icon: Building2, color: 'text-crm-warning-text bg-crm-warning-bg border-crm-warning-border' },
     { label: 'B2B Inbound', value: metrics?.b2bInbound ?? 0, icon: ArrowDownRight, color: 'text-[var(--alo-cta-active)] bg-[var(--alo-cta-soft)] border-[var(--alo-cta)]/25' },
-    { label: 'B2B Outbound', value: metrics?.b2bOutbound ?? 0, icon: ArrowUpRight, color: 'text-amber-600 bg-amber-50 border-amber-200' },
-    { label: 'Submitted', value: metrics?.submitted ?? 0, icon: Send, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
-    { label: 'Decision Pending', value: metrics?.decisionPending ?? 0, icon: Clock, color: 'text-amber-600 bg-amber-50 border-amber-200' },
-    { label: 'Conditional Offers', value: metrics?.conditionalOffers ?? 0, icon: Award, color: 'text-purple-600 bg-purple-50 border-purple-200' },
-    { label: 'Unconditional Offers', value: metrics?.unconditionalOffers ?? 0, icon: Award, color: 'text-violet-600 bg-violet-50 border-violet-200' },
-    { label: 'Rejected', value: metrics?.rejected ?? 0, icon: X, color: 'text-red-600 bg-red-50 border-red-200' },
+    { label: 'B2B Outbound', value: metrics?.b2bOutbound ?? 0, icon: ArrowUpRight, color: 'text-crm-warning-text bg-crm-warning-bg border-crm-warning-border' },
+    { label: 'Submitted', value: metrics?.submitted ?? 0, icon: Send, color: 'text-crm-success-text bg-crm-success-bg border-crm-success-border' },
+    { label: 'Decision Pending', value: metrics?.decisionPending ?? 0, icon: Clock, color: 'text-crm-warning-text bg-crm-warning-bg border-crm-warning-border' },
+    { label: 'Conditional Offers', value: metrics?.conditionalOffers ?? 0, icon: Award, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] border-[var(--alo-border)]' },
+    { label: 'Unconditional Offers', value: metrics?.unconditionalOffers ?? 0, icon: Award, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] border-[var(--alo-border)]' },
+    { label: 'Rejected', value: metrics?.rejected ?? 0, icon: X, color: 'text-crm-danger-text bg-crm-danger-bg border-crm-danger-border' },
     { label: 'Deferred', value: metrics?.deferred ?? 0, icon: Timer, color: 'text-[var(--alo-body)] bg-[var(--alo-page)] border-[var(--alo-border)]' },
     { label: 'Documents Pending', value: metrics?.documentsPending ?? 0, icon: FileWarning, color: 'text-[var(--alo-cta-active)] bg-[var(--alo-cta-soft)] border-[var(--alo-cta)]/25' },
-    { label: 'CAS / I-20 / COE Pending', value: metrics?.casPending ?? 0, icon: Shield, color: 'text-cyan-600 bg-cyan-50 border-cyan-200' },
-    { label: 'Urgent Deadlines', value: metrics?.urgentDeadlines ?? 0, icon: AlertTriangle, color: 'text-red-600 bg-red-50 border-red-200' },
+    { label: 'CAS / I-20 / COE Pending', value: metrics?.casPending ?? 0, icon: Shield, color: 'text-[var(--alo-info-text)] bg-[var(--alo-info-bg)] border-[var(--alo-info-border)]' },
+    { label: 'Urgent Deadlines', value: metrics?.urgentDeadlines ?? 0, icon: AlertTriangle, color: 'text-crm-danger-text bg-crm-danger-bg border-crm-danger-border' },
     { label: 'Pending Tasks', value: metrics?.pendingTasks ?? 0, icon: CheckSquare, color: 'text-[var(--alo-brand)] bg-[var(--alo-brand)]/10 border-[var(--alo-brand)]/20' },
   ];
 
@@ -122,14 +122,14 @@ export default function ApplicationManagerDashboard() {
                   <p className="text-sm text-[var(--alo-text-muted)]">Direct, Partner & B2B Inbound/Outbound — 30+ stage pipeline with safe status mapping</p>
                   <div className="flex gap-2 mt-2">
                     <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-[11px]">REAL API</Badge>
-                    <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">B2B SECURED</Badge>
+                    <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]">B2B SECURED</Badge>
                     <Badge className="bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)] text-[11px]">{recentApps.length} live records</Badge>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Link href="/application-manager/applications"><Button variant="outline" className="border-[var(--alo-border)] text-[var(--alo-text)]">All Applications</Button></Link>
-                <Link href="/application-manager/b2b"><Button className="bg-rose-600 hover:bg-rose-700 text-white flex items-center gap-1.5"><Lock className="w-4 h-4" />B2B Queue</Button></Link>
+                <Link href="/application-manager/b2b"><Button className="bg-[var(--alo-error)] hover:bg-[var(--alo-error)] text-white flex items-center gap-1.5"><Lock className="w-4 h-4" />B2B Queue</Button></Link>
                 <Button onClick={fetchDashboardData} variant="outline" className="border-[var(--alo-border)]"><RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /></Button>
               </div>
             </div>
@@ -190,7 +190,7 @@ export default function ApplicationManagerDashboard() {
           {/* Submission breakdown */}
           <div className="col-span-12 lg:col-span-4">
             <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl h-full">
-              <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Send className="w-4 h-4 text-emerald-600" />Submission Methods</CardTitle></CardHeader>
+              <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Send className="w-4 h-4 text-crm-success-text" />Submission Methods</CardTitle></CardHeader>
               <CardContent className="p-4 space-y-3">
                 {[
                   { label: 'Direct University Portal', value: dashboard?.breakdowns?.stages?.SUBMITTED_VIA_PORTAL || 0 },
@@ -210,19 +210,19 @@ export default function ApplicationManagerDashboard() {
 
           {/* B2B confidential alerts */}
           <div className="col-span-12 lg:col-span-4">
-            <Card className="bg-white border-rose-200 shadow-sm rounded-xl h-full">
-              <CardHeader className="p-4 border-b border-rose-100 flex flex-row items-center justify-between bg-rose-50/50 rounded-t-xl">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2 text-rose-700"><Lock className="w-4 h-4" />B2B Confidential Alerts</CardTitle>
-                <Badge className="bg-rose-100 text-rose-700 border-rose-200 text-[11px]">RESTRICTED</Badge>
+            <Card className="bg-white border-crm-warning-border shadow-sm rounded-xl h-full">
+              <CardHeader className="p-4 border-b border-crm-warning-border flex flex-row items-center justify-between bg-crm-warning-bg/50 rounded-t-xl">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2 text-crm-warning-text"><Lock className="w-4 h-4" />B2B Confidential Alerts</CardTitle>
+                <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]">RESTRICTED</Badge>
               </CardHeader>
               <CardContent className="p-4 space-y-2">
                 {(dashboard?.alerts?.confidential || []).length === 0 ? (
                   <p className="text-xs text-[var(--alo-text-muted)] py-4 text-center">No confidential alerts. B2B queue clear.</p>
                 ) : (
                   dashboard.alerts.confidential.map((alert: any, i: number) => (
-                    <div key={i} className="bg-rose-50 border border-rose-200 rounded-xl p-3 text-xs">
-                      <p className="font-semibold text-rose-800">{alert.b2bProvider?.name || 'B2B Provider'} — {alert.b2bType}</p>
-                      <p className="text-rose-600 mt-1">Ref: {alert.b2bReference || 'PENDING'} • Status: {alert.b2bStatus}</p>
+                    <div key={i} className="bg-crm-warning-bg border border-crm-warning-border rounded-xl p-3 text-xs">
+                      <p className="font-semibold text-crm-warning-text">{alert.b2bProvider?.name || 'B2B Provider'} — {alert.b2bType}</p>
+                      <p className="text-crm-warning-text mt-1">Ref: {alert.b2bReference || 'PENDING'} • Status: {alert.b2bStatus}</p>
                     </div>
                   ))
                 )}
@@ -238,7 +238,7 @@ export default function ApplicationManagerDashboard() {
                 {(dashboard?.documents || []).slice(0, 5).map((doc: any, i: number) => (
                   <div key={i} className="flex items-center justify-between bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3">
                     <div><p className="text-xs font-medium text-[var(--alo-text)] truncate">{doc.fileName || doc.documentType}</p><p className="text-[11px] text-[var(--alo-text-muted)]">{doc.status}</p></div>
-                    <Badge className="bg-amber-50 text-amber-700 border-amber-200 text-[11px]">{doc.status}</Badge>
+                    <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]">{doc.status}</Badge>
                   </div>
                 ))}
                 {(dashboard?.documents || []).length === 0 && <p className="text-xs text-[var(--alo-text-muted)] py-4 text-center">No documents pending review.</p>}
@@ -250,11 +250,11 @@ export default function ApplicationManagerDashboard() {
           {/* Offer management */}
           <div className="col-span-12 lg:col-span-4">
             <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl h-full">
-              <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Award className="w-4 h-4 text-purple-600" />Offer Management</CardTitle></CardHeader>
+              <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Award className="w-4 h-4 text-[var(--alo-brand)]" />Offer Management</CardTitle></CardHeader>
               <CardContent className="p-4 space-y-2">
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-3 text-center"><p className="text-lg font-bold text-purple-700">{metrics?.conditionalOffers || 0}</p><p className="text-[11px] text-purple-600">Conditional</p></div>
-                  <div className="bg-violet-50 border border-violet-200 rounded-xl p-3 text-center"><p className="text-lg font-bold text-violet-700">{metrics?.unconditionalOffers || 0}</p><p className="text-[11px] text-violet-600">Unconditional</p></div>
+                  <div className="bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-xl p-3 text-center"><p className="text-lg font-bold text-[var(--alo-brand)]">{metrics?.conditionalOffers || 0}</p><p className="text-[11px] text-[var(--alo-brand)]">Conditional</p></div>
+                  <div className="bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-xl p-3 text-center"><p className="text-lg font-bold text-[var(--alo-brand)]">{metrics?.unconditionalOffers || 0}</p><p className="text-[11px] text-[var(--alo-brand)]">Unconditional</p></div>
                 </div>
                 <Link href="/application-manager/offer-management"><Button variant="outline" size="sm" className="w-full border-[var(--alo-border)] ">Manage Offers</Button></Link>
               </CardContent>
@@ -264,7 +264,7 @@ export default function ApplicationManagerDashboard() {
           {/* CAS / I-20 / COE */}
           <div className="col-span-12 lg:col-span-6">
             <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl h-full">
-              <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Shield className="w-4 h-4 text-cyan-600" />CAS / I-20 / COE — Destination Mapping</CardTitle></CardHeader>
+              <CardHeader className="p-4 border-b border-[var(--alo-border)]"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Shield className="w-4 h-4 text-[var(--alo-info-text)]" />CAS / I-20 / COE — Destination Mapping</CardTitle></CardHeader>
               <CardContent className="p-4">
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   {[
@@ -290,14 +290,14 @@ export default function ApplicationManagerDashboard() {
           <div className="col-span-12 lg:col-span-6">
             <Card className="bg-white border-[var(--alo-border)] shadow-sm rounded-xl h-full">
               <CardHeader className="p-4 border-b border-[var(--alo-border)] flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2"><Calendar className="w-4 h-4 text-red-600" />Deadline Engine</CardTitle>
+                <CardTitle className="text-sm font-semibold flex items-center gap-2"><Calendar className="w-4 h-4 text-crm-danger-text" />Deadline Engine</CardTitle>
                 <Link href="/application-manager/deadlines" className="text-xs text-[var(--alo-brand)]">View all →</Link>
               </CardHeader>
               <CardContent className="p-4 space-y-2">
                 {(dashboard?.deadlines || []).slice(0, 5).map((dl: any, i: number) => (
                   <div key={i} className="flex items-center justify-between bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3">
                     <div><p className="text-xs font-medium text-[var(--alo-text)]">{dl.deadlineType?.replace(/_/g, ' ')}</p><p className="text-[11px] text-[var(--alo-text-muted)]">{new Date(dl.deadlineDate).toLocaleDateString()} • {dl.application?.universityName || dl.applicationId}</p></div>
-                    <Badge className={`${dl.status === 'OVERDUE' ? 'bg-red-50 text-red-700 border-red-200' : dl.status === 'DUE_TODAY' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]'} text-[11px]`}>{dl.status}</Badge>
+                    <Badge className={`${dl.status === 'OVERDUE' ? 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' : dl.status === 'DUE_TODAY' ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' : 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]'} text-[11px]`}>{dl.status}</Badge>
                   </div>
                 ))}
                 {(dashboard?.deadlines || []).length === 0 && <p className="text-xs text-[var(--alo-text-muted)] py-4 text-center">No pending deadlines. Alerts will appear here as deadlines approach.</p>}
@@ -332,7 +332,7 @@ export default function ApplicationManagerDashboard() {
                 {(dashboard?.tasks || []).slice(0, 6).map((task: any, i: number) => (
                   <div key={i} className="flex items-center justify-between bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3">
                     <div><p className="text-xs font-medium text-[var(--alo-text)]">{task.taskTitle}</p><p className="text-[11px] text-[var(--alo-text-muted)]">{task.assignedToName || task.assignedTo} • Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date'}</p></div>
-                    <Badge className={`${task.priority === 'URGENT' ? 'bg-red-50 text-red-700 border-red-200' : task.priority === 'HIGH' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]'} text-[11px]`}>{task.priority}</Badge>
+                    <Badge className={`${task.priority === 'URGENT' ? 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' : task.priority === 'HIGH' ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' : 'bg-[var(--alo-page)] text-[var(--alo-body)] border-[var(--alo-border)]'} text-[11px]`}>{task.priority}</Badge>
                   </div>
                 ))}
                 {(dashboard?.tasks || []).length === 0 && <p className="text-xs text-[var(--alo-text-muted)] py-4 text-center">No pending tasks.</p>}
@@ -415,10 +415,10 @@ export default function ApplicationManagerDashboard() {
                             <td className="p-3 text-[var(--alo-text)]">{app.universityName}</td>
                             <td className="p-3 text-xs text-[var(--alo-body)]">{app.courseName}</td>
                             <td className="p-3">
-                              {app.isB2b ? <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[11px]"><Lock className="w-2.5 h-2.5 mr-1" />{app.b2bType || 'B2B'}</Badge> : <Badge variant="outline" className="text-[var(--alo-body)] border-[var(--alo-border)] text-[11px]">{(app.applicationSource || 'DIRECT').replace(/_/g, ' ')}</Badge>}
+                              {app.isB2b ? <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]"><Lock className="w-2.5 h-2.5 mr-1" />{app.b2bType || 'B2B'}</Badge> : <Badge variant="outline" className="text-[var(--alo-body)] border-[var(--alo-border)] text-[11px]">{(app.applicationSource || 'DIRECT').replace(/_/g, ' ')}</Badge>}
                             </td>
-                            <td className="p-3 text-xs text-amber-600 font-medium">{app.stage}</td>
-                            <td className="p-3"><Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">{app.safeStatus || 'UNDER REVIEW'}</Badge></td>
+                            <td className="p-3 text-xs text-crm-warning-text font-medium">{app.stage}</td>
+                            <td className="p-3"><Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]">{app.safeStatus || 'UNDER REVIEW'}</Badge></td>
                             <td className="p-3 text-right"><Link href={`/application-manager/application/${app.id}`}><Button size="sm" variant="ghost" className="text-[var(--alo-text)] hover:text-[var(--alo-brand)]"><Eye className="w-4 h-4 mr-1" />Manage</Button></Link></td>
                           </tr>
                         ))

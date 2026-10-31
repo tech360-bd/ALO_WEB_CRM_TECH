@@ -78,9 +78,9 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
                     isComplete
-                      ? 'bg-emerald-600 text-white'
+                      ? 'bg-[var(--alo-success-dark)] text-white'
                       : isCurrent
-                        ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-600'
+                        ? 'bg-crm-success-bg text-crm-success-text ring-2 ring-emerald-600'
                         : 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]'
                   }`}
                 >
@@ -88,7 +88,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                 </div>
                 <span
                   className={`text-[11px] whitespace-nowrap ${
-                    isCurrent ? 'font-semibold text-emerald-700' : 'text-[var(--alo-text-muted)]'
+                    isCurrent ? 'font-semibold text-crm-success-text' : 'text-[var(--alo-text-muted)]'
                   }`}
                 >
                   {step.label}
@@ -97,7 +97,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
               {idx < STEP_CONFIG.length - 1 && (
                 <div
                   className={`w-4 sm:w-8 h-0.5 mx-0.5 mt-[-14px] ${
-                    currentStep > step.id ? 'bg-emerald-600' : 'bg-slate-200'
+                    currentStep > step.id ? 'bg-[var(--alo-success-dark)]' : 'bg-[var(--alo-page)]'
                   }`}
                 />
               )}
@@ -113,14 +113,14 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
           </span>
           <Badge
             variant="secondary"
-            className="bg-emerald-50 text-emerald-700 text-xs"
+            className="bg-crm-success-bg text-crm-success-text text-xs"
           >
             {STEP_CONFIG[currentStep - 1].label}
           </Badge>
         </div>
         <Progress
           value={(currentStep / 12) * 100}
-          className="[&_[data-slot=progress-indicator]]:bg-emerald-600 h-2"
+          className="[&_[data-slot=progress-indicator]]:bg-[var(--alo-success-dark)] h-2"
         />
       </div>
     </div>
@@ -129,9 +129,9 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
 
 function severityColor(severity: string) {
   switch (severity) {
-    case 'error': return 'bg-red-100 text-red-700';
-    case 'warning': return 'bg-amber-100 text-amber-700';
-    case 'blocked': return 'bg-red-200 text-red-800';
+    case 'error': return 'bg-crm-danger-bg text-crm-danger-text';
+    case 'warning': return 'bg-crm-warning-bg text-crm-warning-text';
+    case 'blocked': return 'bg-crm-danger-bg text-crm-danger-text';
     default: return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
   }
 }
@@ -357,11 +357,11 @@ export function ImportWorkflow() {
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-[var(--alo-border-strong)] rounded-xl p-12 text-center cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-colors"
+                  className="border-2 border-dashed border-[var(--alo-border-strong)] rounded-xl p-12 text-center cursor-pointer hover:border-[var(--alo-success)] hover:bg-crm-success-bg/30 transition-colors"
                 >
                   <Upload className="size-12 text-[var(--alo-placeholder)] mx-auto mb-4" />
                   <p className="text-sm font-medium text-[var(--alo-body)]">
-                    Drop your CSV file here, or <span className="text-emerald-600">browse</span>
+                    Drop your CSV file here, or <span className="text-crm-success-text">browse</span>
                   </p>
                   <p className="text-xs text-[var(--alo-text-muted)] mt-1">CSV files up to 50MB</p>
                 </div>
@@ -386,9 +386,9 @@ export function ImportWorkflow() {
                 </div>
                 {file && (
                   <div className="flex items-center gap-2 bg-[var(--alo-page)] p-3 rounded-lg">
-                    <FileSpreadsheet className="size-5 text-emerald-600" />
+                    <FileSpreadsheet className="size-5 text-crm-success-text" />
                     <span className="text-sm font-medium text-[var(--alo-body)]">{file.name}</span>
-                    <Badge variant="secondary" className="text-xs bg-emerald-50 text-emerald-700">
+                    <Badge variant="secondary" className="text-xs bg-crm-success-bg text-crm-success-text">
                       {(file.size / 1024).toFixed(1)} KB
                     </Badge>
                   </div>
@@ -403,11 +403,11 @@ export function ImportWorkflow() {
                       key={value}
                       className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${
                         importType === value
-                          ? 'border-emerald-600 bg-emerald-50'
+                          ? 'border-crm-success-border bg-crm-success-bg'
                           : 'border-[var(--alo-border)] hover:border-[var(--alo-border-strong)]'
                       }`}
                     >
-                      <RadioGroupItem value={value} className="border-emerald-600 text-emerald-600" />
+                      <RadioGroupItem value={value} className="border-crm-success-border text-crm-success-text" />
                       <span className="text-sm font-medium text-[var(--alo-text)]">{label}</span>
                     </label>
                   ))}
@@ -534,7 +534,7 @@ export function ImportWorkflow() {
                 <Button
                   onClick={runValidation}
                   disabled={validating}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-8"
+                  className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white px-8"
                 >
                   {validating ? (
                     <>
@@ -570,21 +570,21 @@ export function ImportWorkflow() {
                     <div className="text-2xl font-bold text-[var(--alo-text)]">{validationResult.total}</div>
                     <div className="text-xs text-[var(--alo-text-muted)] mt-1">Total Rows</div>
                   </Card>
-                  <Card className="p-4 border-emerald-200 bg-emerald-50">
-                    <div className="text-2xl font-bold text-emerald-700">{validationResult.valid}</div>
-                    <div className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                  <Card className="p-4 border-crm-success-border bg-crm-success-bg">
+                    <div className="text-2xl font-bold text-crm-success-text">{validationResult.valid}</div>
+                    <div className="text-xs text-crm-success-text mt-1 flex items-center gap-1">
                       <CheckCircle2 className="size-3" /> Valid
                     </div>
                   </Card>
-                  <Card className="p-4 border-amber-200 bg-amber-50">
-                    <div className="text-2xl font-bold text-amber-700">{validationResult.warnings}</div>
-                    <div className="text-xs text-amber-600 mt-1 flex items-center gap-1">
+                  <Card className="p-4 border-crm-warning-border bg-crm-warning-bg">
+                    <div className="text-2xl font-bold text-crm-warning-text">{validationResult.warnings}</div>
+                    <div className="text-xs text-crm-warning-text mt-1 flex items-center gap-1">
                       <AlertTriangle className="size-3" /> Warnings
                     </div>
                   </Card>
-                  <Card className="p-4 border-red-200 bg-red-50">
-                    <div className="text-2xl font-bold text-red-700">{validationResult.blocked}</div>
-                    <div className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                  <Card className="p-4 border-crm-danger-border bg-crm-danger-bg">
+                    <div className="text-2xl font-bold text-crm-danger-text">{validationResult.blocked}</div>
+                    <div className="text-xs text-crm-danger-text mt-1 flex items-center gap-1">
                       <XCircle className="size-3" /> Blocked
                     </div>
                   </Card>
@@ -650,10 +650,10 @@ export function ImportWorkflow() {
                     Review the details before starting the import
                   </p>
                 </div>
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="bg-crm-warning-bg border border-crm-warning-border rounded-lg p-4">
                   <div className="flex gap-3">
-                    <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
-                    <div className="text-sm text-amber-800">
+                    <AlertTriangle className="size-5 text-crm-warning-text shrink-0 mt-0.5" />
+                    <div className="text-sm text-crm-warning-text">
                       <p className="font-medium">Important</p>
                       <p className="mt-1">
                         This will import <strong>{validationResult.valid} rows</strong> into the system.
@@ -679,13 +679,13 @@ export function ImportWorkflow() {
                   </div>
                   <div>
                     <p className="text-xs text-[var(--alo-text-muted)]">Rows to Import</p>
-                    <p className="text-sm font-bold text-emerald-600 text-lg mt-0.5">
+                    <p className="text-sm font-bold text-crm-success-text text-lg mt-0.5">
                       {validationResult.valid}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-[var(--alo-text-muted)]">Rows to Skip</p>
-                    <p className="text-sm font-bold text-red-600 text-lg mt-0.5">
+                    <p className="text-sm font-bold text-crm-danger-text text-lg mt-0.5">
                       {validationResult.blocked + validationResult.duplicates}
                     </p>
                   </div>
@@ -697,7 +697,7 @@ export function ImportWorkflow() {
             {step === 9 && (
               <div className="space-y-6 py-4">
                 <div className="text-center">
-                  <Loader2 className="size-10 text-emerald-600 animate-spin mx-auto mb-4" />
+                  <Loader2 className="size-10 text-crm-success-text animate-spin mx-auto mb-4" />
                   <h2 className="text-lg font-semibold text-[var(--alo-text)]">Importing Data...</h2>
                   <p className="text-sm text-[var(--alo-text-muted)] mt-1">
                     Please do not close this page while the import is in progress
@@ -706,11 +706,11 @@ export function ImportWorkflow() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-[var(--alo-body)]">Progress</span>
-                    <span className="font-medium text-emerald-600">{importProgress}%</span>
+                    <span className="font-medium text-crm-success-text">{importProgress}%</span>
                   </div>
                   <Progress
                     value={importProgress}
-                    className="h-3 [&_[data-slot=progress-indicator]]:bg-emerald-600"
+                    className="h-3 [&_[data-slot=progress-indicator]]:bg-[var(--alo-success-dark)]"
                   />
                   <p className="text-xs text-[var(--alo-text-muted)] text-center">
                     Processing rows...
@@ -725,15 +725,15 @@ export function ImportWorkflow() {
                 <div className="text-center py-4">
                   {importResult.success ? (
                     <>
-                      <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-                        <CheckCircle2 className="size-8 text-emerald-600" />
+                      <div className="w-16 h-16 rounded-full bg-crm-success-bg flex items-center justify-center mx-auto mb-4">
+                        <CheckCircle2 className="size-8 text-crm-success-text" />
                       </div>
                       <h2 className="text-lg font-semibold text-[var(--alo-text)]">Import Successful</h2>
                     </>
                   ) : (
                     <>
-                      <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                        <XCircle className="size-8 text-red-600" />
+                      <div className="w-16 h-16 rounded-full bg-crm-danger-bg flex items-center justify-center mx-auto mb-4">
+                        <XCircle className="size-8 text-crm-danger-text" />
                       </div>
                       <h2 className="text-lg font-semibold text-[var(--alo-text)]">Import Completed with Errors</h2>
                     </>
@@ -749,11 +749,11 @@ export function ImportWorkflow() {
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center p-3 bg-white rounded-lg border">
-                      <div className="text-xl font-bold text-emerald-600">{importResult.imported}</div>
+                      <div className="text-xl font-bold text-crm-success-text">{importResult.imported}</div>
                       <div className="text-xs text-[var(--alo-text-muted)]">Imported</div>
                     </div>
                     <div className="text-center p-3 bg-white rounded-lg border">
-                      <div className="text-xl font-bold text-red-600">{importResult.failed}</div>
+                      <div className="text-xl font-bold text-crm-danger-text">{importResult.failed}</div>
                       <div className="text-xs text-[var(--alo-text-muted)]">Failed</div>
                     </div>
                     <div className="text-center p-3 bg-white rounded-lg border">
@@ -768,7 +768,7 @@ export function ImportWorkflow() {
                     variant="outline"
                     size="sm"
                     onClick={handleRollback}
-                    className="border-red-200 text-red-600 hover:bg-red-50"
+                    className="border-crm-danger-border text-crm-danger-text hover:bg-crm-danger-bg"
                   >
                     <RotateCcw className="size-3.5 mr-1.5" />
                     Rollback Import
@@ -792,14 +792,14 @@ export function ImportWorkflow() {
                   <FileText className="size-8 text-[var(--alo-text-muted)]" />
                 </div>
                 <h2 className="text-lg font-semibold text-[var(--alo-text)]">Audit Log</h2>
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 max-w-md mx-auto">
+                <div className="bg-crm-success-bg border border-crm-success-border rounded-lg p-4 max-w-md mx-auto">
                   <div className="flex items-center gap-2 justify-center">
-                    <CheckCircle2 className="size-5 text-emerald-600" />
-                    <p className="text-sm font-medium text-emerald-700">
+                    <CheckCircle2 className="size-5 text-crm-success-text" />
+                    <p className="text-sm font-medium text-crm-success-text">
                       Audit log created for Batch {batchId}
                     </p>
                   </div>
-                  <p className="text-xs text-emerald-600 mt-1">
+                  <p className="text-xs text-crm-success-text mt-1">
                     All import actions have been recorded with timestamps and user information.
                   </p>
                 </div>
@@ -809,8 +809,8 @@ export function ImportWorkflow() {
             {/* Step 12: Done */}
             {step === 12 && (
               <div className="space-y-6 text-center py-8">
-                <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-                  <PartyPopper className="size-10 text-emerald-600" />
+                <div className="w-20 h-20 rounded-full bg-crm-success-bg flex items-center justify-center mx-auto mb-4">
+                  <PartyPopper className="size-10 text-crm-success-text" />
                 </div>
                 <h2 className="text-2xl font-bold text-[var(--alo-text)]">Import Complete!</h2>
                 <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto">
@@ -819,7 +819,7 @@ export function ImportWorkflow() {
                 <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
                   <Button
                     onClick={handleNewImport}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
                   >
                     <Upload className="size-4 mr-2" />
                     New Import
@@ -851,7 +851,7 @@ export function ImportWorkflow() {
                   <Button
                     onClick={goNext}
                     disabled={!canGoNext()}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
                   >
                     Next
                     <ChevronRight className="size-4 ml-1" />
@@ -861,7 +861,7 @@ export function ImportWorkflow() {
                   <Button
                     onClick={goNext}
                     disabled={importing}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
                   >
                     <Check className="size-4 mr-1" />
                     Confirm Import
@@ -877,7 +877,7 @@ export function ImportWorkflow() {
                 </Button>
                 <Button
                   onClick={goNext}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
                 >
                   Finish
                   <ChevronRight className="size-4 ml-1" />

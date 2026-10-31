@@ -60,9 +60,9 @@ const TOPIC_TYPES = [
 
 const STATUS_TONE: Record<string, string> = {
   draft: 'border-[var(--alo-border)] bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
-  pending: 'border-amber-200 bg-amber-50 text-amber-800',
-  approved: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  rejected: 'border-red-200 bg-red-50 text-red-800',
+  pending: 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text',
+  approved: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
+  rejected: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text',
 };
 
 function statusLabel(value: string): string {
@@ -205,7 +205,7 @@ export default function SeoManager() {
         </div>
 
         {actionError && (
-          <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-800" role="alert">
+          <div className="mb-4 flex items-start gap-2 rounded-xl border border-crm-danger-border bg-crm-danger-bg px-4 py-3 text-[13px] text-crm-danger-text" role="alert">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{actionError}</span>
           </div>
@@ -280,12 +280,12 @@ export default function SeoManager() {
 
           {state === 'error' && (
             <div className="flex flex-col items-start gap-3 p-5 sm:flex-row sm:items-center">
-              <AlertCircle className="h-5 w-5 shrink-0 text-red-600" aria-hidden="true" />
+              <AlertCircle className="h-5 w-5 shrink-0 text-crm-danger-text" aria-hidden="true" />
               <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-semibold text-red-900">SEO queue unavailable</p>
-                <p className="mt-0.5 text-[13px] text-red-800">{error}</p>
+                <p className="text-[14px] font-semibold text-crm-danger-text">SEO queue unavailable</p>
+                <p className="mt-0.5 text-[13px] text-crm-danger-text">{error}</p>
               </div>
-              <Button variant="outline" className="shrink-0 border-red-300 bg-white text-red-700" onClick={load}>
+              <Button variant="outline" className="shrink-0 border-crm-danger-border bg-white text-crm-danger-text" onClick={load}>
                 <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
                 Try Again
               </Button>
@@ -317,7 +317,7 @@ export default function SeoManager() {
                         .filter(Boolean).join(' · ') || 'No targeting set'}
                     </p>
                     {item.rejectionReason && (
-                      <p className="mt-1 text-[12px] text-red-700">Rejected: {item.rejectionReason}</p>
+                      <p className="mt-1 text-[12px] text-crm-danger-text">Rejected: {item.rejectionReason}</p>
                     )}
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-2">
@@ -330,7 +330,7 @@ export default function SeoManager() {
                     {item.status !== 'approved' && (
                       <Button
  variant="outline"
- className=" rounded-button border-emerald-300 px-3 text-[12px] font-semibold text-emerald-700"
+ className=" rounded-button border-crm-success-border px-3 text-[12px] font-semibold text-crm-success-text"
  onClick={() => approve(item)}
                         disabled={approving === item.id}
                       >
@@ -361,7 +361,7 @@ export default function SeoManager() {
 }
 
 function Metric({ label, value, tone = 'neutral' }: { label: string; value: number; tone?: 'neutral' | 'success' | 'danger' }) {
-  const toneClass = tone === 'success' ? 'text-emerald-600' : tone === 'danger' ? 'text-red-600' : 'text-[var(--alo-text)]';
+  const toneClass = tone === 'success' ? 'text-crm-success-text' : tone === 'danger' ? 'text-crm-danger-text' : 'text-[var(--alo-text)]';
   return (
     <div className="rounded-xl border border-[var(--alo-border)] bg-white px-4 py-3">
       <p className={cn('text-[24px] font-bold leading-none tracking-[-0.02em]', toneClass)}>{value}</p>

@@ -26,10 +26,10 @@ type VisaReadinessData = {
 };
 
 const RISK_COLORS: Record<string, string> = {
-  READY: "bg-emerald-100 text-emerald-700",
-  NEEDS_DOCUMENT_UPDATE: "bg-amber-100 text-amber-700",
-  HIGH_RISK: "bg-rose-100 text-rose-700",
-  HUMAN_REVIEW_REQUIRED: "bg-violet-100 text-violet-700",
+  READY: "bg-crm-success-bg text-crm-success-text",
+  NEEDS_DOCUMENT_UPDATE: "bg-crm-warning-bg text-crm-warning-text",
+  HIGH_RISK: "bg-crm-warning-bg text-crm-warning-text",
+  HUMAN_REVIEW_REQUIRED: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   UNKNOWN: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 

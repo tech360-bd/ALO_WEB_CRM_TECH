@@ -392,7 +392,7 @@ export function FeatureFlagsPanel() {
                 key={flag.key}
                 className={cn(
                   "flex flex-col gap-2 rounded-xl border-2 p-3 transition-colors",
-                  flag.enabled ? "border-emerald-200 bg-emerald-50/50" : "border-[var(--alo-border)] bg-[var(--alo-page)]",
+                  flag.enabled ? "border-crm-success-border bg-crm-success-bg/50" : "border-[var(--alo-border)] bg-[var(--alo-page)]",
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -400,7 +400,7 @@ export function FeatureFlagsPanel() {
                     <div
                       className={cn(
                         "flex size-8 shrink-0 items-center justify-center rounded-lg",
-                        flag.enabled ? "bg-emerald-100 text-emerald-600" : "bg-slate-200 text-[var(--alo-text-muted)]",
+                        flag.enabled ? "bg-crm-success-bg text-crm-success-text" : "bg-[var(--alo-page)] text-[var(--alo-text-muted)]",
                       )}
                     >
                       <Icon name={iconForModule(flag.module)} className="size-4" />

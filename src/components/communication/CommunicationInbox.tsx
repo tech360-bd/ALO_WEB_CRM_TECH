@@ -16,15 +16,15 @@ import { SLA_STATES } from '@/lib/communications/sla-policy';
 const VISIBILITY_META: Record<string, { label: string; color: string }> = {
   public_safe: { label: 'Public Safe', color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
   student_visible: { label: 'Student Visible', color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
-  partner_visible: { label: 'Partner Visible', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  counselor_visible: { label: 'Counselor Only', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-  application_team_visible: { label: 'App Team', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  visa_team_visible: { label: 'Visa Team', color: 'bg-cyan-50 text-cyan-700 border-cyan-200' },
+  partner_visible: { label: 'Partner Visible', color: 'bg-crm-success-bg text-crm-success-text border-crm-success-border' },
+  counselor_visible: { label: 'Counselor Only', color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
+  application_team_visible: { label: 'App Team', color: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  visa_team_visible: { label: 'Visa Team', color: 'bg-[var(--alo-info-bg)] text-[var(--alo-info-text)] border-[var(--alo-info-border)]' },
   finance_visible: { label: 'Finance', color: 'bg-teal-50 text-teal-700 border-teal-200' },
-  marketing_visible: { label: 'Marketing', color: 'bg-pink-50 text-pink-700 border-pink-200' },
-  b2b_confidential: { label: 'B2B', color: 'bg-rose-100 text-rose-800 border-rose-200' },
-  internal_only: { label: 'Internal Only', color: 'bg-amber-100 text-amber-900 border-amber-200' },
-  super_admin_only: { label: 'Super Admin', color: 'bg-red-100 text-red-900 border-red-200' },
+  marketing_visible: { label: 'Marketing', color: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  b2b_confidential: { label: 'B2B', color: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  internal_only: { label: 'Internal Only', color: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  super_admin_only: { label: 'Super Admin', color: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
 };
 
 const CHANNEL_ICON: Record<string, any> = {
@@ -78,7 +78,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
           <CardTitle className="text-sm font-bold flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-[var(--alo-brand)]" /> Unified Inbox — All Channels (SLA-sorted)
             <Badge variant="outline" className="ml-2 bg-white">{counts.total} threads</Badge>
-            {counts.overdue > 0 && <Badge className="bg-red-100 text-red-700 border-red-200">{counts.overdue} SLA overdue</Badge>}
+            {counts.overdue > 0 && <Badge className="bg-crm-danger-bg text-crm-danger-text border-crm-danger-border">{counts.overdue} SLA overdue</Badge>}
           </CardTitle>
           <Button size="sm" variant="outline" onClick={fetchInbox}><Clock className="w-3.5 h-3.5 mr-1" /> Refresh</Button>
         </CardHeader>
@@ -148,7 +148,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
             <Input placeholder="Course" value={filters.course} onChange={e => setFilters(s => ({ ...s, course: e.target.value }))} className="h-7 text-xs" />
             <div className="flex gap-1">
               <Button size="sm" variant="outline" className="h-7 flex-1" onClick={() => setFilters({ channel: 'all', source: '', office: '', counselor: '', assigned: '', student: '', partner: '', application: '', country: '', course: '', status: '', unread: '', sla: '', priority: '', b2b: '', marketing: '', visa: '', document: '', search: '', dateFrom: '', dateTo: '' })}>Clear</Button>
-              <Badge variant="outline" className="text-[11px] bg-amber-50 hidden sm:flex">Bangladesh TZ: Asia/Dhaka</Badge>
+              <Badge variant="outline" className="text-[11px] bg-crm-warning-bg hidden sm:flex">Bangladesh TZ: Asia/Dhaka</Badge>
             </div>
           </div>
 
@@ -188,7 +188,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
                     <tr key={t.id} className="border-b hover:bg-[var(--alo-brand-pale)]/30 align-top">
                       {/* Priority (§145) */}
                       <td className="px-2 py-2">
-                        <Badge variant="outline" className={`text-[11px] ${t.priority === 'urgent' || t.priority === 'high' ? 'bg-red-100 text-red-700 border-red-200' : t.priority === 'low' ? 'bg-[var(--alo-page)] text-[var(--alo-body)]' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]'}`}>
+                        <Badge variant="outline" className={`text-[11px] ${t.priority === 'urgent' || t.priority === 'high' ? 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' : t.priority === 'low' ? 'bg-[var(--alo-page)] text-[var(--alo-body)]' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]'}`}>
                           {(t.priority || 'normal').toUpperCase()}
                         </Badge>
                         <div className="mt-1"><Badge variant="outline" className={`text-[11px] ${Vis.color} border`}>{Vis.label}</Badge></div>
@@ -241,14 +241,14 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
                         {t.unreadCount > 0 && <Badge className="mt-1 text-[11px] bg-[var(--alo-brand)]">{t.unreadCount} unread</Badge>}
                       </td>
                       {/* Assigned counselor */}
-                      <td className="px-2 py-2 text-[11px]">{t.assignedToName || (t.assignedToId ? t.assignedToId.slice(0, 6) : <span className="text-amber-600">Unassigned</span>)}</td>
+                      <td className="px-2 py-2 text-[11px]">{t.assignedToName || (t.assignedToId ? t.assignedToId.slice(0, 6) : <span className="text-crm-warning-text">Unassigned</span>)}</td>
                       {/* Intent */}
                       <td className="px-2 py-2">
                         <Badge variant="outline" className="text-[11px] bg-[var(--alo-page)]">{(t.intent || 'general').replace(/_/g, ' ')}</Badge>
                       </td>
                       {/* Status */}
                       <td className="px-2 py-2">
-                        <Badge className={`text-[11px] ${t.status === 'resolved' ? 'bg-emerald-100 text-emerald-700' : t.status === 'escalated' ? 'bg-rose-100 text-rose-700' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'}`}>{t.status}</Badge>
+                        <Badge className={`text-[11px] ${t.status === 'resolved' ? 'bg-crm-success-bg text-crm-success-text' : t.status === 'escalated' ? 'bg-crm-warning-bg text-crm-warning-text' : 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'}`}>{t.status}</Badge>
                       </td>
                       {/* Last response (§150) */}
                       <td className="px-2 py-2 text-[11px] text-[var(--alo-body)]">
@@ -260,7 +260,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
                               {t.countsAsBreach ? ' · counted breach' : t.slaBreached ? ' · late (excluded)' : ' · within SLA'}
                             </div>
                           </>
-                        ) : <span className="text-amber-600">No response yet</span>}
+                        ) : <span className="text-crm-warning-text">No response yet</span>}
                       </td>
                       {/* Deadline */}
                       <td className="px-2 py-2 text-[11px] text-[var(--alo-body)]">

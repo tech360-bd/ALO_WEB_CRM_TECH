@@ -120,7 +120,7 @@ function SidebarContent() {
       <div className="p-3">
         <Button
  variant="ghost"
- className="w-full justify-start text-red-600 hover:bg-red-50 cursor-pointer"
+ className="w-full justify-start text-crm-danger-text hover:bg-crm-danger-bg cursor-pointer"
  onClick={logout}
  >
           <LogOut className="w-4 h-4 mr-2" />
@@ -183,7 +183,7 @@ export default function CounselorPortalShell({ children }: { children: React.Rea
                 <Button variant="ghost" size="icon" className="relative cursor-pointer" onClick={() => setShowNotifDropdown((v) => !v)}>
                   <Bell className="w-5 h-5 text-alo-text-secondary" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center font-bold px-1">
+                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[var(--alo-error)] text-white text-[11px] flex items-center justify-center font-bold px-1">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}

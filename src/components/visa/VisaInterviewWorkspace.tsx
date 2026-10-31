@@ -775,14 +775,14 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-bold">Visa Interview Workspace ({caseData.caseCode})</h1>
-              <Badge className="bg-indigo-100 text-indigo-800 text-xs">{caseData.currentStage}</Badge>
+              <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs">{caseData.currentStage}</Badge>
               <Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-body)] text-[11px]">Student ID: {caseData.studentId}</Badge>
             </div>
-            <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">Student: <strong className="text-[var(--alo-text)]">{caseData.studentName}</strong> • Destination: <strong className="text-indigo-600">{caseData.destinationCountry}</strong> • University: {caseData.university} • Course: {caseData.course} • Intake: {caseData.intake} • Counselor: {caseData.counselorName} • App Officer: {caseData.applicationOfficerId}</p>
+            <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">Student: <strong className="text-[var(--alo-text)]">{caseData.studentName}</strong> • Destination: <strong className="text-[var(--alo-brand)]">{caseData.destinationCountry}</strong> • University: {caseData.university} • Course: {caseData.course} • Intake: {caseData.intake} • Counselor: {caseData.counselorName} • App Officer: {caseData.applicationOfficerId}</p>
           </div>
         </div>
         {caseAccess.readinessUpdate && <div className="flex items-center gap-2">
-          <Button onClick={handleCalculateReadiness} size="sm" variant="outline" className=" "><Sparkles className="w-3.5 h-3.5 mr-1 text-indigo-600" /> Recalculate Completion</Button>
+          <Button onClick={handleCalculateReadiness} size="sm" variant="outline" className=" "><Sparkles className="w-3.5 h-3.5 mr-1 text-[var(--alo-brand)]" /> Recalculate Completion</Button>
         </div>}
       </div>
 
@@ -799,7 +799,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
           { key: 'tasks', label: 'Tasks', allowed: caseAccess.tasks },
           { key: 'timeline', label: 'Visa Timeline', allowed: caseAccess.timeline },
         ].filter(tab => tab.allowed).map(tab => (
-          <button key={tab.key} onClick={() => setActiveTab(tab.key as any)} className={`px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap ${activeTab === tab.key ? 'bg-indigo-600 text-white' : 'text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]'}`}>{tab.label}</button>
+          <button key={tab.key} onClick={() => setActiveTab(tab.key as any)} className={`px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap ${activeTab === tab.key ? 'bg-[var(--alo-brand)] text-white' : 'text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]'}`}>{tab.label}</button>
         ))}
       </div>
 
@@ -812,21 +812,21 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                 <div><span className="text-[var(--alo-text-muted)] block">University</span><span className="font-semibold">{caseData.university}</span></div>
                 <div><span className="text-[var(--alo-text-muted)] block">Course</span><span className="font-semibold">{caseData.course}</span></div>
                 <div><span className="text-[var(--alo-text-muted)] block">Intake</span><span className="font-semibold">{caseData.intake}</span></div>
-                <div><span className="text-[var(--alo-text-muted)] block">Destination</span><span className="font-semibold text-indigo-600">{caseData.destinationCountry}</span></div>
+                <div><span className="text-[var(--alo-text-muted)] block">Destination</span><span className="font-semibold text-[var(--alo-brand)]">{caseData.destinationCountry}</span></div>
                 <div><span className="text-[var(--alo-text-muted)] block">Student ID</span><span className="font-mono text-[11px]">{caseData.studentId}</span></div>
                 <div><span className="text-[var(--alo-text-muted)] block">Case Code</span><span className="font-mono text-[11px]">{caseData.caseCode}</span></div>
                 <div><span className="text-[var(--alo-text-muted)] block">Counselor</span><span className="font-semibold">{caseData.counselorName}</span></div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-indigo-200">
-              <CardHeader className="p-4 border-b bg-indigo-50/50 flex flex-row items-start justify-between gap-3">
+            <Card className="bg-white border-[var(--alo-border)]">
+              <CardHeader className="p-4 border-b bg-[var(--alo-brand-pale)]/50 flex flex-row items-start justify-between gap-3">
                 <div>
                   <CardTitle className="text-sm font-bold">Practice Interview & Saved Prompts</CardTitle>
                   <p className="text-xs text-[var(--alo-body)] mt-1">Preparation only — not an embassy interview, visa decision, or guarantee. Questions and responses are saved to this case's interview record for human review.</p>
                   {activeInterview && <p className="text-[11px] text-[var(--alo-text-muted)] mt-2">Interview {activeInterview.id} · {activeInterview.interviewType} · {activeInterview.status}</p>}
                 </div>
-                {!activeInterview && caseAccess.interviewCreate && <Button size="sm" disabled={savingInterview} onClick={handleStartInterview} className="shrink-0 bg-indigo-600 text-white">{savingInterview ? 'Starting…' : 'Start Practice Interview'}</Button>}
+                {!activeInterview && caseAccess.interviewCreate && <Button size="sm" disabled={savingInterview} onClick={handleStartInterview} className="shrink-0 bg-[var(--alo-brand)] text-white">{savingInterview ? 'Starting…' : 'Start Practice Interview'}</Button>}
               </CardHeader>
               <CardContent className="p-4 space-y-4">
                 {activeInterview && !interviewCompleted && caseAccess.interviewUpdate && (
@@ -855,8 +855,8 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
 
                 {currentQuestion ? (
                   <div className="space-y-3">
-                    <div className="rounded-lg border border-indigo-100 bg-indigo-50/60 p-3">
-                      <p className="text-[11px] font-bold uppercase text-indigo-700">Saved prompt {currentQuestionIndex + 1} of {questions.length} · {currentQuestion.category}</p>
+                    <div className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/60 p-3">
+                      <p className="text-[11px] font-bold uppercase text-[var(--alo-brand)]">Saved prompt {currentQuestionIndex + 1} of {questions.length} · {currentQuestion.category}</p>
                       <p className="text-sm font-semibold text-[var(--alo-text)] mt-1">{currentQuestion.question}</p>
                     </div>
                     <div className="space-y-1.5">
@@ -864,7 +864,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                       <Textarea id="visa-interview-response" placeholder="Enter the student's response for the transcript. Do not score accent or grammar automatically." rows={4} value={recordedAnswer} onChange={(event) => setRecordedAnswer(event.target.value)} className="text-xs bg-[var(--alo-page)]" disabled={interviewCompleted || savingAnswer || !caseAccess.interviewUpdate} />
                     </div>
                     <div className="flex justify-end">
-                      <Button size="sm" disabled={!caseAccess.interviewUpdate || savingAnswer || interviewCompleted || !recordedAnswer.trim()} className="bg-indigo-600 text-white" onClick={handleRecordAnswer}>{savingAnswer ? 'Saving…' : 'Save Response to Transcript'}</Button>
+                      <Button size="sm" disabled={!caseAccess.interviewUpdate || savingAnswer || interviewCompleted || !recordedAnswer.trim()} className="bg-[var(--alo-brand)] text-white" onClick={handleRecordAnswer}>{savingAnswer ? 'Saving…' : 'Save Response to Transcript'}</Button>
                     </div>
                   </div>
                 ) : activeInterview ? (
@@ -881,7 +881,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
               <CardHeader className="p-4 border-b"><CardTitle className="text-xs font-bold uppercase">J. Live Transcript — {liveTranscript.length} entries</CardTitle></CardHeader>
               <CardContent className="p-4 space-y-3">
                 {liveTranscript.length === 0 ? <div className="text-xs text-[var(--alo-text-muted)] p-4 text-center border-dashed border rounded-lg">No interview responses have been recorded yet.</div> : liveTranscript.map((t, idx) => (
-                  <div key={idx} className="p-3 bg-[var(--alo-page)] rounded-lg border space-y-1 text-xs"><div className="flex items-center justify-between"><span className="font-bold text-indigo-900">Q: {t.question}</span><Badge variant="outline" className="text-[11px] bg-white">{t.category}</Badge></div><p className="text-[var(--alo-body)] italic">A: "{t.answer}"</p></div>
+                  <div key={idx} className="p-3 bg-[var(--alo-page)] rounded-lg border space-y-1 text-xs"><div className="flex items-center justify-between"><span className="font-bold text-[var(--alo-brand)]">Q: {t.question}</span><Badge variant="outline" className="text-[11px] bg-white">{t.category}</Badge></div><p className="text-[var(--alo-body)] italic">A: "{t.answer}"</p></div>
                 ))}
               </CardContent>
             </Card>
@@ -921,7 +921,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                       <label htmlFor="visa-human-assessment" className="text-xs font-semibold">Human officer assessment / internal notes</label>
                       <Textarea id="visa-human-assessment" rows={3} value={humanAssessmentText} onChange={(event) => setHumanAssessmentText(event.target.value)} placeholder="Record the officer's review of the saved practice answers" className="text-xs bg-[var(--alo-page)]" disabled={!activeInterview || !caseAccess.interviewFinish || savingAssessment} />
                     </div>
-                    <Button disabled={!caseAccess.interviewFinish || !activeInterview || interviewCompleted || savingAssessment || liveTranscript.length === 0 || humanScore.trim() === ''} onClick={handleFinalize} className="w-full bg-indigo-600 text-white">
+                    <Button disabled={!caseAccess.interviewFinish || !activeInterview || interviewCompleted || savingAssessment || liveTranscript.length === 0 || humanScore.trim() === ''} onClick={handleFinalize} className="w-full bg-[var(--alo-brand)] text-white">
                       <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> {savingAssessment ? 'Saving assessment…' : 'Save Human Assessment & Complete Interview'}
                     </Button>
                     <p className="text-[11px] text-[var(--alo-text-muted)]">At least one answer to a saved practice prompt is required. The score and status are recorded as internal preparation data only; no visa or admission decision is made.</p>
@@ -947,7 +947,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                     onChange={(event) => setStudentFeedbackText(event.target.value)}
                     className="text-xs bg-[var(--alo-page)]"
                   />
-                  <Button size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white" disabled={!studentFeedbackText.trim()} onClick={handleSendStudentFeedback}>
+                  <Button size="sm" className="w-full bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)] text-white" disabled={!studentFeedbackText.trim()} onClick={handleSendStudentFeedback}>
                     <Send className="mr-1 h-3.5 w-3.5" /> Approve & share in student portal
                   </Button>
                   <p className="text-[11px] text-[var(--alo-text-muted)]">The feedback is saved to the portal; this action does not send an external message.</p>
@@ -982,7 +982,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                   <label className="flex items-center gap-2"><input type="checkbox" checked={fundingDraft.hasBankStatement} onChange={(event) => setFundingDraft((current: any) => ({ ...current, hasBankStatement: event.target.checked }))} /> Bank statement evidence marked available</label>
                   <label className="flex items-center gap-2"><input type="checkbox" checked={fundingDraft.hasSolvencyCert} onChange={(event) => setFundingDraft((current: any) => ({ ...current, hasSolvencyCert: event.target.checked }))} /> Solvency evidence marked available</label>
                 </div>
-                <div className="flex justify-end md:col-span-2"><Button size="sm" disabled={savingReviewKey !== null} onClick={handleSaveFundingReview} className="bg-indigo-600 text-white">{savingReviewKey === 'funding' ? 'Saving review…' : 'Save funding review'}</Button></div>
+                <div className="flex justify-end md:col-span-2"><Button size="sm" disabled={savingReviewKey !== null} onClick={handleSaveFundingReview} className="bg-[var(--alo-brand)] text-white">{savingReviewKey === 'funding' ? 'Saving review…' : 'Save funding review'}</Button></div>
               </div>
             ) : fundingReview && (
               <div className="grid gap-4 md:grid-cols-2">
@@ -991,7 +991,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
               </div>
             )}
             {Array.isArray(fundingReview?.sponsorDocuments) && fundingReview.sponsorDocuments.length > 0 && (
-              <div className="space-y-2 rounded-lg border p-3"><h2 className="font-semibold">Linked sponsor documents</h2>{fundingReview.sponsorDocuments.map((document: any) => <div key={document.id}><a href={document.downloadUrl} className="font-semibold text-indigo-700 underline">Open private document</a></div>)}</div>
+              <div className="space-y-2 rounded-lg border p-3"><h2 className="font-semibold">Linked sponsor documents</h2>{fundingReview.sponsorDocuments.map((document: any) => <div key={document.id}><a href={document.downloadUrl} className="font-semibold text-[var(--alo-brand)] underline">Open private document</a></div>)}</div>
             )}
           </CardContent>
         </Card>
@@ -1016,16 +1016,16 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                 <label className="space-y-1"><span className="font-semibold">Family reason</span><Textarea maxLength={4000} rows={2} value={studyGapDraft.familyReason} onChange={(event) => setStudyGapDraft((current: any) => ({ ...current, familyReason: event.target.value }))} className="bg-white" /></label>
                 <label className="space-y-1"><span className="font-semibold">Visa or other explanation</span><Textarea maxLength={4000} rows={2} value={studyGapDraft.visaReason} onChange={(event) => setStudyGapDraft((current: any) => ({ ...current, visaReason: event.target.value }))} className="bg-white" /></label>
                 {caseAccess.sensitiveDetails && caseAccess.sensitiveUpdate && <label className="space-y-1 md:col-span-2"><span className="font-semibold">Medical details (restricted)</span><Textarea maxLength={4000} rows={2} value={studyGapDraft.medicalReason} onChange={(event) => setStudyGapDraft((current: any) => ({ ...current, medicalReason: event.target.value }))} className="bg-white" /></label>}
-                {caseAccess.sensitiveDetails && !caseAccess.sensitiveUpdate && studyGapReview?.medicalReason && <p className="md:col-span-2 rounded-md border border-rose-200 bg-rose-50 p-3 text-rose-900"><span className="font-semibold">Restricted medical details:</span> {studyGapReview.medicalReason}</p>}
+                {caseAccess.sensitiveDetails && !caseAccess.sensitiveUpdate && studyGapReview?.medicalReason && <p className="md:col-span-2 rounded-md border border-crm-warning-border bg-crm-warning-bg p-3 text-crm-warning-text"><span className="font-semibold">Restricted medical details:</span> {studyGapReview.medicalReason}</p>}
                 {caseAccess.documents && caseAccess.documentsDownload && caseAccess.sensitiveDetails && (
                   <label className="space-y-1 md:col-span-2"><span className="font-semibold">Supporting private documents</span><select multiple value={studyGapDraft.supportingDocumentIds} onChange={(event) => setStudyGapDraft((current: any) => ({ ...current, supportingDocumentIds: Array.from(event.target.selectedOptions, (option) => option.value) }))} className="min-h-24 w-full rounded-md border bg-white px-3 py-2">{documents.map((document: any) => <option key={document.id} value={document.id}>{document.fileName || document.category} · {document.category}</option>)}</select></label>
                 )}
-                <div className="flex justify-end md:col-span-2"><Button size="sm" disabled={savingReviewKey !== null} onClick={handleSaveStudyGapReview} className="bg-indigo-600 text-white">{savingReviewKey === 'study-gap' ? 'Saving review…' : 'Save study-history review'}</Button></div>
+                <div className="flex justify-end md:col-span-2"><Button size="sm" disabled={savingReviewKey !== null} onClick={handleSaveStudyGapReview} className="bg-[var(--alo-brand)] text-white">{savingReviewKey === 'study-gap' ? 'Saving review…' : 'Save study-history review'}</Button></div>
               </div>
             ) : studyGapReview && (
-              <div className="space-y-2 rounded-lg border bg-[var(--alo-page)] p-4"><p>Study gap recorded: {studyGapReview.hasStudyGap ? 'Yes' : 'No'}</p><p>Duration: {studyGapReview.gapDurationMonths} months</p><p>Period: {studyGapReview.gapFrom || 'Not recorded'} – {studyGapReview.gapTo || 'Not recorded'}</p><p>Purpose: {studyGapReview.gapPurpose || 'Not recorded'}</p><p>Work/activity: {studyGapReview.workExpDuringGap || 'Not recorded'}</p><p>Explanation clarity: {studyGapReview.explanationClarity || 'Unknown'}</p><p>Review status: {studyGapReview.riskFlag || 'Human review required'}</p>{caseAccess.sensitiveDetails && studyGapReview.medicalReason && <p className="rounded-md border border-rose-200 bg-rose-50 p-3 text-rose-900"><span className="font-semibold">Restricted medical details:</span> {studyGapReview.medicalReason}</p>}</div>
+              <div className="space-y-2 rounded-lg border bg-[var(--alo-page)] p-4"><p>Study gap recorded: {studyGapReview.hasStudyGap ? 'Yes' : 'No'}</p><p>Duration: {studyGapReview.gapDurationMonths} months</p><p>Period: {studyGapReview.gapFrom || 'Not recorded'} – {studyGapReview.gapTo || 'Not recorded'}</p><p>Purpose: {studyGapReview.gapPurpose || 'Not recorded'}</p><p>Work/activity: {studyGapReview.workExpDuringGap || 'Not recorded'}</p><p>Explanation clarity: {studyGapReview.explanationClarity || 'Unknown'}</p><p>Review status: {studyGapReview.riskFlag || 'Human review required'}</p>{caseAccess.sensitiveDetails && studyGapReview.medicalReason && <p className="rounded-md border border-crm-warning-border bg-crm-warning-bg p-3 text-crm-warning-text"><span className="font-semibold">Restricted medical details:</span> {studyGapReview.medicalReason}</p>}</div>
             )}
-            {Array.isArray(studyGapReview?.supportingDocuments) && studyGapReview.supportingDocuments.length > 0 && <div className="space-y-2 rounded-lg border p-3"><h2 className="font-semibold">Linked supporting documents</h2>{studyGapReview.supportingDocuments.map((document: any) => <div key={document.id}><a href={document.downloadUrl} className="font-semibold text-indigo-700 underline">Open private document</a></div>)}</div>}
+            {Array.isArray(studyGapReview?.supportingDocuments) && studyGapReview.supportingDocuments.length > 0 && <div className="space-y-2 rounded-lg border p-3"><h2 className="font-semibold">Linked supporting documents</h2>{studyGapReview.supportingDocuments.map((document: any) => <div key={document.id}><a href={document.downloadUrl} className="font-semibold text-[var(--alo-brand)] underline">Open private document</a></div>)}</div>}
           </CardContent>
         </Card>
       )}
@@ -1049,22 +1049,22 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                 <label className="space-y-1 md:col-span-2"><span className="font-semibold">Current explanation</span><Textarea maxLength={5000} rows={2} value={refusalDraft.newExplanation} onChange={(event) => setRefusalDraft((current: any) => ({ ...current, newExplanation: event.target.value }))} className="bg-white" /></label>
                 <label className="space-y-1 md:col-span-2"><span className="font-semibold">Internal officer note</span><Textarea maxLength={5000} rows={2} value={refusalDraft.officerNote} onChange={(event) => setRefusalDraft((current: any) => ({ ...current, officerNote: event.target.value }))} className="bg-white" /></label>
                 {caseAccess.documents && <label className="space-y-1 md:col-span-2"><span className="font-semibold">Link a stored private refusal letter (optional)</span><select value={refusalDraft.refusalLetterDocumentId} onChange={(event) => setRefusalDraft((current: any) => ({ ...current, refusalLetterDocumentId: event.target.value }))} className="w-full rounded-md border bg-white px-3 py-2"><option value="">Keep current link / no change</option>{documents.map((document: any) => <option key={document.id} value={document.id}>{document.fileName || document.category} · {document.category}</option>)}</select></label>}
-                <div className="flex justify-end md:col-span-2"><Button size="sm" disabled={savingReviewKey !== null} onClick={handleSaveRefusalReview} className="bg-indigo-600 text-white">{savingReviewKey === 'refusal' ? 'Saving review…' : 'Save refusal review'}</Button></div>
+                <div className="flex justify-end md:col-span-2"><Button size="sm" disabled={savingReviewKey !== null} onClick={handleSaveRefusalReview} className="bg-[var(--alo-brand)] text-white">{savingReviewKey === 'refusal' ? 'Saving review…' : 'Save refusal review'}</Button></div>
               </div>
             ) : refusalReview && (
-              <div className="space-y-2 rounded-lg border bg-[var(--alo-page)] p-4"><p>Prior refusal recorded: {refusalReview.hasVisaRefusal ? 'Yes' : 'No'}</p><p>Country: {refusalReview.refusalCountry || 'Not recorded'}</p><p>Visa type: {refusalReview.visaType || 'Not recorded'}</p><p>Date: {refusalReview.refusalDate || 'Not recorded'}</p><p>Reason: {refusalReview.refusalReason || 'Not recorded'}</p><p>Improvement plan: {refusalReview.improvementPlan || 'Not recorded'}</p><p>Human review status: {refusalReview.humanReviewStatus}</p>{refusalReview.refusalLetterDownloadUrl && <a href={refusalReview.refusalLetterDownloadUrl} className="font-semibold text-indigo-700 underline">Open private refusal letter</a>}</div>
+              <div className="space-y-2 rounded-lg border bg-[var(--alo-page)] p-4"><p>Prior refusal recorded: {refusalReview.hasVisaRefusal ? 'Yes' : 'No'}</p><p>Country: {refusalReview.refusalCountry || 'Not recorded'}</p><p>Visa type: {refusalReview.visaType || 'Not recorded'}</p><p>Date: {refusalReview.refusalDate || 'Not recorded'}</p><p>Reason: {refusalReview.refusalReason || 'Not recorded'}</p><p>Improvement plan: {refusalReview.improvementPlan || 'Not recorded'}</p><p>Human review status: {refusalReview.humanReviewStatus}</p>{refusalReview.refusalLetterDownloadUrl && <a href={refusalReview.refusalLetterDownloadUrl} className="font-semibold text-[var(--alo-brand)] underline">Open private refusal letter</a>}</div>
             )}
           </CardContent>
         </Card>
       )}
 
       {activeTab === 'sensitive' && (
-        <Card className="border-rose-200 bg-white">
-          <CardHeader className="border-b bg-rose-50/40 p-4"><CardTitle className="text-sm font-bold text-rose-900">Restricted medical and criminal review</CardTitle><p className="mt-1 text-xs text-rose-800">This restricted section is available only with explicit permission. Views and changes are audited. Sensitive details are not sent externally.</p></CardHeader>
+        <Card className="border-crm-warning-border bg-white">
+          <CardHeader className="border-b bg-crm-warning-bg/40 p-4"><CardTitle className="text-sm font-bold text-crm-warning-text">Restricted medical and criminal review</CardTitle><p className="mt-1 text-xs text-crm-warning-text">This restricted section is available only with explicit permission. Views and changes are audited. Sensitive details are not sent externally.</p></CardHeader>
           <CardContent className="space-y-4 p-4 text-xs">
             {!sensitiveReview && <p className="rounded-lg border border-dashed p-4 text-[var(--alo-text-muted)]">No restricted review has been recorded for this case.</p>}
             {caseAccess.sensitiveDetails && caseAccess.sensitiveUpdate ? (
-              <div className="grid gap-3 rounded-lg border border-rose-200 bg-rose-50/30 p-4 md:grid-cols-2">
+              <div className="grid gap-3 rounded-lg border border-crm-warning-border bg-crm-warning-bg/30 p-4 md:grid-cols-2">
                 <label className="space-y-1"><span className="font-semibold">Serious medical condition recorded?</span><select value={sensitiveDraft.seriousMedicalCondition} onChange={(event) => setSensitiveDraft((current: any) => ({ ...current, seriousMedicalCondition: event.target.value }))} className="w-full rounded-md border bg-white px-3 py-2"><option value="">Select a response</option><option value="yes">Yes</option><option value="no">No</option></select></label>
                 <label className="space-y-1"><span className="font-semibold">Criminal offense recorded?</span><select value={sensitiveDraft.criminalOffense} onChange={(event) => setSensitiveDraft((current: any) => ({ ...current, criminalOffense: event.target.value }))} className="w-full rounded-md border bg-white px-3 py-2"><option value="">Select a response</option><option value="yes">Yes</option><option value="no">No</option></select></label>
                 <label className="space-y-1 md:col-span-2"><span className="font-semibold">Medical explanation</span><Textarea maxLength={5000} rows={3} value={sensitiveDraft.medicalExplanation} onChange={(event) => setSensitiveDraft((current: any) => ({ ...current, medicalExplanation: event.target.value }))} className="bg-white" /></label>
@@ -1075,12 +1075,12 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                   <label className="space-y-1"><span className="font-semibold">Stored private medical evidence</span><select value={sensitiveDraft.medicalDocumentId} onChange={(event) => setSensitiveDraft((current: any) => ({ ...current, medicalDocumentId: event.target.value }))} className="w-full rounded-md border bg-white px-3 py-2"><option value="">Keep current link / no change</option>{documents.filter((document: any) => /medical|sensitive/i.test(document.category)).map((document: any) => <option key={document.id} value={document.id}>{document.fileName || document.category}</option>)}</select></label>
                   <label className="space-y-1"><span className="font-semibold">Stored private criminal-history evidence</span><select value={sensitiveDraft.criminalDocumentId} onChange={(event) => setSensitiveDraft((current: any) => ({ ...current, criminalDocumentId: event.target.value }))} className="w-full rounded-md border bg-white px-3 py-2"><option value="">Keep current link / no change</option>{documents.filter((document: any) => /criminal|sensitive/i.test(document.category)).map((document: any) => <option key={document.id} value={document.id}>{document.fileName || document.category}</option>)}</select></label>
                 </>}
-                <div className="flex justify-end md:col-span-2"><Button size="sm" disabled={savingReviewKey !== null} onClick={handleSaveSensitiveReview} className="bg-rose-700 text-white">{savingReviewKey === 'sensitive' ? 'Saving restricted review…' : 'Save restricted review'}</Button></div>
+                <div className="flex justify-end md:col-span-2"><Button size="sm" disabled={savingReviewKey !== null} onClick={handleSaveSensitiveReview} className="bg-[var(--alo-error)] text-white">{savingReviewKey === 'sensitive' ? 'Saving restricted review…' : 'Save restricted review'}</Button></div>
               </div>
             ) : sensitiveReview && (
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2 rounded-lg border bg-[var(--alo-page)] p-3"><h2 className="font-bold">Medical review</h2><p>Condition recorded: {sensitiveReview.seriousMedicalCondition ? 'Yes' : 'No'}</p><p className="whitespace-pre-wrap">Explanation: {sensitiveReview.medicalExplanation || 'Not recorded'}</p>{sensitiveReview.medicalDocumentDownloadUrl && <a href={sensitiveReview.medicalDocumentDownloadUrl} className="font-semibold text-indigo-700 underline">Open private medical document</a>}</div>
-                <div className="space-y-2 rounded-lg border bg-[var(--alo-page)] p-3"><h2 className="font-bold">Criminal-history review</h2><p>Offense recorded: {sensitiveReview.criminalOffense ? 'Yes' : 'No'}</p><p className="whitespace-pre-wrap">Explanation: {sensitiveReview.criminalExplanation || 'Not recorded'}</p>{sensitiveReview.criminalDocumentDownloadUrl && <a href={sensitiveReview.criminalDocumentDownloadUrl} className="font-semibold text-indigo-700 underline">Open private document</a>}</div>
+                <div className="space-y-2 rounded-lg border bg-[var(--alo-page)] p-3"><h2 className="font-bold">Medical review</h2><p>Condition recorded: {sensitiveReview.seriousMedicalCondition ? 'Yes' : 'No'}</p><p className="whitespace-pre-wrap">Explanation: {sensitiveReview.medicalExplanation || 'Not recorded'}</p>{sensitiveReview.medicalDocumentDownloadUrl && <a href={sensitiveReview.medicalDocumentDownloadUrl} className="font-semibold text-[var(--alo-brand)] underline">Open private medical document</a>}</div>
+                <div className="space-y-2 rounded-lg border bg-[var(--alo-page)] p-3"><h2 className="font-bold">Criminal-history review</h2><p>Offense recorded: {sensitiveReview.criminalOffense ? 'Yes' : 'No'}</p><p className="whitespace-pre-wrap">Explanation: {sensitiveReview.criminalExplanation || 'Not recorded'}</p>{sensitiveReview.criminalDocumentDownloadUrl && <a href={sensitiveReview.criminalDocumentDownloadUrl} className="font-semibold text-[var(--alo-brand)] underline">Open private document</a>}</div>
                 <div className="space-y-2 rounded-lg border bg-[var(--alo-page)] p-3 md:col-span-2"><h2 className="font-bold">Officer handling</h2><p className="whitespace-pre-wrap">Internal note: {sensitiveReview.officerInternalNote || 'Not recorded'}</p><p className="whitespace-pre-wrap">Student-safe note: {sensitiveReview.studentSafeNote || 'Not recorded'}</p><p>Human review required: {sensitiveReview.humanReviewRequired ? 'Yes' : 'No'}</p></div>
               </div>
             )}
@@ -1131,7 +1131,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                   <label className="flex items-center gap-2"><input type="checkbox" checked={documentRequestDraft.counselorVisible} onChange={(event) => setDocumentRequestDraft((current) => ({ ...current, counselorVisible: event.target.checked }))} /> Visible to assigned counselor</label>
                 </div>
                 <div className="flex justify-end md:col-span-2">
-                  <Button size="sm" disabled={!documentRequestDraft.documentName.trim() || savingDocumentRequest} onClick={handleCreateDocumentRequest} className="bg-indigo-600 text-white">
+                  <Button size="sm" disabled={!documentRequestDraft.documentName.trim() || savingDocumentRequest} onClick={handleCreateDocumentRequest} className="bg-[var(--alo-brand)] text-white">
                     {savingDocumentRequest ? 'Saving request…' : 'Request document'}
                   </Button>
                 </div>
@@ -1175,7 +1175,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge variant="outline" className="text-[11px]">{status.replaceAll('_', ' ')}</Badge>
-                      {document.downloadUrl && <a href={document.downloadUrl} className="text-xs font-semibold text-indigo-700 underline">Download securely</a>}
+                      {document.downloadUrl && <a href={document.downloadUrl} className="text-xs font-semibold text-[var(--alo-brand)] underline">Download securely</a>}
                       {caseAccess.documentsReview && !immutable && (
                         <>
                           <Button size="sm" variant="outline" disabled={savingDocumentReview} onClick={() => handleDocumentReview(document, 'approve')}>Approve</Button>
@@ -1190,7 +1190,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
             </section>
 
             {documentReviewDraft.document && documentReviewDraft.action && (
-              <div role="dialog" aria-modal="true" aria-labelledby="document-review-title" className="rounded-lg border border-amber-300 bg-amber-50 p-4">
+              <div role="dialog" aria-modal="true" aria-labelledby="document-review-title" className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-4">
                 <h2 id="document-review-title" className="font-semibold">{documentReviewDraft.action === 'reject' ? 'Reject document version' : 'Request a replacement version'}</h2>
                 <p className="mt-1 text-xs text-[var(--alo-body)]">{documentReviewDraft.document.fileName}. Student-facing guidance must be clear and must not disclose internal notes.</p>
                 <label className="mt-3 block space-y-1">
@@ -1203,7 +1203,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                 </label>
                 <div className="mt-3 flex justify-end gap-2">
                   <Button size="sm" variant="outline" disabled={savingDocumentReview} onClick={() => setDocumentReviewDraft({ document: null, action: null })}>Cancel</Button>
-                  <Button size="sm" disabled={!documentReviewReason.trim() || savingDocumentReview} onClick={handleSubmitDocumentReview} className="bg-indigo-600 text-white">{savingDocumentReview ? 'Saving review…' : 'Save review'}</Button>
+                  <Button size="sm" disabled={!documentReviewReason.trim() || savingDocumentReview} onClick={handleSubmitDocumentReview} className="bg-[var(--alo-brand)] text-white">{savingDocumentReview ? 'Saving review…' : 'Save review'}</Button>
                 </div>
               </div>
             )}
@@ -1218,18 +1218,18 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
               <CardTitle className="text-sm font-bold">Case-record completion indicator</CardTitle>
               <p className="text-xs text-[var(--alo-text-muted)] mt-1">A summary of recorded case information only — not eligibility, visa readiness, an approval prediction, or a guarantee.</p>
             </div>
-            {caseAccess.readinessUpdate && <Button onClick={handleCalculateReadiness} size="sm" className=" bg-indigo-600 text-white">Recalculate from records</Button>}
+            {caseAccess.readinessUpdate && <Button onClick={handleCalculateReadiness} size="sm" className=" bg-[var(--alo-brand)] text-white">Recalculate from records</Button>}
           </CardHeader>
           <CardContent className="p-4">
             {readiness && typeof readiness.overallScore === 'number' ? (
-              <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4 space-y-2">
-                <p className="text-xs font-bold uppercase text-indigo-900">Recorded information completeness</p>
-                <p className="text-3xl font-extrabold text-indigo-700">{readiness.overallScore} / 100</p>
-                <p className="text-xs text-indigo-900">Required checklist documents recorded as approved: {readiness.documentsReady ?? 0} of {readiness.documentsTotal ?? 0}.</p>
+              <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-4 space-y-2">
+                <p className="text-xs font-bold uppercase text-[var(--alo-brand)]">Recorded information completeness</p>
+                <p className="text-3xl font-extrabold text-[var(--alo-brand)]">{readiness.overallScore} / 100</p>
+                <p className="text-xs text-[var(--alo-brand)]">Required checklist documents recorded as approved: {readiness.documentsReady ?? 0} of {readiness.documentsTotal ?? 0}.</p>
                 <p className="text-[11px] text-[var(--alo-body)]">{readiness.interpretation || 'Checklist completion indicator only; not an eligibility assessment, approval prediction, or guarantee.'}</p>
               </div>
             ) : readiness?.recalculationRequired ? (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900">This saved report uses an older calculation method. Its score is withheld; recalculate from current case records to create a current completion indicator.</div>
+              <div className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-4 text-xs text-crm-warning-text">This saved report uses an older calculation method. Its score is withheld; recalculate from current case records to create a current completion indicator.</div>
             ) : readiness ? (
               <div className="rounded-lg border border-dashed p-6 text-center text-xs text-[var(--alo-text-muted)]">No current numeric completion indicator is available. Recalculate only if you have the required permission.</div>
             ) : (
@@ -1265,7 +1265,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                   >
                     {noteVisibilityOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   </select>
-                  <Button size="sm" disabled={!officerNoteText.trim()} className=" bg-indigo-600 text-white" onClick={handleSaveOfficerNote}>
+                  <Button size="sm" disabled={!officerNoteText.trim()} className=" bg-[var(--alo-brand)] text-white" onClick={handleSaveOfficerNote}>
                     Save note
                   </Button>
                 </div>
@@ -1343,7 +1343,7 @@ export default function VisaInterviewWorkspace({ caseId, onBack }: Props) {
                   <Textarea rows={2} maxLength={2000} value={taskDraft.description} onChange={(event) => setTaskDraft((current) => ({ ...current, description: event.target.value }))} className="bg-white" />
                 </label>
                 <div className="md:col-span-2 flex justify-end">
-                  <Button size="sm" disabled={!taskDraft.title.trim() || savingTask} onClick={handleCreateTask} className="bg-indigo-600 text-white">
+                  <Button size="sm" disabled={!taskDraft.title.trim() || savingTask} onClick={handleCreateTask} className="bg-[var(--alo-brand)] text-white">
                     {savingTask ? 'Saving task…' : 'Create task'}
                   </Button>
                 </div>

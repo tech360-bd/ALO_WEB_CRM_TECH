@@ -86,8 +86,8 @@ const MOCK_UNIVERSITIES: University[] = [
 ];
 
 const typeColors: Record<string, string> = {
-  Public: 'bg-emerald-100 text-emerald-700',
-  Private: 'bg-violet-100 text-violet-700',
+  Public: 'bg-crm-success-bg text-crm-success-text',
+  Private: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
 };
 
 function UniversityCard({ uni }: { uni: University }) {
@@ -116,7 +116,7 @@ function UniversityCard({ uni }: { uni: University }) {
         <div className="grid grid-cols-2 gap-2 text-xs text-[var(--alo-body)]">
           {uni.ranking > 0 && (
             <div className="flex items-center gap-1.5">
-              <Trophy className="size-3.5 text-amber-500" />
+              <Trophy className="size-3.5 text-crm-warning-text" />
               <span>Rank #{uni.ranking}</span>
             </div>
           )}
@@ -130,7 +130,7 @@ function UniversityCard({ uni }: { uni: University }) {
         <div className="text-xs text-[var(--alo-text-muted)]">
           <span className="font-medium text-[var(--alo-body)]">Tuition:</span>{' '}
           {uni.tuitionMin === 0 ? (
-            <span className="text-emerald-600 font-medium">Free / Tuition-free</span>
+            <span className="text-crm-success-text font-medium">Free / Tuition-free</span>
           ) : (
             <span>
               {uni.tuitionCurrency} {uni.tuitionMin.toLocaleString()} – {uni.tuitionMax.toLocaleString()}
@@ -229,13 +229,13 @@ export function UniversityDirectory() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-emerald-600 text-white">
+      <div className="bg-[var(--alo-success-dark)] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           <div className="flex items-center gap-2 mb-1">
             <Building2 className="size-6" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold">University Directory</h1>
-          <p className="text-emerald-100 mt-2 text-sm sm:text-base">
+          <p className="text-crm-success-text mt-2 text-sm sm:text-base">
             Browse universities across {COUNTRIES.length} countries
           </p>
 
@@ -263,7 +263,7 @@ export function UniversityDirectory() {
               onClick={() => setCountryFilter('all')}
               className={
                 countryFilter === 'all'
-                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white h-7 text-xs'
+                  ? 'bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white h-7 text-xs'
                   : 'h-7 text-xs'
               }
             >
@@ -277,7 +277,7 @@ export function UniversityDirectory() {
                 onClick={() => setCountryFilter(c)}
                 className={
                   countryFilter === c
-                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white h-7 text-xs'
+                    ? 'bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white h-7 text-xs'
                     : 'h-7 text-xs'
                 }
               >

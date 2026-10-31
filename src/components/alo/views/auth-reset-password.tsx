@@ -211,7 +211,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
                 {error && (
                   <div
                     role="alert"
-                    className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+                    className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-sm text-crm-danger-text"
                   >
                     <Icon name="AlertCircle" className="mt-0.5 size-4 shrink-0" />
                     <span>{error}</span>
@@ -254,19 +254,19 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
               <form onSubmit={handleReset} className="space-y-4" noValidate>
                 {/* Dev token notice */}
                 {devToken && (
-                  <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
+                  <div className="rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2.5 text-xs text-crm-warning-text">
                     <div className="flex items-center gap-1.5 font-semibold">
                       <Icon name="FlaskConical" className="size-3.5" />
                       Dev mode — token auto-filled
                     </div>
                     <div className="mt-2 flex items-center gap-2">
-                      <code className="flex-1 truncate rounded bg-white px-2 py-1 font-mono text-[11px] text-amber-900">
+                      <code className="flex-1 truncate rounded bg-white px-2 py-1 font-mono text-[11px] text-crm-warning-text">
                         {devToken}
                       </code>
                       <button
                         type="button"
                         onClick={copyToken}
-                        className="rounded-md border border-amber-300 bg-white px-2 py-1 text-[11px] font-medium text-amber-800 hover:bg-amber-100"
+                        className="rounded-md border border-crm-warning-border bg-white px-2 py-1 text-[11px] font-medium text-crm-warning-text hover:bg-crm-warning-bg"
                       >
                         {devCopied ? "Copied!" : "Copy"}
                       </button>
@@ -356,14 +356,14 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
                     />
                   </div>
                   {confirmPassword && confirmPassword !== newPassword && (
-                    <p className="text-xs text-red-600">Passwords do not match.</p>
+                    <p className="text-xs text-crm-danger-text">Passwords do not match.</p>
                   )}
                 </div>
 
                 {error && (
                   <div
                     role="alert"
-                    className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+                    className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-sm text-crm-danger-text"
                   >
                     <Icon name="AlertCircle" className="mt-0.5 size-4 shrink-0" />
                     <span>{error}</span>
@@ -408,8 +408,8 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
             {/* STEP 3 — Success */}
             {step === "success" && (
               <div className="space-y-5 text-center">
-                <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-50">
-                  <Icon name="CheckCircle2" className="size-9 text-emerald-600" />
+                <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-crm-success-bg">
+                  <Icon name="CheckCircle2" className="size-9 text-crm-success-text" />
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-foreground">Password Reset Successful</h2>

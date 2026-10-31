@@ -176,7 +176,7 @@ export default function FloatingActionWidget() {
       {/* ASSISTANT CHAT DIALOG */}
       {aiChatOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-[60] bg-[var(--alo-navy)]/50 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) setAiChatOpen(false);
           }}
@@ -235,7 +235,7 @@ export default function FloatingActionWidget() {
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-full border border-[var(--alo-whatsapp)] px-3 py-1.5 text-[11px] font-semibold text-[#128C4A] hover:bg-green-50"
+                  className="inline-flex items-center rounded-full border border-[var(--alo-whatsapp)] px-3 py-1.5 text-[11px] font-semibold text-[#128C4A] hover:bg-[var(--alo-success-soft)]"
                 >
                   Talk to a counselor
                 </a>

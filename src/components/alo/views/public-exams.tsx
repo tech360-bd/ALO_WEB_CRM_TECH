@@ -295,7 +295,7 @@ function ExamCard({
         <div className="mt-3 space-y-1.5 text-xs">
           {pricing.free && (
             <div className="flex items-start gap-1.5">
-              <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+              <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
               <span className="text-foreground/80">
                 <span className="font-semibold text-foreground">Free:</span> {pricing.free}
               </span>

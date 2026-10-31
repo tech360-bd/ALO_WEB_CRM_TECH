@@ -118,7 +118,7 @@ export function Button({
     primary: 'bg-[var(--alo-brand)] text-white',
     outline: 'border border-[var(--alo-border)] text-[var(--alo-text)]',
     ghost: 'text-[var(--alo-body)] hover:bg-[var(--alo-page)]',
-    danger: 'border border-red-300 text-red-700',
+    danger: 'border border-crm-danger-border text-crm-danger-text',
   };
   return (
     <button
@@ -160,9 +160,9 @@ export const inputClass =
 export function Pill({ children, tone = 'default' }: { children: React.ReactNode; tone?: 'default' | 'ok' | 'warn' | 'bad' | 'info' }) {
   const tones: Record<string, string> = {
     default: 'bg-[var(--alo-page)] text-[var(--alo-text)]',
-    ok: 'bg-emerald-50 text-emerald-800',
-    warn: 'bg-amber-50 text-amber-800',
-    bad: 'bg-red-50 text-red-800',
+    ok: 'bg-crm-success-bg text-crm-success-text',
+    warn: 'bg-crm-warning-bg text-crm-warning-text',
+    bad: 'bg-crm-danger-bg text-crm-danger-text',
     info: 'bg-sky-50 text-sky-800',
   };
   return <span className={cx('rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide', tones[tone])}>{children}</span>;
@@ -187,7 +187,7 @@ export function Empty({ title, hint }: { title: string; hint?: string }) {
 
 export function ErrorBox({ message }: { message: string }) {
   return (
-    <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+    <div role="alert" className="rounded-xl border border-crm-danger-border bg-crm-danger-bg p-4 text-sm text-crm-danger-text">
       {message}
     </div>
   );

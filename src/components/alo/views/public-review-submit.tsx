@@ -99,7 +99,7 @@ export function PublicReviewSubmit({ token }: { token: string }) {
         <Card className="max-w-lg w-full p-8 rounded-2xl border-2 border-[var(--alo-border)] text-center">
           <div className="animate-pulse">
             <div className="h-12 w-12 bg-[var(--alo-brand)]/20 rounded-full mx-auto mb-4" />
-            <div className="h-4 bg-slate-200 rounded w-3/4 mx-auto mb-2" />
+            <div className="h-4 bg-[var(--alo-page)] rounded w-3/4 mx-auto mb-2" />
             <div className="h-3 bg-[var(--alo-surface-muted)] rounded w-1/2 mx-auto" />
           </div>
         </Card>
@@ -110,8 +110,8 @@ export function PublicReviewSubmit({ token }: { token: string }) {
   if (error || alreadySubmitted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-white p-4">
-        <Card className="max-w-lg w-full p-8 rounded-2xl border-2 border-amber-200 text-center">
-          <Icon name="Clock" className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+        <Card className="max-w-lg w-full p-8 rounded-2xl border-2 border-crm-warning-border text-center">
+          <Icon name="Clock" className="h-12 w-12 text-crm-warning-text mx-auto mb-4" />
           <h1 className="text-xl font-bold text-[var(--alo-text)] mb-2">
             {alreadySubmitted ? "Review Already Submitted" : "Link Unavailable"}
           </h1>
@@ -129,9 +129,9 @@ export function PublicReviewSubmit({ token }: { token: string }) {
   if (submitted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-white p-4">
-        <Card className="max-w-lg w-full p-8 rounded-2xl border-2 border-emerald-200 text-center">
-          <div className="h-16 w-16 bg-emerald-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-            <Icon name="Check" className="h-8 w-8 text-emerald-600" />
+        <Card className="max-w-lg w-full p-8 rounded-2xl border-2 border-crm-success-border text-center">
+          <div className="h-16 w-16 bg-crm-success-bg rounded-full mx-auto mb-4 flex items-center justify-center">
+            <Icon name="Check" className="h-8 w-8 text-crm-success-text" />
           </div>
           <h1 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Thank You!</h1>
           <p className="text-[var(--alo-body)] text-sm mb-6">
@@ -141,11 +141,11 @@ export function PublicReviewSubmit({ token }: { token: string }) {
           </p>
 
           {moderationResult && moderationResult.flags.length > 0 && (
-            <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 mb-4 text-left">
-              <div className="text-xs font-semibold text-amber-700 mb-1">Review flagged for manual review:</div>
+            <div className="rounded-lg bg-crm-warning-bg border border-crm-warning-border p-3 mb-4 text-left">
+              <div className="text-xs font-semibold text-crm-warning-text mb-1">Review flagged for manual review:</div>
               <div className="flex flex-wrap gap-1">
                 {moderationResult.flags.map((f: string) => (
-                  <Badge key={f} className="bg-amber-100 text-amber-700 text-xs">{f}</Badge>
+                  <Badge key={f} className="bg-crm-warning-bg text-crm-warning-text text-xs">{f}</Badge>
                 ))}
               </div>
             </div>

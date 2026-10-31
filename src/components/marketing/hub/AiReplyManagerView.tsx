@@ -78,9 +78,9 @@ interface LoadState {
 }
 
 const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
-  high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
-  urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
-  medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
+  high: { label: 'High', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  urgent: { label: 'Urgent', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  medium: { label: 'Medium', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
   low: { label: 'Low', cls: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
   normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
@@ -362,7 +362,7 @@ export default function AiReplyManagerView() {
                               variant="outline"
                               className={`text-[11px] ${
                                 trigger.status === 'ACTIVE'
-                                  ? 'bg-green-100 text-green-700 border-green-200'
+                                  ? 'bg-crm-success-bg text-crm-success-text border-crm-success-border'
                                   : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]'
                               }`}
                             >
@@ -444,14 +444,14 @@ export default function AiReplyManagerView() {
                               variant="outline"
                               className={`text-[11px] ${
                                 thread.isAiHandled
-                                  ? 'bg-violet-100 text-violet-700 border-violet-200'
+                                  ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]'
                                   : 'bg-sky-100 text-sky-700 border-sky-200'
                               }`}
                             >
                               {thread.isAiHandled ? 'AI' : 'Human'}
                             </Badge>
                             {thread.needsHumanTakeover ? (
-                              <Badge variant="outline" className="mt-1 bg-red-100 text-red-700 text-[11px]">
+                              <Badge variant="outline" className="mt-1 bg-crm-danger-bg text-crm-danger-text text-[11px]">
                                 Needs takeover
                               </Badge>
                             ) : null}
@@ -536,7 +536,7 @@ export default function AiReplyManagerView() {
                               {(log.routingReason || 'unspecified').replace(/_/g, ' ')}
                             </Badge>
                             {log.fallbackUsed ? (
-                              <Badge variant="outline" className="mt-1 bg-amber-100 text-amber-700 text-[11px]">
+                              <Badge variant="outline" className="mt-1 bg-crm-warning-bg text-crm-warning-text text-[11px]">
                                 Fallback used
                               </Badge>
                             ) : null}

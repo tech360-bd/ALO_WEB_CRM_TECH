@@ -100,9 +100,9 @@ const KPI_ICONS: Record<string, React.ElementType> = {
 };
 
 const ALERT_STYLES: Record<DashboardAlert['severity'], { border: string; label: string }> = {
-  error: { border: 'border-red-200 bg-red-50', label: 'High' },
-  warning: { border: 'border-amber-200 bg-amber-50', label: 'Medium' },
-  success: { border: 'border-emerald-200 bg-emerald-50', label: 'OK' },
+  error: { border: 'border-crm-danger-border bg-crm-danger-bg', label: 'High' },
+  warning: { border: 'border-crm-warning-border bg-crm-warning-bg', label: 'Medium' },
+  success: { border: 'border-crm-success-border bg-crm-success-bg', label: 'OK' },
 };
 
 function formatTimestamp(value?: string | null): string {
@@ -171,8 +171,8 @@ export default function CrmAdminDashboard() {
       </div>
 
       {state.error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
               <p className="font-medium">{state.error}</p>
@@ -265,7 +265,7 @@ export default function CrmAdminDashboard() {
             <Card className="border-alo-border bg-white">
               <CardHeader>
                 <CardTitle className="text-alo-text flex items-center gap-2 text-base">
-                  <AlertTriangle className="text-amber-600 h-4 w-4" />
+                  <AlertTriangle className="text-crm-warning-text h-4 w-4" />
                   Alerts
                 </CardTitle>
               </CardHeader>

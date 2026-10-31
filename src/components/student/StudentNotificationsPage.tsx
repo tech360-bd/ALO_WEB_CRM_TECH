@@ -49,8 +49,8 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const PRIORITY_STYLES: Record<string, string> = {
-  URGENT: 'border-red-200 bg-red-50 text-red-700',
-  HIGH: 'border-amber-200 bg-amber-50 text-amber-700',
+  URGENT: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text',
+  HIGH: 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text',
   NORMAL: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-body)]',
   LOW: 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]',
 };

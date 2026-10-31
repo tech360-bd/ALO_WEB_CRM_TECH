@@ -41,9 +41,9 @@ const defaultProviderCards: ProviderStatus[] = [
 ];
 
 function statusStyles(status: string) {
-  if (status === 'CONNECTED') return 'bg-emerald-50 border-emerald-200 text-emerald-800';
-  if (status.includes('PENDING') || status.includes('REQUIRES') || status.includes('LIVE_TEST')) return 'bg-amber-50 border-amber-200 text-amber-800';
-  if (status.includes('ERROR') || status.includes('EXPIRED')) return 'bg-red-50 border-red-200 text-red-800';
+  if (status === 'CONNECTED') return 'bg-crm-success-bg border-crm-success-border text-crm-success-text';
+  if (status.includes('PENDING') || status.includes('REQUIRES') || status.includes('LIVE_TEST')) return 'bg-crm-warning-bg border-crm-warning-border text-crm-warning-text';
+  if (status.includes('ERROR') || status.includes('EXPIRED')) return 'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text';
   return 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]';
 }
 
@@ -219,7 +219,7 @@ export default function MarketingAutomationDashboard() {
             <span className="text-[var(--alo-text-muted)] block">Access Control Level:</span>
             <strong className="text-[var(--alo-brand)] font-bold">{role}</strong>
           </div>
-          <Button onClick={fetchDashboardData} className="bg-[var(--alo-surface-muted)] hover:bg-slate-200 text-[var(--alo-body)] rounded-xl px-4 flex items-center gap-1.5">
+          <Button onClick={fetchDashboardData} className="bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] text-[var(--alo-body)] rounded-xl px-4 flex items-center gap-1.5">
             <RefreshCw className="w-4 h-4" /> Refresh Status
           </Button>
         </div>
@@ -233,23 +233,23 @@ export default function MarketingAutomationDashboard() {
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Pending Approvals</span>
-          <p className="text-2xl font-extrabold text-amber-600">{metrics.pendingApprovals}</p>
+          <p className="text-2xl font-extrabold text-crm-warning-text">{metrics.pendingApprovals}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Staged AI Posts</span>
-          <p className="text-2xl font-extrabold text-indigo-600">{metrics.stagedPosts}</p>
+          <p className="text-2xl font-extrabold text-[var(--alo-brand)]">{metrics.stagedPosts}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Captured Leads</span>
-          <p className="text-2xl font-extrabold text-emerald-600">{metrics.totalLeads}</p>
+          <p className="text-2xl font-extrabold text-crm-success-text">{metrics.totalLeads}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">WhatsApp SLA Overdue</span>
-          <p className="text-2xl font-extrabold text-red-600">{metrics.overdueSlaCount}</p>
+          <p className="text-2xl font-extrabold text-crm-danger-text">{metrics.overdueSlaCount}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">OCR Docs Auto-Matched</span>
-          <p className="text-2xl font-extrabold text-purple-600">{metrics.ocrDocumentJobs}</p>
+          <p className="text-2xl font-extrabold text-[var(--alo-brand)]">{metrics.ocrDocumentJobs}</p>
         </Card>
       </div>
 
@@ -306,7 +306,7 @@ export default function MarketingAutomationDashboard() {
           {/* Access Security Control Panel */}
           <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl space-y-4">
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-600" /> Official RBAC Permissions
+              <ShieldCheck className="w-5 h-5 text-crm-success-text" /> Official RBAC Permissions
             </h2>
             <div className="space-y-3 text-xs">
               <div className="p-3 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] space-y-1">
@@ -332,18 +332,18 @@ export default function MarketingAutomationDashboard() {
           <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-4">
             <div>
               <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-amber-500" /> Official ALO Brand Asset Configuration
+                <Sparkles className="w-5 h-5 text-crm-warning-text" /> Official ALO Brand Asset Configuration
               </h2>
               <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
                 Every AI-generated post, video reel, and campaign banner enforces official ALO Education branding rules.
               </p>
             </div>
             {logoUploaded ? (
-              <span className="px-3 py-1 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full border border-emerald-300">
+              <span className="px-3 py-1 bg-crm-success-bg text-crm-success-text font-bold text-xs rounded-full border border-crm-success-border">
                 Logo Configured
               </span>
             ) : (
-              <span className="px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full border border-amber-300">
+              <span className="px-3 py-1 bg-crm-warning-bg text-crm-warning-text font-bold text-xs rounded-full border border-crm-warning-border">
                 Logo Missing
               </span>
             )}
@@ -476,7 +476,7 @@ export default function MarketingAutomationDashboard() {
         <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl space-y-6">
           <div className="border-b border-[var(--alo-border)] pb-4">
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <Bot className="w-5 h-5 text-emerald-600" /> WhatsApp 24/7 AI Agent & SLA Manager
+              <Bot className="w-5 h-5 text-crm-success-text" /> WhatsApp 24/7 AI Agent & SLA Manager
             </h2>
             <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
               After-hours AI responses, student memory loading, OTP protection for private data, and SLA escalation (40m → 20m → 10m).
@@ -484,9 +484,9 @@ export default function MarketingAutomationDashboard() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-            <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-2">
-              <span className="font-bold text-emerald-900">24/7 After-Hours Mode:</span>
-              <p className="text-emerald-800">Office hours: Human counselor chat.<br />After hours: AI auto-responds in Bangla/English.</p>
+            <div className="p-4 bg-crm-success-bg rounded-xl border border-crm-success-border space-y-2">
+              <span className="font-bold text-crm-success-text">24/7 After-Hours Mode:</span>
+              <p className="text-crm-success-text">Office hours: Human counselor chat.<br />After hours: AI auto-responds in Bangla/English.</p>
             </div>
 
             <div className="p-4 bg-[var(--alo-brand-pale)] rounded-xl border border-[var(--alo-border)] space-y-2">
@@ -494,9 +494,9 @@ export default function MarketingAutomationDashboard() {
               <p className="text-[var(--alo-brand-deep)]">AI requires OTP verification before releasing application, visa, or payment info.</p>
             </div>
 
-            <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-2">
-              <span className="font-bold text-amber-900">SLA Escalation Timers:</span>
-              <p className="text-amber-800">40m response limit → 20m Manager alert → 10m Super Admin/CEO alert.</p>
+            <div className="p-4 bg-crm-warning-bg rounded-xl border border-crm-warning-border space-y-2">
+              <span className="font-bold text-crm-warning-text">SLA Escalation Timers:</span>
+              <p className="text-crm-warning-text">40m response limit → 20m Manager alert → 10m Super Admin/CEO alert.</p>
             </div>
           </div>
         </Card>
@@ -507,7 +507,7 @@ export default function MarketingAutomationDashboard() {
         <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl space-y-4">
           <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-4">
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <FileCheck className="w-5 h-5 text-indigo-600" /> AI & Staff Post Draft Approval Queue
+              <FileCheck className="w-5 h-5 text-[var(--alo-brand)]" /> AI & Staff Post Draft Approval Queue
             </h2>
             <span className="text-xs font-semibold text-[var(--alo-text-muted)]">Marketing Manager Sign-off Enforced</span>
           </div>
@@ -519,10 +519,10 @@ export default function MarketingAutomationDashboard() {
                 <p className="text-[var(--alo-text-muted)] mt-0.5">Prepared by Marketing Staff • Facebook, Instagram, LinkedIn</p>
               </div>
               <div className="flex items-center gap-2">
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-3 py-1 flex items-center gap-1">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white rounded-xl px-3 py-1 flex items-center gap-1">
                   <Check className="w-3.5 h-3.5" /> Approve & Publish
                 </Button>
-                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-red-50 text-red-600 hover:bg-red-100 rounded-xl px-3 py-1 flex items-center gap-1">
+                <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-crm-danger-bg text-crm-danger-text hover:bg-crm-danger-bg rounded-xl px-3 py-1 flex items-center gap-1">
                   <X className="w-3.5 h-3.5" /> Reject
                 </Button>
               </div>
@@ -537,7 +537,7 @@ export default function MarketingAutomationDashboard() {
           <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-4">
             <div>
               <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-purple-600" /> n8n Webhook & Workflow Manager
+                <Sliders className="w-5 h-5 text-[var(--alo-brand)]" /> n8n Webhook & Workflow Manager
               </h2>
               <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
                 Toggle automated lead synchronization, WhatsApp sequences, and counselor notification workflows.
@@ -545,12 +545,12 @@ export default function MarketingAutomationDashboard() {
             </div>
             <Button
  onClick={handleWorkflowRequest}
- className=" font-bold rounded-xl px-4 bg-amber-100 text-amber-800 hover:bg-amber-200"
+ className=" font-bold rounded-xl px-4 bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg"
  >
               Request Workflow Change
             </Button>
           </div>
-          {workflowLog && <p className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 p-3 rounded-xl">{workflowLog}</p>}
+          {workflowLog && <p className="text-xs font-semibold text-crm-warning-text bg-crm-warning-bg border border-crm-warning-border p-3 rounded-xl">{workflowLog}</p>}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             <div className="p-4 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] space-y-1">

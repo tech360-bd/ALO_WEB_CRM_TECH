@@ -45,9 +45,9 @@ export default function MarketingManagerDashboard() {
   if (!auth.allowed) {
     return (
       <div className="p-8">
-        <div className="mx-auto max-w-xl rounded-2xl border-2 border-red-200 bg-red-50 p-6 text-center">
-          <h2 className="text-lg font-bold text-red-700">403 — Unauthorized</h2>
-          <p className="mt-2 text-sm text-red-600">
+        <div className="mx-auto max-w-xl rounded-2xl border-2 border-crm-danger-border bg-crm-danger-bg p-6 text-center">
+          <h2 className="text-lg font-bold text-crm-danger-text">403 — Unauthorized</h2>
+          <p className="mt-2 text-sm text-crm-danger-text">
             You do not have permission to access company official Facebook/Instagram/Messenger/social campaign
             controls. This area is restricted to <b>Marketing Manager</b>, <b>3 approved marketing users</b>, and{" "}
             <b>Super Admin</b>.

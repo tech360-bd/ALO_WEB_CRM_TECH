@@ -165,8 +165,8 @@ export default function ApplicationDetailPage() {
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-mono text-xs text-[var(--alo-brand)] bg-[var(--alo-brand)]/10 border border-[var(--alo-brand)]/20 rounded px-2 py-0.5">{app.applicationCode || app.id.substring(0,10)}</span>
                   <Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)] text-[11px]">{app.stage}</Badge>
-                  <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">{app.safeStatus}</Badge>
-                  {app.isB2b && <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[11px]"><Lock className="w-3 h-3 mr-1" />CONFIDENTIAL B2B</Badge>}
+                  <Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]">{app.safeStatus}</Badge>
+                  {app.isB2b && <Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]"><Lock className="w-3 h-3 mr-1" />CONFIDENTIAL B2B</Badge>}
                 </div>
                 <h1 className="text-lg font-bold text-[var(--alo-text)] mt-1">{app.universityName} • {app.courseName}</h1>
                 <p className="text-xs text-[var(--alo-text-muted)]">{app.country} • {app.intake} • {app.applicationSource} • Student: {app.studentId?.substring(0,8)}</p>
@@ -180,14 +180,14 @@ export default function ApplicationDetailPage() {
         </div>
       </div>
 
-      {msg && <div className={`p-3 rounded-xl border text-sm flex gap-2 ${msg.type==='success'?'bg-emerald-50 border-emerald-200 text-emerald-700':'bg-red-50 border-red-200 text-red-700'}`}>{msg.type==='success'?<CheckCircle2 className="w-4 h-4"/>:<AlertTriangle className="w-4 h-4"/>}{msg.text}</div>}
+      {msg && <div className={`p-3 rounded-xl border text-sm flex gap-2 ${msg.type==='success'?'bg-crm-success-bg border-crm-success-border text-crm-success-text':'bg-crm-danger-bg border-crm-danger-border text-crm-danger-text'}`}>{msg.type==='success'?<CheckCircle2 className="w-4 h-4"/>:<AlertTriangle className="w-4 h-4"/>}{msg.text}</div>}
 
       {/* Tabs 13 */}
       <div className="bg-white border border-[var(--alo-border)] rounded-2xl p-2 shadow-sm">
         <div className="flex gap-1 overflow-x-auto">
           {TABS.map(tab => (
             <button key={tab.key} onClick={()=>setActiveTab(tab.key)} className={`px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap flex items-center gap-1.5 transition-all ${activeTab===tab.key ? 'bg-[var(--alo-brand)] text-white shadow-sm' : 'text-[var(--alo-body)] hover:bg-[var(--alo-page)] border border-transparent hover:border-[var(--alo-border)]'}`}>
-              {(tab as any).lock && <Lock className={`w-3 h-3 ${activeTab===tab.key ? 'text-white' : 'text-rose-500'}`} />}{tab.label}
+              {(tab as any).lock && <Lock className={`w-3 h-3 ${activeTab===tab.key ? 'text-white' : 'text-crm-warning-text'}`} />}{tab.label}
             </button>
           ))}
         </div>
@@ -205,7 +205,7 @@ export default function ApplicationDetailPage() {
                 <div><p className="text-xs text-[var(--alo-text-muted)]">Country</p><p className="font-semibold">{app.country}</p></div>
                 <div><p className="text-xs text-[var(--alo-text-muted)]">Intake</p><p className="font-semibold">{app.intake || 'N/A'}</p></div>
                 <div><p className="text-xs text-[var(--alo-text-muted)]">Source</p><p className="font-semibold text-[var(--alo-brand)]">{app.applicationSource}</p></div>
-                <div><p className="text-xs text-[var(--alo-text-muted)]">Safe Status</p><Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs mt-1">{app.safeStatus}</Badge></div>
+                <div><p className="text-xs text-[var(--alo-text-muted)]">Safe Status</p><Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-xs mt-1">{app.safeStatus}</Badge></div>
                 <div><p className="text-xs text-[var(--alo-text-muted)]">Counselor</p><p className="font-semibold">{app.counselorName || app.counselorId?.substring(0,8) || 'Unassigned'}</p></div>
                 <div><p className="text-xs text-[var(--alo-text-muted)]">App Officer</p><p className="font-semibold">{app.appTeamOfficerId?.substring(0,8) || app.applicationOfficer?.substring(0,8) || 'Pending'}</p></div>
                 <div className="col-span-2"><p className="text-xs text-[var(--alo-text-muted)]">Internal Notes</p><p className="text-xs bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-2 mt-1">{app.internalNotes || app.notes || 'No notes'}</p></div>
@@ -263,7 +263,7 @@ export default function ApplicationDetailPage() {
           <CardHeader className="p-4 border-b border-[var(--alo-border)] flex flex-row items-center justify-between"><CardTitle className="text-sm">Documents — Engine Reuse (Required/Uploaded/Missing/Rejected/Expired/Under Review/Verified/Locked/Request Again)</CardTitle><Badge className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[11px]">{app.documents?.length || 0} docs</Badge></CardHeader>
           <CardContent className="p-4 space-y-2">
             {(app.documents || []).length===0 ? <p className="text-sm text-[var(--alo-text-muted)] py-6 text-center">No documents — empty. Document engine reuses Required/Uploaded/Missing/Rejected/Expired/Under Review/Verified/Locked/Request Again with preview/download/approve/reject/note/version audited.</p> : (app.documents||[]).map((d:any)=>(
-              <div key={d.id} className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3 flex items-center justify-between"><div><p className="text-sm font-medium">{d.fileName || d.documentType}</p><p className="text-xs text-[var(--alo-text-muted)]">{d.documentType} • {d.status} • v{d.version}</p></div><div className="flex gap-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7"><Eye className="w-3 h-3" /></Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7"><Download className="w-3 h-3" /></Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 bg-emerald-600 text-white"><Check className="w-3 h-3" /></Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 border-red-200 text-red-600"><X className="w-3 h-3" /></Button></div></div>
+              <div key={d.id} className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-3 flex items-center justify-between"><div><p className="text-sm font-medium">{d.fileName || d.documentType}</p><p className="text-xs text-[var(--alo-text-muted)]">{d.documentType} • {d.status} • v{d.version}</p></div><div className="flex gap-1"><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7"><Eye className="w-3 h-3" /></Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="ghost" className="h-7"><Download className="w-3 h-3" /></Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="h-7 bg-[var(--alo-success-dark)] text-white"><Check className="w-3 h-3" /></Button><Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" variant="outline" className="h-7 border-crm-danger-border text-crm-danger-text"><X className="w-3 h-3" /></Button></div></div>
             ))}
           </CardContent>
         </Card>
@@ -285,25 +285,25 @@ export default function ApplicationDetailPage() {
       )}
 
       {activeTab==='b2b' && (
-        <Card className="bg-white border-rose-200 shadow-sm rounded-xl">
-          <CardHeader className="p-4 border-b border-rose-100 bg-rose-50/50 rounded-t-xl flex flex-row items-center justify-between"><CardTitle className="text-sm text-rose-700 flex items-center gap-2"><Lock className="w-4 h-4" />B2B Details — Confidential (Backend 403, Encrypted Credentials Never in Normal Response)</CardTitle><Badge className="bg-rose-100 text-rose-700 border-rose-200 text-[11px]">RESTRICTED</Badge></CardHeader>
+        <Card className="bg-white border-crm-warning-border shadow-sm rounded-xl">
+          <CardHeader className="p-4 border-b border-crm-warning-border bg-crm-warning-bg/50 rounded-t-xl flex flex-row items-center justify-between"><CardTitle className="text-sm text-crm-warning-text flex items-center gap-2"><Lock className="w-4 h-4" />B2B Details — Confidential (Backend 403, Encrypted Credentials Never in Normal Response)</CardTitle><Badge className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]">RESTRICTED</Badge></CardHeader>
           <CardContent className="p-4">
             {!canViewB2B ? (
-              <div className="bg-rose-50 border border-rose-200 rounded-xl p-6 text-center"><Lock className="w-8 h-8 text-rose-400 mx-auto mb-2" /><p className="text-sm font-semibold text-rose-800">B2B Details Restricted</p><p className="text-xs text-rose-600 mt-1">Only APPLICATION_MANAGER/APPLICATION_TEAM/SUPER_ADMIN can view. Backend returns 403 for unauthorized. Normal application response omits B2B provider fields.</p></div>
+              <div className="bg-crm-warning-bg border border-crm-warning-border rounded-xl p-6 text-center"><Lock className="w-8 h-8 text-crm-warning-text mx-auto mb-2" /><p className="text-sm font-semibold text-crm-warning-text">B2B Details Restricted</p><p className="text-xs text-crm-warning-text mt-1">Only APPLICATION_MANAGER/APPLICATION_TEAM/SUPER_ADMIN can view. Backend returns 403 for unauthorized. Normal application response omits B2B provider fields.</p></div>
             ) : b2bDetails.length===0 ? (
               <p className="text-sm text-[var(--alo-text-muted)] py-6 text-center">No B2B details — application is Direct/Partner. B2B Details tab confidential with encrypted credentials never in normal response.</p>
             ) : (
               <div className="space-y-3">
                 {b2bDetails.map((b:any)=>(
                   <div key={b.id} className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl p-4 space-y-2 text-sm">
-                    <div className="flex items-center justify-between"><span className="font-semibold">{b.b2bProvider?.name || b.b2bProviderId} — {b.b2bType}</span><Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">{b.b2bStatus}</Badge></div>
+                    <div className="flex items-center justify-between"><span className="font-semibold">{b.b2bProvider?.name || b.b2bProviderId} — {b.b2bType}</span><Badge className="bg-crm-success-bg text-crm-success-text border-crm-success-border text-[11px]">{b.b2bStatus}</Badge></div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div><span className="text-[var(--alo-text-muted)]">Provider Code:</span> {b.b2bProvider?.providerCode}</div>
                       <div><span className="text-[var(--alo-text-muted)]">Reference:</span> {b.b2bReference}</div>
                       <div><span className="text-[var(--alo-text-muted)]">Portal URL:</span> {b.b2bProvider?.portalUrl || 'Confidential'}</div>
                       <div><span className="text-[var(--alo-text-muted)]">Commission:</span> {b.b2bCommissionAmount} {b.b2bCommissionType}</div>
                       <div className="col-span-2"><span className="text-[var(--alo-text-muted)]">Internal Note:</span> {b.b2bInternalNote || 'N/A'}</div>
-                      <div className="col-span-2 bg-rose-50 border border-rose-200 rounded-xl p-2"><span className="text-rose-700 font-medium">Login Note (encrypted):</span> <span className="font-mono text-[11px]">{b.b2bProvider?.loginNote ? '•••••• (decrypted for manager only)' : 'No credentials'}</span></div>
+                      <div className="col-span-2 bg-crm-warning-bg border border-crm-warning-border rounded-xl p-2"><span className="text-crm-warning-text font-medium">Login Note (encrypted):</span> <span className="font-mono text-[11px]">{b.b2bProvider?.loginNote ? '•••••• (decrypted for manager only)' : 'No credentials'}</span></div>
                     </div>
                   </div>
                 ))}
@@ -323,7 +323,7 @@ export default function ApplicationDetailPage() {
             </form>
             <div className="space-y-2">
               {(app.comments || []).length===0 ? <p className="text-sm text-[var(--alo-text-muted)] py-4 text-center">No comments — empty. Comments filtered by visibility backend.</p> : (app.comments||[]).map((c:any)=>(
-                <div key={c.id} className={`border rounded-xl p-3 ${c.isB2bConfidential ? 'bg-rose-50 border-rose-200' : 'bg-[var(--alo-page)] border-[var(--alo-border)]'}`}><div className="flex items-center justify-between"><span className="text-xs font-medium">{c.role} • {c.userId?.substring(0,6)}</span><Badge className={`${c.isB2bConfidential ? 'bg-rose-100 text-rose-700 border-rose-200' : 'bg-white border-[var(--alo-border)]'} text-[11px]`}>{c.isB2bConfidential && <Lock className="w-2.5 h-2.5 mr-1" />}{c.visibility} • {c.commentType}</Badge></div><p className="text-sm mt-2">{c.commentText}</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{new Date(c.createdAt).toLocaleString()}</p></div>
+                <div key={c.id} className={`border rounded-xl p-3 ${c.isB2bConfidential ? 'bg-crm-warning-bg border-crm-warning-border' : 'bg-[var(--alo-page)] border-[var(--alo-border)]'}`}><div className="flex items-center justify-between"><span className="text-xs font-medium">{c.role} • {c.userId?.substring(0,6)}</span><Badge className={`${c.isB2bConfidential ? 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' : 'bg-white border-[var(--alo-border)]'} text-[11px]`}>{c.isB2bConfidential && <Lock className="w-2.5 h-2.5 mr-1" />}{c.visibility} • {c.commentType}</Badge></div><p className="text-sm mt-2">{c.commentText}</p><p className="text-[11px] text-[var(--alo-text-muted)] mt-1">{new Date(c.createdAt).toLocaleString()}</p></div>
               ))}
             </div>
           </CardContent>

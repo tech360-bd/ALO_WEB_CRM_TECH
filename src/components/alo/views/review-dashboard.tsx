@@ -15,16 +15,16 @@ import { useToast } from "@/hooks/use-toast";
 import { timeAgo } from "@/lib/alo-types";
 
 const MODERATION_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
   NEEDS_REVIEW: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const PUBLICATION_COLORS: Record<string, string> = {
   INTERNAL: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  PUBLISHED: "bg-emerald-100 text-emerald-700",
-  UNPUBLISHED: "bg-rose-100 text-rose-700",
+  PUBLISHED: "bg-crm-success-bg text-crm-success-text",
+  UNPUBLISHED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: string) => void }) {
@@ -150,13 +150,13 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[var(--alo-body)]">Google Clicks</span>
-              <Badge className="bg-emerald-50 text-emerald-700">{s.googleClicks}</Badge>
+              <Badge className="bg-crm-success-bg text-crm-success-text">{s.googleClicks}</Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[var(--alo-body)]">Facebook Clicks</span>
               <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">{s.facebookClicks}</Badge>
             </div>
-            <div className="rounded-lg bg-amber-50 border border-amber-200 p-2 text-xs text-amber-700 mt-2">
+            <div className="rounded-lg bg-crm-warning-bg border border-crm-warning-border p-2 text-xs text-crm-warning-text mt-2">
               <Icon name="Info" className="h-3 w-3 inline mr-1" />
               Students submit reviews themselves on each platform. We never post on their behalf.
             </div>
@@ -170,7 +170,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
               data.bySentiment.map((snt: any) => (
                 <div key={snt.sentiment} className="flex items-center justify-between text-sm">
                   <span className="text-[var(--alo-body)] capitalize">{snt.sentiment.toLowerCase()}</span>
-                  <Badge className={snt.sentiment === "POSITIVE" ? "bg-emerald-100 text-emerald-700" : snt.sentiment === "NEGATIVE" ? "bg-rose-100 text-rose-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>{snt.count}</Badge>
+                  <Badge className={snt.sentiment === "POSITIVE" ? "bg-crm-success-bg text-crm-success-text" : snt.sentiment === "NEGATIVE" ? "bg-crm-warning-bg text-crm-warning-text" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>{snt.count}</Badge>
                 </div>
               ))
             ) : (
@@ -207,12 +207,12 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
                       <TableCell className="align-top">
                         <div className="text-sm font-medium text-[var(--alo-text)]">{r.studentName}</div>
                         <div className="text-xs text-[var(--alo-text-muted)]">{r.country || "—"} · {r.serviceType || "—"}</div>
-                        {r.isVerifiedStudent && <Badge className="mt-1 bg-emerald-50 text-emerald-700 text-xs">Verified</Badge>}
+                        {r.isVerifiedStudent && <Badge className="mt-1 bg-crm-success-bg text-crm-success-text text-xs">Verified</Badge>}
                       </TableCell>
                       <TableCell className="align-top">
                         <div className="flex items-center gap-0.5">
                           {[1,2,3,4,5].map((s) => (
-                            <Icon key={s} name="Star" className={`h-3 w-3 ${r.rating >= s ? "fill-[var(--alo-cta)] text-[var(--alo-cta)]" : "text-slate-200"}`} />
+                            <Icon key={s} name="Star" className={`h-3 w-3 ${r.rating >= s ? "fill-[var(--alo-cta)] text-[var(--alo-cta)]" : "text-[var(--alo-text-muted)]"}`} />
                           ))}
                         </div>
                       </TableCell>
@@ -221,22 +221,22 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
                       </TableCell>
                       <TableCell className="align-top">
                         <div className="flex flex-col gap-0.5">
-                          {r.consentPublish && <Badge className="bg-emerald-50 text-emerald-700 text-xs">Website</Badge>}
+                          {r.consentPublish && <Badge className="bg-crm-success-bg text-crm-success-text text-xs">Website</Badge>}
                           {r.consentMarketing && <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs">Marketing</Badge>}
-                          {r.consentShowName && <Badge className="bg-violet-50 text-violet-700 text-xs">Name</Badge>}
+                          {r.consentShowName && <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-xs">Name</Badge>}
                           {!r.consentPublish && !r.consentMarketing && <Badge className="bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] text-xs">Internal only</Badge>}
                         </div>
                       </TableCell>
                       <TableCell className="align-top">
-                        {r.aiSpamScore > 0.5 ? <Badge className="bg-rose-100 text-rose-700 text-xs">{(r.aiSpamScore * 100).toFixed(0)}%</Badge> : <span className="text-xs text-[var(--alo-text-muted)]">clean</span>}
+                        {r.aiSpamScore > 0.5 ? <Badge className="bg-crm-warning-bg text-crm-warning-text text-xs">{(r.aiSpamScore * 100).toFixed(0)}%</Badge> : <span className="text-xs text-[var(--alo-text-muted)]">clean</span>}
                       </TableCell>
                       <TableCell className="align-top"><Badge className={MODERATION_COLORS[r.moderationStatus]}>{r.moderationStatus}</Badge></TableCell>
                       <TableCell className="align-top"><Badge className={PUBLICATION_COLORS[r.publicationStatus]}>{r.publicationStatus}</Badge></TableCell>
                       <TableCell className="align-top text-xs text-[var(--alo-text-muted)]">{timeAgo(r.createdAt)}</TableCell>
                       <TableCell className="align-top text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1">
-                          <Button size="sm" variant="outline" className="h-7 px-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50" onClick={() => performAction(r.id, "PUBLISH")} disabled={acting || !r.consentPublish}>Publish</Button>
-                          <Button size="sm" variant="outline" className="h-7 px-2 border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => performAction(r.id, "REJECT")} disabled={acting}>Reject</Button>
+                          <Button size="sm" variant="outline" className="h-7 px-2 border-crm-success-border text-crm-success-text hover:bg-crm-success-bg" onClick={() => performAction(r.id, "PUBLISH")} disabled={acting || !r.consentPublish}>Publish</Button>
+                          <Button size="sm" variant="outline" className="h-7 px-2 border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg" onClick={() => performAction(r.id, "REJECT")} disabled={acting}>Reject</Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -262,7 +262,7 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   {[1,2,3,4,5].map((s) => (
-                    <Icon key={s} name="Star" className={`h-5 w-5 ${selectedReview.rating >= s ? "fill-[var(--alo-cta)] text-[var(--alo-cta)]" : "text-slate-200"}`} />
+                    <Icon key={s} name="Star" className={`h-5 w-5 ${selectedReview.rating >= s ? "fill-[var(--alo-cta)] text-[var(--alo-cta)]" : "text-[var(--alo-text-muted)]"}`} />
                   ))}
                   <span className="text-sm text-[var(--alo-body)] ml-2">{selectedReview.rating}/5</span>
                 </div>
@@ -271,15 +271,15 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
                   <p className="text-sm text-[var(--alo-text)] whitespace-pre-wrap">{selectedReview.reviewText}</p>
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
-                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentPublish ? "bg-emerald-50 text-emerald-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]"}`}>
+                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentPublish ? "bg-crm-success-bg text-crm-success-text" : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]"}`}>
                     <Icon name={selectedReview.consentPublish ? "Check" : "X"} className="h-4 w-4 mx-auto mb-1" />
                     Website
                   </div>
-                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentMarketing ? "bg-emerald-50 text-emerald-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]"}`}>
+                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentMarketing ? "bg-crm-success-bg text-crm-success-text" : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]"}`}>
                     <Icon name={selectedReview.consentMarketing ? "Check" : "X"} className="h-4 w-4 mx-auto mb-1" />
                     Marketing
                   </div>
-                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentShowName ? "bg-emerald-50 text-emerald-700" : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]"}`}>
+                  <div className={`rounded-lg p-2 text-center ${selectedReview.consentShowName ? "bg-crm-success-bg text-crm-success-text" : "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]"}`}>
                     <Icon name={selectedReview.consentShowName ? "Check" : "X"} className="h-4 w-4 mx-auto mb-1" />
                     Show Name
                   </div>
@@ -290,9 +290,9 @@ export function ReviewDashboard({ onNavigate }: { onNavigate: (v: any, slug?: st
                 </div>
               </div>
               <DialogFooter className="gap-2">
-                <Button variant="outline" className="border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => performAction(selectedReview.id, "REJECT")} disabled={acting}>Reject</Button>
-                <Button variant="outline" className="border-amber-200 text-amber-700 hover:bg-amber-50" onClick={() => performAction(selectedReview.id, "APPROVE")} disabled={acting}>Approve (Internal)</Button>
-                <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => performAction(selectedReview.id, "PUBLISH")} disabled={acting || !selectedReview.consentPublish}>
+                <Button variant="outline" className="border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg" onClick={() => performAction(selectedReview.id, "REJECT")} disabled={acting}>Reject</Button>
+                <Button variant="outline" className="border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg" onClick={() => performAction(selectedReview.id, "APPROVE")} disabled={acting}>Approve (Internal)</Button>
+                <Button className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)]" onClick={() => performAction(selectedReview.id, "PUBLISH")} disabled={acting || !selectedReview.consentPublish}>
                   {selectedReview.consentPublish ? "Publish to Website" : "Cannot Publish (no consent)"}
                 </Button>
               </DialogFooter>

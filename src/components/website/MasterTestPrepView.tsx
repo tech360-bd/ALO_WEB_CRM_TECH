@@ -198,25 +198,25 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
               </Card>
 
               <Card className="p-6 bg-white border-[var(--alo-border)]">
-                <div className="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-4">03</div>
+                <div className="h-10 w-10 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center font-bold mb-4">03</div>
                 <h3 className="font-bold text-lg text-[var(--alo-text)] mb-2">Why Universities Require It</h3>
                 <p className="text-xs text-[var(--alo-body)] leading-relaxed">{test.overview.whyUniversitiesRequireIt}</p>
               </Card>
 
               <Card className="p-6 bg-white border-[var(--alo-border)]">
-                <div className="h-10 w-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold mb-4">04</div>
+                <div className="h-10 w-10 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center font-bold mb-4">04</div>
                 <h3 className="font-bold text-lg text-[var(--alo-text)] mb-2">Why Visa Offices Require It</h3>
                 <p className="text-xs text-[var(--alo-body)] leading-relaxed">{test.overview.whyVisaOfficesRequireIt}</p>
               </Card>
 
               <Card className="p-6 bg-white border-[var(--alo-border)]">
-                <div className="h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold mb-4">05</div>
+                <div className="h-10 w-10 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center font-bold mb-4">05</div>
                 <h3 className="font-bold text-lg text-[var(--alo-text)] mb-2">Global Recognition</h3>
                 <p className="text-xs text-[var(--alo-body)] leading-relaxed">{test.overview.globalRecognition}</p>
               </Card>
 
               <Card className="p-6 bg-white border-[var(--alo-border)]">
-                <div className="h-10 w-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold mb-4">06</div>
+                <div className="h-10 w-10 rounded-xl bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center font-bold mb-4">06</div>
                 <h3 className="font-bold text-lg text-[var(--alo-text)] mb-2">Official Owner & History</h3>
                 <p className="text-xs text-[var(--alo-body)] leading-relaxed">{test.officialOwner} — {test.overview.history}</p>
               </Card>
@@ -248,13 +248,13 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
               </div>
 
               <div className="p-5 rounded-2xl bg-[var(--alo-page)] border border-[var(--alo-border)]">
-                <DollarSign className="h-6 w-6 text-emerald-600 mb-2" />
+                <DollarSign className="h-6 w-6 text-crm-success-text mb-2" />
                 <span className="text-[var(--alo-text-muted)] font-medium">Exam Fee in Bangladesh</span>
                 <p className="text-base font-bold text-[var(--alo-text)] mt-1">{test.quickInfo.cost}</p>
               </div>
 
               <div className="p-5 rounded-2xl bg-[var(--alo-page)] border border-[var(--alo-border)]">
-                <ShieldCheck className="h-6 w-6 text-purple-600 mb-2" />
+                <ShieldCheck className="h-6 w-6 text-[var(--alo-brand)] mb-2" />
                 <span className="text-[var(--alo-text-muted)] font-medium">Score Validity</span>
                 <p className="text-base font-bold text-[var(--alo-text)] mt-1">{test.quickInfo.validity}</p>
               </div>
@@ -273,28 +273,28 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
-              <Card className="p-6 bg-white border-l-4 border-l-emerald-600">
+              <Card className="p-6 bg-white border-l-4 border-l-[var(--alo-brand)]">
                 <h3 className="text-lg font-bold text-[var(--alo-text)] mb-4 flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-600" /> Key Advantages
+                  <CheckCircle2 className="h-5 w-5 text-[var(--alo-brand)]" /> Key Advantages
                 </h3>
                 <div className="space-y-3">
                   {test.whyChoose.advantages.map((adv, i) => (
                     <div key={i} className="flex items-start gap-2.5 text-xs text-[var(--alo-body)]">
-                      <div className="h-2 w-2 rounded-full bg-emerald-600 shrink-0 mt-1.5" />
+                      <div className="h-2 w-2 rounded-full bg-[var(--alo-brand)] shrink-0 mt-1.5" />
                       <span className="font-medium">{adv}</span>
                     </div>
                   ))}
                 </div>
               </Card>
 
-              <Card className="p-6 bg-white border-l-4 border-l-amber-600">
+              <Card className="p-6 bg-white border-l-4 border-l-[var(--alo-brand)]">
                 <h3 className="text-lg font-bold text-[var(--alo-text)] mb-4 flex items-center gap-2">
-                  <HelpCircle className="h-5 w-5 text-amber-600" /> Considerations & Limitations
+                  <HelpCircle className="h-5 w-5 text-[var(--alo-brand)]" /> Considerations & Limitations
                 </h3>
                 <div className="space-y-3">
                   {test.whyChoose.disadvantages.map((dis, i) => (
                     <div key={i} className="flex items-start gap-2.5 text-xs text-[var(--alo-body)]">
-                      <div className="h-2 w-2 rounded-full bg-amber-600 shrink-0 mt-1.5" />
+                      <div className="h-2 w-2 rounded-full bg-[var(--alo-brand)] shrink-0 mt-1.5" />
                       <span className="font-medium">{dis}</span>
                     </div>
                   ))}
@@ -319,7 +319,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                 <Card key={i} className="p-6 bg-[var(--alo-page)] border border-[var(--alo-border)]">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-2xl">{c.flag}</span>
-                    <Badge className="bg-emerald-100 text-emerald-800 text-[11px] font-bold">{c.acceptanceRate} Acceptance</Badge>
+                    <Badge className="bg-crm-success-bg text-crm-success-text border border-crm-success-border text-[11px] font-bold">{c.acceptanceRate} Acceptance</Badge>
                   </div>
                   <h3 className="font-bold text-lg text-[var(--alo-text)] mb-3">{c.country}</h3>
                   <div className="space-y-2 text-xs text-[var(--alo-body)]">
@@ -361,7 +361,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                       <td className="p-4 font-bold text-[var(--alo-text)]">{row.country}</td>
                       <td className="p-4 text-[var(--alo-body)]">{row.university}</td>
                       <td className="p-4 text-[var(--alo-body)]">{row.courseLevel}</td>
-                      <td className="p-4 font-semibold text-amber-600">{row.minimumScore}</td>
+                      <td className="p-4 font-semibold text-crm-warning-text">{row.minimumScore}</td>
                       <td className="p-4 font-semibold text-[var(--alo-brand)]">{row.competitiveScore}</td>
                       <td className="p-4 font-bold text-[var(--alo-cta)]">{row.scholarshipScore}</td>
                     </tr>
@@ -423,7 +423,7 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                         </ul>
                       </div>
                       <div>
-                        <h4 className="font-bold text-emerald-600 mb-2">Expert Pro Tips:</h4>
+                        <h4 className="font-bold text-crm-success-text mb-2">Expert Pro Tips:</h4>
                         <ul className="space-y-1 text-[var(--alo-body)] list-disc list-inside">
                           {test.moduleDetails[activeModuleTab].proTips.map((tip, idx) => (
                             <li key={idx}>{tip}</li>
@@ -555,9 +555,9 @@ export default function MasterTestPrepView({ test }: { test: TestPrepRecord }) {
                   <p className="text-xs text-[var(--alo-text-muted)] mb-6">Instantly connected to ALO Education CRM system</p>
 
                   {submitted ? (
-                    <div className="p-6 bg-emerald-50 text-emerald-800 rounded-2xl text-center text-xs font-semibold">
-                      🎉 Request Received! An ALO Test Prep Counselor will contact you within 2 hours.
-                    </div>
+                  <div className="p-6 bg-crm-success-bg text-crm-success-text rounded-2xl text-center text-xs font-semibold">
+                    Request Received! An ALO Test Prep Counselor will contact you within 2 hours.
+                  </div>
                   ) : (
                     <form onSubmit={handleCrmSubmit} className="space-y-4 text-xs">
                       <div>

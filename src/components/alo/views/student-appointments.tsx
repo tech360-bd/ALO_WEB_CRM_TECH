@@ -53,8 +53,8 @@ export function StudentAppointments() {
                 </div>
                 <Badge className={cn(
                   "mt-3",
-                  a.status === "SCHEDULED" && "bg-emerald-100 text-emerald-700",
-                  a.status === "CANCELLED" && "bg-rose-100 text-rose-700",
+                  a.status === "SCHEDULED" && "bg-crm-success-bg text-crm-success-text",
+                  a.status === "CANCELLED" && "bg-crm-warning-bg text-crm-warning-text",
                   a.status !== "SCHEDULED" && a.status !== "CANCELLED" && "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"
                 )}>
                   {a.status}

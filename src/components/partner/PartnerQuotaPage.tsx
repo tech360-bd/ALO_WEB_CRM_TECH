@@ -49,7 +49,7 @@ export default function PartnerQuotaPage() {
 
   return <div className="space-y-6 p-1">
     <div className="flex flex-wrap items-center justify-between gap-3"><div><h1 className="text-2xl font-bold text-alo-text">Usage &amp; quotas</h1><p className="mt-1 text-sm text-alo-text-muted">Current partner package limits, recorded usage, and approved publishing controls.</p></div><Button variant="outline" onClick={() => void load()} disabled={loading}><RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />Refresh</Button></div>
-    {error && <div role="alert" className="flex gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800"><AlertCircle className="h-4 w-4 shrink-0" />{error}</div>}
+    {error && <div role="alert" className="flex gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg p-3 text-sm text-crm-danger-text"><AlertCircle className="h-4 w-4 shrink-0" />{error}</div>}
     {loading ? <Card><CardContent className="p-10 text-center text-sm text-alo-text-muted">Loading usage records…</CardContent></Card> : quota && <>
       <div className="grid gap-4 md:grid-cols-3">
         <QuotaCard title="Images this month" icon={ImageIcon} used={quota.imageQuota.used} limit={quota.imageQuota.limit} remaining={quota.imageQuota.remaining} />

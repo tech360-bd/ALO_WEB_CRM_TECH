@@ -58,7 +58,7 @@ export default function WebChatWidget({ channel = 'webchat' }: { senderId?: stri
             ))}
             {busy && <div className="mr-auto rounded-2xl border border-[var(--alo-border)] bg-white px-3 py-2 text-xs text-[var(--alo-text-muted)]">Preparing a safe response…</div>}
           </div>
-          <p className="px-3 pb-2 text-[11px] text-amber-800">General guidance only, not current admission/visa requirements. Do not share personal identifiers or documents. <Link className="underline" href="/student/login">Student Portal</Link></p>
+          <p className="px-3 pb-2 text-[11px] text-crm-warning-text">General guidance only, not current admission/visa requirements. Do not share personal identifiers or documents. <Link className="underline" href="/student/login">Student Portal</Link></p>
           <div className="flex items-center gap-2 border-t border-[var(--alo-border)] p-2">
             <Input value={input} maxLength={5000} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void send(); } }} placeholder="Write a general question…" aria-label="Message" className="h-9 flex-1 text-xs" />
             <Button disabled={busy || !input.trim()} onClick={() => void send()} className="h-9 bg-[var(--alo-cta)] text-white" aria-label="Send message"><Send className="h-4 w-4" /></Button>

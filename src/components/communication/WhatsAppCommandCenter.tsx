@@ -19,20 +19,20 @@ const DeliveryIcon = ({ status }: { status: string }) => {
 };
 
 const CHANNEL_COLORS: Record<string, string> = {
-  whatsapp: 'bg-emerald-500',
-  email: 'bg-blue-500',
-  sms: 'bg-purple-500',
+  whatsapp: 'bg-[var(--alo-success)]',
+  email: 'bg-[var(--alo-brand)]',
+  sms: 'bg-[var(--alo-brand-pale)]0',
   phone: 'bg-[var(--alo-cta)]',
-  portal: 'bg-slate-500',
+  portal: 'bg-[var(--alo-page)]0',
 };
 
 const INTENT_COLORS: Record<string, string> = {
   DOCUMENT_REQUIREMENT: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
-  PAYMENT_QUESTION: 'bg-red-100 text-red-800',
-  VISA_QUESTION: 'bg-purple-100 text-purple-800',
-  APPLICATION_QUESTION: 'bg-indigo-100 text-indigo-800',
-  URGENT: 'bg-red-100 text-red-900',
-  APPOINTMENT: 'bg-amber-100 text-amber-800',
+  PAYMENT_QUESTION: 'bg-crm-danger-bg text-crm-danger-text',
+  VISA_QUESTION: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  APPLICATION_QUESTION: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  URGENT: 'bg-crm-danger-bg text-crm-danger-text',
+  APPOINTMENT: 'bg-crm-warning-bg text-crm-warning-text',
   GENERAL: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
 };
 
@@ -187,9 +187,9 @@ export default function WhatsAppCommandCenter() {
         {/* Header */}
         <div className="p-3 border-b border-[var(--alo-border)] bg-[var(--alo-page)]">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+            <div className="w-2 h-2 rounded-full bg-[var(--alo-success)]" />
             <span className="font-bold text-xs text-[var(--alo-text)]">WhatsApp Command Center</span>
-            <Badge className="bg-emerald-50 text-emerald-700 text-[11px] font-bold ml-auto">
+            <Badge className="bg-crm-success-bg text-crm-success-text text-[11px] font-bold ml-auto">
               {stats.unread || 0} unread
             </Badge>
           </div>
@@ -209,8 +209,8 @@ export default function WhatsAppCommandCenter() {
                 onClick={() => setSlaFilter(f)}
                 className={`text-[11px] px-2 py-0.5 rounded-full font-bold border transition-colors ${
                   slaFilter === f
-                    ? f === 'overdue' ? 'bg-red-500 text-white border-red-500'
-                      : f === 'warning' ? 'bg-amber-400 text-white border-amber-400'
+                    ? f === 'overdue' ? 'bg-[var(--alo-error)] text-white border-crm-danger-border'
+                      : f === 'warning' ? 'bg-[var(--alo-warning)] text-white border-crm-warning-border'
                       : 'bg-[var(--alo-brand)] text-white border-[var(--alo-brand)]'
                     : 'bg-white text-[var(--alo-body)] border-[var(--alo-border)] hover:bg-[var(--alo-page)]'
                 }`}
@@ -224,11 +224,11 @@ export default function WhatsAppCommandCenter() {
         {/* Stats Bar */}
         <div className="grid grid-cols-3 divide-x divide-[var(--alo-border)] bg-white border-b border-[var(--alo-border)]">
           <div className="text-center py-2">
-            <p className="text-base font-black text-red-600">{stats.overdue || 0}</p>
+            <p className="text-base font-black text-crm-danger-text">{stats.overdue || 0}</p>
             <p className="text-[11px] text-[var(--alo-text-muted)] font-bold uppercase">Overdue</p>
           </div>
           <div className="text-center py-2">
-            <p className="text-base font-black text-amber-600">{stats.warning || 0}</p>
+            <p className="text-base font-black text-crm-warning-text">{stats.warning || 0}</p>
             <p className="text-[11px] text-[var(--alo-text-muted)] font-bold uppercase">Warning</p>
           </div>
           <div className="text-center py-2">
@@ -257,13 +257,13 @@ export default function WhatsAppCommandCenter() {
               >
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <div className={`w-2 h-2 rounded-full shrink-0 ${CHANNEL_COLORS[thread.channel] || 'bg-slate-400'}`} />
+                    <div className={`w-2 h-2 rounded-full shrink-0 ${CHANNEL_COLORS[thread.channel] || 'bg-[var(--alo-page)]'}`} />
                     <span className="font-bold text-xs text-[var(--alo-text)] truncate">
                       {thread.studentContext?.fullName || thread.contactName || 'Unknown'}
                     </span>
                   </div>
                   {thread.unreadCount > 0 && (
-                    <Badge className="bg-emerald-500 text-white text-[11px] font-bold rounded-full h-4 min-w-4 px-1">
+                    <Badge className="bg-[var(--alo-success)] text-white text-[11px] font-bold rounded-full h-4 min-w-4 px-1">
                       {thread.unreadCount}
                     </Badge>
                   )}
@@ -319,15 +319,15 @@ export default function WhatsAppCommandCenter() {
 
           {/* Document Attachment Banner */}
           {pendingAttachment && (
-            <div className="p-3 bg-amber-50 border-b border-amber-200 flex items-center justify-between">
+            <div className="p-3 bg-crm-warning-bg border-b border-crm-warning-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-amber-600" />
+                <FileText className="w-4 h-4 text-crm-warning-text" />
                 <div>
-                  <p className="text-xs font-bold text-amber-900">Student sent a document via WhatsApp</p>
-                  <p className="text-[11px] text-amber-700">DOCUMENT MATCH REVIEW REQUIRED — Select the application and document slot before saving</p>
+                  <p className="text-xs font-bold text-crm-warning-text">Student sent a document via WhatsApp</p>
+                  <p className="text-[11px] text-crm-warning-text">DOCUMENT MATCH REVIEW REQUIRED — Select the application and document slot before saving</p>
                 </div>
               </div>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-amber-600 text-white text-[11px] font-bold gap-1.5 hover:bg-amber-700">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[var(--alo-warning)] text-white text-[11px] font-bold gap-1.5 hover:bg-[var(--alo-warning)]">
                 <ArrowRight className="w-3.5 h-3.5" /> Review & Assign
               </Button>
             </div>
@@ -350,7 +350,7 @@ export default function WhatsAppCommandCenter() {
                     <div className={`max-w-[70%] space-y-1`}>
                       {/* AI label */}
                       {msg.isAiGenerated && (
-                        <div className="flex items-center gap-1 text-[11px] text-purple-600 font-bold">
+                        <div className="flex items-center gap-1 text-[11px] text-[var(--alo-brand)] font-bold">
                           <Bot className="w-3 h-3" /> AI GENERATED DRAFT
                         </div>
                       )}
@@ -389,22 +389,22 @@ export default function WhatsAppCommandCenter() {
           <div className="p-3 border-t border-[var(--alo-border)] bg-white space-y-2">
             {/* AI Draft Banner */}
             {aiDraft && draftText === aiDraft && (
-              <div className="flex items-center justify-between p-2 bg-purple-50 border border-purple-200 rounded-xl text-xs">
-                <div className="flex items-center gap-2 text-purple-700">
+              <div className="flex items-center justify-between p-2 bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-xl text-xs">
+                <div className="flex items-center gap-2 text-[var(--alo-brand)]">
                   <Bot className="w-4 h-4" />
                   <span className="font-bold">AI GENERATED DRAFT</span>
-                  <span className="text-purple-500">— Review before sending</span>
+                  <span className="text-[var(--alo-brand)]">— Review before sending</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setAiApproved(true)}
                     className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${
-                      aiApproved ? 'bg-emerald-500 text-white border-emerald-500' : 'border-emerald-400 text-emerald-700 hover:bg-emerald-50'
+                      aiApproved ? 'bg-[var(--alo-success)] text-white border-crm-success-border' : 'border-[var(--alo-success)] text-crm-success-text hover:bg-crm-success-bg'
                     }`}
                   >
                     {aiApproved ? '✓ Approved' : 'Approve to Send'}
                   </button>
-                  <button onClick={() => { setAiDraft(''); setDraftText(''); }} className="text-purple-400 hover:text-purple-600">
+                  <button onClick={() => { setAiDraft(''); setDraftText(''); }} className="text-[var(--alo-brand)] hover:text-[var(--alo-brand)]">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -415,9 +415,9 @@ export default function WhatsAppCommandCenter() {
             <div className="flex items-center gap-2 text-[11px]">
               <span className="text-[var(--alo-text-muted)] font-bold">Mode:</span>
               {([
-                ['human_send', 'Human Send', 'bg-slate-800'],
-                ['ai_human_send', 'AI Draft + Human Send', 'bg-purple-600'],
-                ['ai_draft_only', 'AI Draft Only', 'bg-indigo-500'],
+                ['human_send', 'Human Send', 'bg-[var(--alo-navy)]'],
+                ['ai_human_send', 'AI Draft + Human Send', 'bg-[var(--alo-brand)]'],
+                ['ai_draft_only', 'AI Draft Only', 'bg-[var(--alo-brand-pale)]0'],
               ] as const).map(([m, label, color]) => (
                 <button
                   key={m}
@@ -457,7 +457,7 @@ export default function WhatsAppCommandCenter() {
                   disabled={aiLoading}
                   size="sm"
                   variant="outline"
-                  className="text-[11px] font-bold gap-1 border-purple-300 text-purple-700 hover:bg-purple-50 h-7"
+                  className="text-[11px] font-bold gap-1 border-[var(--alo-border)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)] h-7"
                 >
                   {aiLoading ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Bot className="w-3 h-3" />}
                   AI Draft
@@ -554,10 +554,10 @@ export default function WhatsAppCommandCenter() {
                   <FileText className="w-3 h-3 text-[var(--alo-brand)]" /> View Full Profile
                 </Button>
                 <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full text-[11px] font-bold gap-1.5 justify-start h-7">
-                  <Phone className="w-3 h-3 text-emerald-600" /> Call Student
+                  <Phone className="w-3 h-3 text-crm-success-text" /> Call Student
                 </Button>
                 <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="w-full text-[11px] font-bold gap-1.5 justify-start h-7">
-                  <Zap className="w-3 h-3 text-amber-500" /> Escalate SLA
+                  <Zap className="w-3 h-3 text-crm-warning-text" /> Escalate SLA
                 </Button>
               </div>
             </div>

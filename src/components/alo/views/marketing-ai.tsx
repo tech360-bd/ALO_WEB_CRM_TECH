@@ -115,14 +115,14 @@ const CONTENT_TYPE_ICONS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  IDEA: "bg-slate-200 text-[var(--alo-body)]",
-  DRAFT: "bg-amber-100 text-amber-700",
-  PENDING_APPROVAL: "bg-violet-100 text-violet-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
+  IDEA: "bg-[var(--alo-page)] text-[var(--alo-body)]",
+  DRAFT: "bg-crm-warning-bg text-crm-warning-text",
+  PENDING_APPROVAL: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
   SCHEDULED: "bg-sky-100 text-sky-700",
   PUBLISHED: "bg-[var(--alo-brand)]/15 text-[var(--alo-brand)]",
-  CANCELLED: "bg-slate-200 text-slate-700",
-  FAILED: "bg-red-100 text-red-700",
+  CANCELLED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
+  FAILED: "bg-crm-danger-bg text-crm-danger-text",
 };
 
 const CHANNEL_ICONS: Record<string, string> = {
@@ -166,7 +166,7 @@ function BrandRulesBanner() {
       <CardContent>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
-            <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-emerald-700">
+            <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-crm-success-text">
               <Icon name="CheckCircle2" className="size-4" /> AI content MUST
             </p>
             <ul className="space-y-1.5">
@@ -181,14 +181,14 @@ function BrandRulesBanner() {
                   key={rule}
                   className="flex items-start gap-2 text-xs text-foreground"
                 >
-                  <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
                   <span>{rule}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div className="md:border-l md:border-[var(--alo-cta)]/20 md:pl-5">
-            <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-red-700">
+            <p className="mb-2.5 flex items-center gap-2 text-sm font-semibold text-crm-danger-text">
               <Icon name="XCircle" className="size-4" /> AI content must NOT
             </p>
             <ul className="space-y-1.5">
@@ -203,7 +203,7 @@ function BrandRulesBanner() {
                   key={rule}
                   className="flex items-start gap-2 text-xs text-foreground"
                 >
-                  <Icon name="X" className="mt-0.5 size-3.5 shrink-0 text-red-600" />
+                  <Icon name="X" className="mt-0.5 size-3.5 shrink-0 text-crm-danger-text" />
                   <span>{rule}</span>
                 </li>
               ))}
@@ -414,7 +414,7 @@ function ContentGeneratorTab() {
               <div className="flex flex-wrap items-center gap-2">
                 <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">{result.contentType}</Badge>
                 <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">{result.platform}</Badge>
-                <Badge variant="outline" className="border-violet-200 text-violet-700"><Icon name="Bot" className="mr-1 size-3" /> Pending manager review</Badge>
+                <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-brand)]"><Icon name="Bot" className="mr-1 size-3" /> Pending manager review</Badge>
               </div>
               <div className="max-h-[280px] overflow-y-auto rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4">
                 <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">{result.content}</pre>
@@ -444,10 +444,10 @@ function ContentGeneratorTab() {
         <SectionCard title="Human review checklist" icon="ShieldCheck" description="Local reminders only. Checking these boxes does not approve, publish, or audit the saved draft.">
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {BRAND_CHECKLIST.map((item) => (
-              <label key={item.id} htmlFor={item.id} className={cn("flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-colors", checks[item.id] ? "border-emerald-300 bg-emerald-50/50" : "border-[var(--alo-border)] bg-white hover:bg-[var(--alo-page)]")}>
-                <Checkbox id={item.id} checked={checks[item.id]} onCheckedChange={(value) => setChecks((current) => ({ ...current, [item.id]: !!value }))} className={cn("size-5 rounded-md border-2", checks[item.id] ? "border-emerald-600 bg-emerald-600 text-white" : "border-[var(--alo-border-strong)]")} />
-                <Icon name={item.icon} className={cn("size-4", checks[item.id] ? "text-emerald-600" : "text-muted-foreground")} />
-                <span className={cn("text-xs font-medium", checks[item.id] ? "text-emerald-800" : "text-foreground")}>{item.label}</span>
+              <label key={item.id} htmlFor={item.id} className={cn("flex cursor-pointer items-center gap-2.5 rounded-xl border-2 p-3 transition-colors", checks[item.id] ? "border-crm-success-border bg-crm-success-bg/50" : "border-[var(--alo-border)] bg-white hover:bg-[var(--alo-page)]")}>
+                <Checkbox id={item.id} checked={checks[item.id]} onCheckedChange={(value) => setChecks((current) => ({ ...current, [item.id]: !!value }))} className={cn("size-5 rounded-md border-2", checks[item.id] ? "border-crm-success-border bg-[var(--alo-success-dark)] text-white" : "border-[var(--alo-border-strong)]")} />
+                <Icon name={item.icon} className={cn("size-4", checks[item.id] ? "text-crm-success-text" : "text-muted-foreground")} />
+                <span className={cn("text-xs font-medium", checks[item.id] ? "text-crm-success-text" : "text-foreground")}>{item.label}</span>
               </label>
             ))}
           </div>
@@ -614,7 +614,7 @@ function CampaignCalendarTab() {
       {loading ? (
         <div className="flex items-center justify-center gap-2 rounded-xl border border-dashed p-8 text-sm text-muted-foreground"><Icon name="Loader2" className="size-4 animate-spin" /> Loading saved calendar records...</div>
       ) : error ? (
-        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><p>{error}</p><Button variant="outline" size="sm" className="mt-3" onClick={() => void load()}>Retry</Button></div>
+        <div role="alert" className="rounded-xl border border-crm-danger-border bg-crm-danger-bg p-4 text-sm text-crm-danger-text"><p>{error}</p><Button variant="outline" size="sm" className="mt-3" onClick={() => void load()}>Retry</Button></div>
       ) : filtered.length === 0 ? (
         <EmptyState icon="CalendarX" title={items.length ? "No records in this status" : "No saved calendar records"} description={items.length ? "Choose another status filter." : "Planning drafts saved to the database calendar will appear here."} />
       ) : (
@@ -637,7 +637,7 @@ function CampaignCalendarTab() {
                   <span>·</span>
                   <span>{item.type === "campaignPost" ? "Campaign post" : "Planning record"}</span>
                 </div>
-                {canCancel && <div className="mt-3 border-t border-[var(--alo-brand)]/10 pt-3"><Button size="sm" variant="outline" disabled={saving} onClick={() => void handleCancelPlan(item)} className="h-8 border-red-300 text-red-700 hover:bg-red-50"><Icon name="X" className="size-3" /> Cancel planning record</Button></div>}
+                {canCancel && <div className="mt-3 border-t border-[var(--alo-brand)]/10 pt-3"><Button size="sm" variant="outline" disabled={saving} onClick={() => void handleCancelPlan(item)} className="h-8 border-crm-danger-border text-crm-danger-text hover:bg-crm-danger-bg"><Icon name="X" className="size-3" /> Cancel planning record</Button></div>}
               </Card>
             );
           })}
@@ -764,10 +764,10 @@ function ReplyQueueTab() {
 
   return (
     <SectionCard title="AI reply draft queue" icon="Inbox" description="Database-backed inbound reply drafts. Review, revise, approve internally, or reject; approval here never sends a message.">
-      <div className="mb-4 flex items-start justify-between gap-3 rounded-xl border-2 border-violet-200 bg-violet-50/50 p-3">
+      <div className="mb-4 flex items-start justify-between gap-3 rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/50 p-3">
         <div className="flex items-start gap-2.5">
-          <Icon name="Bot" className="mt-0.5 size-4 shrink-0 text-violet-700" />
-          <p className="text-xs text-violet-900/80">AI suggestions must be fact-checked by a person. Approving or saving a draft records an internal workflow action only; no reply is delivered by this screen.</p>
+          <Icon name="Bot" className="mt-0.5 size-4 shrink-0 text-[var(--alo-brand)]" />
+          <p className="text-xs text-[var(--alo-brand)]/80">AI suggestions must be fact-checked by a person. Approving or saving a draft records an internal workflow action only; no reply is delivered by this screen.</p>
         </div>
         <Button size="sm" variant="outline" onClick={() => void load()} disabled={loading || savingId !== null} aria-label="Refresh reply drafts"><Icon name="RefreshCw" className={cn("size-3.5", loading && "animate-spin")} /></Button>
       </div>
@@ -775,7 +775,7 @@ function ReplyQueueTab() {
       {loading ? (
         <div className="flex items-center justify-center gap-2 rounded-xl border border-dashed p-8 text-sm text-muted-foreground"><Icon name="Loader2" className="size-4 animate-spin" /> Loading reply drafts...</div>
       ) : error ? (
-        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><p>{error}</p><Button variant="outline" size="sm" className="mt-3" onClick={() => void load()}>Retry</Button></div>
+        <div role="alert" className="rounded-xl border border-crm-danger-border bg-crm-danger-bg p-4 text-sm text-crm-danger-text"><p>{error}</p><Button variant="outline" size="sm" className="mt-3" onClick={() => void load()}>Retry</Button></div>
       ) : items.length === 0 ? (
         <EmptyState icon="Inbox" title="No pending reply drafts" description="Only saved inbound drafts awaiting internal review are shown here. This screen does not create sample conversations." />
       ) : (
@@ -792,7 +792,7 @@ function ReplyQueueTab() {
                       <p className="text-[11px] text-muted-foreground">{item.channel}{item.studentName ? ` · Record ${item.studentName}` : ""}</p>
                     </div>
                   </div>
-                  <Badge variant="outline" className="border-violet-200 text-violet-700"><Icon name="Bot" className="mr-1 size-3" /> Pending human review</Badge>
+                  <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-brand)]"><Icon name="Bot" className="mr-1 size-3" /> Pending human review</Badge>
                 </div>
                 <div className="space-y-2.5">
                   <div className="rounded-xl bg-[var(--alo-page)] p-3">
@@ -809,17 +809,17 @@ function ReplyQueueTab() {
                       </div>
                     </div>
                   ) : (
-                    <div className="rounded-xl border-2 border-violet-200 bg-violet-50/40 p-3">
-                      <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-violet-700"><Icon name="Sparkles" className="size-3" /> Suggested reply draft</p>
+                    <div className="rounded-xl border-2 border-[var(--alo-border)] bg-[var(--alo-brand-pale)]/40 p-3">
+                      <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-brand)]"><Icon name="Sparkles" className="size-3" /> Suggested reply draft</p>
                       <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{item.suggestedReply}</p>
                     </div>
                   )}
                 </div>
                 {editingId !== item.id && (
                   <div className="mt-3 flex flex-wrap gap-2 border-t border-[var(--alo-brand)]/10 pt-3">
-                    <Button size="sm" onClick={() => void handleApproveDraft(item)} disabled={savingId === item.id} className="h-9 bg-emerald-700 text-white hover:bg-emerald-700/90"><Icon name={savingId === item.id ? "Loader2" : "Check"} className={cn("size-3.5", savingId === item.id && "animate-spin")} /> Approve internally</Button>
+                    <Button size="sm" onClick={() => void handleApproveDraft(item)} disabled={savingId === item.id} className="h-9 bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90"><Icon name={savingId === item.id ? "Loader2" : "Check"} className={cn("size-3.5", savingId === item.id && "animate-spin")} /> Approve internally</Button>
                     <Button size="sm" variant="outline" onClick={() => handleEditDraft(item)} disabled={savingId === item.id} className="h-9 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"><Icon name="Pencil" className="size-3.5" /> Edit draft</Button>
-                    <Button size="sm" variant="outline" onClick={() => void handleRejectDraft(item)} disabled={savingId === item.id} className="h-9 border-red-300 text-red-700 hover:bg-red-50"><Icon name="X" className="size-3.5" /> Reject draft</Button>
+                    <Button size="sm" variant="outline" onClick={() => void handleRejectDraft(item)} disabled={savingId === item.id} className="h-9 border-crm-danger-border text-crm-danger-text hover:bg-crm-danger-bg"><Icon name="X" className="size-3.5" /> Reject draft</Button>
                   </div>
                 )}
               </Card>

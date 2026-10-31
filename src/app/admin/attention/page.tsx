@@ -54,9 +54,9 @@ interface AttentionReport {
 }
 
 const SEVERITY_STYLE: Record<Severity, { className: string; icon: typeof Info }> = {
-  CRITICAL: { className: 'bg-red-100 text-red-700 border-red-200', icon: ShieldAlert },
+  CRITICAL: { className: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border', icon: ShieldAlert },
   URGENT: { className: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25', icon: AlertTriangle },
-  WARNING: { className: 'bg-amber-100 text-amber-800 border-amber-200', icon: AlertTriangle },
+  WARNING: { className: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border', icon: AlertTriangle },
   INFO: { className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]', icon: Info },
 };
 
@@ -108,7 +108,7 @@ export default function AttentionPage() {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-64 rounded-lg bg-slate-200" />
+          <div className="h-8 w-64 rounded-lg bg-[var(--alo-page)]" />
           <div className="grid gap-4 md:grid-cols-4">
             {[0, 1, 2, 3].map((i) => (
               <div key={i} className="h-24 rounded-2xl bg-[var(--alo-surface-muted)]" />
@@ -123,9 +123,9 @@ export default function AttentionPage() {
   if (unauthorized || (!report && failure)) {
     return (
       <div className="p-6">
-        <Card className="rounded-2xl border-2 border-red-200">
+        <Card className="rounded-2xl border-2 border-crm-danger-border">
           <CardContent className="flex flex-col items-center gap-3 pt-8 pb-8 text-center">
-            <ShieldAlert className="size-9 text-red-600" />
+            <ShieldAlert className="size-9 text-crm-danger-text" />
             <h2 className="text-base font-bold">
               {unauthorized ? 'Management access required' : 'Attention engine unavailable'}
             </h2>
@@ -217,21 +217,21 @@ export default function AttentionPage() {
 
       {/* A failed bucket must never be mistaken for a clear one (s91) */}
       {erroredBuckets.length > 0 && (
-        <Card className="rounded-2xl border-2 border-red-300 bg-red-50/50">
+        <Card className="rounded-2xl border-2 border-crm-danger-border bg-crm-danger-bg/50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sm font-bold text-red-800">
+            <CardTitle className="flex items-center gap-2 text-sm font-bold text-crm-danger-text">
               <ShieldAlert className="size-4" />
               {erroredBuckets.length} check{erroredBuckets.length === 1 ? '' : 's'} could not be evaluated
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <p className="text-xs text-red-700">
+            <p className="text-xs text-crm-danger-text">
               These figures are UNKNOWN, not zero. The totals above exclude them.
             </p>
             {erroredBuckets.map((bucket) => (
-              <div key={bucket.key} className="rounded-lg border border-red-200 bg-white p-2.5">
+              <div key={bucket.key} className="rounded-lg border border-crm-danger-border bg-white p-2.5">
                 <p className="text-xs font-bold text-[var(--alo-text)]">{bucket.label}</p>
-                <p className="mt-0.5 font-mono text-[11px] text-red-700">{bucket.error || 'Unknown error'}</p>
+                <p className="mt-0.5 font-mono text-[11px] text-crm-danger-text">{bucket.error || 'Unknown error'}</p>
               </div>
             ))}
           </CardContent>
@@ -300,13 +300,13 @@ export default function AttentionPage() {
 
       {/* Clear checks are shown so "nothing to do" is evidenced, not assumed */}
       {clear.length > 0 && (
-        <Card className="rounded-2xl border-2 border-emerald-200 bg-emerald-50/30">
+        <Card className="rounded-2xl border-2 border-crm-success-border bg-crm-success-bg/30">
           <CardHeader>
-            <CardTitle className="text-sm font-bold text-emerald-900">Clear ({clear.length})</CardTitle>
+            <CardTitle className="text-sm font-bold text-crm-success-text">Clear ({clear.length})</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-1.5">
             {clear.map((bucket) => (
-              <Badge key={bucket.key} variant="outline" className="border-emerald-200 bg-white text-[11px] text-emerald-800">
+              <Badge key={bucket.key} variant="outline" className="border-crm-success-border bg-white text-[11px] text-crm-success-text">
                 {bucket.label}: 0
               </Badge>
             ))}

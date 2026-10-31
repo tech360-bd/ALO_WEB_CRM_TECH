@@ -118,7 +118,7 @@ export default async function SuccessStoryDetail({ params }: { params: Promise<{
                       <div className="flex flex-col items-center">
                         <div className="h-3 w-3 rounded-full bg-[var(--alo-cta)] mt-1.5" />
                         {index !== story.timeline.length - 1 && (
-                          <div className="w-px h-full bg-slate-200 my-1" />
+                          <div className="w-px h-full bg-[var(--alo-page)] my-1" />
                         )}
                       </div>
                       <div className="pb-2">

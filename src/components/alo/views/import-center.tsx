@@ -131,8 +131,8 @@ interface PublishedExam {
 
 const APPROVAL_COLORS: Record<string, string> = {
   DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
-  PENDING_REVIEW: "bg-amber-100 text-amber-700",
-  PUBLISHED: "bg-emerald-100 text-emerald-700",
+  PENDING_REVIEW: "bg-crm-warning-bg text-crm-warning-text",
+  PUBLISHED: "bg-crm-success-bg text-crm-success-text",
 };
 
 const APPROVAL_LABELS: Record<string, string> = {
@@ -142,9 +142,9 @@ const APPROVAL_LABELS: Record<string, string> = {
 };
 
 const VERIFICATION_COLORS: Record<string, string> = {
-  VERIFIED: "bg-emerald-100 text-emerald-700",
-  NEEDS_REVIEW: "bg-amber-100 text-amber-700",
-  UNVERIFIED: "bg-rose-100 text-rose-700",
+  VERIFIED: "bg-crm-success-bg text-crm-success-text",
+  NEEDS_REVIEW: "bg-crm-warning-bg text-crm-warning-text",
+  UNVERIFIED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const VERIFICATION_LABELS: Record<string, string> = {
@@ -156,9 +156,9 @@ const VERIFICATION_LABELS: Record<string, string> = {
 const TYPE_BADGE: Record<string, string> = {
   country: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
   university: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
-  course: "bg-violet-100 text-violet-700",
-  exam: "bg-emerald-100 text-emerald-700",
-  scholarship: "bg-rose-100 text-rose-700",
+  course: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  exam: "bg-crm-success-bg text-crm-success-text",
+  scholarship: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const TYPE_LABEL: Record<string, string> = {
@@ -261,7 +261,7 @@ function PendingItemCard({
         </Button>
         <Button
  size="sm"
- className=" bg-emerald-600 text-white hover:bg-emerald-700"
+ className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]"
  disabled={acting}
  onClick={() => onAction(type, item.slug, "publish")}
         >
@@ -271,7 +271,7 @@ function PendingItemCard({
         <Button
  size="sm"
  variant="outline"
- className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ className=" border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
  disabled={acting}
  onClick={() => onAction(type, item.slug, "reject")}
         >
@@ -303,8 +303,8 @@ function PublishedSection({
   const accentBg: Record<string, string> = {
     blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
     orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
-    violet: "bg-violet-100 text-violet-700",
-    emerald: "bg-emerald-100 text-emerald-700",
+    violet: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+    emerald: "bg-crm-success-bg text-crm-success-text",
   };
   return (
     <SectionCard
@@ -340,9 +340,9 @@ function WorkflowStage({
   accent: "slate" | "amber" | "emerald";
 }) {
   const accentMap: Record<string, { ring: string; chip: string; num: string }> = {
-    slate: { ring: "border-[var(--alo-border-strong)]", chip: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", num: "bg-slate-200 text-[var(--alo-body)]" },
-    amber: { ring: "border-amber-300", chip: "bg-amber-100 text-amber-700", num: "bg-amber-500 text-white" },
-    emerald: { ring: "border-emerald-300", chip: "bg-emerald-100 text-emerald-700", num: "bg-emerald-600 text-white" },
+    slate: { ring: "border-[var(--alo-border-strong)]", chip: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", num: "bg-[var(--alo-page)] text-[var(--alo-body)]" },
+    amber: { ring: "border-crm-warning-border", chip: "bg-crm-warning-bg text-crm-warning-text", num: "bg-[var(--alo-warning)] text-white" },
+    emerald: { ring: "border-crm-success-border", chip: "bg-crm-success-bg text-crm-success-text", num: "bg-[var(--alo-success-dark)] text-white" },
   };
   const a = accentMap[accent];
   return (
@@ -669,7 +669,7 @@ export function ImportCenter() {
               <Icon name="Clock" className="size-4" />
               Pending Approvals
               {totalPending > 0 && (
-                <Badge variant="secondary" className="ml-1 bg-amber-100 text-amber-700">
+                <Badge variant="secondary" className="ml-1 bg-crm-warning-bg text-crm-warning-text">
                   {totalPending}
                 </Badge>
               )}
@@ -787,7 +787,7 @@ export function ImportCenter() {
                                 <Button
  size="sm"
  variant="outline"
- className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ className=" border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
  disabled={actingSlug === `country:${c.slug}`}
  onClick={() => handleUnpublish("country", c.slug)}
                                 >
@@ -864,7 +864,7 @@ export function ImportCenter() {
                                 <Button
  size="sm"
  variant="outline"
- className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ className=" border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
  disabled={actingSlug === `university:${u.slug}`}
  onClick={() => handleUnpublish("university", u.slug)}
                                 >
@@ -908,7 +908,7 @@ export function ImportCenter() {
                             <TableCell className="font-medium">{c.name}</TableCell>
                             <TableCell>
                               {c.level && (
-                                <Badge variant="secondary" className="rounded-full bg-violet-100 text-violet-700 text-[11px]">
+                                <Badge variant="secondary" className="rounded-full bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-[11px]">
                                   {c.level}
                                 </Badge>
                               )}
@@ -942,7 +942,7 @@ export function ImportCenter() {
                                 <Button
  size="sm"
  variant="outline"
- className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ className=" border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
  disabled={actingSlug === `course:${c.slug}`}
  onClick={() => handleUnpublish("course", c.slug)}
                                 >
@@ -1017,7 +1017,7 @@ export function ImportCenter() {
                                 <Button
  size="sm"
  variant="outline"
- className=" border-rose-300 text-rose-600 hover:bg-rose-50"
+ className=" border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
  disabled={actingSlug === `exam:${e.slug}`}
  onClick={() => handleUnpublish("exam", e.slug)}
                                 >
@@ -1081,7 +1081,7 @@ export function ImportCenter() {
 
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">
-                      Source URL <span className="text-rose-500">*</span>
+                      Source URL <span className="text-crm-warning-text">*</span>
                     </Label>
                     <Input
                       value={sourceUrl}
@@ -1144,15 +1144,15 @@ export function ImportCenter() {
                   </p>
                   <ol className="space-y-2">
                     <li className="flex items-start gap-2">
-                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-slate-200 text-[11px] font-bold text-[var(--alo-body)]">1</span>
+                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--alo-page)] text-[11px] font-bold text-[var(--alo-body)]">1</span>
                       <span><span className="font-semibold text-foreground">Draft</span> — newly imported or edited data, not visible publicly.</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-500 text-[11px] font-bold text-white">2</span>
+                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--alo-warning)] text-[11px] font-bold text-white">2</span>
                       <span><span className="font-semibold text-foreground">Pending Review</span> — submitted for admin review.</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[11px] font-bold text-white">3</span>
+                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--alo-success-dark)] text-[11px] font-bold text-white">3</span>
                       <span><span className="font-semibold text-foreground">Published</span> — approved and live on the public website.</span>
                     </li>
                   </ol>
@@ -1167,23 +1167,23 @@ export function ImportCenter() {
                   <p>Data can be imported from:</p>
                   <ul className="space-y-1.5">
                     <li className="flex items-start gap-2">
-                      <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                      <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                       <span>Official university websites</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                      <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                       <span>Government immigration sites</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                      <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                       <span>Partner APIs</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                      <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                       <span>Manual entry</span>
                     </li>
                   </ul>
-                  <p className="mt-2 text-[11px] text-amber-600">
+                  <p className="mt-2 text-[11px] text-crm-warning-text">
                     All imported data must be verified before publishing.
                   </p>
                 </div>
@@ -1236,15 +1236,15 @@ export function ImportCenter() {
             <SectionCard title="Counselor / Editor" icon="UserCog">
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
-                  <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                   <span>Can create drafts from external sources</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                   <span>Can submit drafts for review</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Icon name="X" className="size-4 shrink-0 text-rose-500" />
+                  <Icon name="X" className="size-4 shrink-0 text-crm-warning-text" />
                   <span>Cannot publish or unpublish</span>
                 </li>
               </ul>
@@ -1253,15 +1253,15 @@ export function ImportCenter() {
             <SectionCard title="Admin" icon="ShieldCheck">
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
-                  <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                   <span>Can review pending items</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                   <span>Can approve &amp; publish content</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                   <span>Can unpublish (send back to draft)</span>
                 </li>
               </ul>
@@ -1270,15 +1270,15 @@ export function ImportCenter() {
             <SectionCard title="Super Admin" icon="Crown">
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
-                  <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                   <span>Full control over all stages</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                   <span>Can override approvals &amp; reverts</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Icon name="Check" className="size-4 shrink-0 text-emerald-600" />
+                  <Icon name="Check" className="size-4 shrink-0 text-crm-success-text" />
                   <span>Access to complete audit trail</span>
                 </li>
               </ul>
@@ -1330,10 +1330,10 @@ export function ImportCenter() {
                           className={cn(
                             "flex size-8 shrink-0 items-center justify-center rounded-lg",
                             details.action === "publish"
-                              ? "bg-emerald-100 text-emerald-700"
+                              ? "bg-crm-success-bg text-crm-success-text"
                               : details.action === "reject"
-                                ? "bg-rose-100 text-rose-700"
-                                : "bg-amber-100 text-amber-700",
+                                ? "bg-crm-warning-bg text-crm-warning-text"
+                                : "bg-crm-warning-bg text-crm-warning-text",
                           )}
                         >
                           <Icon
@@ -1417,16 +1417,16 @@ export function ImportCenter() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-rose-200 bg-rose-50/50 p-4">
+          <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/50 p-4">
             <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-rose-600 text-white">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-error)] text-white">
                 <Icon name="AlertTriangle" className="size-4" />
               </div>
-              <h4 className="text-sm font-semibold text-rose-700">Never publish unverified</h4>
+              <h4 className="text-sm font-semibold text-crm-warning-text">Never publish unverified</h4>
             </div>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               Never publish unverified data. Mark uncertain data as{" "}
-              <Badge variant="secondary" className="mx-0.5 rounded-full bg-amber-100 px-1.5 py-0 text-[11px] text-amber-700">
+              <Badge variant="secondary" className="mx-0.5 rounded-full bg-crm-warning-bg px-1.5 py-0 text-[11px] text-crm-warning-text">
                 Needs verification
               </Badge>{" "}
               and route it back to the editor.

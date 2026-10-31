@@ -98,16 +98,16 @@ const SCORING_DIMENSIONS = [
 ];
 
 const READINESS_COLORS: Record<string, string> = {
-  ready: "bg-emerald-100 text-emerald-700",
-  needs_practice: "bg-amber-100 text-amber-700",
-  high_risk: "bg-rose-100 text-rose-700",
+  ready: "bg-crm-success-bg text-crm-success-text",
+  needs_practice: "bg-crm-warning-bg text-crm-warning-text",
+  high_risk: "bg-crm-warning-bg text-crm-warning-text",
   human_review_required: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const RISK_COLORS: Record<string, string> = {
-  LOW: "bg-emerald-100 text-emerald-700",
-  MEDIUM: "bg-amber-100 text-amber-700",
-  HIGH: "bg-rose-100 text-rose-700",
+  LOW: "bg-crm-success-bg text-crm-success-text",
+  MEDIUM: "bg-crm-warning-bg text-crm-warning-text",
+  HIGH: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 // ---------------------------------------------------------------------------
@@ -715,19 +715,19 @@ function InterviewPhase({
 
             {/* Error */}
             {error && (
-              <div className="rounded-xl border-2 border-rose-200 bg-rose-50 p-3">
+              <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg p-3">
                 <div className="flex items-start gap-2">
                   <Icon
                     name="TriangleAlert"
-                    className="mt-0.5 size-4 shrink-0 text-rose-500"
+                    className="mt-0.5 size-4 shrink-0 text-crm-warning-text"
                   />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-rose-700">{error}</p>
+                    <p className="text-sm font-medium text-crm-warning-text">{error}</p>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={onRetry}
-                      className="mt-2 border-rose-300 text-rose-700 hover:bg-rose-100"
+                      className="mt-2 border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
                     >
                       <Icon name="RotateCcw" className="size-3.5" />
                       Retry
@@ -905,7 +905,7 @@ function ReportPhase({
                   />
                 </div>
               </div>
-              <div className="ml-auto flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700">
+              <div className="ml-auto flex items-center gap-1.5 rounded-lg bg-crm-success-bg px-3 py-1.5 text-xs font-medium text-crm-success-text">
                 <Icon name="CircleCheck" className="size-4" />
                 Saved to CRM timeline
               </div>
@@ -930,7 +930,7 @@ function ReportPhase({
                   {report.weakAreas.map((w, i) => (
                     <span
                       key={i}
-                      className="rounded-full bg-rose-50 px-2.5 py-0.5 text-xs font-medium text-rose-700"
+                      className="rounded-full bg-crm-warning-bg px-2.5 py-0.5 text-xs font-medium text-crm-warning-text"
                     >
                       {w}
                     </span>

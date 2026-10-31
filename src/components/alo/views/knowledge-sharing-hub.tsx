@@ -46,16 +46,16 @@ interface KnowledgePost {
 
 const CATEGORIES = [
   { value: "general", label: "General", icon: "FileText", color: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
-  { value: "university_update", label: "University Update", icon: "GraduationCap", color: "bg-violet-100 text-violet-700" },
+  { value: "university_update", label: "University Update", icon: "GraduationCap", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
   { value: "visa_update", label: "Visa Update", icon: "Plane", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
-  { value: "scholarship", label: "Scholarship", icon: "Award", color: "bg-emerald-100 text-emerald-700" },
-  { value: "country_guide", label: "Country Guide", icon: "Globe", color: "bg-cyan-100 text-cyan-700" },
+  { value: "scholarship", label: "Scholarship", icon: "Award", color: "bg-crm-success-bg text-crm-success-text" },
+  { value: "country_guide", label: "Country Guide", icon: "Globe", color: "bg-[var(--alo-info-bg)] text-[var(--alo-info-text)]" },
   { value: "course_info", label: "Course Info", icon: "BookOpen", color: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   { value: "partnership", label: "Partnership", icon: "Handshake", color: "bg-teal-100 text-teal-700" },
-  { value: "business_strategy", label: "Business Strategy", icon: "MapPinned", color: "bg-amber-100 text-amber-700" },
-  { value: "training", label: "Training", icon: "Users", color: "bg-pink-100 text-pink-700" },
-  { value: "announcement", label: "Announcement", icon: "Megaphone", color: "bg-rose-100 text-rose-700" },
-  { value: "research", label: "Research", icon: "FileSearch", color: "bg-indigo-100 text-indigo-700" },
+  { value: "business_strategy", label: "Business Strategy", icon: "MapPinned", color: "bg-crm-warning-bg text-crm-warning-text" },
+  { value: "training", label: "Training", icon: "Users", color: "bg-crm-danger-bg text-crm-danger-text" },
+  { value: "announcement", label: "Announcement", icon: "Megaphone", color: "bg-crm-warning-bg text-crm-warning-text" },
+  { value: "research", label: "Research", icon: "FileSearch", color: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
 ];
 
 const VISIBILITY = ["ALL", "EMPLOYEE", "STUDENT", "PARTNER", "COUNSELOR", "ADMIN", "INTERNATIONAL_OFFICER"];
@@ -267,9 +267,9 @@ export function KnowledgeSharingHub() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button onClick={() => setCategoryFilter("all")} className={cn("rounded-full px-3 py-1 text-xs font-medium", categoryFilter === "all" ? "bg-[var(--alo-brand)] text-white" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200")}>All</button>
+            <button onClick={() => setCategoryFilter("all")} className={cn("rounded-full px-3 py-1 text-xs font-medium", categoryFilter === "all" ? "bg-[var(--alo-brand)] text-white" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]")}>All</button>
             {CATEGORIES.map((c) => (
-              <button key={c.value} onClick={() => setCategoryFilter(c.value)} className={cn("inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium", categoryFilter === c.value ? "bg-[var(--alo-brand)] text-white" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-slate-200")}>
+              <button key={c.value} onClick={() => setCategoryFilter(c.value)} className={cn("inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium", categoryFilter === c.value ? "bg-[var(--alo-brand)] text-white" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-page)]")}>
                 <Icon name={c.icon} className="size-3" />{c.label} {stats[c.value] ? `(${stats[c.value]})` : ""}
               </button>
             ))}
@@ -293,7 +293,7 @@ export function KnowledgeSharingHub() {
                       <div className="flex gap-1">
                         {post.isPinned && <Badge variant="outline" className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] text-[11px]"><Icon name="Pin" className="size-3" />Pinned</Badge>}
                         {post.isFeatured && <Badge variant="outline" className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25 text-[11px]"><Icon name="Star" className="size-3" />Featured</Badge>}
-                        {post.status === "PENDING" && <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[11px]">Pending</Badge>}
+                        {post.status === "PENDING" && <Badge variant="outline" className="bg-crm-warning-bg text-crm-warning-text border-crm-warning-border text-[11px]">Pending</Badge>}
                       </div>
                     </div>
                     <div>

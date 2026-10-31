@@ -93,12 +93,12 @@ export default function StudentEnglishPrepProfile() {
           <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Gap: {formData.currentScore && formData.targetScore ? (parseFloat(formData.targetScore) - parseFloat(formData.currentScore)).toFixed(1) : '—'}</p>
         </Card>
         <Card className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl">
-          <div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-emerald-600" /><span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-text-muted)]">Progress</span></div>
+          <div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-crm-success-text" /><span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-text-muted)]">Progress</span></div>
           <p className="text-lg font-black text-[var(--alo-text)]">{profile?.progress || 0}%</p>
           <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Status: {formData.preparationStatus}</p>
         </Card>
         <Card className="p-5 bg-white border border-[var(--alo-border)] rounded-2xl">
-          <div className="flex items-center gap-2 mb-2"><Award className="w-4 h-4 text-amber-600" /><span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-text-muted)]">Weakest Module</span></div>
+          <div className="flex items-center gap-2 mb-2"><Award className="w-4 h-4 text-crm-warning-text" /><span className="text-xs font-bold uppercase tracking-wider text-[var(--alo-text-muted)]">Weakest Module</span></div>
           <p className="text-sm font-bold text-[var(--alo-text)]">{formData.weakestModule || 'Not set'}</p>
           <p className="text-[11px] text-[var(--alo-text-muted)] mt-1">Focus: {formData.weakestModule ? `Practice ${formData.weakestModule}` : 'Diagnostic needed'}</p>
         </Card>
@@ -167,7 +167,7 @@ export default function StudentEnglishPrepProfile() {
             <p><span className="text-[var(--alo-text-muted)]">Recommended:</span> <span className="font-bold">{profile.recommendedTest || formData.preferredTest}</span></p>
             <p><span className="text-[var(--alo-text-muted)]">Counselor:</span> <span className="font-semibold">{profile.counselorName || 'Not assigned'}</span></p>
             <p><span className="text-[var(--alo-text-muted)]">Last Updated:</span> <span className="font-semibold">{profile.updatedAt ? new Date(profile.updatedAt).toLocaleDateString() : '—'}</span></p>
-            <p className="text-[11px] text-amber-700 p-2 rounded-lg bg-amber-50 border border-amber-100 mt-2">Personalization: My English Prep Current/Target/Progress/Recommended/Weakest/Counselor — Only if logged in, DB-driven, no fake</p>
+            <p className="text-[11px] text-crm-warning-text p-2 rounded-lg bg-crm-warning-bg border border-crm-warning-border mt-2">Personalization: My English Prep Current/Target/Progress/Recommended/Weakest/Counselor — Only if logged in, DB-driven, no fake</p>
           </div>
         )}
       </Card>

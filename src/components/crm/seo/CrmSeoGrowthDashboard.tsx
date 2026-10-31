@@ -108,10 +108,10 @@ const contentPipeline: ContentPipelineStatus = {
 };
 
 const destinations: DestinationPerformance[] = [
-  { destination: 'United Kingdom', flag: '🇬🇧', keywordCount: 78, traffic: 5840, maxTraffic: 5840, color: 'bg-emerald-500' },
-  { destination: 'United States', flag: '🇺🇸', keywordCount: 52, traffic: 3680, maxTraffic: 5840, color: 'bg-blue-500' },
-  { destination: 'Canada', flag: '🇨🇦', keywordCount: 34, traffic: 2100, maxTraffic: 5840, color: 'bg-red-500' },
-  { destination: 'Australia', flag: '🇦🇺', keywordCount: 22, traffic: 1227, maxTraffic: 5840, color: 'bg-amber-500' },
+  { destination: 'United Kingdom', flag: '🇬🇧', keywordCount: 78, traffic: 5840, maxTraffic: 5840, color: 'bg-[var(--alo-success)]' },
+  { destination: 'United States', flag: '🇺🇸', keywordCount: 52, traffic: 3680, maxTraffic: 5840, color: 'bg-[var(--alo-brand)]' },
+  { destination: 'Canada', flag: '🇨🇦', keywordCount: 34, traffic: 2100, maxTraffic: 5840, color: 'bg-[var(--alo-error)]' },
+  { destination: 'Australia', flag: '🇦🇺', keywordCount: 22, traffic: 1227, maxTraffic: 5840, color: 'bg-[var(--alo-warning)]' },
 ];
 
 const recentActivities: SeoActivity[] = [
@@ -157,13 +157,13 @@ const TECHNICAL_HEALTH_SCORE = 78;
 function ActivityTypeIcon({ type }: { type: SeoActivity['type'] }) {
   switch (type) {
     case 'published':
-      return <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />;
+      return <CheckCircle2 className="w-3.5 h-3.5 text-crm-success-text" />;
     case 'updated':
       return <RefreshCw className="w-3.5 h-3.5 text-[var(--alo-brand)]" />;
     case 'keyword':
-      return <Target className="w-3.5 h-3.5 text-purple-500" />;
+      return <Target className="w-3.5 h-3.5 text-[var(--alo-brand)]" />;
     case 'technical':
-      return <Wrench className="w-3.5 h-3.5 text-amber-500" />;
+      return <Wrench className="w-3.5 h-3.5 text-crm-warning-text" />;
     case 'link':
       return <Zap className="w-3.5 h-3.5 text-[var(--alo-cta)]" />;
     default:
@@ -173,10 +173,10 @@ function ActivityTypeIcon({ type }: { type: SeoActivity['type'] }) {
 
 function ActivityTypeBadge({ type }: { type: SeoActivity['type'] }) {
   const map: Record<string, string> = {
-    published: 'bg-emerald-100 text-emerald-700',
+    published: 'bg-crm-success-bg text-crm-success-text',
     updated: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
-    keyword: 'bg-purple-100 text-purple-700',
-    technical: 'bg-amber-100 text-amber-700',
+    keyword: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+    technical: 'bg-crm-warning-bg text-crm-warning-text',
     link: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
   };
   const labels: Record<string, string> = {
@@ -270,7 +270,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
         <div>
           <h1 className="text-2xl font-bold text-[var(--alo-text)]">SEO Growth Dashboard</h1>
           <div className="flex flex-wrap items-center gap-2 mt-1.5">
-            <Badge className="bg-emerald-600 text-white text-[11px] hover:bg-emerald-700">
+            <Badge className="bg-[var(--alo-success-dark)] text-white text-[11px] hover:bg-[var(--alo-success-dark)]">
               <TrendingUp className="w-3 h-3 mr-1" />SEO Growth System
             </Badge>
             <span className="text-sm text-[var(--alo-text-muted)]">{today}</span>
@@ -280,7 +280,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="text-[var(--alo-body)]">
             <RefreshCw className="w-4 h-4" /> Refresh Data
           </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white">
             <ArrowRight className="w-4 h-4" /> View Full Report
           </Button>
         </div>
@@ -292,10 +292,10 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
           <Card key={kpi.label} className="bg-white rounded-lg border border-[var(--alo-border)]">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <kpi.icon className="w-5 h-5 text-emerald-600" />
+                <kpi.icon className="w-5 h-5 text-crm-success-text" />
                 <span
                   className={`inline-flex items-center text-[11px] font-medium ${
-                    kpi.up ? 'text-green-600' : 'text-red-500'
+                    kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'
                   }`}
                 >
                   {kpi.up ? (
@@ -319,32 +319,32 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-              <Clock className="w-4 h-4 text-emerald-600" /> 90-Day SEO Execution Progress
+              <Clock className="w-4 h-4 text-crm-success-text" /> 90-Day SEO Execution Progress
             </CardTitle>
-            <Badge className="bg-emerald-100 text-emerald-700 text-[11px] hover:bg-emerald-100">
+            <Badge className="bg-crm-success-bg text-crm-success-text text-[11px] hover:bg-crm-success-bg">
               Week {currentWeek?.week ?? '?'} of 12
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="pt-2">
-          <Progress value={progressPercent} className="h-3 bg-emerald-100 mb-3 [&>div]:bg-emerald-500" />
+          <Progress value={progressPercent} className="h-3 bg-crm-success-bg mb-3 [&>div]:bg-[var(--alo-success)]" />
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-2">
             {weekMilestones.map((m) => (
               <div
                 key={m.week}
                 className={`text-center p-2 rounded-lg border text-[11px] transition-colors ${
                   m.status === 'completed'
-                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                    ? 'border-crm-success-border bg-crm-success-bg text-crm-success-text'
                     : m.status === 'in_progress'
-                    ? 'border-amber-300 bg-amber-50 text-amber-700 ring-2 ring-amber-400'
+                    ? 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text ring-2 ring-amber-400'
                     : 'border-[var(--alo-border)] bg-[var(--alo-page)] text-[var(--alo-text-muted)]'
                 }`}
               >
                 <div className="flex items-center justify-center mb-0.5">
                   {m.status === 'completed' ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-crm-success-text" />
                   ) : m.status === 'in_progress' ? (
-                    <Circle className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+                    <Circle className="w-3.5 h-3.5 text-crm-warning-text fill-amber-400" />
                   ) : (
                     <Circle className="w-3.5 h-3.5 text-[var(--alo-placeholder)]" />
                   )}
@@ -375,28 +375,28 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
               <Card className="bg-white rounded-lg border border-[var(--alo-border)]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-emerald-600" /> Content Pipeline Status
+                    <BookOpen className="w-4 h-4 text-crm-success-text" /> Content Pipeline Status
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <ContentPipelineBlock label="Published" count={contentPipeline.published} color="bg-emerald-500" icon={CheckCircle2} />
-                    <ContentPipelineBlock label="In Review" count={contentPipeline.inReview} color="bg-blue-500" icon={Eye} />
-                    <ContentPipelineBlock label="Draft" count={contentPipeline.draft} color="bg-amber-500" icon={Pencil} />
-                    <ContentPipelineBlock label="Scheduled" count={contentPipeline.scheduled} color="bg-purple-500" icon={Clock} />
+                    <ContentPipelineBlock label="Published" count={contentPipeline.published} color="bg-[var(--alo-success)]" icon={CheckCircle2} />
+                    <ContentPipelineBlock label="In Review" count={contentPipeline.inReview} color="bg-[var(--alo-brand)]" icon={Eye} />
+                    <ContentPipelineBlock label="Draft" count={contentPipeline.draft} color="bg-[var(--alo-warning)]" icon={Pencil} />
+                    <ContentPipelineBlock label="Scheduled" count={contentPipeline.scheduled} color="bg-[var(--alo-brand-pale)]0" icon={Clock} />
                   </div>
                   <div className="mt-4">
                     <div className="flex h-3 rounded-full overflow-hidden bg-[var(--alo-surface-muted)]">
-                      <div className="bg-emerald-500" style={{ width: `${(contentPipeline.published / 52) * 100}%` }} />
-                      <div className="bg-blue-500" style={{ width: `${(contentPipeline.inReview / 52) * 100}%` }} />
-                      <div className="bg-amber-500" style={{ width: `${(contentPipeline.draft / 52) * 100}%` }} />
-                      <div className="bg-purple-500" style={{ width: `${(contentPipeline.scheduled / 52) * 100}%` }} />
+                      <div className="bg-[var(--alo-success)]" style={{ width: `${(contentPipeline.published / 52) * 100}%` }} />
+                      <div className="bg-[var(--alo-brand)]" style={{ width: `${(contentPipeline.inReview / 52) * 100}%` }} />
+                      <div className="bg-[var(--alo-warning)]" style={{ width: `${(contentPipeline.draft / 52) * 100}%` }} />
+                      <div className="bg-[var(--alo-brand-pale)]0" style={{ width: `${(contentPipeline.scheduled / 52) * 100}%` }} />
                     </div>
                     <div className="flex items-center gap-4 mt-2 text-[11px] text-[var(--alo-text-muted)]">
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500" />Published</span>
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500" />In Review</span>
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500" />Draft</span>
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-500" />Scheduled</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[var(--alo-success)]" />Published</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[var(--alo-brand)]" />In Review</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[var(--alo-warning)]" />Draft</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[var(--alo-brand-pale)]0" />Scheduled</span>
                     </div>
                   </div>
                 </CardContent>
@@ -406,19 +406,19 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
               <Card className="bg-white rounded-lg border border-[var(--alo-border)]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-emerald-600" /> Destination Performance Breakdown
+                    <MapPin className="w-4 h-4 text-crm-success-text" /> Destination Performance Breakdown
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {destinations.map((d) => (
-                      <div key={d.destination} className="p-4 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] hover:border-emerald-200 transition-colors">
+                      <div key={d.destination} className="p-4 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] hover:border-crm-success-border transition-colors">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-xl">{d.flag}</span>
                           <span className="text-sm font-semibold text-[var(--alo-text)]">{d.destination}</span>
                         </div>
                         <div className="flex items-end gap-1 h-20">
-                          <div className="w-full rounded-t-md bg-slate-200 overflow-hidden">
+                          <div className="w-full rounded-t-md bg-[var(--alo-page)] overflow-hidden">
                             <div
                               className={`w-full ${d.color} rounded-t-md transition-all`}
                               style={{ height: `${(d.traffic / d.maxTraffic) * 100}%`, marginTop: `${100 - (d.traffic / d.maxTraffic) * 100}%` }}
@@ -432,7 +432,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                         </div>
                         <div className="flex items-center justify-between mt-0.5">
                           <span className="text-xs text-[var(--alo-text-muted)]">Traffic</span>
-                          <span className="text-xs font-semibold text-emerald-600">{d.traffic.toLocaleString()}</span>
+                          <span className="text-xs font-semibold text-crm-success-text">{d.traffic.toLocaleString()}</span>
                         </div>
                       </div>
                     ))}
@@ -447,13 +447,13 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
               <Card className="bg-white rounded-lg border border-[var(--alo-border)]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-emerald-600" /> Technical SEO Health
+                    <Shield className="w-4 h-4 text-crm-success-text" /> Technical SEO Health
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-col items-center py-2">
                     <HealthScoreRing score={TECHNICAL_HEALTH_SCORE} />
-                    <p className="text-sm font-medium text-amber-600 mt-3 flex items-center gap-1">
+                    <p className="text-sm font-medium text-crm-warning-text mt-3 flex items-center gap-1">
                       <AlertTriangle className="w-3.5 h-3.5" /> Needs Improvement
                     </p>
                   </div>
@@ -470,7 +470,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                         <span className="text-xs text-[var(--alo-body)]">{item.label}</span>
                         <Badge
                           className={`text-[11px] hover:${
-                            item.pass ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100' : 'bg-amber-100 text-amber-700 hover:bg-amber-100'
+                            item.pass ? 'bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg' : 'bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg'
                           }`}
                           variant="outline"
                           style={{
@@ -492,7 +492,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                      <Activity className="w-4 h-4 text-emerald-600" /> Recent Activity
+                      <Activity className="w-4 h-4 text-crm-success-text" /> Recent Activity
                     </CardTitle>
                     <Badge variant="outline" className="text-[11px]">Last 10</Badge>
                   </div>
@@ -531,7 +531,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                 <CardHeader className="pb-2">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                      <Target className="w-4 h-4 text-emerald-600" /> Top Performing Keywords
+                      <Target className="w-4 h-4 text-crm-success-text" /> Top Performing Keywords
                     </CardTitle>
                     <div className="relative w-full sm:w-64">
                       <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" />
@@ -565,7 +565,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                               <Badge
                                 className={`text-[11px] hover:opacity-80 ${
                                   kw.position <= 3
-                                    ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100'
+                                    ? 'bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg'
                                     : kw.position <= 10
                                     ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]'
                                     : 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]'
@@ -576,7 +576,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                               </Badge>
                             </TableCell>
                             <TableCell className="text-center">
-                              <span className={`text-xs font-semibold flex items-center justify-center gap-0.5 ${kw.change > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                              <span className={`text-xs font-semibold flex items-center justify-center gap-0.5 ${kw.change > 0 ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
                                 {kw.change > 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                                 {Math.abs(kw.change)}
                               </span>
@@ -598,7 +598,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
               <Card className="bg-white rounded-lg border border-[var(--alo-border)]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-emerald-600" /> Competitor Visibility
+                    <BarChart3 className="w-4 h-4 text-crm-success-text" /> Competitor Visibility
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -606,10 +606,10 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                     {competitors.map((comp, i) => (
                       <div key={comp.name}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className={`text-sm font-medium ${i === 0 ? 'text-emerald-700' : 'text-[var(--alo-body)]'}`}>
+                          <span className={`text-sm font-medium ${i === 0 ? 'text-crm-success-text' : 'text-[var(--alo-body)]'}`}>
                             {comp.name}
                             {i === 0 && (
-                              <Badge className="bg-emerald-100 text-emerald-700 text-[11px] ml-1.5 hover:bg-emerald-100" variant="outline">You</Badge>
+                              <Badge className="bg-crm-success-bg text-crm-success-text text-[11px] ml-1.5 hover:bg-crm-success-bg" variant="outline">You</Badge>
                             )}
                           </span>
                           <span className="text-xs text-[var(--alo-text-muted)]">{comp.keywords} keywords</span>
@@ -617,7 +617,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                         <div className="w-full h-2.5 rounded-full bg-[var(--alo-surface-muted)] overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all ${
-                              i === 0 ? 'bg-emerald-500' : 'bg-slate-400'
+                              i === 0 ? 'bg-[var(--alo-success)]' : 'bg-[var(--alo-page)]'
                             }`}
                             style={{ width: `${(comp.keywords / comp.maxKeywords) * 100}%` }}
                           />
@@ -627,11 +627,11 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                     ))}
                   </div>
                   <Separator className="my-4" />
-                  <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
-                    <p className="text-xs text-emerald-700 font-medium flex items-center gap-1.5">
+                  <div className="p-3 rounded-lg bg-crm-success-bg border border-crm-success-border">
+                    <p className="text-xs text-crm-success-text font-medium flex items-center gap-1.5">
                       <ChevronRight className="w-3 h-3" /> Opportunity Gap
                     </p>
-                    <p className="text-[11px] text-emerald-600 mt-1">
+                    <p className="text-[11px] text-crm-success-text mt-1">
                       You rank for 186 keywords vs IDP&apos;s 342. Focus on long-tail keywords in the USA &amp; Canada segments to close the gap.
                     </p>
                   </div>
@@ -648,15 +648,15 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
               <Card className="bg-white rounded-lg border border-[var(--alo-border)]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-emerald-600" /> Content Pipeline
+                    <BookOpen className="w-4 h-4 text-crm-success-text" /> Content Pipeline
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <ContentPipelineBlock label="Published" count={contentPipeline.published} color="bg-emerald-500" icon={CheckCircle2} />
-                    <ContentPipelineBlock label="In Review" count={contentPipeline.inReview} color="bg-blue-500" icon={Eye} />
-                    <ContentPipelineBlock label="Draft" count={contentPipeline.draft} color="bg-amber-500" icon={Pencil} />
-                    <ContentPipelineBlock label="Scheduled" count={contentPipeline.scheduled} color="bg-purple-500" icon={Clock} />
+                    <ContentPipelineBlock label="Published" count={contentPipeline.published} color="bg-[var(--alo-success)]" icon={CheckCircle2} />
+                    <ContentPipelineBlock label="In Review" count={contentPipeline.inReview} color="bg-[var(--alo-brand)]" icon={Eye} />
+                    <ContentPipelineBlock label="Draft" count={contentPipeline.draft} color="bg-[var(--alo-warning)]" icon={Pencil} />
+                    <ContentPipelineBlock label="Scheduled" count={contentPipeline.scheduled} color="bg-[var(--alo-brand-pale)]0" icon={Clock} />
                   </div>
                   <Separator className="mb-4" />
                   <div className="space-y-2 max-h-72 overflow-y-auto">
@@ -671,10 +671,10 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                       { title: 'Part-Time Work Rules for International Students in UK', status: 'scheduled', date: 'Dec 18' },
                     ].map((item, i) => {
                       const statusMap: Record<string, { bg: string; text: string }> = {
-                        published: { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+                        published: { bg: 'bg-crm-success-bg', text: 'text-crm-success-text' },
                         in_review: { bg: 'bg-[var(--alo-brand-pale)]', text: 'text-[var(--alo-brand)]' },
-                        draft: { bg: 'bg-amber-100', text: 'text-amber-700' },
-                        scheduled: { bg: 'bg-purple-100', text: 'text-purple-700' },
+                        draft: { bg: 'bg-crm-warning-bg', text: 'text-crm-warning-text' },
+                        scheduled: { bg: 'bg-[var(--alo-brand-pale)]', text: 'text-[var(--alo-brand)]' },
                       };
                       const s = statusMap[item.status] || statusMap.draft;
                       return (
@@ -701,7 +701,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
               <Card className="bg-white rounded-lg border border-[var(--alo-border)]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-emerald-600" /> Destination Performance
+                    <MapPin className="w-4 h-4 text-crm-success-text" /> Destination Performance
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -713,7 +713,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                           <span className="text-sm font-medium text-[var(--alo-body)]">{d.destination}</span>
                         </div>
                         <div className="flex items-end gap-1 h-16">
-                          <div className="w-full rounded-t-md bg-slate-200 overflow-hidden">
+                          <div className="w-full rounded-t-md bg-[var(--alo-page)] overflow-hidden">
                             <div
                               className={`w-full ${d.color} rounded-t-md transition-all`}
                               style={{ height: `${(d.traffic / d.maxTraffic) * 100}%`, marginTop: `${100 - (d.traffic / d.maxTraffic) * 100}%` }}
@@ -740,7 +740,7 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
               <Card className="bg-white rounded-lg border border-[var(--alo-border)]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                    <Wrench className="w-4 h-4 text-emerald-600" /> Technical SEO Health Details
+                    <Wrench className="w-4 h-4 text-crm-success-text" /> Technical SEO Health Details
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -763,10 +763,10 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
                           <span
                             className={`text-[11px] px-1.5 py-0.5 rounded font-medium ${
                               item.status === 'pass'
-                                ? 'bg-emerald-100 text-emerald-700'
+                                ? 'bg-crm-success-bg text-crm-success-text'
                                 : item.status === 'partial'
-                                ? 'bg-amber-100 text-amber-700'
-                                : 'bg-red-100 text-red-700'
+                                ? 'bg-crm-warning-bg text-crm-warning-text'
+                                : 'bg-crm-danger-bg text-crm-danger-text'
                             }`}
                           >
                             {item.score}
@@ -784,13 +784,13 @@ function LegacyUnverifiedCrmSeoGrowthDashboard() {
               <Card className="bg-white rounded-lg border border-[var(--alo-border)]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base font-semibold text-[var(--alo-text)] flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-emerald-600" /> Overall Health Score
+                    <Shield className="w-4 h-4 text-crm-success-text" /> Overall Health Score
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-col items-center py-4">
                     <HealthScoreRing score={TECHNICAL_HEALTH_SCORE} />
-                    <p className="text-sm font-medium text-amber-600 mt-3 flex items-center gap-1">
+                    <p className="text-sm font-medium text-crm-warning-text mt-3 flex items-center gap-1">
                       <AlertTriangle className="w-3.5 h-3.5" /> Needs Improvement
                     </p>
                     <p className="text-xs text-[var(--alo-text-muted)] mt-1 text-center">

@@ -96,7 +96,7 @@ export default function InboxPage() {
                 >
                   <div className="flex justify-between items-start mb-1">
                     <span className="font-semibold text-[var(--alo-text)] capitalize flex items-center gap-2">
-                      {c.channel === 'whatsapp' ? <Phone className="w-4 h-4 text-green-500" /> : <Mail className="w-4 h-4 text-[var(--alo-text-muted)]" />}
+                      {c.channel === 'whatsapp' ? <Phone className="w-4 h-4 text-crm-success-text" /> : <Mail className="w-4 h-4 text-[var(--alo-text-muted)]" />}
                       {c.channel} Message
                     </span>
                     <span className="text-xs text-[var(--alo-text-muted)]">
@@ -117,7 +117,7 @@ export default function InboxPage() {
           <>
             <div className="p-4 border-b border-[var(--alo-border)] bg-white flex justify-between items-center shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-[var(--alo-page)] rounded-full flex items-center justify-center">
                   <User className="w-6 h-6 text-[var(--alo-text-muted)]" />
                 </div>
                 <div>

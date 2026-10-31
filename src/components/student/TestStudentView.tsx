@@ -39,8 +39,8 @@ const ICONS = {
 } as const;
 
 const TONES = {
-  PASS: 'text-emerald-600',
-  FAIL: 'text-red-600',
+  PASS: 'text-crm-success-text',
+  FAIL: 'text-crm-danger-text',
   SKIPPED: 'text-[var(--alo-text-muted)]',
 } as const;
 
@@ -107,7 +107,7 @@ export default function TestStudentView() {
         {state === 'unauthorised' && (
           <Card className="rounded-2xl border-[var(--alo-border)] bg-white p-6">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-500" />
+              <AlertTriangle className="mt-0.5 h-5 w-5 text-crm-warning-text" />
               <div>
                 <p className="text-sm font-semibold">Sign in as a student to run this check.</p>
                 <p className="mt-1 text-sm text-[var(--alo-body)]">
@@ -124,7 +124,7 @@ export default function TestStudentView() {
         )}
 
         {state === 'error' && (
-          <Card className="rounded-2xl border-red-200 bg-red-50 p-6 text-sm text-red-700">
+          <Card className="rounded-2xl border-crm-danger-border bg-crm-danger-bg p-6 text-sm text-crm-danger-text">
             <p className="font-semibold">The check could not run.</p>
             <p className="mt-1">{error}</p>
           </Card>
@@ -142,7 +142,7 @@ export default function TestStudentView() {
                     stage {data.student?.journeyStage || 'unset'} · profile {data.student?.profileComplete ?? 0}%
                   </p>
                 </div>
-                <span className={`rounded-full px-3 py-1 text-xs font-bold ${data.verdict === 'PASS' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+                <span className={`rounded-full px-3 py-1 text-xs font-bold ${data.verdict === 'PASS' ? 'bg-crm-success-bg text-crm-success-text' : 'bg-crm-danger-bg text-crm-danger-text'}`}>
                   {data.verdict}
                 </span>
               </div>
@@ -164,7 +164,7 @@ export default function TestStudentView() {
                         <p className="text-sm font-semibold">{check.label}</p>
                         <p className="mt-0.5 break-words text-xs text-[var(--alo-body)]">{check.detail}</p>
                         {check.requiredFix && (
-                          <p className="mt-1 text-xs font-medium text-amber-700">{check.requiredFix}</p>
+                          <p className="mt-1 text-xs font-medium text-crm-warning-text">{check.requiredFix}</p>
                         )}
                       </div>
                       <span className="ml-auto shrink-0 text-[11px] font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">{check.status}</span>

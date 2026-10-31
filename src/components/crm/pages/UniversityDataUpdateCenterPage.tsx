@@ -106,7 +106,7 @@ export default function UniversityDataUpdateCenterPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-xl border border-[var(--alo-border)] shadow-xs">
         <div>
           <h1 className="text-xl font-bold text-[var(--alo-text)] flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-600" />
+            <Sparkles className="w-5 h-5 text-[var(--alo-brand)]" />
             University &amp; Course Data Update Center (Weekly AI Agent)
           </h1>
           <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
@@ -115,7 +115,7 @@ export default function UniversityDataUpdateCenterPage() {
         </div>
 
         <Button
- className="bg-indigo-600 hover:bg-indigo-700 text-white "
+ className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)] text-white "
  onClick={handleRunWeeklyAiAgent}
  disabled={runningAgent}
  >
@@ -162,14 +162,14 @@ export default function UniversityDataUpdateCenterPage() {
                     <TableCell className="text-xs font-medium text-[var(--alo-body)]">{u.country}</TableCell>
                     <TableCell><Badge variant="outline" className="text-[11px] font-mono">{u.fieldName}</Badge></TableCell>
                     <TableCell className="text-xs text-[var(--alo-text-muted)] line-through">{u.oldValue}</TableCell>
-                    <TableCell className="text-xs font-bold text-indigo-600">{u.newValue}</TableCell>
+                    <TableCell className="text-xs font-bold text-[var(--alo-brand)]">{u.newValue}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <Badge className="bg-emerald-50 text-emerald-700 text-[11px]">
+                        <Badge className="bg-crm-success-bg text-crm-success-text text-[11px]">
                           {Math.round(u.aiConfidence * 100)}% Match
                         </Badge>
                         {u.evidenceUrl && (
-                          <a href={u.evidenceUrl} target="_blank" rel="noreferrer" className="text-[var(--alo-text-muted)] hover:text-indigo-600">
+                          <a href={u.evidenceUrl} target="_blank" rel="noreferrer" className="text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)]">
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         )}
@@ -178,15 +178,15 @@ export default function UniversityDataUpdateCenterPage() {
                     <TableCell className="text-right">
                       {['pending_approval', 'pending', 'apply_failed', 'approved'].includes(u.status) || (u.status === 'reviewed_unverified' && u.approvalFingerprint && u.approvalFingerprint !== 'valid') ? (
                         <div className="flex items-center justify-end gap-1">
-                          <Button size="sm" className="h-7 bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => handleApproveUpdate(u.id)}>
+                          <Button size="sm" className="h-7 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white" onClick={() => handleApproveUpdate(u.id)}>
                             {u.status === 'pending_approval' || u.status === 'pending' ? 'Approve (not applied)' : 'Re-approve'}
                           </Button>
-                          <Button size="sm" variant="outline" className="h-7 text-rose-600 border-rose-200" onClick={() => handleRejectUpdate(u.id)}>
+                          <Button size="sm" variant="outline" className="h-7 text-crm-warning-text border-crm-warning-border" onClick={() => handleRejectUpdate(u.id)}>
                             Reject
                           </Button>
                         </div>
                       ) : (
-                        <Badge className={`text-[11px] ${u.status === 'applied' || u.status === 'reviewed_unverified' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                        <Badge className={`text-[11px] ${u.status === 'applied' || u.status === 'reviewed_unverified' ? 'bg-crm-success-bg text-crm-success-text' : 'bg-crm-warning-bg text-crm-warning-text'}`}>
                           {PROPOSAL_STATUS_LABELS[u.status] ?? u.status}
                         </Badge>
                       )}

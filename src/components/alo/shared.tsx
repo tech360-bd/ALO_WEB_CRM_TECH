@@ -35,7 +35,7 @@ export function StatCard({
     orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-hover)]",
     emerald: "bg-[#DCFCE7] text-[var(--alo-success-dark)]",
     amber: "bg-[var(--alo-warning-soft)] text-[var(--alo-warning-strong)]",
-    violet: "bg-violet-50 text-violet-600",
+    violet: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
     rose: "bg-[var(--alo-error-soft)] text-[var(--alo-danger-strong)]",
   };
   return (

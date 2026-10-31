@@ -101,11 +101,11 @@ const PROPOSABLE_STAGES = [
 ];
 
 const DOC_STATUS_STYLE: Record<string, string> = {
-  VERIFIED: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  APPROVED: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+  VERIFIED: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
+  APPROVED: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
   PENDING: 'border-[var(--alo-border)] bg-[var(--alo-brand-pale)] text-[var(--alo-brand-deep)]',
-  REJECTED: 'border-red-200 bg-red-50 text-red-700',
-  EXPIRED: 'border-amber-200 bg-amber-50 text-amber-800',
+  REJECTED: 'border-crm-danger-border bg-crm-danger-bg text-crm-danger-text',
+  EXPIRED: 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text',
 };
 
 export default function UniversityPortalPage() {
@@ -440,7 +440,7 @@ export default function UniversityPortalPage() {
                   ))}
                 </div>
                 {stats.totalApplications === 0 && (
-                  <p className="rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-[11px] text-amber-900">
+                  <p className="rounded-lg border border-crm-warning-border bg-crm-warning-bg p-2.5 text-[11px] text-crm-warning-text">
                     No applications yet, so the conversion rate reads 0%. That is an absence of data,
                     not a measured zero.
                   </p>
@@ -596,7 +596,7 @@ export default function UniversityPortalPage() {
                         {docsLoading ? (
                           <p className="mt-1.5 text-[11px] text-[var(--alo-text-muted)]">Loading documents…</p>
                         ) : docsError ? (
-                          <p className="mt-1.5 rounded-lg border border-red-200 bg-red-50 p-2 text-[11px] text-red-700">
+                          <p className="mt-1.5 rounded-lg border border-crm-danger-border bg-crm-danger-bg p-2 text-[11px] text-crm-danger-text">
                             {docsError}
                           </p>
                         ) : documents.length === 0 ? (

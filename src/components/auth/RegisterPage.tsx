@@ -168,7 +168,7 @@ export default function RegisterPage() {
           <ul className="space-y-5">
             {BULLET_POINTS.map((point) => (
               <li key={point} className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-emerald-300 mt-0.5 flex-shrink-0" />
+                <CheckCircle className="w-5 h-5 text-crm-success-text mt-0.5 flex-shrink-0" />
                 <span className="text-white/90 text-[15px] leading-relaxed">{point}</span>
               </li>
             ))}
@@ -178,8 +178,8 @@ export default function RegisterPage() {
         {/* Right Content */}
         <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
           <div className="w-full max-w-md text-center">
-            <div className="mx-auto w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-6">
-              <ShieldCheck className="w-8 h-8 text-emerald-600" />
+            <div className="mx-auto w-16 h-16 rounded-full bg-crm-success-bg flex items-center justify-center mb-6">
+              <ShieldCheck className="w-8 h-8 text-crm-success-text" />
             </div>
             <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-3">
               Application Submitted
@@ -226,7 +226,7 @@ export default function RegisterPage() {
         <ul className="space-y-5">
           {BULLET_POINTS.map((point) => (
             <li key={point} className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-emerald-300 mt-0.5 flex-shrink-0" />
+              <CheckCircle className="w-5 h-5 text-crm-success-text mt-0.5 flex-shrink-0" />
               <span className="text-white/90 text-[15px] leading-relaxed">{point}</span>
             </li>
           ))}
@@ -269,7 +269,7 @@ export default function RegisterPage() {
           {/* Error Alert */}
           {displayError && (
             <div
-              className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 mb-6 text-red-800"
+              className="flex items-start gap-3 rounded-lg border border-crm-danger-border bg-crm-danger-bg p-4 mb-6 text-crm-danger-text"
               role="alert"
             >
               <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />

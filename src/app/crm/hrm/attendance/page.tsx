@@ -45,12 +45,12 @@ export default function HrmAttendancePage() {
             <>
               <div className="grid grid-cols-2 lg:grid-cols-7 gap-2">
                 {[
-                  ['Present', data?.summary?.present ?? 0, 'bg-emerald-50 text-emerald-700'],
-                  ['Late', data?.summary?.late ?? 0, 'bg-amber-50 text-amber-700'],
-                  ['Absent', data?.summary?.absent ?? 0, 'bg-red-50 text-red-700'],
+                  ['Present', data?.summary?.present ?? 0, 'bg-crm-success-bg text-crm-success-text'],
+                  ['Late', data?.summary?.late ?? 0, 'bg-crm-warning-bg text-crm-warning-text'],
+                  ['Absent', data?.summary?.absent ?? 0, 'bg-crm-danger-bg text-crm-danger-text'],
                   ['Half Day', data?.summary?.halfDay ?? 0, 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]'],
                   ['Holiday', data?.summary?.holiday ?? 0, 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'],
-                  ['Leave', data?.summary?.leave ?? 0, 'bg-purple-50 text-purple-700'],
+                  ['Leave', data?.summary?.leave ?? 0, 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]'],
                   ['Hours', data?.summary?.totalHours ?? 0, 'bg-[var(--alo-page)] text-[var(--alo-body)]'],
                 ].map(([label,val,cls])=> (
                   <div key={String(label)} className={`p-3 rounded-xl border text-center ${cls as string} border-[var(--alo-border)]`}>

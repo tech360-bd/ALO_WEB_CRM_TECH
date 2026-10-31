@@ -200,9 +200,9 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         <div className="flex items-center gap-3">
           <div className="p-3 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] text-xs">
             <span className="text-[var(--alo-text-muted)] block">User Seats:</span>
-            <strong className="text-emerald-700 font-bold">{kpis.counselorSeats.used} / {kpis.counselorSeats.limit} Used</strong>
+            <strong className="text-crm-success-text font-bold">{kpis.counselorSeats.used} / {kpis.counselorSeats.limit} Used</strong>
           </div>
-          <Button onClick={fetchPartnerData} className="bg-[var(--alo-surface-muted)] hover:bg-slate-200 text-[var(--alo-body)] rounded-xl px-4 flex items-center gap-1.5">
+          <Button onClick={fetchPartnerData} className="bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] text-[var(--alo-body)] rounded-xl px-4 flex items-center gap-1.5">
             <RefreshCw className="w-4 h-4" /> Refresh
           </Button>
         </div>
@@ -218,23 +218,23 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Active Applications</span>
-          <p className="text-2xl font-extrabold text-indigo-600">{kpis.activeApplications}</p>
+          <p className="text-2xl font-extrabold text-[var(--alo-brand)]">{kpis.activeApplications}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Submitted Stage</span>
-          <p className="text-2xl font-extrabold text-purple-600">{kpis.submittedApplications}</p>
+          <p className="text-2xl font-extrabold text-[var(--alo-brand)]">{kpis.submittedApplications}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Offers Received</span>
-          <p className="text-2xl font-extrabold text-emerald-600">{kpis.offerReceived}</p>
+          <p className="text-2xl font-extrabold text-crm-success-text">{kpis.offerReceived}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Image Quota</span>
-          <p className="text-2xl font-extrabold text-amber-600">{kpis.marketingQuota.imagesUsed} / {kpis.marketingQuota.monthlyImageLimit}</p>
+          <p className="text-2xl font-extrabold text-crm-warning-text">{kpis.marketingQuota.imagesUsed} / {kpis.marketingQuota.monthlyImageLimit}</p>
         </Card>
         <Card className="p-4 bg-white border border-[var(--alo-border)] rounded-xl space-y-1">
           <span className="text-[11px] font-semibold text-[var(--alo-text-muted)]">Video Quota</span>
-          <p className="text-2xl font-extrabold text-rose-600">{kpis.marketingQuota.videosUsed} / {kpis.marketingQuota.monthlyVideoLimit}</p>
+          <p className="text-2xl font-extrabold text-crm-warning-text">{kpis.marketingQuota.videosUsed} / {kpis.marketingQuota.monthlyVideoLimit}</p>
         </Card>
       </div>
 
@@ -245,7 +245,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
               <Users className="w-5 h-5 text-[var(--alo-brand)]" /> Counselor Seat Management
             </h2>
-            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+            <span className="text-xs font-semibold text-crm-success-text bg-crm-success-bg px-2.5 py-1 rounded-full border border-crm-success-border">
               Default Limit: 3 Users (1 Admin + 2 Counselors)
             </span>
           </div>
@@ -264,7 +264,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
                 <span className="font-bold text-[var(--alo-text)]">2. Senior Counselor (Partner Employee 1)</span>
                 <p className="text-[var(--alo-text-muted)]">Assigned Partner Students & Applications</p>
               </div>
-              <Badge className="bg-emerald-600 text-white text-[11px]">ACTIVE</Badge>
+              <Badge className="bg-[var(--alo-success-dark)] text-white text-[11px]">ACTIVE</Badge>
             </div>
 
             <div className="p-3 bg-[var(--alo-page)] rounded-xl border border-[var(--alo-border)] flex justify-between items-center">
@@ -272,7 +272,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
                 <span className="font-bold text-[var(--alo-text)]">3. Application Assistant (Partner Employee 2)</span>
                 <p className="text-[var(--alo-text-muted)]">Available Seat</p>
               </div>
-              <Badge className="bg-slate-200 text-[var(--alo-body)] text-[11px]">AVAILABLE</Badge>
+              <Badge className="bg-[var(--alo-page)] text-[var(--alo-body)] text-[11px]">AVAILABLE</Badge>
             </div>
           </div>
         </Card>
@@ -281,7 +281,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         <Card className="p-6 bg-white border border-[var(--alo-border)] rounded-2xl space-y-4">
           <div className="border-b border-[var(--alo-border)] pb-3">
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <Plus className="w-5 h-5 text-indigo-600" /> Request Extra User Seats from ALO Super Admin
+              <Plus className="w-5 h-5 text-[var(--alo-brand)]" /> Request Extra User Seats from ALO Super Admin
             </h2>
             <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
               If your counseling team is expanding, submit a seat increase request. ALO Super Admin reviews and approves all requests.
@@ -320,7 +320,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
               {requestingSeats ? 'Submitting Request...' : 'Submit Request to ALO Super Admin'}
             </Button>
 
-            {seatMsg && <p className="text-xs font-semibold text-emerald-700 bg-emerald-50 p-2.5 rounded-lg text-center">{seatMsg}</p>}
+            {seatMsg && <p className="text-xs font-semibold text-crm-success-text bg-crm-success-bg p-2.5 rounded-lg text-center">{seatMsg}</p>}
           </div>
         </Card>
       </div>
@@ -330,7 +330,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-4">
           <div>
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-500" /> Partner Marketing Automation Studio
+              <Sparkles className="w-5 h-5 text-crm-warning-text" /> Partner Marketing Automation Studio
             </h2>
             <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
               Generate AI promotional captions, image banners, and 30-second reel video scripts under your monthly partner quota.
@@ -338,10 +338,10 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
           </div>
 
           <div className="flex items-center gap-3 text-xs font-bold">
-            <span className="p-2 bg-amber-50 text-amber-800 border border-amber-200 rounded-xl">
+            <span className="p-2 bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border rounded-xl">
               Images: {kpis.marketingQuota.imagesUsed} / {kpis.marketingQuota.monthlyImageLimit}
             </span>
-            <span className="p-2 bg-rose-50 text-rose-800 border border-rose-200 rounded-xl">
+            <span className="p-2 bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border rounded-xl">
               30s Videos: {kpis.marketingQuota.videosUsed} / {kpis.marketingQuota.monthlyVideoLimit}
             </span>
           </div>
@@ -397,7 +397,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
               {mGenerating ? 'Generating AI Draft...' : 'Generate AI Marketing Package'}
             </Button>
 
-            {mError && <p className="text-xs font-bold text-rose-700 bg-rose-50 p-3 rounded-xl border border-rose-200">{mError}</p>}
+            {mError && <p className="text-xs font-bold text-crm-warning-text bg-crm-warning-bg p-3 rounded-xl border border-crm-warning-border">{mError}</p>}
           </div>
 
           {/* GENERATED DRAFT PREVIEW */}
@@ -415,7 +415,7 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
                     {mResult.request?.videoScript || mResult.request?.imagePrompt}
                   </p>
                 </div>
-                <Badge className="bg-emerald-600 text-white text-[11px]">{mResult.quotaUsed}</Badge>
+                <Badge className="bg-[var(--alo-success-dark)] text-white text-[11px]">{mResult.quotaUsed}</Badge>
               </div>
             ) : (
               <div className="text-center py-8 text-[var(--alo-text-muted)]">
@@ -432,29 +432,29 @@ export default function MasterPartnerAdminView({ currentPath = '/partner-admin/d
         <div className="flex items-center justify-between border-b border-[var(--alo-border)] pb-3">
           <div>
             <h2 className="text-base font-bold text-[var(--alo-text)] flex items-center gap-2">
-              <Ticket className="w-5 h-5 text-purple-600" /> Student Test Vouchers &amp; Benefit Entitlements
+              <Ticket className="w-5 h-5 text-[var(--alo-brand)]" /> Student Test Vouchers &amp; Benefit Entitlements
             </h2>
             <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
               Special ALO learning &amp; interview prep benefits are granted ONLY when a student has an active ALO Education application.
             </p>
           </div>
-          <Badge className="bg-purple-100 text-purple-800 border-purple-200 text-xs font-mono">
+          <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] text-xs font-mono">
             3 English Vouchers per Application
           </Badge>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div className="p-4 bg-purple-50 rounded-xl border border-purple-200 space-y-1">
-            <span className="font-bold text-purple-900 block">1. UKVI / Credibility Prep</span>
-            <p className="text-purple-800">1 Full UKVI interview prep package per active application.</p>
+          <div className="p-4 bg-[var(--alo-brand-pale)] rounded-xl border border-[var(--alo-border)] space-y-1">
+            <span className="font-bold text-[var(--alo-brand)] block">1. UKVI / Credibility Prep</span>
+            <p className="text-[var(--alo-brand)]">1 Full UKVI interview prep package per active application.</p>
           </div>
-          <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-200 space-y-1">
-            <span className="font-bold text-indigo-900 block">2. University Mock Attempt</span>
-            <p className="text-indigo-800">1 Free university interview practice mock attempt.</p>
+          <div className="p-4 bg-[var(--alo-brand-pale)] rounded-xl border border-[var(--alo-border)] space-y-1">
+            <span className="font-bold text-[var(--alo-brand)] block">2. University Mock Attempt</span>
+            <p className="text-[var(--alo-brand)]">1 Free university interview practice mock attempt.</p>
           </div>
-          <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-1">
-            <span className="font-bold text-emerald-900 block">3. 3x English Test Vouchers</span>
-            <p className="text-emerald-800">3 Voucher codes generated upon active ALO application approval.</p>
+          <div className="p-4 bg-crm-success-bg rounded-xl border border-crm-success-border space-y-1">
+            <span className="font-bold text-crm-success-text block">3. 3x English Test Vouchers</span>
+            <p className="text-crm-success-text">3 Voucher codes generated upon active ALO application approval.</p>
           </div>
         </div>
       </Card>

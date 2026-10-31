@@ -32,7 +32,7 @@ async function readJson<T = any>(res: Response): Promise<T> {
 
 function ErrorNote({ message }: { message: string }) {
   return (
-    <div role="alert" className="p-3 bg-red-50 border border-red-200 text-red-800 text-sm rounded-xl flex items-center gap-2">
+    <div role="alert" className="p-3 bg-crm-danger-bg border border-crm-danger-border text-crm-danger-text text-sm rounded-xl flex items-center gap-2">
       <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
       <span>{message}</span>
     </div>
@@ -41,7 +41,7 @@ function ErrorNote({ message }: { message: string }) {
 
 function OkNote({ message }: { message: string }) {
   return (
-    <div role="status" className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-900 text-sm rounded-xl flex items-center gap-2">
+    <div role="status" className="p-3 bg-crm-success-bg border border-crm-success-border text-crm-success-text text-sm rounded-xl flex items-center gap-2">
       <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
       <span>{message}</span>
     </div>
@@ -219,11 +219,11 @@ export function ChangeApprovalView() {
                         )}
                       </td>
                       <td className="p-2"><div className="font-medium text-[var(--alo-text)]">{p.entityName || '(unnamed)'}</div><div className="text-xs text-[var(--alo-text-muted)] font-mono">{p.entityType} · {p.universityId}{p.courseId ? ` / ${p.courseId}` : ''}</div></td>
-                      <td className="p-2 font-mono text-xs">{p.fieldName}{p.fieldName.startsWith('intake_new:') && <div className="text-amber-700 font-sans">Creates a new intake (unverified)</div>}</td>
+                      <td className="p-2 font-mono text-xs">{p.fieldName}{p.fieldName.startsWith('intake_new:') && <div className="text-crm-warning-text font-sans">Creates a new intake (unverified)</div>}</td>
                       <td className="p-2 text-[var(--alo-body)]">{p.oldValue || <span className="text-[var(--alo-text-muted)]">(blank)</span>}</td>
-                      <td className="p-2 text-emerald-800 font-medium">{p.newValue}</td>
-                      <td className="p-2 text-xs">{p.evidenceUrl ? <a className="text-[var(--alo-brand)] underline break-all" href={p.evidenceUrl} target="_blank" rel="noopener noreferrer">{p.evidenceUrl}</a> : <span className="text-red-700">No evidence URL</span>}</td>
-                      <td className="p-2 text-xs">{PROPOSAL_STATUS_LABELS[p.status] ?? p.status}{p.reviewedBy && <div className="text-[var(--alo-text-muted)]">by {p.reviewedBy}</div>}{needsReapproval(p) && <div className="text-amber-700 font-medium">Re-approval required: {p.approvalFingerprint === 'mismatch' ? 'the proposal changed after approval' : 'no valid approval fingerprint'}. It cannot be applied until approved again.</div>}</td>
+                      <td className="p-2 text-crm-success-text font-medium">{p.newValue}</td>
+                      <td className="p-2 text-xs">{p.evidenceUrl ? <a className="text-[var(--alo-brand)] underline break-all" href={p.evidenceUrl} target="_blank" rel="noopener noreferrer">{p.evidenceUrl}</a> : <span className="text-crm-danger-text">No evidence URL</span>}</td>
+                      <td className="p-2 text-xs">{PROPOSAL_STATUS_LABELS[p.status] ?? p.status}{p.reviewedBy && <div className="text-[var(--alo-text-muted)]">by {p.reviewedBy}</div>}{needsReapproval(p) && <div className="text-crm-warning-text font-medium">Re-approval required: {p.approvalFingerprint === 'mismatch' ? 'the proposal changed after approval' : 'no valid approval fingerprint'}. It cannot be applied until approved again.</div>}</td>
                       <td className="p-2 space-x-1 whitespace-nowrap">
                         {(['pending_approval', 'pending', 'apply_failed'].includes(p.status) || needsReapproval(p)) && (
                           <>
@@ -244,7 +244,7 @@ export function ChangeApprovalView() {
 
       {tab === 'weekly' && (
         <>
-          <Card className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-sm text-amber-900">
+          <Card className="p-4 bg-crm-warning-bg border border-crm-warning-border rounded-2xl text-sm text-crm-warning-text">
             Weekly update requests are shown read-only. They have no typed mapping to catalogue fields, and their approve, edit and publish endpoints are disabled, so they cannot be applied here. Re-submit a needed change as a catalogue proposal (CSV import) with an official evidence URL.
           </Card>
           {weekly === null && !error && <Loading />}
@@ -425,7 +425,7 @@ export function DataReviewView() {
                     <td className="p-1 font-mono">{r.verificationStatus}</td>
                     <td className="p-1 font-mono">{r.publicationStatus}</td>
                     <td className="p-1">{r.visibility}</td>
-                    <td className="p-1 break-all">{r.sourceUrl || r.officialUrl || <span className="text-red-700">none</span>}</td>
+                    <td className="p-1 break-all">{r.sourceUrl || r.officialUrl || <span className="text-crm-danger-text">none</span>}</td>
                     <td className="p-1">{r.lastVerifiedAt || <span className="text-[var(--alo-text-muted)]">never</span>}</td>
                     <td className="p-1">{r.lastApprovedUpdateAt || ''}{r.updatedBy ? ` (${r.updatedBy})` : ''}</td>
                   </tr>
@@ -480,7 +480,7 @@ export function DuplicatesView() {
       {!data && !error && <Loading />}
       {data && (
         <>
-          <Card className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-sm text-amber-900">{data.mergeNote}</Card>
+          <Card className="p-4 bg-crm-warning-bg border border-crm-warning-border rounded-2xl text-sm text-crm-warning-text">{data.mergeNote}</Card>
           {Object.entries(data.truncated).some(([, v]) => v) && <ErrorNote message={`Only the first ${data.scanLimit.toLocaleString()} rows per table were scanned; results are incomplete.`} />}
           <GroupList title="Universities" groups={data.universities} idKey="universityId" label={(r) => `${r.name} (${r.country ?? ''})`} />
           <GroupList title="Courses" groups={data.courses} idKey="courseId" label={(r) => `${r.courseTitle || r.name} · ${r.studyLevel ?? ''} · ${r.universityId}`} />
@@ -558,7 +558,7 @@ export function EligibilityRulesView() {
               {results.map((r) => (
                 <tr key={r.label} className="border-t border-[var(--alo-border)] align-top">
                   <td className="p-1">{r.label}</td>
-                  <td className="p-1 font-medium">{r.evaluation ? r.evaluation.categoryLabel : <span className="text-red-700">Error: {r.error}</span>}</td>
+                  <td className="p-1 font-medium">{r.evaluation ? r.evaluation.categoryLabel : <span className="text-crm-danger-text">Error: {r.error}</span>}</td>
                   <td className="p-1">{r.evaluation ? `${r.evaluation.requirementsMetPercent}%` : ''}</td>
                   <td className="p-1">{r.evaluation?.reason}</td>
                   <td className="p-1">{r.evaluation?.nextSteps[0] ?? ''}</td>

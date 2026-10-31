@@ -40,19 +40,19 @@ const PLATFORM_META: Record<string, { label: string; bg: string; icon: React.Ele
   facebook: { label: 'Facebook', bg: 'bg-[var(--alo-brand)]', icon: Facebook },
   instagram: { label: 'Instagram', bg: 'bg-gradient-to-r from-purple-600 to-pink-500', icon: Instagram },
   linkedin: { label: 'LinkedIn', bg: 'bg-[var(--alo-brand-hover)]', icon: Linkedin },
-  tiktok: { label: 'TikTok', bg: 'bg-gray-900', icon: Music },
+  tiktok: { label: 'TikTok', bg: 'bg-[var(--alo-page)]', icon: Music },
 };
 
 function platformMeta(value: string) {
   const key = (value || '').toLowerCase();
-  return PLATFORM_META[key] ?? { label: value || 'Unspecified', bg: 'bg-gray-500', icon: Globe };
+  return PLATFORM_META[key] ?? { label: value || 'Unspecified', bg: 'bg-[var(--alo-page)]', icon: Globe };
 }
 
 const STATUS_META: Record<string, { label: string; className: string; icon: React.ElementType }> = {
-  published: { label: 'Published', className: 'bg-green-100 text-green-700', icon: CheckCircle },
+  published: { label: 'Published', className: 'bg-crm-success-bg text-crm-success-text', icon: CheckCircle },
   scheduled: { label: 'Scheduled', className: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', icon: Clock },
   draft: { label: 'Draft', className: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', icon: FileText },
-  failed: { label: 'Failed', className: 'bg-red-100 text-red-700', icon: XCircle },
+  failed: { label: 'Failed', className: 'bg-crm-danger-bg text-crm-danger-text', icon: XCircle },
 };
 
 function statusMeta(value: string) {
@@ -245,7 +245,7 @@ export default function CrmSocialPage() {
         </Card>
         <Card className="shadow-sm">
           <CardContent className="p-4">
-            <div className="p-2 bg-green-100 rounded-lg w-fit"><CheckCircle className="h-4 w-4 text-green-600" /></div>
+            <div className="p-2 bg-crm-success-bg rounded-lg w-fit"><CheckCircle className="h-4 w-4 text-crm-success-text" /></div>
             <p className="text-2xl font-bold text-[var(--alo-text)] mt-3">{publishedCount}</p>
             <p className="text-xs text-[var(--alo-text-muted)]">Published</p>
           </CardContent>
@@ -259,7 +259,7 @@ export default function CrmSocialPage() {
         </Card>
         <Card className="shadow-sm">
           <CardContent className="p-4">
-            <div className="p-2 bg-red-100 rounded-lg w-fit"><XCircle className="h-4 w-4 text-red-600" /></div>
+            <div className="p-2 bg-crm-danger-bg rounded-lg w-fit"><XCircle className="h-4 w-4 text-crm-danger-text" /></div>
             <p className="text-2xl font-bold text-[var(--alo-text)] mt-3">{failedCount}</p>
             <p className="text-xs text-[var(--alo-text-muted)]">Failed</p>
           </CardContent>
@@ -365,7 +365,7 @@ export default function CrmSocialPage() {
                         <td className="px-4 py-3">
                           <p className="text-sm text-[var(--alo-text)] max-w-xs truncate">{bodyText(post) || '—'}</p>
                           {post.failReason && (
-                            <p className="text-[11px] text-red-600 mt-0.5 max-w-xs truncate">Reason: {post.failReason}</p>
+                            <p className="text-[11px] text-crm-danger-text mt-0.5 max-w-xs truncate">Reason: {post.failReason}</p>
                           )}
                         </td>
                         <td className="px-4 py-3 text-xs text-[var(--alo-text-muted)]">{formatDate(post.scheduledAt)}</td>

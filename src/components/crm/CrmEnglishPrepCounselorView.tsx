@@ -86,7 +86,7 @@ export default function CrmEnglishPrepCounselorView() {
                         <div><span className="text-[var(--alo-text-muted)] block">Course</span><span className="font-semibold">{lead.courseName || '—'}</span></div>
                         <div><span className="text-[var(--alo-text-muted)] block">Intake</span><span className="font-semibold">{lead.intake || '—'}</span></div>
                         <div><span className="text-[var(--alo-text-muted)] block">Current</span><span className="font-bold text-[var(--alo-brand)]">{lead.currentScore || '—'}</span></div>
-                        <div><span className="text-[var(--alo-text-muted)] block">Target</span><span className="font-bold text-emerald-600">{lead.targetScore || '—'}</span></div>
+                        <div><span className="text-[var(--alo-text-muted)] block">Target</span><span className="font-bold text-crm-success-text">{lead.targetScore || '—'}</span></div>
                         <div><span className="text-[var(--alo-text-muted)] block">Status</span><span className="font-semibold">{lead.status || 'new'}</span></div>
                         <div><span className="text-[var(--alo-text-muted)] block">Created</span><span className="font-semibold">{lead.createdAt ? new Date(lead.createdAt).toLocaleDateString() : '—'}</span></div>
                       </div>
@@ -120,9 +120,9 @@ export default function CrmEnglishPrepCounselorView() {
             </ul>
           </Card>
 
-          <Card className="p-5 bg-amber-50 border-amber-200 rounded-2xl">
-            <h4 className="font-bold text-xs text-amber-900 flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5" /> CRM Integration Notes</h4>
-            <ul className="text-[11px] text-amber-800 mt-2 space-y-1.5 list-disc pl-4">
+          <Card className="p-5 bg-crm-warning-bg border border-crm-warning-border rounded-2xl">
+            <h4 className="font-bold text-xs text-crm-warning-text flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5 text-[var(--alo-warning)]" /> CRM Integration Notes</h4>
+            <ul className="text-[11px] text-crm-warning-text mt-2 space-y-1.5 list-disc pl-4">
               <li>Lead created via POST /api/language-prep/leads with dedup 24h phone+test</li>
               <li>Fallback to LeadForm + MarketingLead + PortalAuditLog LANGUAGE_PREP_LEAD_CREATED</li>
               <li>Do not create duplicate leads unnecessarily — check 24h window</li>

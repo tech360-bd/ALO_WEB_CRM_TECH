@@ -112,7 +112,7 @@ export default function TimelinePanel() {
             </Button>
           </div>
         </div>
-        {actionError && <p className="mt-3 text-xs text-red-700">{actionError}</p>}
+        {actionError && <p className="mt-3 text-xs text-crm-danger-text">{actionError}</p>}
       </Card>
 
       {loading ? (

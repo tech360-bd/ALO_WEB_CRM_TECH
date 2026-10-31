@@ -20,7 +20,7 @@ const ICONS = {
 const TONES = {
   blue: 'border-[var(--alo-brand)]/30 bg-[var(--alo-brand)]/[0.04] text-[var(--alo-brand)]',
   orange: 'border-[var(--alo-cta)]/30 bg-[var(--alo-cta)]/[0.04] text-[#B63A12]',
-  green: 'border-emerald-300 bg-emerald-50 text-emerald-700',
+  green: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
   slate: 'border-[var(--alo-border-strong)] bg-[var(--alo-page)] text-[var(--alo-body)]',
 };
 
@@ -81,7 +81,7 @@ export default function EditorialFlowDiagram({
         })}
       </ol>
       <p className="mt-4 flex items-center gap-2 text-[11px] leading-4 text-[var(--alo-text-muted)]">
-        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+        <CheckCircle2 className="h-3.5 w-3.5 text-crm-success-text" aria-hidden="true" />
         Automation drafts stay reviewable before any external reply or campaign publish.
       </p>
     </figure>

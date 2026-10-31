@@ -137,7 +137,7 @@ export default function AiEosMasterBlueprint() {
         </div>
       </aside>
 
-      {mobileNav && <div className="fixed inset-0 z-20 bg-black/50 lg:hidden" onClick={() => setMobileNav(false)} />}
+      {mobileNav && <div className="fixed inset-0 z-20 bg-[var(--alo-navy)]/50 lg:hidden" onClick={() => setMobileNav(false)} />}
 
       <main className="flex-1 min-w-0">
         <header className="sticky top-0 z-20 bg-[var(--cc-bg)]/90 backdrop-blur border-b border-[var(--cc-border)] px-4 lg:px-6 py-3 flex items-center justify-between gap-4">
@@ -281,7 +281,7 @@ function StreamsView() {
             <div className="space-y-2 text-sm mb-3">
               {s.items.map((it, i) => (
                 <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-[var(--cc-bg-2)]">
-                  <span className="text-green-400">✓</span>
+                  <span className="text-crm-success-text">✓</span>
                   <span>{it}</span>
                 </div>
               ))}
