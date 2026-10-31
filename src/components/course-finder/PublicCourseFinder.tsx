@@ -22,6 +22,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { recordCourseFinderTouch } from '@/lib/analytics/attribution-payload';
 import {
   DEFAULT_INTAKE_YEAR,
   INTAKE_WINDOW_LABEL,
@@ -256,6 +257,11 @@ export default function PublicCourseFinder() {
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
 
+  /* ── First-party UTM + Course Finder funnel capture ────────────────── */
+  useEffect(() => {
+    recordCourseFinderTouch({ subject, country, studyLevel: level });
+  }, [subject, country, level]);
+
   /* ── Facets (subjects / countries / university names) ─────────────── */
   useEffect(() => {
     let cancelled = false;
@@ -284,6 +290,7 @@ export default function PublicCourseFinder() {
     async (targetPage = 1) => {
       setLoading(true);
       setError('');
+      recordCourseFinderTouch({ subject, country, studyLevel: level });
       try {
         const params = new URLSearchParams();
         if (subject) params.set('subjectArea', subject);

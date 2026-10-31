@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import UniversityHub from '@/components/website/UniversityHub';
 import UniversityPageRecord from '@/components/website/UniversityPageRecord';
 import { db } from '@/lib/db';
+import { breadcrumbSchema, collegeOrUniversitySchema } from '@/lib/seo/schema-helpers';
 import {
   loadOpenConflicts,
   passesPublicInternationalCoursePagePolicy,
@@ -59,10 +60,41 @@ export default async function UniversityDetailPageRoute({
   const [{ slug }, query] = await Promise.all([params, searchParams]);
   const crmUniversity = await db.crmUniversity.findFirst({
     where: { OR: [{ slug }, { universityId: slug }], status: 'active', verificationStatus: 'VERIFIED', publicationStatus: { in: ['published', 'PUBLISHED'] }, AND: [{ OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] } ] },
-    select: { id: true },
+    select: { id: true, name: true, slug: true, universityId: true, country: true, city: true, officialUrl: true },
   });
   if (crmUniversity) {
-    return <div className="min-h-screen bg-white"><main className="pb-16 pt-20"><Suspense fallback={<div className="p-12 text-center text-[var(--alo-text-muted)] font-medium">Loading source-linked university records…</div>}><UniversityHub slug={slug} /></Suspense></main></div>;
+    const uniSlug = crmUniversity.slug || crmUniversity.universityId || slug;
+    const uniLd = [
+      collegeOrUniversitySchema({
+        name: crmUniversity.name,
+        slug: uniSlug,
+        country: crmUniversity.country || '',
+        city: crmUniversity.city || undefined,
+        officialWebsite: crmUniversity.officialUrl || undefined,
+        baseUrl: SITE_URL,
+      }),
+      breadcrumbSchema(
+        [
+          { name: 'Home', url: '/' },
+          { name: 'Universities', url: '/universities' },
+          { name: crmUniversity.name, url: `/universities/${encodeURIComponent(uniSlug)}` },
+        ],
+        SITE_URL,
+      ),
+    ];
+    return (
+      <div className="min-h-screen bg-white">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(uniLd).replace(/</g, '\\u003c') }}
+        />
+        <main className="pb-16 pt-20">
+          <Suspense fallback={<div className="p-12 text-center text-[var(--alo-text-muted)] font-medium">Loading source-linked university records…</div>}>
+            <UniversityHub slug={slug} />
+          </Suspense>
+        </main>
+      </div>
+    );
   }
 
   // Legacy page-model route: show the complete paginated set of verified course

@@ -48,7 +48,12 @@ export async function GET(req: Request) {
       },
     });
 
-    let requirements = recorded
+    let requirements: Array<
+      Omit<(typeof recorded)[number], 'test' | 'lastVerifiedAt'> & {
+        testName: string;
+        lastVerifiedAt: Date | string | null;
+      }
+    > = recorded
       .filter((row) => hasCurrentLanguagePrepSourceReview(row) && hasCurrentLanguagePrepVerification(row.test))
       .map(({ test, ...row }) => ({ ...row, testName: test.name }));
 

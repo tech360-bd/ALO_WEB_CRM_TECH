@@ -106,7 +106,28 @@ export function rememberEntryAttribution(storageKey = 'alo.attribution.entry.v1'
       // visitor who arrived on a new campaign link is not attributed to the
       // stale one, while the original landing page is preserved separately.
       if (fresh && parsed.landingPage) {
-        return { ...parsed, ...fresh, landingPage: parsed.landingPage };
+        const hasFreshCampaignSignal = Boolean(
+          fresh.utmSource ||
+            fresh.utmMedium ||
+            fresh.utmCampaign ||
+            fresh.utmContent ||
+            fresh.utmTerm ||
+            fresh.gclid ||
+            fresh.fbclid,
+        );
+        if (hasFreshCampaignSignal) {
+          return {
+            ...parsed,
+            ...fresh,
+            referrer: fresh.referrer || parsed.referrer,
+            visitorId: fresh.visitorId || parsed.visitorId,
+            landingPage: parsed.landingPage,
+          };
+        }
+        return {
+          ...parsed,
+          visitorId: fresh.visitorId || parsed.visitorId,
+        };
       }
       return parsed;
     }
@@ -116,3 +137,69 @@ export function rememberEntryAttribution(storageKey = 'alo.attribution.entry.v1'
   }
   return fresh;
 }
+
+export const COURSE_FINDER_FUNNEL_STORAGE_KEY = 'alo.funnel.course_finder.v1';
+
+export interface CourseFinderTouch {
+  visitedAt: string;
+  landingPage: string;
+  subject: string;
+  country: string;
+  studyLevel: string;
+}
+
+/**
+ * First-party Course Finder funnel touch (`UTM Landing -> Course Finder -> Lead`).
+ *
+ * Captures entry UTM attribution into both form and registration session keys
+ * (`alo.attribution.entry.v1` and `alo.attribution.register.v1`) so a visitor
+ * arriving on `/course-finder?utm_source=...` preserves their first-touch
+ * campaign when they subsequently open `/apply`, `/student-register`, or a
+ * consultation form. Stores strictly non-PII filter facets.
+ */
+export function recordCourseFinderTouch(facets?: {
+  subject?: string;
+  country?: string;
+  studyLevel?: string;
+}): CourseFinderTouch | null {
+  if (typeof window === 'undefined') return null;
+
+  const entry = rememberEntryAttribution('alo.attribution.entry.v1');
+  rememberEntryAttribution('alo.attribution.apply.v1');
+  rememberEntryAttribution('alo.attribution.register.v1');
+
+  const touch: CourseFinderTouch = {
+    visitedAt: new Date().toISOString(),
+    landingPage: entry?.landingPage || cap(`${window.location.pathname}${window.location.search}`),
+    subject: cap(facets?.subject || ''),
+    country: cap(facets?.country || ''),
+    studyLevel: cap(facets?.studyLevel || ''),
+  };
+
+  try {
+    window.sessionStorage.setItem(COURSE_FINDER_FUNNEL_STORAGE_KEY, JSON.stringify(touch));
+  } catch {
+    /* sessionStorage unavailable */
+  }
+  return touch;
+}
+
+export function readCourseFinderTouch(): CourseFinderTouch | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.sessionStorage.getItem(COURSE_FINDER_FUNNEL_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<CourseFinderTouch>;
+    if (!parsed || typeof parsed.visitedAt !== 'string') return null;
+    return {
+      visitedAt: cap(parsed.visitedAt),
+      landingPage: cap(parsed.landingPage || ''),
+      subject: cap(parsed.subject || ''),
+      country: cap(parsed.country || ''),
+      studyLevel: cap(parsed.studyLevel || ''),
+    };
+  } catch {
+    return null;
+  }
+}
+

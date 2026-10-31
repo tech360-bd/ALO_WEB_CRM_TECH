@@ -1,41 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authenticateRequest } from "@/lib/auth-middleware";
 import { db } from "@/lib/db";
-import { encryptStoredToken } from "@/lib/social/token-encryption";
+import { isMarketingManager } from "@/lib/marketing/access";
 import { safeReturnTo, verifyOAuthState } from "@/lib/social/oauth-state";
+import { encryptStoredToken } from "@/lib/social/token-encryption";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// GET /api/facebook/callback — OAuth callback handler.
-// Exchanges the code for a user access token, then long-lived page access token.
+// GET /api/facebook/callback — authenticated OAuth callback handler.
+// Exchanges the code for a user access token, upgrades to a long-lived token,
+// encrypts page credentials at rest (AES-256-GCM), and commits atomically with AuditLog.
 export async function GET(req: NextRequest) {
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
+  if (!isMarketingManager(auth)) {
+    return NextResponse.json(
+      { error: "Marketing Manager or Super Admin authorization is required to connect Facebook Pages." },
+      { status: 403 },
+    );
+  }
+  if (auth.actingAsSessionId) {
+    return NextResponse.json(
+      { error: "Acting-as sessions cannot connect or overwrite official social credentials." },
+      { status: 403 },
+    );
+  }
+
   try {
     const code = req.nextUrl.searchParams.get("code");
     const state = req.nextUrl.searchParams.get("state");
-    const error = req.nextUrl.searchParams.get("error");
+    const upstreamError = req.nextUrl.searchParams.get("error");
 
-    if (error) {
-      return NextResponse.redirect(new URL("/admin/marketing?fb_error=" + encodeURIComponent(error), req.url));
-    }
-
-    if (!code) {
-      return NextResponse.json({ error: "Authorization code missing" }, { status: 400 });
-    }
-
-    // Verify the signed state BEFORE exchanging the code. Rejecting after the
-    // exchange would still complete an attacker-chosen OAuth round trip. The
-    // verified payload is also the only source of `returnTo`, so a callback
-    // cannot be used to redirect the user off-site.
     const verifiedState = verifyOAuthState(state, "facebook");
     if (!verifiedState.ok) {
       return NextResponse.json(
-        { error: "The OAuth state was invalid or expired. Restart the connection from the integration center." },
+        {
+          error: "The OAuth state was invalid or expired. Restart the connection from Integrations.",
+          reason: verifiedState.reason,
+        },
         { status: 403 },
       );
     }
     const returnTo = safeReturnTo(verifiedState.payload.returnTo, "/admin/marketing");
+
+    if (upstreamError) {
+      const errUrl = new URL(returnTo, req.url);
+      errUrl.searchParams.set("fb_error", upstreamError.slice(0, 120));
+      return NextResponse.redirect(errUrl);
+    }
+
+    if (!code || code.length > 4096) {
+      return NextResponse.json({ error: "Authorization code missing or invalid." }, { status: 400 });
+    }
 
     const appId = process.env.FACEBOOK_APP_ID;
     const appSecret = process.env.FACEBOOK_APP_SECRET;
@@ -43,115 +60,136 @@ export async function GET(req: NextRequest) {
 
     if (!appId || !appSecret || !redirectUri) {
       return NextResponse.json(
-        { error: "FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, and FACEBOOK_REDIRECT_URI must be set" },
-        { status: 500 }
+        {
+          status: "NOT_CONFIGURED",
+          error: "FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, and FACEBOOK_REDIRECT_URI must be configured.",
+        },
+        { status: 503 },
       );
     }
 
     // 1. Exchange code for short-lived user access token
-    const tokenUrl =
-      `https://graph.facebook.com/v18.0/oauth/access_token` +
-      `?client_id=${encodeURIComponent(appId)}` +
-      `&client_secret=${encodeURIComponent(appSecret)}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&code=${encodeURIComponent(code)}`;
+    const tokenUrl = new URL("https://graph.facebook.com/v19.0/oauth/access_token");
+    tokenUrl.searchParams.set("client_id", appId);
+    tokenUrl.searchParams.set("client_secret", appSecret);
+    tokenUrl.searchParams.set("redirect_uri", redirectUri);
+    tokenUrl.searchParams.set("code", code);
 
-    const tokenRes = await fetch(tokenUrl, { method: "GET" });
-    const tokenJson = await tokenRes.json();
+    const tokenRes = await fetch(tokenUrl.toString(), {
+      method: "GET",
+      redirect: "error",
+      signal: AbortSignal.timeout(15_000),
+    });
+    const tokenJson = (await tokenRes.json().catch(() => ({}))) as Record<string, unknown>;
+    const userAccessToken = typeof tokenJson.access_token === "string" ? tokenJson.access_token.trim() : "";
 
-    if (!tokenRes.ok || !tokenJson.access_token) {
+    if (!tokenRes.ok || !userAccessToken) {
       return NextResponse.json(
-        { error: "Failed to exchange code for token", details: tokenJson },
-        { status: 502 }
+        { error: `Facebook OAuth code exchange failed (HTTP ${tokenRes.status}).` },
+        { status: 502 },
       );
     }
 
-    const userAccessToken = tokenJson.access_token;
+    // 2. Upgrade to 60-day long-lived token
+    const longLivedUrl = new URL("https://graph.facebook.com/v19.0/oauth/access_token");
+    longLivedUrl.searchParams.set("grant_type", "fb_exchange_token");
+    longLivedUrl.searchParams.set("client_id", appId);
+    longLivedUrl.searchParams.set("client_secret", appSecret);
+    longLivedUrl.searchParams.set("fb_exchange_token", userAccessToken);
 
-    // 2. Exchange for long-lived token
-    const longLivedUrl =
-      `https://graph.facebook.com/v18.0/oauth/access_token` +
-      `?grant_type=fb_exchange_token` +
-      `&client_id=${encodeURIComponent(appId)}` +
-      `&client_secret=${encodeURIComponent(appSecret)}` +
-      `&fb_exchange_token=${encodeURIComponent(userAccessToken)}`;
+    const longLivedRes = await fetch(longLivedUrl.toString(), {
+      redirect: "error",
+      signal: AbortSignal.timeout(15_000),
+    });
+    const longLivedJson = (await longLivedRes.json().catch(() => ({}))) as Record<string, unknown>;
+    const longLivedToken =
+      typeof longLivedJson.access_token === "string" && longLivedJson.access_token.trim()
+        ? longLivedJson.access_token.trim()
+        : userAccessToken;
 
-    const longLivedRes = await fetch(longLivedUrl);
-    const longLivedJson = await longLivedRes.json();
-    const longLivedToken = longLivedJson.access_token || userAccessToken;
+    // 3. Fetch managed Facebook Pages
+    const pagesUrl = new URL("https://graph.facebook.com/v19.0/me/accounts");
+    pagesUrl.searchParams.set("fields", "id,name,access_token");
 
-    // 3. Get user's pages with page access tokens
-    const pagesUrl =
-      `https://graph.facebook.com/v18.0/me/accounts` +
-      `?access_token=${encodeURIComponent(longLivedToken)}` +
-      `&fields=id,name,access_token`;
+    const pagesRes = await fetch(pagesUrl.toString(), {
+      headers: { Authorization: `Bearer ${longLivedToken}` },
+      redirect: "error",
+      signal: AbortSignal.timeout(15_000),
+    });
+    const pagesJson = (await pagesRes.json().catch(() => ({}))) as Record<string, unknown>;
+    const pages = Array.isArray(pagesJson.data) ? pagesJson.data : [];
 
-    const pagesRes = await fetch(pagesUrl);
-    const pagesJson = await pagesRes.json();
-    const pages: any[] = pagesJson.data || [];
-
-    const session = await getServerSession(authOptions);
-    const userId = (session?.user as any)?.id;
-
-    // 4. Persist page integrations.
-    //
-    // Credentials are encrypted at rest with AES-256-GCM (ENCRYPTION_KEY)
-    // before they reach the database. Previously the page access token, the app
-    // secret and the verify token were written in plaintext, which made a
-    // single SQL-read or backup-leak enough to publish every connected page.
-    // Readers must use decryptStoredToken(), which also tolerates the legacy
-    // plaintext rows already stored.
-    const encryptedAppSecret = encryptStoredToken(appSecret);
-    const encryptedVerifyToken = encryptStoredToken(process.env.FACEBOOK_VERIFY_TOKEN || "");
-    const savedPages: any[] = [];
-    for (const page of pages) {
-      const encryptedPageToken = encryptStoredToken(page.access_token);
-      const integration = await db.facebookIntegration.upsert({
-        where: { pageId: page.id },
-        update: {
-          pageName: page.name,
-          pageAccessToken: encryptedPageToken,
-          appId,
-          appSecret: encryptedAppSecret,
-          verifyToken: encryptedVerifyToken || null,
-          connectedBy: userId,
-          connectedAt: new Date(),
-          status: "ACTIVE",
-        },
-        create: {
-          pageId: page.id,
-          pageName: page.name,
-          pageAccessToken: encryptedPageToken,
-          appId,
-          appSecret: encryptedAppSecret,
-          verifyToken: encryptedVerifyToken || null,
-          connectedBy: userId,
-          status: "ACTIVE",
-        },
-      });
-      savedPages.push({ id: integration.id, pageId: page.id, pageName: page.name });
+    if (!pagesRes.ok || pages.length === 0) {
+      return NextResponse.json(
+        { error: "No Facebook Pages with management permissions were returned by Meta." },
+        { status: 422 },
+      );
     }
 
-    // 5. Audit log
-    if (userId) {
-      await db.auditLog.create({
+    const encryptedAppSecret = encryptStoredToken(appSecret);
+    const verifyRaw = process.env.FACEBOOK_VERIFY_TOKEN || "";
+    const encryptedVerifyToken = verifyRaw ? encryptStoredToken(verifyRaw) : "";
+
+    // 4. Persist encrypted page tokens and audit log inside one transaction.
+    const savedPages = await db.$transaction(async (tx) => {
+      const results: Array<{ id: string; pageId: string; pageName: string | null }> = [];
+      for (const rawPage of pages) {
+        if (!rawPage || typeof rawPage !== "object") continue;
+        const page = rawPage as Record<string, unknown>;
+        const pageId = typeof page.id === "string" ? page.id.trim() : "";
+        const pageName = typeof page.name === "string" ? page.name.trim() : pageId;
+        const pageAccessToken = typeof page.access_token === "string" ? page.access_token.trim() : "";
+        if (!pageId || !pageAccessToken) continue;
+
+        const encryptedPageToken = encryptStoredToken(pageAccessToken);
+        const integration = await tx.facebookIntegration.upsert({
+          where: { pageId },
+          update: {
+            pageName,
+            pageAccessToken: encryptedPageToken,
+            appId,
+            appSecret: encryptedAppSecret,
+            verifyToken: encryptedVerifyToken || null,
+            connectedBy: auth.userId,
+            connectedAt: new Date(),
+            status: "ACTIVE",
+          },
+          create: {
+            pageId,
+            pageName,
+            pageAccessToken: encryptedPageToken,
+            appId,
+            appSecret: encryptedAppSecret,
+            verifyToken: encryptedVerifyToken || null,
+            connectedBy: auth.userId,
+            status: "ACTIVE",
+          },
+        });
+        results.push({ id: integration.id, pageId: integration.pageId, pageName: integration.pageName });
+      }
+
+      await tx.auditLog.create({
         data: {
-          userId,
+          userId: auth.userId,
           action: "FACEBOOK_CONNECT",
           resource: "FacebookIntegration",
           details: JSON.stringify({
-            pagesConnected: savedPages.length,
-            pageIds: savedPages.map((p) => p.pageId),
+            pagesConnected: results.length,
+            pageIds: results.map((p) => p.pageId),
           }),
         },
-      }).catch(() => {});
-    }
+      });
+      return results;
+    });
 
-    // 6. Redirect back to the verified, same-origin path.
-    const redirectUrl = `${returnTo}?fb_connected=${savedPages.length}`;
-    return NextResponse.redirect(new URL(redirectUrl, req.url));
-  } catch (err: any) {
-    console.error("[facebook.callback] error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const redirectUrl = new URL(returnTo, req.url);
+    redirectUrl.searchParams.set("fb_connected", String(savedPages.length));
+    return NextResponse.redirect(redirectUrl);
+  } catch (err) {
+    console.error("[facebook.callback] error:", err instanceof Error ? err.name : "UnknownError");
+    return NextResponse.json(
+      { error: "Failed to complete Facebook OAuth connection." },
+      { status: 502 },
+    );
   }
 }

@@ -199,8 +199,7 @@ const PUBLIC_API_READ_ROUTES = [
   "/api/faqs",
   "/api/reviews/submit",
   "/api/whatsapp/status",
-  "/api/facebook/auth",
-  "/api/facebook/callback",
+  "/api/facebook/webhook",
   "/api/health",
   "/api/destinations",
   "/api/ai/eligibility",
@@ -228,8 +227,9 @@ const PUBLIC_API_READ_ROUTES = [
 ];
 
 const PUBLIC_API_WRITE_ROUTES = [
-  // Provider authentication (HS256 JWT), bounded body and dedupe enforced by route.
+  // Provider authentication (HS256 JWT / HMAC-SHA256), bounded body and dedupe enforced by route.
   "/api/integrations/httpsms/webhook",
+  "/api/integrations/opensms/webhook",
   // RFC 8058 one-click unsubscribe POST and confirm form. Token-verified in the route.
   "/api/email/unsubscribe",
   // Outbox worker trigger (Bearer CRON_SECRET, verified by requireCron).
@@ -351,7 +351,11 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/live-edit": ["SUPER_ADMIN", "ADMIN"],
   "/api/source-intelligence": ["SUPER_ADMIN", "ADMIN"],
   "/api/content-engine": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
-  "/api/seo": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/seo": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
+  "/api/super-admin": ["SUPER_ADMIN"],
+  "/api/facebook/auth": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/facebook/callback": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/marketing/social/publish": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
   "/api/employee-learning": ["SUPER_ADMIN", "ADMIN", "HR_MANAGER"],
   "/api/knowledge-base": ["SUPER_ADMIN", "ADMIN"],
   "/api/event-bus": ["SUPER_ADMIN", "ADMIN"],

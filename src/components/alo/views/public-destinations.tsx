@@ -72,10 +72,11 @@ export function PublicDestinations({ onNavigate }: PublicDestinationsProps) {
     .map((country) => new Date(country.lastVerifiedAt || ""))
     .filter((date) => !Number.isNaN(date.getTime()))
     .sort((a, b) => b.getTime() - a.getTime())[0];
+  type StatAccent = "blue" | "orange" | "emerald" | "violet";
   const stats = [
-    { icon: "Globe", value: countries.length, label: "Current destination guides", accent: "blue" as const },
-    { icon: "ShieldCheck", value: countries.filter((country) => Boolean(country.sourceUrl)).length, label: "HTTPS source-linked guides", accent: "emerald" as const },
-    { icon: "CalendarDays", value: latestReview ? fmtDate(latestReview.toISOString()) : "—", label: "Latest source review", accent: "violet" as const },
+    { icon: "Globe" as const, value: countries.length, label: "Current destination guides", accent: "blue" as StatAccent },
+    { icon: "ShieldCheck" as const, value: countries.filter((country) => Boolean(country.sourceUrl)).length, label: "HTTPS source-linked guides", accent: "emerald" as StatAccent },
+    { icon: "CalendarDays" as const, value: latestReview ? fmtDate(latestReview.toISOString()) : "—", label: "Latest source review", accent: "violet" as StatAccent },
   ];
 
   function handleWhatsApp() {
