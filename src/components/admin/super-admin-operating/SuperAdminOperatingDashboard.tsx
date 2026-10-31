@@ -46,6 +46,7 @@ import {
   TOKENS,
   unavailableText,
 } from './primitives';
+import { SuperAdminExtendedPanels } from './SuperAdminExtendedPanels';
 
 // ── Types local to this view ────────────────────────────────
 
@@ -130,6 +131,7 @@ interface ReasonRequest {
   description: string;
   confirmLabel: string;
   danger?: boolean;
+  minChars?: number;
   onConfirm: (reason: string) => Promise<void> | void;
 }
 
@@ -141,7 +143,8 @@ function ReasonDialog({ request, onClose }: { request: ReasonRequest | null; onC
   useEffect(() => { setReason(''); setError(null); setBusy(false); }, [request]);
   if (!request) return null;
 
-  const tooShort = reason.trim().length < 8;
+  const minLen = request.minChars ?? 8;
+  const tooShort = reason.trim().length < minLen;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" role="dialog" aria-modal="true">
@@ -149,7 +152,7 @@ function ReasonDialog({ request, onClose }: { request: ReasonRequest | null; onC
         <h3 className="text-base font-semibold" style={{ color: TOKENS.text }}>{request.title}</h3>
         <p className="mt-1 text-xs leading-relaxed text-[var(--alo-text-muted)]">{request.description}</p>
         <label className="mt-4 block text-xs font-semibold" style={{ color: TOKENS.text }} htmlFor="reason-input">
-          Reason (recorded in the audit log, minimum 8 characters)
+          Reason (recorded in the audit log, minimum {minLen} characters)
         </label>
         <textarea
           id="reason-input"
@@ -399,15 +402,48 @@ export default function SuperAdminOperatingDashboard() {
     },
   });
 
+  const forcePasswordChange = (row: EmployeeControlRow) => setDialog({
+    title: `Force password change for ${row.name}?`,
+    description:
+      'Flags the account so a new password is required on next login and revokes every live session immediately. No password is viewed or transmitted.',
+    confirmLabel: 'Force password reset',
+    danger: true,
+    onConfirm: async (reason) => {
+      await mutate(`/api/super-admin/employees/${encodeURIComponent(row.id)}/force-password-change`, 'POST', { reason });
+      flash(`Password change enforced and active sessions revoked for ${row.name}.`);
+      void employees.reload();
+    },
+  });
+
+  const triggerCountryScan = (country: CountryControlRow) => setDialog({
+    title: `Queue university/course data scan for ${country.name}?`,
+    description:
+      'Queues an audited DATA_SCAN task in the task register for worker execution.',
+    confirmLabel: 'Queue data scan',
+    onConfirm: async (reason) => {
+      await mutate(`/api/super-admin/countries/${encodeURIComponent(country.id)}/trigger-data-scan`, 'POST', { reason });
+      flash(`Data scan task queued for ${country.name}.`);
+      void countries.reload();
+    },
+  });
+
   // ── Approval actions ──────────────────────────────────────
 
   const decide = (row: ApprovalRow, decision: 'approve' | 'reject' | 'revision_needed') => setDialog({
     title: `${decision === 'approve' ? 'Approve' : decision === 'reject' ? 'Reject' : 'Request revision on'} “${row.title}”?`,
-    description: `Type: ${row.type}. The decision and your reason are written to the audit log together.`,
+    description: `Type: ${row.type}. The decision and your reason are written to the audit log inside a single transaction.`,
     confirmLabel: decision === 'approve' ? 'Approve' : decision === 'reject' ? 'Reject' : 'Request revision',
     danger: decision === 'reject',
+    minChars: decision === 'approve' ? 8 : 10,
     onConfirm: async (note) => {
-      await mutate(`/api/super-admin/approvals/${encodeURIComponent(row.id)}`, 'PATCH', { decision, note });
+      const encodedId = encodeURIComponent(row.id);
+      if (decision === 'approve') {
+        await mutate(`/api/super-admin/approvals/${encodedId}/approve`, 'PATCH', { note });
+      } else if (decision === 'reject') {
+        await mutate(`/api/super-admin/approvals/${encodedId}/reject`, 'PATCH', { reason: note });
+      } else {
+        await mutate(`/api/super-admin/approvals/${encodedId}/revision-needed`, 'PATCH', { changesNeeded: note });
+      }
       flash('Decision recorded.');
       void approvals.reload();
       void metrics.reload();
@@ -684,6 +720,7 @@ export default function SuperAdminOperatingDashboard() {
                                 Open dashboard
                               </ActionButton>
                               <ActionButton onClick={() => revokeSessions(row)}>Revoke sessions</ActionButton>
+                              <ActionButton onClick={() => forcePasswordChange(row)}>Force password</ActionButton>
                               {row.status.toLowerCase() === 'active' ? (
                                 <ActionButton variant="danger" onClick={() => changeStatus(row, 'suspended', true)}>Suspend</ActionButton>
                               ) : (
@@ -893,7 +930,7 @@ export default function SuperAdminOperatingDashboard() {
                     <table className="w-full border-collapse text-left text-xs">
                       <thead>
                         <tr className="border-b" style={{ borderColor: TOKENS.border }}>
-                          {['Country', 'Leads', 'Applications', 'Visa cases', 'High risk', 'Readiness'].map((heading) => (
+                          {['Country', 'Leads', 'Applications', 'Visa cases', 'High risk', 'Readiness', 'Scan'].map((heading) => (
                             <th key={heading} className="px-2 py-2 font-semibold text-[var(--alo-text-muted)]">{heading}</th>
                           ))}
                         </tr>
@@ -909,6 +946,9 @@ export default function SuperAdminOperatingDashboard() {
                               {country.highRiskVisaCases}
                             </td>
                             <td className="px-2 py-1.5 tabular-nums">{country.visaReadinessAvg === null ? 'not assessed' : `${country.visaReadinessAvg}%`}</td>
+                            <td className="px-2 py-1.5">
+                              <ActionButton onClick={() => triggerCountryScan(country)}>Queue scan</ActionButton>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -1124,6 +1164,9 @@ export default function SuperAdminOperatingDashboard() {
               </div>
             ) : null}
           </Section>
+
+          {/* 13B. EXTENDED OPERATING PANELS (Report Center · AI Jobs · System Builder · Security Forensics · Acting-As Log) */}
+          <SuperAdminExtendedPanels onPromptReason={setDialog} onFlash={flash} />
 
           {/* 14. AUDIT LOGS + RECENT ACTIVITY */}
           <Section

@@ -5,6 +5,7 @@ import CourseDetailHub from '@/components/website/CourseDetailHub';
 import { db } from '@/lib/db';
 import { loadOpenConflicts, passesPublicCoursePagePolicy, publicCoursePageWhere } from '@/lib/course-finder/public-content-page-policy';
 import { publicCourseIdentifierWhere } from '@/lib/public-catalog';
+import { breadcrumbSchema, courseSchema } from '@/lib/seo/schema-helpers';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -15,7 +16,14 @@ async function findPublicCourse(slug: string) {
   if (!where) return null;
   return db.crmCourse.findFirst({
     where: where as any,
-    select: { id: true, courseTitle: true, slug: true, courseId: true },
+    select: {
+      id: true,
+      courseTitle: true,
+      slug: true,
+      courseId: true,
+      studyLevel: true,
+      university: { select: { name: true, slug: true, universityId: true } },
+    },
   });
 }
 
@@ -62,8 +70,35 @@ export default async function CourseDetailPageRoute({
     notFound();
   }
 
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com').replace(/\/$/, '');
+  const canonicalSlug = record.slug || record.courseId || slug;
+  const uniSlug = record.university?.slug || record.university?.universityId;
+  const courseLd = [
+    courseSchema({
+      name: record.courseTitle,
+      description: `Source-linked course information for ${record.courseTitle}.`,
+      slug: canonicalSlug,
+      providerName: record.university?.name || 'ALO Education Partner Institution',
+      providerUrl: uniSlug ? `${siteUrl}/universities/${encodeURIComponent(uniSlug)}` : undefined,
+      educationalCredentialAwarded: record.studyLevel || undefined,
+      baseUrl: siteUrl,
+    }),
+    breadcrumbSchema(
+      [
+        { name: 'Home', url: '/' },
+        { name: 'Courses', url: '/courses' },
+        { name: record.courseTitle, url: `/course/${encodeURIComponent(canonicalSlug)}` },
+      ],
+      siteUrl,
+    ),
+  ];
+
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseLd).replace(/</g, '\\u003c') }}
+      />
       <main className="flex-1 pt-20 pb-16">
         <Suspense
           fallback={

@@ -88,3 +88,58 @@ export function organizationSchema(baseUrl?: string) {
     sameAs: ALO_SOCIALS.map(social => social.href),
   };
 }
+
+export function collegeOrUniversitySchema(opts: {
+  name: string;
+  slug: string;
+  country: string;
+  city?: string;
+  officialWebsite?: string;
+  logoUrl?: string;
+  baseUrl?: string;
+}) {
+  const base = (opts.baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://aloeducation.com").replace(/\/$/, "");
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollegeOrUniversity",
+    name: opts.name,
+    url: `${base}/universities/${opts.slug}`,
+    ...(opts.officialWebsite ? { sameAs: [opts.officialWebsite] } : {}),
+    ...(opts.logoUrl ? { logo: opts.logoUrl } : {}),
+    address: {
+      "@type": "PostalAddress",
+      ...(opts.city ? { addressLocality: opts.city } : {}),
+      addressCountry: opts.country,
+    },
+  };
+}
+
+export function courseSchema(opts: {
+  name: string;
+  description: string;
+  slug: string;
+  providerName: string;
+  providerUrl?: string;
+  educationalCredentialAwarded?: string;
+  inLanguage?: string;
+  baseUrl?: string;
+}) {
+  const base = (opts.baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://aloeducation.com").replace(/\/$/, "");
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: opts.name,
+    description: opts.description.slice(0, 300),
+    url: `${base}/course/${opts.slug}`,
+    provider: {
+      "@type": "CollegeOrUniversity",
+      name: opts.providerName,
+      ...(opts.providerUrl ? { sameAs: opts.providerUrl } : {}),
+    },
+    ...(opts.educationalCredentialAwarded
+      ? { educationalCredentialAwarded: opts.educationalCredentialAwarded }
+      : {}),
+    inLanguage: opts.inLanguage || "en",
+  };
+}
+

@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2822,
+  "filesScanned": 2861,
   "summary": {
-    "UNUSED": 97,
-    "REFERENCED_WITH_FALLBACK": 168,
-    "REFERENCED_FAIL_CLOSED": 20,
-    "REFERENCED": 122,
+    "UNUSED": 92,
+    "REFERENCED_WITH_FALLBACK": 173,
+    "REFERENCED_FAIL_CLOSED": 22,
+    "REFERENCED": 130,
     "PUBLIC": 14
   },
   "productionRequired": [
@@ -726,6 +726,21 @@
       "declaredIn": [],
       "sampleReferences": [
         "src/lib/cron/job-handlers.ts"
+      ]
+    },
+    {
+      "name": "ALO_SEED_PUBLISH_STORIES",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "prisma/seed-language-prep.ts"
       ]
     },
     {
@@ -1574,7 +1589,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 7,
+      "referenceCount": 9,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -1722,6 +1737,21 @@
       ],
       "sampleReferences": [
         "src/lib/doodle-note-engine.ts"
+      ]
+    },
+    {
+      "name": "DREAMFRAME_PREVIEW",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "next.config.ts"
       ]
     },
     {
@@ -1952,7 +1982,7 @@
       "classification": "REFERENCED",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 2,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1963,7 +1993,8 @@
       ],
       "sampleReferences": [
         "src/app/api/facebook/auth/route.ts",
-        "src/app/api/facebook/callback/route.ts"
+        "src/app/api/facebook/callback/route.ts",
+        "src/app/api/social/[provider]/auth/route.ts"
       ]
     },
     {
@@ -1971,7 +2002,7 @@
       "classification": "REFERENCED",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 3,
+      "referenceCount": 5,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1981,9 +2012,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/app/api/facebook/auth/route.ts",
         "src/app/api/facebook/callback/route.ts",
-        "src/app/api/facebook/webhook/route.ts",
-        "src/lib/facebook-lead-sync.ts"
+        "src/app/api/facebook/webhook/route.ts"
       ]
     },
     {
@@ -2009,18 +2040,20 @@
       "classification": "REFERENCED",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 2,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
+        ".env.example",
         ".env.production.example"
       ],
       "sampleReferences": [
         "src/app/api/facebook/auth/route.ts",
-        "src/app/api/facebook/callback/route.ts"
+        "src/app/api/facebook/callback/route.ts",
+        "src/app/api/social/[provider]/auth/route.ts"
       ]
     },
     {
@@ -2352,7 +2385,7 @@
       "classification": "REFERENCED",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 2,
+      "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -2363,7 +2396,8 @@
       ],
       "sampleReferences": [
         "src/app/api/seo/health/route.ts",
-        "src/lib/doodle-note-engine.ts"
+        "src/lib/doodle-note-engine.ts",
+        "src/lib/social/providers.ts"
       ]
     },
     {
@@ -2371,7 +2405,7 @@
       "classification": "REFERENCED",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 2,
+      "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -2382,7 +2416,8 @@
       ],
       "sampleReferences": [
         "src/app/api/seo/health/route.ts",
-        "src/lib/doodle-note-engine.ts"
+        "src/lib/doodle-note-engine.ts",
+        "src/lib/social/providers.ts"
       ]
     },
     {
@@ -3191,10 +3226,10 @@
     },
     {
       "name": "INSTAGRAM_APP_ID",
-      "classification": "UNUSED",
-      "referenced": false,
+      "classification": "REFERENCED",
+      "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 0,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -3203,14 +3238,16 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
     },
     {
       "name": "INSTAGRAM_APP_SECRET",
-      "classification": "UNUSED",
-      "referenced": false,
+      "classification": "REFERENCED",
+      "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 0,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -3219,7 +3256,26 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "INSTAGRAM_REDIRECT_URI",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
     },
     {
       "name": "INTAKE_SESSION_SECRET",
@@ -3413,36 +3469,74 @@
       ]
     },
     {
-      "name": "LINKEDIN_CLIENT_ID",
-      "classification": "UNUSED",
-      "referenced": false,
+      "name": "LINKEDIN_API_VERSION",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 0,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "LINKEDIN_CLIENT_ID",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
     },
     {
       "name": "LINKEDIN_CLIENT_SECRET",
-      "classification": "UNUSED",
-      "referenced": false,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 0,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "LINKEDIN_REDIRECT_URI",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
     },
     {
       "name": "LLM_API_KEY",
@@ -4429,7 +4523,7 @@
       "classification": "PUBLIC",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 10,
+      "referenceCount": 11,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -4440,8 +4534,8 @@
       ],
       "sampleReferences": [
         "src/app/api/admin/builder/route.ts",
-        "src/app/api/seo/health/route.ts",
-        "src/app/course/[slug]/page.tsx"
+        "src/app/api/seo/audit/route.ts",
+        "src/app/api/seo/health/route.ts"
       ]
     },
     {
@@ -4679,6 +4773,77 @@
         ".env.production.example"
       ],
       "sampleReferences": []
+    },
+    {
+      "name": "OPENSMS_API_KEY",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/sms-gateway.ts",
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "OPENSMS_BASE_URL",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/sms-gateway.ts",
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "OPENSMS_FROM",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/sms-gateway.ts"
+      ]
+    },
+    {
+      "name": "OPENSMS_WEBHOOK_SECRET",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/app/api/integrations/opensms/webhook/route.ts",
+        "src/lib/opensms-webhook.ts"
+      ]
     },
     {
       "name": "OPENVECTA_API_KEY",
@@ -6616,22 +6781,6 @@
     },
     {
       "name": "WHATSAPP_PHONE_NUMBER_ID",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referencedIndirectly": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "WHATSAPP_TOKEN",
       "classification": "REFERENCED",
       "referenced": true,
       "referencedIndirectly": false,
@@ -6645,6 +6794,25 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "WHATSAPP_TOKEN",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts",
         "src/lib/whatsapp-media.ts"
       ]
     },
@@ -6812,7 +6980,7 @@
       "name": "YOUTUBE_CLIENT_ID",
       "classification": "REFERENCED",
       "referenced": true,
-      "referencedIndirectly": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -6823,14 +6991,14 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/lib/google/config.ts"
+        "src/lib/social/providers.ts"
       ]
     },
     {
       "name": "YOUTUBE_CLIENT_SECRET",
       "classification": "REFERENCED",
       "referenced": true,
-      "referencedIndirectly": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -6841,7 +7009,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/lib/google/config.ts"
+        "src/lib/social/providers.ts"
       ]
     },
     {
@@ -6857,6 +7025,23 @@
       "declaredIn": [],
       "sampleReferences": [
         "src/lib/video-engine/config.ts"
+      ]
+    },
+    {
+      "name": "YOUTUBE_REDIRECT_URI",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
       ]
     },
     {
