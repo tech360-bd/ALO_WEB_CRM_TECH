@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import AICommandCenterAgent from '@/components/admin/AICommandCenterAgent';
+import AiAgentRegistry from '@/components/admin/super-admin-operating/AiAgentRegistry';
 
 export default function AICommandCenterDashboard() {
   const [health, setHealth] = useState<any | null>(null);
@@ -125,6 +126,7 @@ export default function AICommandCenterDashboard() {
           { id: 'terminal', label: 'Dispatch status', icon: Terminal },
           { id: 'departments', label: `Legacy departments (${health?.totalDepartments ?? '—'})`, icon: Building2 },
           { id: 'engines', label: `Legacy engine types (${health?.totalEngineTypes ?? '—'})`, icon: Cpu },
+          { id: 'network', label: '2000 protected agents', icon: Cpu },
           { id: 'activity', label: 'Recent Activity', icon: Activity },
         ].map((tab) => {
           const Icon = tab.icon;
@@ -208,6 +210,13 @@ export default function AICommandCenterDashboard() {
             ))}
           </div>
         </Card>
+      )}
+
+      {/* TAB: ALO 2000 PROTECTED AGENT NETWORK */}
+      {activeTab === 'network' && (
+        <div className="grid grid-cols-12 gap-4">
+          <AiAgentRegistry />
+        </div>
       )}
 
       {/* TAB 4: RECENT ACTIVITY */}

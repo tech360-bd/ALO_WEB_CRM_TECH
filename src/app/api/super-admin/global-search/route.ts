@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { requireSuperAdminOrActing, actorLabel } from '@/lib/super-admin/access';
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,12 +14,12 @@ export async function GET(req: NextRequest) {
     // it was a second, undocumented authentication path that granted the full
     // cross-entity search to that address regardless of role and could not be
     // revoked from the RBAC UI. Removed — authority comes from the role only.
-    const isSuperAdmin = (auth.userType === 'SUPER_ADMIN')
-      || (auth.roles || []).some((role) => role.toLowerCase() === 'super_admin');
-
-    if (!isSuperAdmin) {
-      return NextResponse.json({ error: 'Unauthorized: Super Admin access required' }, { status: 403 });
-    }
+    //
+    // Reads are permitted under an Acting-As session (the label records
+    // "SUPER_ADMIN acting_as ROLE"); mutations are not, and this endpoint has
+    // no mutation handler.
+    const guard = requireSuperAdminOrActing(auth);
+    if (!guard.ok) return guard.response;
 
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('q') || '';
@@ -89,7 +90,7 @@ export async function GET(req: NextRequest) {
     await db.crmAuditLog.create({
       data: {
         actorUserId: auth.userId,
-        actorRole: 'SUPER_ADMIN',
+        actorRole: actorLabel(auth),
         action: 'SUPER_ADMIN_GLOBAL_SEARCH',
         targetCollection: 'Global',
         targetId: 'SEARCH',

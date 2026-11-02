@@ -36,6 +36,12 @@ export interface AuthContext {
   actingAsSessionId?: string;
   actingAsExpiresAt?: Date;
   actingAsRole?: string;
+  /**
+   * The actor's `portal_users` id when it differs from `actorUserId`.
+   * Acting-As session rows and employee links live in that namespace, so this
+   * is what start/stop must bind against.
+   */
+  actorPortalUserId?: string | null;
 }
 
 // ============================================================
@@ -100,7 +106,52 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
     }
 
     const role = user.role || nextAuthUser.role || 'STUDENT';
+    const realActorIsSuperAdmin = role.toUpperCase() === 'SUPER_ADMIN';
+    const { resolveActingAsSession, resolveActorPortalUserId } = await import('@/lib/acting-as');
+
+    // Acting-As is resolved here too — this is the path the web app actually
+    // uses. Without it the acting cookie was ignored, the banner never showed
+    // and every action was audited as the Super Admin while they believed they
+    // were operating as an employee.
+    const acting = await resolveActingAsSession(request, {
+      userId: user.id,
+      email: user.email,
+      isSuperAdmin: realActorIsSuperAdmin,
+    });
+    if (acting.status === 'error') return acting.response;
+
+    if (acting.status === 'active') {
+      const target = acting.target;
+      const effectivePartner = await resolvePartnerScopeByUserId(target.userId);
+      return {
+        identityDomain: 'portal',
+        authenticationMethod: 'cookie',
+        userId: target.userId,
+        email: target.email,
+        name: target.name,
+        userType: target.userType,
+        roles: target.roles,
+        permissions: target.permissions,
+        sessionId: `nextauth:${user.id}`,
+        partnerId: effectivePartner?.partnerId,
+        partnerRole: effectivePartner?.partnerRole,
+        actorUserId: user.id,
+        actorEmail: user.email,
+        actorName: user.name || user.email,
+        actingAsSessionId: target.sessionId,
+        actingAsExpiresAt: target.expiresAt,
+        actingAsRole: target.employeeRole,
+      };
+    }
+
     const naPartner = await resolvePartnerScope(user.email);
+
+    // Expose the actor's portal identity so Acting-As start/stop can bind the
+    // session row (which lives against portal_users) when the ids differ.
+    const actorPortalUserId = realActorIsSuperAdmin
+      ? await resolveActorPortalUserId(user.id, user.email)
+      : null;
+
     return {
       identityDomain: 'user',
       authenticationMethod: 'cookie',
@@ -116,6 +167,7 @@ async function authenticateSession(request: Request): Promise<AuthContext | Next
       actorUserId: user.id,
       actorEmail: user.email,
       actorName: user.name || user.email,
+      actorPortalUserId,
     };
   }
 
@@ -393,13 +445,35 @@ export function withAuth(
 
     const auth = authResult as AuthContext;
 
-    // Only the exact Super Admin authority bypasses configured permissions.
-    // ADMIN remains subject to the same explicit permission checks as staff.
-    if (
+    const isSuperAdminAuthority =
       auth.userType === 'SUPER_ADMIN' ||
       auth.roles.includes('super_admin') ||
-      auth.roles.includes('SUPER_ADMIN')
-    ) {
+      auth.roles.includes('SUPER_ADMIN');
+
+    // Emergency lockdown enforcement.
+    //
+    // The lockdown flag is persisted in system_settings and read through a
+    // short-lived cache, so it applies across processes. It fails open: if the
+    // flag cannot be read the platform keeps working. Only the real Super Admin
+    // authority — which must always retain its recovery path — is exempt.
+    if (!isSuperAdminAuthority) {
+      const { isEmergencyLockdownActive } = await import('@/lib/emergency-lockdown');
+      if (await isEmergencyLockdownActive()) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              'Emergency lockdown is active. Normal users cannot perform privileged operations until a Super Admin lifts it.',
+            code: 'EMERGENCY_LOCKDOWN',
+          },
+          { status: 503 },
+        );
+      }
+    }
+
+    // Only the exact Super Admin authority bypasses configured permissions.
+    // ADMIN remains subject to the same explicit permission checks as staff.
+    if (isSuperAdminAuthority) {
       return handler(request, auth, context);
     }
 

@@ -22,8 +22,24 @@ import { NextResponse } from 'next/server';
 import type { AuthContext } from '@/lib/auth-middleware';
 
 export function isSuperAdmin(auth: AuthContext): boolean {
-  return auth.roles.some((role) => role.toLowerCase() === 'super_admin')
-    || auth.userType.toUpperCase() === 'SUPER_ADMIN';
+  if (
+    auth.roles.some((role) => role.toLowerCase() === 'super_admin')
+    || auth.userType.toUpperCase() === 'SUPER_ADMIN'
+  ) {
+    return true;
+  }
+
+  // An Acting-As session is only ever bound when the auth middleware has
+  // validated that the REAL actor holds SUPER_ADMIN (see the
+  // realActorIsSuperAdmin gate in src/lib/auth-middleware.ts). While acting, the
+  // effective `roles` are the employee's roles — by design — so effective-role
+  // inspection alone would deny the Super Admin their own read access and blank
+  // the dashboard (including the Acting-As banner itself). Authority for READS
+  // is therefore derived from the validated session, never from the employee.
+  //
+  // This can never widen mutation rights: requireSuperAdmin() explicitly
+  // refuses any context carrying an actingAsSessionId.
+  return isActingAs(auth);
 }
 
 /** True when the request is being served under an Acting-As session. */

@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       const activeSession = await tx.portalSession.findFirst({
         where: {
           id: actingAsSessionId,
-          userId: auth.actorUserId,
+          userId: auth.actorPortalUserId || auth.actorUserId,
           revokedAt: null,
           expiresAt: { gt: now },
           deviceName: { startsWith: 'ALO_ACTING_AS:' },

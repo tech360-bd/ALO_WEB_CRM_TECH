@@ -11,6 +11,7 @@ import { db } from '@/lib/db';
 import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 import { writePortalAudit } from '@/lib/transactional-audit';
 import { requireSuperAdminOrActing, requireSuperAdmin, isSameOrigin } from '@/lib/super-admin/access';
+import { LOCKDOWN_SETTING_KEY } from '@/lib/emergency-lockdown';
 
 export const dynamic = 'force-dynamic';
 
@@ -89,6 +90,12 @@ async function handleGet(_request: Request, auth: AuthContext) {
 
     for (const row of stored) {
       if (DEFAULT_SETTINGS.some((definition) => definition.key === row.key)) continue;
+      // The emergency-lockdown flag is controlled exclusively by
+      // /api/admin/security/lockdown, which requires a written reason, a
+      // non-acting Super Admin and writes its own audit row. Exposing it here
+      // would let a generic settings write flip the platform into (or out of)
+      // lockdown with no reason and no lockdown audit trail.
+      if (row.key === LOCKDOWN_SETTING_KEY) continue;
       merged.push({
         key: row.key,
         category: row.category,
@@ -140,6 +147,17 @@ async function handlePatch(request: Request, auth: AuthContext) {
     );
   }
   const { updates, reason, confirmSensitive } = parsed.data;
+
+  if (updates.some((update) => update.key === LOCKDOWN_SETTING_KEY)) {
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          'The emergency lockdown state cannot be changed through System Settings. Use /admin/security (POST /api/admin/security/lockdown) so the change requires a reason and is recorded in the lockdown audit trail.',
+      },
+      { status: 400 },
+    );
+  }
 
   const touchingSensitive = updates.some((update) => update.isSensitive);
   if (touchingSensitive && !confirmSensitive) {

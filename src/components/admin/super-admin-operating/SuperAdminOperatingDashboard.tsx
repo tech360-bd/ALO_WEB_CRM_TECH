@@ -23,7 +23,6 @@ import { NamedIcon } from '@/components/ui/named-icon';
 
 import * as React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   AgentNetworkSummary,
@@ -260,38 +259,161 @@ function KpiTile({ card }: { card: KpiCard }) {
   );
 }
 
+// ── Employee profile drawer ─────────────────────────────────
+
+interface ProfilePayload {
+  detail?: { employee?: Record<string, unknown>; user?: Record<string, unknown> } & Record<string, unknown>;
+  roles?: { user?: { roles?: Array<{ name: string; label: string }> } } & Record<string, unknown>;
+  permissions?: { effectivePermissions?: string[]; counts?: Record<string, number> } & Record<string, unknown>;
+  access?: { dashboardAccess?: { primaryRole?: string; launchableDashboards?: Array<{ key: string; label: string; matchesCurrentRole: boolean }>; navigationItemCount?: number } };
+  activity?: { logs?: Array<{ id: string; action: string; entityType?: string; createdAt: string }>; tasks?: Array<{ id: string; title: string; status: string; priority?: string }> };
+}
+
+function ProfileModal({
+  state,
+  onClose,
+}: {
+  state: { loading: boolean; error: string | null; employeeId: string; payload: Record<string, unknown> | null };
+  onClose: () => void;
+}) {
+  const payload = (state.payload || {}) as ProfilePayload;
+  const employee = (payload.detail?.employee || {}) as Record<string, unknown>;
+  const roles = payload.roles?.user?.roles || [];
+  const effective = payload.permissions?.effectivePermissions || [];
+  const dashboards = payload.access?.dashboardAccess?.launchableDashboards || [];
+  const activity = payload.activity?.logs || [];
+  const tasks = payload.activity?.tasks || [];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4" role="dialog" aria-modal="true">
+      <div className="my-6 w-full max-w-3xl rounded-2xl bg-white p-5 shadow-xl">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h3 className="text-base font-semibold" style={{ color: TOKENS.text }}>
+              {String(employee.name || 'Employee profile')}
+            </h3>
+            <p className="text-[11px] text-[var(--alo-text-muted)]">
+              {String(employee.employeeId || '')} · {String(employee.role || '')} · {String(employee.branch || '—')}
+            </p>
+          </div>
+          <ActionButton onClick={onClose}>Close</ActionButton>
+        </div>
+
+        {state.loading ? <div className="mt-3"><Skeleton rows={5} /></div> : null}
+        {state.error ? <div className="mt-3"><ErrorState message={state.error} onRetry={onClose} /></div> : null}
+
+        {!state.loading && !state.error ? (
+          <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="rounded-xl border p-3" style={{ borderColor: TOKENS.border }}>
+              <p className="text-xs font-semibold">RBAC roles</p>
+              {roles.length ? (
+                <ul className="mt-1 space-y-0.5 text-[11px]">
+                  {roles.map((role) => <li key={role.name}>• {role.label} <span className="text-[var(--alo-text-muted)]">({role.name})</span></li>)}
+                </ul>
+              ) : <p className="mt-1 text-[11px]" style={{ color: TOKENS.danger }}>No RBAC role assigned.</p>}
+            </div>
+
+            <div className="rounded-xl border p-3" style={{ borderColor: TOKENS.border }}>
+              <p className="text-xs font-semibold">Effective permissions</p>
+              <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">
+                {effective.length} effective · {payload.permissions?.counts?.fromRoles ?? 0} from roles
+                {' · '}{payload.permissions?.counts?.allow ?? 0} allow · {payload.permissions?.counts?.deny ?? 0} deny
+              </p>
+              <p className="mt-1 text-[11px]">Rule: effective = role grants ∪ ALLOW − DENY.</p>
+            </div>
+
+            <div className="rounded-xl border p-3" style={{ borderColor: TOKENS.border }}>
+              <p className="text-xs font-semibold">Dashboard access</p>
+              <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">
+                Primary role {payload.access?.dashboardAccess?.primaryRole || '—'} · {payload.access?.dashboardAccess?.navigationItemCount ?? 0} navigation items
+              </p>
+              <ul className="mt-1 grid grid-cols-1 gap-0.5 text-[11px]">
+                {dashboards.filter((row) => row.matchesCurrentRole).map((row) => <li key={row.key}>• {row.label}</li>)}
+              </ul>
+            </div>
+
+            <div className="rounded-xl border p-3" style={{ borderColor: TOKENS.border }}>
+              <p className="text-xs font-semibold">Open tasks ({tasks.length})</p>
+              <ul className="mt-1 space-y-0.5 text-[11px]">
+                {tasks.slice(0, 6).map((task) => <li key={task.id}>• {task.title} <span className="text-[var(--alo-text-muted)]">{task.status}</span></li>)}
+                {tasks.length === 0 ? <li className="text-[var(--alo-text-muted)]">No open tasks.</li> : null}
+              </ul>
+            </div>
+
+            <div className="rounded-xl border p-3 md:col-span-2" style={{ borderColor: TOKENS.border }}>
+              <p className="text-xs font-semibold">Recent activity ({activity.length})</p>
+              <ul className="mt-1 space-y-0.5 text-[11px]">
+                {activity.slice(0, 8).map((log) => (
+                  <li key={log.id} className="flex justify-between gap-2">
+                    <span className="truncate">{log.action} <span className="text-[var(--alo-text-muted)]">{log.entityType || ''}</span></span>
+                    <span className="whitespace-nowrap text-[var(--alo-text-muted)]">{new Date(log.createdAt).toLocaleString()}</span>
+                  </li>
+                ))}
+                {activity.length === 0 ? <li className="text-[var(--alo-text-muted)]">No activity recorded.</li> : null}
+              </ul>
+            </div>
+
+            <div className="md:col-span-2 flex flex-wrap gap-2">
+              <Link
+                href="/admin/role-permissions"
+                className="inline-flex min-h-[36px] items-center rounded-lg border px-3 text-xs font-semibold"
+                style={{ borderColor: TOKENS.border, color: TOKENS.primary }}
+              >
+                Assign role or permission →
+              </Link>
+              <span className="self-center text-[11px] text-[var(--alo-text-muted)]">
+                Role and permission changes require a written reason and are audited.
+              </span>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 // ── Main component ──────────────────────────────────────────
 
 const LAUNCHERS = [
-  { name: 'Student Management', href: '/admin/students', role: 'COUNSELOR / ADMIN' },
-  { name: 'Partner Management', href: '/admin/partners', role: 'PARTNER_MANAGER' },
-  { name: 'Counselor Dashboard', href: '/counselor/dashboard', role: 'COUNSELOR' },
-  { name: 'Marketing Manager', href: '/crm/marketing', role: 'MARKETING_MANAGER' },
-  { name: 'Visa Interview Officer', href: '/crm/visa-interviews', role: 'VISA_INTERVIEW_OFFICER' },
-  { name: 'Application Team', href: '/crm/application', role: 'APPLICATION_TEAM' },
-  { name: 'Finance', href: '/crm/ucc', role: 'FINANCE' },
-  { name: 'HR', href: '/crm/hrm', role: 'HR_MANAGER' },
-  { name: 'English Test', href: '/admin/language-tests', role: 'ENGLISH_TEST' },
-  { name: 'Support', href: '/crm/inbox', role: 'SUPPORT_STAFF' },
-  { name: 'Branch Manager', href: '/admin/branch-control', role: 'BRANCH_MANAGER' },
-  { name: 'AI Command Center', href: '/admin/ai-command-center', role: 'SUPER_ADMIN' },
-  { name: 'Website Builder', href: '/admin/website-cms', role: 'MARKETING_MANAGER' },
-  { name: 'Reports', href: '/admin/reports', role: 'ADMIN / SUPER_ADMIN' },
+  { name: 'Student Management', href: '/admin/students', role: 'COUNSELOR / ADMIN', roles: ['COUNSELOR', 'SENIOR_COUNSELOR', 'ADMIN'] },
+  { name: 'Partner Management', href: '/admin/partners', role: 'PARTNER_MANAGER', roles: ['PARTNER_MANAGER'] },
+  { name: 'Counselor Dashboard', href: '/counselor/dashboard', role: 'COUNSELOR', roles: ['COUNSELOR', 'SENIOR_COUNSELOR'] },
+  { name: 'Marketing Manager', href: '/crm/marketing', role: 'MARKETING_MANAGER', roles: ['MARKETING_MANAGER', 'MARKETING'] },
+  { name: 'Visa Interview Officer', href: '/crm/visa-interviews', role: 'VISA_INTERVIEW_OFFICER', roles: ['VISA_INTERVIEW_OFFICER', 'VISA_OFFICER'] },
+  { name: 'Application Team', href: '/crm/applications', role: 'APPLICATION_TEAM', roles: ['APPLICATION_TEAM'] },
+  { name: 'Finance', href: '/crm/ucc', role: 'FINANCE', roles: ['FINANCE'] },
+  { name: 'HR', href: '/crm/hrm', role: 'HR_MANAGER', roles: ['HR_MANAGER'] },
+  { name: 'English Test', href: '/admin/language-tests', role: 'ENGLISH_TEST', roles: ['ENGLISH_TEST_OFFICER', 'ENGLISH_TEST'] },
+  { name: 'Support', href: '/crm/inbox', role: 'SUPPORT_STAFF', roles: ['SUPPORT_STAFF', 'FRONT_DESK'] },
+  { name: 'Branch Manager', href: '/admin/branch-control', role: 'BRANCH_MANAGER', roles: ['BRANCH_MANAGER'] },
+  { name: 'AI Command Center', href: '/admin/ai-command-center', role: 'SUPER_ADMIN', roles: ['SUPER_ADMIN'] },
+  { name: 'Website Builder', href: '/admin/website-cms', role: 'MARKETING_MANAGER', roles: ['MARKETING_MANAGER', 'MARKETING'] },
+  { name: 'Reports', href: '/admin/reports', role: 'ADMIN / SUPER_ADMIN', roles: ['ADMIN', 'SUPER_ADMIN'] },
 ] as const;
+
+/** Deep-links for the dashboards a role is expected to own (Acting-As landing target). */
+function dashboardHrefForRole(role: string): string {
+  const normalised = (role || '').toUpperCase();
+  const match = LAUNCHERS.find((launcher) => (launcher.roles as readonly string[]).includes(normalised));
+  return match?.href || '/crm/dashboard';
+}
 
 const QUICK_ACTIONS = [
   { label: 'Add Employee', href: '/admin/employees' },
   { label: 'Add Student', href: '/admin/students' },
+  { label: 'Add Partner', href: '/admin/partners' },
   { label: 'Open Employee Control', href: '/admin/employee-control' },
   { label: 'Permission Matrix', href: '/admin/role-permissions' },
   { label: 'Open AI Command Center', href: '/admin/ai-command-center' },
   { label: 'Open Reports', href: '/admin/reports' },
+  { label: 'Create AI Build Request', href: '/admin/system-builder' },
+  { label: 'Trigger Data Scan', href: '/admin/country-control' },
   { label: 'Open Security Center', href: '/admin/security' },
   { label: 'Approve Queue', href: '/admin/approvals' },
+  { label: 'System Settings', href: '/admin/settings' },
 ] as const;
 
-export default function SuperAdminOperatingDashboard() {
-  const router = useRouter();
+export default function SuperAdminOperatingDashboard({ focus }: { focus?: string }) {
   const metrics = useApi<OperatingMetricsResponse>('/api/super-admin/dashboard');
   const employees = useApi<{ employees: EmployeeControlRow[]; summary: Record<string, number> }>('/api/super-admin/employees');
   const roles = useApi<{ roles: RoleSummary[]; totals: Record<string, number> }>('/api/super-admin/roles');
@@ -317,10 +439,46 @@ export default function SuperAdminOperatingDashboard() {
   const [searching, setSearching] = useState(false);
   const [settingsDraft, setSettingsDraft] = useState<Record<string, string>>({});
 
+  // Emergency lockdown (real, audited, reason-required route).
+  const [lockdown, setLockdown] = useState<{ active: boolean; reason: string; activatedBy: string; activatedAt: string | null } | null>(null);
+
+  // Employee profile drawer: fetched on demand from the audited employee API.
+  const [profile, setProfile] = useState<{
+    loading: boolean;
+    error: string | null;
+    employeeId: string;
+    payload: Record<string, unknown> | null;
+  } | null>(null);
+
   const flash = (message: string) => {
     setNotice(message);
     window.setTimeout(() => setNotice(null), 6000);
   };
+
+  // Deep-link support: /admin/branch-control?focus=branches lands on that section.
+  useEffect(() => {
+    if (!focus) return;
+    const timer = window.setTimeout(() => {
+      const element = document.getElementById(focus);
+      if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [focus]);
+
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      try {
+        const response = await fetch('/api/admin/security/lockdown', { credentials: 'same-origin', cache: 'no-store' });
+        const payload = await response.json().catch(() => null);
+        if (alive && response.ok && payload?.success) setLockdown(payload.lockdown);
+      } catch {
+        // The lockdown state is advisory on the dashboard; a read failure must
+        // not block the rest of the operating view.
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
 
   const reloadAll = () => {
     void metrics.reload();
@@ -362,16 +520,72 @@ export default function SuperAdminOperatingDashboard() {
 
   // ── Employee actions ──────────────────────────────────────
 
-  const startActingAs = (row: EmployeeControlRow) => setDialog({
+  const startActingAs = (row: EmployeeControlRow, landOn?: string) => setDialog({
     title: `Act as ${row.name} (${row.role})?`,
     description:
-      'A short-lived, revocable session is created. Every action you take will be recorded as '
-      + `"SUPER_ADMIN acting_as ${row.role} / ${row.name}". You do not need the employee's password.`,
-    confirmLabel: 'Start Acting-As session',
+      'A short-lived, revocable session is created and you are taken to that employee\'s dashboard. '
+      + `Every action you take there is recorded as "SUPER_ADMIN acting_as ${row.role} / ${row.name}". `
+      + 'You do not need the employee\'s password, and RBAC / finance / settings mutations stay blocked while the session is active.',
+    confirmLabel: 'Start Acting-As & open dashboard',
     onConfirm: async (reason) => {
       await mutate('/api/portal-auth/acting-as/start', 'POST', { targetUserId: row.userId, reason });
-      flash(`Acting-As session started for ${row.name}. Reloading…`);
-      window.location.reload();
+      const destination = landOn || dashboardHrefForRole(row.role);
+      flash(`Acting-As session started for ${row.name}. Opening ${destination}…`);
+      window.location.assign(destination);
+    },
+  });
+
+  /**
+   * Opens an employee's full, audited profile: RBAC roles, effective
+   * permissions, dashboard access and recent activity. Read-only — nothing on
+   * this drawer mutates an account.
+   */
+  const openProfile = async (row: EmployeeControlRow) => {
+    setProfile({ loading: true, error: null, employeeId: row.id, payload: null });
+    try {
+      const [detail, roles, permissions, access, activity] = await Promise.all([
+        fetch(`/api/super-admin/employees/${encodeURIComponent(row.id)}`, { credentials: 'same-origin', cache: 'no-store' }).then((response) => response.json().catch(() => null)),
+        fetch(`/api/super-admin/users/${encodeURIComponent(row.userId)}/roles`, { credentials: 'same-origin', cache: 'no-store' }).then((response) => response.json().catch(() => null)),
+        fetch(`/api/super-admin/users/${encodeURIComponent(row.userId)}/permissions`, { credentials: 'same-origin', cache: 'no-store' }).then((response) => response.json().catch(() => null)),
+        fetch(`/api/super-admin/employees/${encodeURIComponent(row.id)}/dashboard-access`, { credentials: 'same-origin', cache: 'no-store' }).then((response) => response.json().catch(() => null)),
+        fetch(`/api/super-admin/employees/${encodeURIComponent(row.id)}/activity`, { credentials: 'same-origin', cache: 'no-store' }).then((response) => response.json().catch(() => null)),
+      ]);
+      if (!detail?.success) throw new Error(detail?.error || 'Employee profile could not be loaded.');
+      setProfile({
+        loading: false,
+        error: null,
+        employeeId: row.id,
+        payload: { detail, roles, permissions, access, activity },
+      });
+    } catch (profileError) {
+      setProfile({
+        loading: false,
+        error: profileError instanceof Error ? profileError.message : 'Employee profile could not be loaded.',
+        employeeId: row.id,
+        payload: null,
+      });
+    }
+  };
+
+  const toggleLockdown = (activate: boolean) => setDialog({
+    title: activate ? 'Activate EMERGENCY LOCKDOWN?' : 'Lift the emergency lockdown?',
+    description: activate
+      ? 'Normal users are blocked from privileged operations until you lift it. The reason, your account and the timestamp are written to the audit log, and the lockdown can always be lifted again by a Super Admin.'
+      : 'Normal operations resume. The deactivation is written to the audit log.',
+    confirmLabel: activate ? 'Activate lockdown' : 'Lift lockdown',
+    danger: activate,
+    minChars: 10,
+    onConfirm: async (reason) => {
+      const response = await fetch('/api/admin/security/lockdown', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: activate, reason }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success) throw new Error(payload?.error || 'Lockdown could not be changed.');
+      setLockdown(payload.lockdown);
+      flash(activate ? 'Emergency lockdown ACTIVE — audited.' : 'Emergency lockdown lifted — audited.');
     },
   });
 
@@ -623,6 +837,22 @@ export default function SuperAdminOperatingDashboard() {
                   {action.label}
                 </Link>
               ))}
+              <ActionButton
+                variant="cta"
+                onClick={() => { document.getElementById('employees')?.scrollIntoView({ behavior: 'smooth' }); }}
+                disabled={acting.data?.active}
+                title="Choose an employee in the Employee Control Center and open their dashboard under an audited session."
+              >
+                Start Acting-As Mode
+              </ActionButton>
+              <ActionButton
+                variant="danger"
+                onClick={() => toggleLockdown(!lockdown?.active)}
+                disabled={acting.data?.active}
+                title="Block normal users from privileged operations. Reason required; audited; always reversible."
+              >
+                {lockdown?.active ? 'Lift Emergency Lockdown' : 'Emergency Lockdown'}
+              </ActionButton>
             </div>
           </Section>
 
@@ -710,11 +940,11 @@ export default function SuperAdminOperatingDashboard() {
                           </td>
                           <td className="px-2 py-2">
                             <div className="flex flex-wrap gap-1">
-                              <ActionButton onClick={() => router.push(`/admin/employees?focus=${row.id}`)}>View</ActionButton>
+                              <ActionButton onClick={() => void openProfile(row)}>Profile & access</ActionButton>
                               <ActionButton
                                 variant="primary"
                                 disabled={!row.actingAsEligible || acting.data?.active}
-                                title={row.actingAsEligible ? 'Open the employee dashboard as this employee' : 'Not eligible for Acting-As (inactive, unverified, privileged or already acting)'}
+                                title={row.actingAsEligible ? `Open ${dashboardHrefForRole(row.role)} as this employee` : 'Not eligible for Acting-As (inactive, unverified, privileged or already acting)'}
                                 onClick={() => startActingAs(row)}
                               >
                                 Open dashboard
@@ -755,6 +985,7 @@ export default function SuperAdminOperatingDashboard() {
                         <ActionButton variant="primary" disabled={!row.actingAsEligible} onClick={() => startActingAs(row)}>
                           Open dashboard
                         </ActionButton>
+                        <ActionButton onClick={() => void openProfile(row)}>Profile</ActionButton>
                         <ActionButton onClick={() => revokeSessions(row)}>Revoke</ActionButton>
                       </div>
                     </div>
@@ -766,35 +997,59 @@ export default function SuperAdminOperatingDashboard() {
 
           {/* 5. DASHBOARD LAUNCHER */}
           <Section
+            id="launchers"
             title="Dashboard launcher"
-            description="Open any employee dashboard. Choosing “Act as” starts an audited Acting-As session for that role."
+            description="Open any employee dashboard directly, or start an audited Acting-As session for the employee who owns that role. Active users and open tasks are read from the employee register — a role with no employee says so."
             badge={<StatusPill tone="neutral">{LAUNCHERS.length} dashboards</StatusPill>}
           >
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {LAUNCHERS.map((launcher) => (
-                <div key={launcher.name} className="flex min-h-[112px] flex-col justify-between rounded-xl border p-3" style={{ borderColor: TOKENS.border }}>
-                  <div>
-                    <p className="text-sm font-semibold">{launcher.name}</p>
-                    <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">{launcher.role}</p>
+              {LAUNCHERS.map((launcher) => {
+                const owners = (employees.data?.employees || []).filter((row) =>
+                  (launcher.roles as readonly string[]).includes((row.role || '').toUpperCase()),
+                );
+                const eligible = owners.filter((owner) => owner.actingAsEligible);
+                const openTasks = owners.reduce((sum, owner) => sum + owner.openTasks, 0);
+                return (
+                  <div key={launcher.name} className="flex min-h-[132px] flex-col justify-between rounded-xl border p-3" style={{ borderColor: TOKENS.border }}>
+                    <div>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm font-semibold">{launcher.name}</p>
+                        <StatusPill tone={owners.length ? 'ok' : 'unknown'}>
+                          {owners.length ? `${owners.length} active` : 'no employee'}
+                        </StatusPill>
+                      </div>
+                      <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">{launcher.role}</p>
+                      <p className="mt-1 text-[11px] text-[var(--alo-text-muted)]">
+                        {openTasks} open task(s) · {eligible.length} launchable via Acting-As
+                      </p>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      <Link
+                        href={launcher.href}
+                        className="inline-flex min-h-[32px] items-center rounded-lg border px-2 text-[11px] font-semibold"
+                        style={{ borderColor: TOKENS.border, color: TOKENS.primary }}
+                      >
+                        Open
+                      </Link>
+                      <ActionButton
+                        variant="primary"
+                        disabled={!eligible.length || acting.data?.active}
+                        title={eligible.length ? `Act as ${eligible[0].name} and land on ${launcher.href}` : 'No eligible employee for this role (inactive, unverified, privileged, or already acting)'}
+                        onClick={() => eligible.length && startActingAs(eligible[0], launcher.href)}
+                      >
+                        Act as
+                      </ActionButton>
+                      <Link
+                        href="/admin/role-permissions"
+                        className="inline-flex min-h-[32px] items-center rounded-lg border px-2 text-[11px] font-semibold"
+                        style={{ borderColor: TOKENS.border, color: TOKENS.text }}
+                      >
+                        Permissions
+                      </Link>
+                    </div>
                   </div>
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    <Link
-                      href={launcher.href}
-                      className="inline-flex min-h-[32px] items-center rounded-lg border px-2 text-[11px] font-semibold"
-                      style={{ borderColor: TOKENS.border, color: TOKENS.primary }}
-                    >
-                      Open
-                    </Link>
-                    <Link
-                      href="/admin/role-permissions"
-                      className="inline-flex min-h-[32px] items-center rounded-lg border px-2 text-[11px] font-semibold"
-                      style={{ borderColor: TOKENS.border, color: TOKENS.text }}
-                    >
-                      Permissions
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </Section>
 
@@ -873,6 +1128,7 @@ export default function SuperAdminOperatingDashboard() {
           <div className="col-span-12 grid grid-cols-12 gap-4">
             <div className="col-span-12 xl:col-span-8">
               <Section
+                id="branches"
                 title="Branch Control Center"
                 description="Branches are the existing `offices` table. A metric that cannot be derived per branch is reported as 0 or null, never estimated."
                 badge={<StatusPill tone="neutral">{branches.data?.totals?.offices ?? '—'} branches</StatusPill>}
@@ -915,6 +1171,7 @@ export default function SuperAdminOperatingDashboard() {
               </Section>
 
               <Section
+                id="countries"
                 title="Country / Destination Control Center"
                 description="Per-country lead, application and visa operations read from real rows."
                 badge={<StatusPill tone="neutral">{countries.data?.totals?.countries ?? '—'} destinations</StatusPill>}
@@ -961,6 +1218,7 @@ export default function SuperAdminOperatingDashboard() {
             {/* 9. APPROVAL CENTER (right column) */}
             <div className="col-span-12 xl:col-span-4">
               <Section
+                id="approvals"
                 title="Approval Center"
                 description="Human decisions required before risky work proceeds."
                 badge={<StatusPill tone={approvals.data?.counts?.pending ? 'attention' : 'ok'}>{approvals.data?.counts?.pending ?? '—'} pending</StatusPill>}
@@ -993,12 +1251,40 @@ export default function SuperAdminOperatingDashboard() {
 
               {/* SECURITY CENTER */}
               <Section
+                id="security"
                 title="Security Center"
-                description="Live sessions, unresolved security events and RBAC changes."
+                description="Live sessions, unresolved security events, RBAC changes and the emergency lockdown control."
                 badge={<StatusPill tone={security.data?.summary?.unresolvedSecurityEvents ? 'critical' : 'ok'}>
                   {security.data?.summary?.unresolvedSecurityEvents ?? '—'} open
                 </StatusPill>}
               >
+                <div
+                  className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 p-3"
+                  style={{
+                    borderColor: lockdown?.active ? TOKENS.danger : TOKENS.border,
+                    backgroundColor: lockdown?.active ? '#FEF2F2' : TOKENS.soft,
+                  }}
+                >
+                  <div>
+                    <p className="text-xs font-semibold">
+                      Emergency lockdown
+                      {' '}
+                      <StatusPill tone={lockdown?.active ? 'critical' : 'ok'}>{lockdown?.active ? 'ACTIVE' : 'not active'}</StatusPill>
+                    </p>
+                    <p className="mt-0.5 text-[11px] text-[var(--alo-text-muted)]">
+                      {lockdown?.active
+                        ? `Activated ${lockdown.activatedAt ? new Date(lockdown.activatedAt).toLocaleString() : '—'} · reason: ${lockdown.reason || '—'}. A Super Admin can always lift it.`
+                        : 'Blocks normal users from privileged operations. Requires a written reason and is fully audited.'}
+                    </p>
+                  </div>
+                  <ActionButton
+                    variant={lockdown?.active ? 'primary' : 'danger'}
+                    onClick={() => toggleLockdown(!lockdown?.active)}
+                    disabled={acting.data?.active}
+                  >
+                    {lockdown?.active ? 'Lift lockdown' : 'Activate lockdown'}
+                  </ActionButton>
+                </div>
                 {security.error ? <ErrorState message={security.error} onRetry={security.reload} /> : null}
                 {security.loading && !security.data ? <Skeleton rows={4} /> : null}
                 {security.data ? (
@@ -1060,6 +1346,7 @@ export default function SuperAdminOperatingDashboard() {
 
           {/* 11. 2000 PROTECTED AGENT NETWORK */}
           <Section
+            id="agents"
             title={agents.data?.clusterName || 'ALO 2000 Protected Self-Learning Agent Network'}
             description={`40 departments × 50 micro-agents = ${(agents.data?.totalLogicalAgents ?? 2000).toLocaleString()} logical agents. Runtime state is counted from ai_agents and ai_tasks; departments with no persisted rows say so.`}
             badge={<StatusPill tone="info">protected mode</StatusPill>}
@@ -1093,6 +1380,7 @@ export default function SuperAdminOperatingDashboard() {
 
           {/* 12. GLOBAL SEARCH */}
           <Section
+            id="search"
             title="Global search"
             description="Find students, partners, employees, applications and visa cases. Every search is audited against your Super Admin account."
           >
@@ -1170,6 +1458,7 @@ export default function SuperAdminOperatingDashboard() {
 
           {/* 14. AUDIT LOGS + RECENT ACTIVITY */}
           <Section
+            id="audit"
             title="Audit log"
             description="Newest privileged events. Audit rows are never deletable from this dashboard."
             badge={<StatusPill tone="neutral">{audit.data?.logs?.length ?? '—'} recent</StatusPill>}
@@ -1216,6 +1505,7 @@ export default function SuperAdminOperatingDashboard() {
       </div>
 
       <ReasonDialog request={dialog} onClose={() => setDialog(null)} />
+      {profile ? <ProfileModal state={profile} onClose={() => setProfile(null)} /> : null}
     </div>
   );
 }

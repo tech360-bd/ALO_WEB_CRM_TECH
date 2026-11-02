@@ -196,7 +196,7 @@ const DEFINITIONS: Definition[] = [
     name: 'Global search is SUPER_ADMIN-only and audited',
     expectation: 'The privileged-email bypass has been removed; role is the only authority.',
     file: 'src/app/api/super-admin/global-search/route.ts',
-    requiredGuards: ['isSuperAdmin', 'SUPER_ADMIN_GLOBAL_SEARCH'],
+    requiredGuards: ['requireSuperAdminOrActing', 'SUPER_ADMIN_GLOBAL_SEARCH'],
   },
   {
     id: 'SEC-SA-21',
@@ -267,6 +267,50 @@ const DEFINITIONS: Definition[] = [
     expectation: 'The metrics service contains no numeric fallback for a failed query.',
     file: 'src/lib/super-admin/metrics.ts',
     requiredGuards: ['unavailableReason', 'available: false'],
+  },
+  {
+    id: 'SEC-SA-31',
+    name: 'Emergency lockdown actually blocks non-Super-Admin API access',
+    expectation:
+      'The auth middleware consults the persisted lockdown state and refuses non-Super-Admin requests while it is active.',
+    file: 'src/lib/auth-middleware.ts',
+    requiredGuards: ['isEmergencyLockdownActive', 'EMERGENCY_LOCKDOWN'],
+  },
+  {
+    id: 'SEC-SA-32',
+    name: 'Emergency lockdown state is durable across processes and restarts',
+    expectation:
+      'The flag is persisted in system_settings (not a module variable) and fails open only when storage is unreadable.',
+    file: 'src/lib/emergency-lockdown.ts',
+    requiredGuards: ['systemSetting', 'readEmergencyLockdown', 'fail'],
+  },
+  {
+    id: 'SEC-SA-33',
+    name: 'Emergency lockdown can only be changed by the real Super Admin',
+    expectation: 'Activation/lifting rejects Acting-As sessions and requires a written reason.',
+    file: 'src/app/api/admin/security/lockdown/route.ts',
+    requiredGuards: ['isRealSuperAdmin', 'isSameOrigin', 'at least 10 characters'],
+  },
+  {
+    id: 'SEC-SA-34',
+    name: 'The 2000-agent registry is SUPER_ADMIN-only',
+    expectation: 'GET /api/super-admin/ai/agents/registry requires the SUPER_ADMIN role server-side.',
+    file: 'src/app/api/super-admin/ai/agents/registry/route.ts',
+    requiredGuards: ['withAuth', 'requireSuperAdminOrActing'],
+  },
+  {
+    id: 'SEC-SA-35',
+    name: 'An AI build patch cannot be applied without approval',
+    expectation: 'The apply endpoint refuses any request whose status is not APPROVED.',
+    file: 'src/app/api/super-admin/ai/system-builder/requests/[id]/apply/route.ts',
+    requiredGuards: ['requireSuperAdmin', "status !== 'APPROVED'", 'AI_BUILD_APPLIED'],
+  },
+  {
+    id: 'SEC-SA-36',
+    name: 'Report download is audited before bytes are served',
+    expectation: 'Every report download writes REPORT_DOWNLOADED and respects SUPER_ADMIN authority.',
+    file: 'src/app/api/super-admin/reports/[id]/download/route.ts',
+    requiredGuards: ['requireSuperAdminOrActing', 'REPORT_DOWNLOADED'],
   },
 ];
 

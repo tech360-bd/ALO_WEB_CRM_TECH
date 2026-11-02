@@ -183,3 +183,140 @@ export async function getAgentNetworkSummary(): Promise<AgentNetworkSummary> {
     warnings,
   };
 }
+
+// ── Full logical roster (2000 rows) ─────────────────────────
+//
+// The summary above is deliberately aggregate. The registry view needs the
+// individual agents, because "2000 logical agents" is only auditable if every
+// code is addressable: ALO-VISA_INTERVIEW-014 must be a real row an operator
+// can look up, not an arithmetic claim.
+//
+// The roster is generated from the deterministic definition (40 departments ×
+// 50) and joined to persisted `ai_agents` rows by agent code. An agent that has
+// no row is reported as NOT_MATERIALISED — never as "active".
+
+export interface LogicalAgentRow {
+  code: string;
+  department: string;
+  departmentName: string;
+  index: number;
+  name: string;
+  /** Persisted status when a row exists, otherwise NOT_MATERIALISED. */
+  status: string;
+  persisted: boolean;
+  jobsProcessed: number;
+  pendingApprovals: number;
+  lastRunAt: string | null;
+  protectionMode: 'protected';
+}
+
+export interface AgentRosterResult {
+  success: true;
+  clusterName: string;
+  totalLogicalAgents: number;
+  totalPersistedAgents: number;
+  department: string | null;
+  search: string;
+  page: number;
+  pageSize: number;
+  total: number;
+  agents: LogicalAgentRow[];
+  departments: Array<{ key: string; name: string; logicalAgents: number; persistedAgents: number }>;
+}
+
+export async function getAgentRoster(options: {
+  department?: string | null;
+  search?: string | null;
+  page?: number;
+  pageSize?: number;
+} = {}): Promise<AgentRosterResult> {
+  const departmentKey = (options.department || '').trim().toUpperCase();
+  const search = (options.search || '').trim();
+  const page = Math.max(1, Math.floor(options.page || 1));
+  const pageSize = Math.min(200, Math.max(10, Math.floor(options.pageSize || 50)));
+
+  const departments = departmentKey
+    ? AGENT_DEPARTMENTS.filter((entry) => entry.key === departmentKey)
+    : AGENT_DEPARTMENTS;
+
+  // One query per department slice, not one per agent.
+  const persisted = await safeAggregate(async () => {
+    return db.aiAgent.findMany({
+      where: departmentKey
+        ? { OR: [{ department: departmentKey }, { department: departments[0]?.name || departmentKey }] }
+        : {},
+      select: {
+        agentCode: true,
+        agentName: true,
+        status: true,
+        jobsProcessed: true,
+        pendingApprovals: true,
+        lastRunAt: true,
+      },
+      take: 4000,
+    });
+  }, [] as Array<{
+    agentCode: string;
+    agentName: string;
+    status: string;
+    jobsProcessed: number;
+    pendingApprovals: number;
+    lastRunAt: Date | null;
+  }>);
+
+  const byCode = new Map(persisted.map((row) => [row.agentCode, row]));
+  const persistedByDepartment = new Map<string, number>();
+  for (const row of persisted) {
+    const key = row.agentCode.split('-')[1] || '';
+    persistedByDepartment.set(key, (persistedByDepartment.get(key) || 0) + 1);
+  }
+
+  const roster: LogicalAgentRow[] = [];
+  for (const definition of departments) {
+    for (let index = 1; index <= AGENTS_PER_DEPARTMENT; index += 1) {
+      const code = logicalAgentCode(definition.key, index);
+      const row = byCode.get(code);
+      roster.push({
+        code,
+        department: definition.key,
+        departmentName: definition.name,
+        index,
+        name: row?.agentName || `${definition.name.replace(/ Agents$/, '')} micro-agent ${String(index).padStart(3, '0')}`,
+        status: row?.status || 'NOT_MATERIALISED',
+        persisted: Boolean(row),
+        jobsProcessed: row?.jobsProcessed ?? 0,
+        pendingApprovals: row?.pendingApprovals ?? 0,
+        lastRunAt: row?.lastRunAt ? row.lastRunAt.toISOString() : null,
+        protectionMode: 'protected',
+      });
+    }
+  }
+
+  const filtered = search
+    ? roster.filter((agent) =>
+      [agent.code, agent.name, agent.department, agent.departmentName, agent.status]
+        .some((value) => value.toLowerCase().includes(search.toLowerCase())),
+    )
+    : roster;
+
+  const start = (page - 1) * pageSize;
+
+  return {
+    success: true,
+    clusterName: CLUSTER_NAME,
+    totalLogicalAgents: TOTAL_LOGICAL_AGENTS,
+    totalPersistedAgents: persisted.length,
+    department: departmentKey || null,
+    search,
+    page,
+    pageSize,
+    total: filtered.length,
+    agents: filtered.slice(start, start + pageSize),
+    departments: AGENT_DEPARTMENTS.map((definition) => ({
+      key: definition.key,
+      name: definition.name,
+      logicalAgents: AGENTS_PER_DEPARTMENT,
+      persistedAgents: persistedByDepartment.get(definition.key) || 0,
+    })),
+  };
+}
