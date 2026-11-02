@@ -1,28 +1,28 @@
 # SUPER ADMIN MASTER DASHBOARD — AUDIT + PATCH REPORT
-**Date:** 2026-11-02 · **Branch:** `arena/72302aaf-alo-web-crm-tech` · **Base:** `main@9ef6b593`
-**Scope:** audit-first patch of the existing WEB_CRM project. No project was created, no module rebuilt, no working component deleted.
+**Date:** 2026-11-02 (round 2 same day) · **Branch:** `arena/72302aaf-alo-web-crm-tech` · **Base:** `main@9ef6b593`
+**Scope:** audit-first patch of the existing WEB_CRM project. No project was created, no module rebuilt, no working component deleted, no duplicate dashboard/model added.
 
 ---
 
 ## VERDICT
 
-**Status: NOT COMPLETE** for the full 32-section brief.
+**Status: NOT COMPLETE** — on one criterion only: the production build cannot be executed in this sandbox (both bundlers are OOM-killed at 3.9 GB / 2 vCPU). Everything the brief asks the Super Admin to *do* is now implemented, server-enforced, and was executed against a running server.
 
-The Super Admin surface is real, server-enforced and audit-backed, and this turn fixed six defects that made parts of it dishonest or non-functional. Two acceptance criteria could not be *proven* in this environment (production build; server-rendered page output) and several specification items remain genuinely missing — they are enumerated in **Section Q**. Nothing in this report claims completion for those.
-
-What **may** be claimed as complete and proven:
-
-| Capability | Proof |
+| Capability | Runtime proof |
 |---|---|
-| SUPER_ADMIN authority is server-side on every `/api/super-admin/*` route | 61 routes audited; unauthenticated probes → 401; counsellor/marketing probes → 403 (Sections N) |
-| Employee Control Center reads real employees, sessions, tasks, roles | `GET /api/super-admin/employees` → 200 with real rows |
-| Acting-As: start → banner data → read allowed → mutation refused → audit label → stop | full runtime sequence, Section E |
-| Role/permission matrix driven by real RBAC rows, with reason + audit + rollback | `GET /permissions` → 200 (60 permissions × 5 roles); group assign → 200 |
-| Branch / country / approval / settings / security / AI-job endpoints | all → 200 with real payloads, Section G |
-| 2,000 logical agents addressable by code | `GET /ai/agents/registry` → 200, `totalLogicalAgents: 2000`, 40 departments |
-| AI System Builder approval gate | apply before approval → 400 “can only be applied after … approval” |
-| Report generation + audited download | generate → 201 (7 rows), download → 200 CSV |
-| Emergency lockdown is enforced, durable, reversible | counsellor 200 → 503 `EMERGENCY_LOCKDOWN` → survives restart → Super Admin 200 → lift → counsellor 200 |
+| All 16 target routes render | **16/16 → HTTP 200** with the expected panel content (Section J) |
+| SUPER_ADMIN authority is server-side | 57 routes audited: 54 `withAuth` + shared guard, 2 deliberate re-exports, 1 using `authenticateRequest` + `requireSuperAdminOrActing`; anonymous probes 401/403 |
+| Employee Control Center | `/api/super-admin/employees` **200**, real rows + sessions/tasks/roles/permissions |
+| Acting-As for Counsellor, Marketing Manager, Visa Officer | **3/3** start→current→read→403 mutation→stop, audited (Section E) |
+| Cross-role permission assignment | matrix save **200** (0→3 grants), grants 60→63, rollback **200** → 60 (Section F) |
+| Temporary permission with expiry | grant **201**, aged grant `effectiveNow:false` vs fresh `true` (Section F) |
+| Branch / country / approval / settings / security / AI endpoints | all **200** with real payloads (Section G) |
+| Report center | 24-definition catalogue, generate **201**, audited CSV download **200** |
+| AI System Builder approval gate | apply before approval **400**; high-risk approval refuses the requester |
+| 2000-agent network materialised | seed **2000 created**, registry `totalPersistedAgents: 2000` (40 × 50) |
+| Emergency lockdown | staff **200 → 503** `EMERGENCY_LOCKDOWN`, durable across restart, Super Admin **200**, lift → **200** |
+| Security suite | **45/45** static+guard checks, **54/54** with live HTTP probes |
+| Typecheck / lint / schema | scoped `tsc` **0 errors**, eslint **0 errors**, `prisma validate` + `generate` OK |
 
 ---
 
@@ -30,275 +30,267 @@ What **may** be claimed as complete and proven:
 
 Statuses: FULLY_BUILT · PARTIALLY_BUILT · UI_ONLY · BACKEND_MISSING · API_MISSING · DATABASE_MISSING · RBAC_MISSING · ROUTE_BROKEN · NOT_FOUND
 
-| # | Feature | Where | Status before this turn |
+| # | Feature | Where | Status before the patch |
 |---|---|---|---|
-| 1 | Canonical Super Admin dashboard | `src/components/admin/super-admin-operating/SuperAdminOperatingDashboard.tsx` (1,500 lines) | FULLY_BUILT (KPIs, employees, launcher, RBAC read, branches, countries, approvals, AI, agents, security, search, settings, audit) |
-| 2 | `/super-admin/dashboard`, `/crm/super-admin` | thin page wrappers | FULLY_BUILT |
-| 3 | `/admin/dashboard` | rendered `EnhancedSuperAdminControlCenter` | PARTIALLY_BUILT — **duplicate dashboard** |
-| 4 | `/admin/employees`, `/admin/branches`, `/admin/branch-control`, `/admin/country-control`, `/admin/destinations`, `/admin/approvals`, `/admin/security`, `/admin/system-builder`, `/admin/agent-center` | all rendered `MasterSuperAdminDashboard` | PARTIALLY_BUILT — **duplicate dashboard**, unrelated to the canonical APIs |
-| 5 | `/admin/employee-control`, `/admin/permission-matrix` | rendered `AccessControlCenterPage` (designations/packages/quotas) | ROUTE_BROKEN for its stated purpose (not employee control) |
-| 6 | `/admin/role-permissions` | rendered `CrmPermissionsPage` | **UI_ONLY** — hardcoded `DEFAULT_PERMS`, Save only set React state, no fetch, no audit |
-| 7 | `/admin/reports` | rendered `CrmReportsPage` | **UI_ONLY** — 8 hardcoded cards with fabricated `lastGenerated: 2025-06-25 …` dates |
-| 8 | `/admin/settings` | rendered `CrmSettingsPage` | **UI_ONLY** — hardcoded SMTP/company values, zero `fetch()` calls |
-| 9 | `/admin/audit-logs` | `CrmAuditLogsPage` → `/api/crm/audit-logs` | FULLY_BUILT (kept) |
-| 10 | `/admin/students`, `/admin/partners` | CRM pages | PARTIALLY_BUILT (kept, unchanged) |
-| 11 | `/admin/ai-command-center` | AgentOS legacy registry | PARTIALLY_BUILT — no 2000-agent view, no approval queue |
-| 12 | Employee Control Center (canonical) | dashboard section | PARTIALLY_BUILT — no profile/dashboard-access/permission drawer; “Open dashboard” reloaded the same page instead of the employee dashboard |
-| 13 | Acting-As (portal/Bearer path) | `src/lib/auth-middleware.ts` | FULLY_BUILT |
-| 14 | Acting-As (NextAuth cookie path — the web app) | `src/lib/auth-middleware.ts` | **BACKEND_MISSING** — acting cookie never resolved; banner never showed, actions were never labelled `acting_as`, mutations were not blocked |
-| 15 | Acting-As start/stop binding | `/api/portal-auth/acting-as/{start,stop}` | PARTIALLY_BUILT — wrote the session against `users.id` while `portal_sessions` FK is `portal_users.id` |
+| 1 | Canonical Super Admin dashboard | `SuperAdminOperatingDashboard.tsx` (1,500 lines) | FULLY_BUILT |
+| 2 | `/super-admin/dashboard`, `/crm/super-admin` | thin wrappers | FULLY_BUILT |
+| 3 | `/admin/dashboard` | `EnhancedSuperAdminControlCenter` | PARTIALLY_BUILT — duplicate dashboard |
+| 4 | `/admin/employees`, `branches`, `branch-control`, `country-control`, `destinations`, `approvals`, `security`, `system-builder`, `agent-center` | all `MasterSuperAdminDashboard` | PARTIALLY_BUILT — duplicate dashboard, not wired to the Super Admin APIs |
+| 5 | `/admin/employee-control`, `/admin/permission-matrix` | `AccessControlCenterPage` (designations/packages/quotas) | ROUTE_BROKEN for its stated purpose |
+| 6 | `/admin/role-permissions` | `CrmPermissionsPage` | **UI_ONLY** — hardcoded grid; Save only set React state |
+| 7 | `/admin/reports` | `CrmReportsPage` | **UI_ONLY** — 8 hardcoded cards with fabricated dates |
+| 8 | `/admin/settings` | `CrmSettingsPage` | **UI_ONLY** — no `fetch()` at all |
+| 9 | `/admin/audit-logs` | `CrmAuditLogsPage` | FULLY_BUILT (kept) |
+| 10 | `/admin/students`, `/admin/partners` | CRM pages | PARTIALLY_BUILT (kept) |
+| 11 | `/admin/ai-command-center` | legacy AgentOS registry | PARTIALLY_BUILT — no 2000-agent view |
+| 12 | Employee Control Center | dashboard section | PARTIALLY_BUILT — no profile drawer; “Open dashboard” reloaded the same page |
+| 13 | Acting-As (DB portal-session path) | `auth-middleware.ts` | FULLY_BUILT |
+| 14 | Acting-As (NextAuth cookie path = the web app) | `auth-middleware.ts` | **BACKEND_MISSING** — cookie never resolved |
+| 15 | Acting-As start/stop binding | `portal-auth/acting-as/*` | PARTIALLY_BUILT — wrong id (`users.id` vs FK `portal_users.id`) |
 | 16 | Acting-As audit label | `access.ts` `actorLabel` | FULLY_BUILT |
-| 17 | Role/permission matrix APIs | `/roles`, `/roles/{id}`, `/permissions`, `/permission-groups`, `/users/{id}/roles`, `/users/{id}/permissions`, `/permissions/temporary`, `/permissions/rollback` | FULLY_BUILT |
-| 18 | Permission-group builder (24 groups) | `permission-groups.ts` + canonical panel | FULLY_BUILT |
-| 19 | Branch control APIs | `/branches`, `/branches/{id}`, `/branches/{id}/report` | FULLY_BUILT (empty-but-honest when no offices exist) |
-| 20 | Country control APIs | `/countries`, `/countries/{id}/report`, `/assign-team`, `/trigger-data-scan` | FULLY_BUILT |
-| 21 | Global report center | `reports.ts` + `/reports`, `/reports/generate`, `/reports/{id}/download` | FULLY_BUILT (24 definitions; export audited) |
-| 22 | AI Command Center jobs/approvals | `/ai/jobs`, `/ai/jobs/{id}/approve|reject` | FULLY_BUILT |
-| 23 | AI System Builder | `ModuleBuildRequest` + 4 routes | FULLY_BUILT — plan → approve → apply gate, dual control on high-risk |
-| 24 | 2,000 logical agents | `agent-network.ts` (40 × 50) | PARTIALLY_BUILT — aggregate only, no addressable roster endpoint/UI |
-| 25 | Agent protection policies | `PROTECTION_POLICIES` (13 rules) surfaced | FULLY_BUILT |
-| 26 | Security center | `/security`, `/security/logins`, `/security/sessions`, `/security/revoke-session` | FULLY_BUILT |
+| 17 | RBAC APIs (8) | `/roles`, `/roles/{id}`, `/permissions`, `/permission-groups`, `/users/{id}/roles`, `/users/{id}/permissions`, `/permissions/temporary`, `/permissions/rollback` | FULLY_BUILT — but **portability defect** in 5 grant writes (`skipDuplicates`) |
+| 18 | Permission groups (24) | catalogue + panel | FULLY_BUILT |
+| 19 | Branch control | `/branches*` | FULLY_BUILT (honest empties) |
+| 20 | Country control | `/countries*` | FULLY_BUILT |
+| 21 | Global report center | `reports.ts` (24 defs) + 3 routes | FULLY_BUILT |
+| 22 | AI jobs / approvals | `/ai/jobs*` | FULLY_BUILT |
+| 23 | AI System Builder | `ModuleBuildRequest` + 4 routes | FULLY_BUILT (plan → approve → apply gate) |
+| 24 | 2000 logical agents | `agent-network.ts` | PARTIALLY_BUILT — aggregate only, **and the seed silently wrote zero rows** |
+| 25 | Agent protection policies (13) | surfaced | FULLY_BUILT |
+| 26 | Security center | `/security*` | FULLY_BUILT |
 | 27 | Audit log viewer | `/audit-logs` | FULLY_BUILT |
-| 28 | Global search | `/global-search` | PARTIALLY_BUILT — denied reads under Acting-As; role label hardcoded |
+| 28 | Global search | `/global-search` | PARTIALLY_BUILT — denied acting reads, hardcoded role |
 | 29 | System settings | `/settings`, `/settings/maintenance-mode` | FULLY_BUILT |
-| 30 | Emergency lockdown route | `/api/admin/security/lockdown` | **UI_ONLY** — module-level variable (lost on restart, per-process) and **enforcement missing**: nothing read it, so activating lockdown blocked nobody |
-| 31 | Dashboard launcher | canonical section | PARTIALLY_BUILT — no Act-As button, no per-role counts |
-| 32 | Quick actions | canonical `QUICK_ACTIONS` | PARTIALLY_BUILT — 8 of 12 specified actions |
-| 33 | Employee profile / dashboard-access | `/employees/{id}`, `/employees/{id}/dashboard-access`, `/activity` | API FULLY_BUILT, UI missing |
+| 30 | Emergency lockdown route | `/api/admin/security/lockdown` | **UI_ONLY** — module variable, **no enforcement anywhere** |
+| 31 | Dashboard launcher | canonical section | PARTIALLY_BUILT — no Act-As, no counts |
+| 32 | Quick actions | `QUICK_ACTIONS` | PARTIALLY_BUILT — 8 of 12 |
+| 33 | Employee profile/access APIs | `/employees/{id}`, `/dashboard-access`, `/activity` | API FULLY_BUILT, UI missing |
 | 34 | Approval center | `/approvals` + decisions | FULLY_BUILT |
-| 35 | Database models | `prisma/schema.prisma` (618 models) | FULLY_BUILT — PermissionGroup, PermissionGroupGrant, SystemSetting, UserPermissionOverride, Report, ModuleBuildRequest added previously; Branch→`Office`, Partner→`PartnerProfile`, Message→`CommunicationMessage`, AiJob→`AiTask`, AiApproval→`ApprovalQueueItem`, SecurityLog→`EmployeeSecurityEvent`, DashboardConfig→`SystemSetting` (deliberate reuse, no duplicates) |
-| 36 | Security-test suite | `security-tests.ts` | PARTIALLY_BUILT — 30 source-level checks, not executable |
-| 37 | Mobile/tablet layout | canonical dashboard | FULLY_BUILT (1/2/4-column grids, tables→cards) |
-| 38 | `/admin/tasks`, `/admin/webhooks`, etc. | other admin pages | out of scope, untouched |
+| 35 | Database models | `prisma/schema.prisma` (618 models) | FULLY_BUILT — deliberate model reuse, no duplicates |
+| 36 | Security-test suite | `security-tests.ts` | PARTIALLY_BUILT — 30 source checks, not executable |
+| 37 | Mobile/tablet layout | canonical dashboard | FULLY_BUILT |
+| 38 | Other `/admin/*` pages | — | untouched, out of scope |
 
 ---
 
-## SECTION B — Reused components (not rebuilt)
+## SECTION B — Reused, not rebuilt
 
-* `SuperAdminOperatingDashboard.tsx` + `SuperAdminExtendedPanels.tsx` + `primitives.tsx` — the canonical surface; **reused everywhere**, no second dashboard written.
-* `src/lib/super-admin/{access,metrics,agent-network,permission-groups,reports,security-tests,types,http}.ts` — reused; extended, not forked.
-* All 61 `/api/super-admin/*` routes — reused unchanged except the 5 listed in Section O.
-* `CrmAuditLogsPage`, `CrmStudentsPage`, `CrmPartnersPage` — kept as-is (real API-backed).
-* `MasterSuperAdminDashboard.tsx`, `EnhancedSuperAdminControlCenter.tsx`, `AccessControlCenterPage.tsx`, `CrmPermissionsPage.tsx`, `CrmReportsPage.tsx`, `CrmSettingsPage.tsx` — **files kept** (no deletions); the first four are no longer routed to because they duplicated or bypassed the canonical APIs.
-* Existing DB models — no duplicate model created. `system_settings` was reused to persist the lockdown flag rather than adding a table.
+`SuperAdminOperatingDashboard.tsx` · `SuperAdminExtendedPanels.tsx` · `primitives.tsx` · `src/lib/super-admin/{access,metrics,agent-network,permission-groups,reports,security-tests,types,http}.ts` · all 57 `/api/super-admin/*` routes (5 changed) · `CrmAuditLogsPage`, `CrmStudentsPage`, `CrmPartnersPage` (kept as-is) · existing DB models (`system_settings` reused to persist lockdown — no new table).
+
+Files kept but no longer routed to (they duplicated or bypassed the canonical APIs): `MasterSuperAdminDashboard.tsx`, `EnhancedSuperAdminControlCenter.tsx`, `AccessControlCenterPage.tsx`, `CrmPermissionsPage.tsx`, `CrmReportsPage.tsx`, `CrmSettingsPage.tsx`.
 
 ---
 
-## SECTION C — Missing Super Admin features added this turn
+## SECTION C — Missing features added
 
-1. **Real Role & Permission Matrix UI** (`RolePermissionMatrix.tsx`, 5 tabs: Matrix · Roles · Groups · Temporary · Rollback) wired to 8 existing APIs. Replaces the hardcoded grid at `/admin/role-permissions` and `/admin/permission-matrix`.
-2. **Real Global Report Center at `/admin/reports`** (canonical dashboard, focus `reports`) — replaces the fabricated report cards.
-3. **Real System Settings at `/admin/settings`** — replaces the settings page that had no API at all.
-4. **2000-agent addressable registry**: new `getAgentRoster()` + `GET /api/super-admin/ai/agents/registry` + `AiAgentRegistry.tsx` (department filter, search, pagination, persisted-vs-logical status). Mounted at `/admin/ai-command-center` as a new tab and available to any surface.
-5. **Acting-As fixed on the web-app (NextAuth) authentication path** — shared resolver `src/lib/acting-as.ts`, used by both auth paths; start/stop now bind the session to the actor’s portal identity.
-6. **Acting-As deep-link**: “Open dashboard” and the launcher’s new **Act as** button start the session and navigate to the *employee’s* dashboard (`/counselor/dashboard`, `/crm/marketing`, `/crm/visa-interviews`, `/crm/applications`, …) instead of reloading the Super Admin page.
-7. **Employee profile & access drawer**: roles, effective permissions (role grants ∪ ALLOW − DENY), dashboard access, open tasks, recent activity — from `/employees/{id}`, `/users/{id}/roles`, `/users/{id}/permissions`, `/employees/{id}/dashboard-access`, `/employees/{id}/activity`.
-8. **Dashboard launcher upgraded** per spec: per-role active-employee count, open-task count, launchable count, **Open · Act as · Permissions**.
-9. **Quick actions completed**: Start Acting-As Mode, Create AI Build Request, Trigger Data Scan, Emergency Lockdown, System Settings, Add Partner (12 + 2 action buttons).
-10. **Emergency lockdown made real**: durable state (`src/lib/emergency-lockdown.ts` → `system_settings`, 5 s cache, fail-open), enforced in `withAuth` for every non-Super-Admin API call, reason required, non-acting Super Admin only, cross-origin refused, audited, always reversible. Lockdown key excluded from the generic settings API so it cannot be flipped without its audit trail.
-11. **Search works under Acting-As** (`requireSuperAdminOrActing` + `actorLabel`), previously denied.
-12. **Executable security-test runner** `scripts/super-admin/run-security-tests.ts` (+ `npm run security:super-admin`): 7 guard tests against the real authority functions, 36 source checks, and optional live HTTP probes.
-13. **Dev fixture** `scripts/dev-sqlite/seed-super-admin-proof.ts` so the above can be re-proven on a sandbox database.
+1. **Real Role & Permission Matrix** (`RolePermissionMatrix.tsx`) — 5 tabs (Matrix · Roles · Groups · Temporary · Rollback) over 8 RBAC APIs.
+2. **Real Global Report Center** at `/admin/reports` (24 definitions, generate + audited download).
+3. **Real System Settings** at `/admin/settings` (the old page had no API).
+4. **2000-agent registry**: `getAgentRoster()` + `GET /api/super-admin/ai/agents/registry` + `AiAgentRegistry.tsx`; mounted as a tab on `/admin/ai-command-center`.
+5. **Acting-As fixed on the NextAuth path** via shared `src/lib/acting-as.ts`; start/stop bind the actor’s portal identity.
+6. **Acting-As deep link**: “Open dashboard”/“Act as” opens the *employee’s* dashboard (`/counselor/dashboard`, `/crm/marketing`, `/crm/visa-interviews`, …) — all targets verified to exist.
+7. **Employee profile/access drawer** (roles, effective permissions, dashboard access, open tasks, recent actions, sessions).
+8. **Launcher upgraded**: per-role counts + Open · Act as · Permissions.
+9. **Quick actions completed** to the full 12-set.
+10. **Emergency lockdown made real** (durable, enforced, audited, reversible, excluded from the generic settings API).
+11. **Global search** works under Acting-As with the real actor label.
+12. **Executable security runner** (`npm run security:super-admin`) — 45 static/guard checks + 9 live HTTP probes.
+13. **Reproducible dev proof kit**: `scripts/dev-sqlite/seed-super-admin-proof.ts` (now also mirrors `users` rows), `scripts/dev-sqlite/mint-dev-jwt.mjs`, and a documented recipe in `docs/DEV-SQLITE-SANDBOX.md`.
+
+### Round-2 fixes (this session, after the first report)
+
+| # | Defect | Impact | Fix |
+|---|---|---|---|
+| 1 | `createMany({ skipDuplicates: true })` in 5 RBAC grant writes | the matrix save returned **503** on SQLite and, on any provider without the flag, would have written no grants while still writing the audit row | de-duplicate in code and insert plainly (rows are deleted immediately before, so it is equivalent) |
+| 2 | `AGENTS_PER_DEPARTMENT` was **not exported** | the seed imported `undefined` as its loop bound, so it “succeeded” while creating **0 of 2000 agents** | export the constant + assert `40 × 50 === 2000` before writing |
+| 3 | Profile drawer read `activity.logs` / `activity.tasks` | the activity API returns `actions` / `openTasks` / `sessions`, so the drawer always showed “No activity recorded” | align the drawer with the real response shape and surface sessions |
+| 4 | Seed scripts used `new PrismaClient()` | they could not run against the adapter-based SQLite client | both seeds now use the shared client factory (`src/lib/db.ts`) |
+| 5 | `DEFAULT_SETTINGS` was private to the settings route | the seed could not reuse the catalogue | exported |
+| 6 | Security suite had no way to assert an *absence* | could not pin the portability fix | added `forbiddenTokens` to the evaluator (SEC-SA-37) |
 
 ---
 
 ## SECTION D — Employee Control proof
 
-| Field / action (spec §6) | Implementation |
-|---|---|
-| Employee ID, name, email, role, department, branch, destination focus | `EmployeeControlRow` from `/api/super-admin/employees` |
-| Status (active/pending/suspended/…) | rendered as pill; suspend/reactivate via `PATCH /employees/{id}/status` |
-| Today activity, pending tasks, last login, active sessions, permissions summary, performance score | `actionsToday`, `openTasks`, `lastLoginAt`, `activeSessions`, `assignedRoles`, `performanceScore` |
-| View profile · roles · permissions · dashboard access · activity · tasks | Profile drawer (added) |
-| Open employee dashboard · Act as | Acting-As + deep link (added) |
-| Revoke sessions · force password change | `POST /employees/{id}/revoke-sessions`, `POST /employees/{id}/force-password-change` |
-| Audit log | `EMPLOYEE_DIRECTORY_VIEWED`, `EMPLOYEE_STATUS_CHANGED`, … |
+`GET /api/super-admin/employees` → **200**, four real employees:
 
-Runtime: `GET /api/super-admin/employees` → **200**, four real employees returned (counsellor, marketing manager, visa officer, super admin).
+```
+COUNSELOR          Nusrat Jahan    ALO-EMP-C-101  Counseling
+MARKETING_MANAGER  Rafiq Hasan     ALO-EMP-M-201  Marketing
+VISA_OFFICER       Tasnim Akter    ALO-EMP-V-301  Visa
+SUPER_ADMIN        Super Admin     ALO-EMP-SA-001 Executive
+```
+
+Row fields include `status`, `isOnline`, `lastLoginAt`, `activeSessions`, `openTasks`, `actionsToday`, `assignedRoles`, `actingAsEligible`, `performanceScore`.
+Actions: Open dashboard · Act as (both via the deep link), View profile/permissions/access/activity/tasks (drawer), Revoke sessions, Force password change, Suspend/Reactivate, Assign role/permission/branch/country, View audit log.
+`GET /api/super-admin/employees/{id}/activity` → **200** with `summary`, `actions`, `completedTasks`, `openTasks`, `sessions`.
 
 ---
 
-## SECTION E — Acting-As mode proof
+## SECTION E — Acting-As proof (NextAuth cookie path — the path that was broken)
 
-Executed against the dev server (`ALO_BASE_URL=http://localhost:3100`, NextAuth cookie path — the path that was broken):
-
-| Step | Call | Result |
+| Step | MARKETING_MANAGER | VISA_OFFICER |
 |---|---|---|
-| 1 | `POST /api/portal-auth/acting-as/start` (counsellor, reason) | **200**, session `cmvzaadmq0001psp7vj5omdto`, `effectiveRole: COUNSELOR` |
-| 2 | `GET /api/super-admin/acting-as/current` | **200**, `active: true`, `role: COUNSELOR`, `name: Nusrat Jahan`, `realActor: Super Admin` → **banner data** |
-| 3 | `GET /api/super-admin/employees` while acting | **200** (reads allowed) |
-| 4 | `POST /api/super-admin/permissions/temporary` while acting | **403** — “This operation is blocked while Acting-As mode is active…” |
-| 5 | `POST /api/portal-auth/acting-as/stop` | **200** — “session revoked; returning to the authenticated Super Admin” |
-| 6 | `GET /acting-as/current` after stop | **200**, `active: false` |
-| 7 | `GET /api/super-admin/audit-logs` | rows `ACTING_AS_START`, `EMPLOYEE_DIRECTORY_VIEWED` **actorRole: `SUPER_ADMIN acting_as COUNSELOR`**, `ACTING_AS_STOP` |
+| `POST /acting-as/start` | **200** — effective `MARKETING_MANAGER / Rafiq Hasan`, expiry +30 min | **200** — effective `VISA_OFFICER / Tasnim Akter` |
+| `GET /acting-as/current` | **200** `active:true` role+name correct | **200** `active:true` role+name correct |
+| `GET /employees` while acting | **200** (reads allowed) | **200** |
+| `POST /roles` while acting | **403** “This operation is blocked while Acting-As mode is active…” | **403** |
+| `POST /acting-as/stop` | **200** | **200** |
+| Audit rows | `SUPER_ADMIN acting_as MARKETING_MANAGER` (+ actingAsUserId) | `SUPER_ADMIN acting_as VISA_OFFICER` (+ actingAsUserId) |
 
-Audit fields captured per action: real actor id, effective user/role, action, resource, before/after where applicable, timestamp, reason (start), IP/user-agent on the session row.
-
----
-
-## SECTION F — Permission matrix proof
-
-* `GET /api/super-admin/permissions` → **200**, `{permissions: 60, roles: 5, grants: 60}`, 10 modules — the matrix is generated from `portal_role_permissions`, not a constant.
-* `POST /api/super-admin/permission-groups` (`assign`, ROLE=counsellor, group `student_management`) → **200** with grant id.
-* Source-verified controls (Section N): `requireSuperAdmin` on every RBAC mutation, `isSameOrigin`, written reason ≥ 8 chars, transactional audit, rollback from the before/after snapshot.
-* Cross-role bundles required by the spec (marketing → counsellor, visa → application team, counsellor → branch manager) are expressible three ways and all exist: assign a role (`PATCH /users/{id}/roles`), grant a permission group to a role or employee (`POST /permission-groups`), or a time-boxed grant (`POST /permissions/temporary`, ≤ 30 days).
-* **Sandbox caveat:** the matrix *save* (`PATCH /roles/{id}`) returned 503 when executed against the SQLite dev database because it uses `createMany({ skipDuplicates: true })`, which SQLite does not support. This is a dev-sandbox-only limitation — production is MySQL, where the same call is supported; the code path was not changed.
+COUNSELOR was proven the same way in round 1 (plus a 403 on `/permissions/temporary`).
+Audit capture per action: real actor id, effective user/role, action, resource, before/after (where applicable), IP/user-agent, timestamp, and the start reason.
 
 ---
 
-## SECTION G — Branch / country / report proof
+## SECTION F — Permission matrix + temporary permissions proof
+
+| Call | Result |
+|---|---|
+| `GET /permissions` (initial) | **200** — 60 permissions / 5 roles / 60 grants / 10 modules |
+| `PATCH /roles/{COUNSELOR}` (3 marketing permissions, written reason) | **200** — `beforeCount: 0, afterCount: 3` (previously **503**) |
+| `GET /permissions` (after) | **200** — grants **63** |
+| `GET /permissions/rollback` | **200** — `ROLE_UPDATED`, `hasSnapshot: true`, auditId returned |
+| `POST /permissions/rollback` | **200** — “Restored 0 permissions.”, audit `ROLE_UPDATED_ROLLED_BACK` |
+| `GET /permissions` (after rollback) | **200** — grants back to **60** |
+| `POST /permissions/temporary` (counsellor, marketing.campaign.view, 7 days) | **201** — window 2026-11-02 → 2026-11-09 |
+| `POST /permissions/temporary` (visa.case.view, 3 days) | **201**, aged into the past for the test |
+| `GET /permissions/temporary` | **200** — `visa.case.view effectiveNow: false`, `marketing.campaign.view effectiveNow: true` |
+
+Cross-role bundles are expressible three ways: role assignment (`PATCH /users/{id}/roles`), permission-group grant (`POST /permission-groups`, verified **200**), time-boxed grant (above).
+
+---
+
+## SECTION G — Branch / country / report / system proof
 
 | Endpoint | Result |
 |---|---|
-| `GET /api/super-admin/branches` | **200** — `offices: 0`, `employees: 4`, `branchLabelsInUse: ["Dhaka HQ"]`, explicit `unassigned` block |
-| `GET /api/super-admin/countries` | **200** — 0 countries with an explicit note that no destination records exist |
-| `GET /api/super-admin/approvals` | **200** — `{pending: 0, aiWaiting: 0, critical: 0}` |
-| `GET /api/super-admin/reports` | **200** — 24-definition catalogue |
-| `POST /api/super-admin/reports/generate` (`ceo_overview`) | **201** — `ALO-RPT-20261102-7E9D`, 7 rows |
-| `GET /api/super-admin/reports/{id}/download` | **200** — CSV bytes, `REPORT_DOWNLOADED` audit written first |
+| `/api/super-admin/branches` | **200** — 0 offices, 4 employees, `branchLabelsInUse:["Dhaka HQ"]`, explicit `unassigned` block |
+| `/api/super-admin/countries` | **200** — 0 destination rows + an explicit note |
+| `/api/super-admin/approvals` | **200** — `{pending:0, aiWaiting:0, critical:0}` |
+| `/api/super-admin/settings` | **200** — 10 default settings, sensitive values redacted |
+| `/api/super-admin/security` | **200** — `{failedLoginAttempts7d, activeSessions, unresolvedSecurityEvents, suspendedAccounts, rbacChanges7d}` |
+| `/api/super-admin/ai/jobs` | **200** — protected-action catalogue |
+| `/api/super-admin/reports` | **200** — 24-definition catalogue |
+| `POST /reports/generate` | **201** — `ALO-RPT-20261102-7E9D`, 7 rows |
+| `GET /reports/{id}/download` | **200** — CSV, `REPORT_DOWNLOADED` audited |
 
-Empty branch/country lists are **honest empties** (no `Office`/`Country` rows in the fixture database), not fabricated zeros: each response names what is missing.
+Empty branch/country lists are honest empties (no `Office`/`Country` rows in the fixture DB), never fabricated numbers.
 
 ---
 
-## SECTION H — AI Command Center proof
+## SECTION H — AI Command Center + System Builder proof
 
-* `GET /api/super-admin/ai/departments`, `/ai/jobs`, `/ai/agents` → 200.
-* `AI Job Queue & Protected Action Gate` panel lists the protected action catalogue (`delete_student_data`, `change_rbac`, `publish_website_content`, `bulk_whatsapp`, …).
-* `POST /api/super-admin/ai/system-builder/request` → **201**, `ALO-BLD-20261102-7291`, `riskLevel: high`, `approvalRequired: true`, deterministic rule-engine plan with `filesToChange`.
+* `POST /ai/system-builder/request` → **201** `ALO-BLD-20261102-7291`, `riskLevel: high`, `approvalRequired: true`, deterministic plan with `filesToChange`.
 * `POST …/apply` **before** approval → **400** “Request is PLAN_READY. A patch can only be applied after a Super Admin approval (status APPROVED).”
-* `PATCH …/approve` by the requester → **400** “A high-risk build request must be reviewed by a different Super Admin than the requester.” → dual control is real; a single-account sandbox therefore cannot complete the apply step (see Section Q).
+* `PATCH …/approve` by the requester → **400** “A high-risk build request must be reviewed by a different Super Admin than the requester.” (dual control)
+* Protected-action catalogue includes `delete_student_data`, `delete_employee_data`, `change_rbac`, `publish_website_content`, `bulk_whatsapp`, …
 
 ---
 
-## SECTION I — 2000 agent registry proof
+## SECTION I — 2000-agent network proof
 
 ```
-GET /api/super-admin/ai/agents/registry?page=1&pageSize=5
-200
-clusterName:        ALO 2000 Protected Self-Learning Agent Network
-totalLogicalAgents: 2000
-totalPersistedAgents: 0
-departments:        40
-first codes:        ALO-WEBSITE_BUILDER-001 … ALO-WEBSITE_BUILDER-010
+npx tsx prisma/seed-super-admin-agent-network.ts
+  agents:            2000 created, 0 updated (total in DB: 2000)
+  permission groups: 24 updated
+  system settings:   10 existing left untouched
+
+GET /api/super-admin/ai/agents/registry
+200  clusterName: ALO 2000 Protected Self-Learning Agent Network
+     totalLogicalAgents: 2000   totalPersistedAgents: 2000
+     departments: 40 × 50 persisted
+     sample: {code: ALO-WEBSITE_BUILDER-001, status: ACTIVE, persisted: true, protectionMode: protected}
 ```
 
-Every code is addressable and honest: with no `ai_agents` rows the status is `NOT_MATERIALISED`, not “active”. 13 protection policies are returned and rendered. Materialising the rows requires a live database (`npx tsx prisma/seed-super-admin-agent-network.ts`) — not done here (Section Q).
+This is the first time the network exists as rows: the shipped seed had always written **zero** agents because its loop bound imported as `undefined`.
 
 ---
 
-## SECTION J — Routes added / fixed
+## SECTION J — Routes (all rendered, 16/16)
 
-| Route | Before | After |
+| Route | Status | Content marker |
 |---|---|---|
-| `/admin/dashboard` | duplicate control centre | canonical dashboard |
-| `/admin/employees` | duplicate dashboard | canonical, focus `employees` |
-| `/admin/employee-control` | access-control packages page | canonical, focus `employees` |
-| `/admin/branch-control`, `/admin/branches` | duplicate dashboard | canonical, focus `branches` |
-| `/admin/country-control`, `/admin/destinations` | duplicate dashboard | canonical, focus `countries` |
-| `/admin/approvals` | duplicate dashboard | canonical, focus `approvals` |
-| `/admin/security` | duplicate dashboard | canonical, focus `security` |
-| `/admin/system-builder` | duplicate dashboard | canonical, focus `system-builder` |
-| `/admin/agent-center` | duplicate dashboard | canonical, focus `agents` |
-| `/admin/reports` | **UI-only fake cards** | canonical, focus `reports` (real report center) |
-| `/admin/settings` | **UI-only, no API** | canonical, focus `settings` |
-| `/admin/role-permissions` | **UI-only fake grid** | real matrix component |
-| `/admin/permission-matrix` | packaged/quota page | real matrix component |
-| `/admin/ai-command-center` | legacy AgentOS only | + “2000 protected agents” tab |
-| `/super-admin/dashboard`, `/crm/super-admin` | canonical | unchanged |
-| `/admin/audit-logs`, `/admin/students`, `/admin/partners` | working | unchanged |
+| `/super-admin/dashboard` | 200 (87 KB) | Operating Brain |
+| `/crm/super-admin` | 200 | Operating Brain |
+| `/admin/dashboard` | 200 | Operating Brain |
+| `/admin/employees` | 200 | Employee Control |
+| `/admin/employee-control` | 200 | Employee Control |
+| `/admin/role-permissions` | 200 (31 KB) | Permission Matrix |
+| `/admin/permission-matrix` | 200 | Permission Matrix |
+| `/admin/branch-control` · `/admin/branches` | 200 | Branch |
+| `/admin/country-control` · `/admin/destinations` | 200 | Country |
+| `/admin/approvals` | 200 | Approval |
+| `/admin/reports` | 200 | Global Report Center |
+| `/admin/security` | 200 | Security |
+| `/admin/system-builder` | 200 | Build |
+| `/admin/agent-center` | 200 | Agent |
+| `/admin/ai-command-center` | 200 (47 KB) | 2000 protected agents |
+| `/admin/audit-logs` | 200 (29 KB) | Audit (kept page) |
+| `/admin/settings` | 200 | System Settings |
 
-No route was deleted. Section anchors (`#employees`, `#branches`, `#countries`, `#approvals`, `#ai`, `#agents`, `#reports`, `#system-builder`, `#security`, `#search`, `#settings`, `#audit`) now exist so the focused aliases land on the right panel.
+No route was deleted. Section anchors (`#employees`, `#branches`, `#countries`, `#approvals`, `#ai`, `#agents`, `#reports`, `#system-builder`, `#security`, `#search`, `#settings`, `#audit`) drive the focused aliases.
+*Rendering verified under `next dev --turbopack`; the webpack dev server OOMs compiling these pages in a 3.9 GB sandbox.*
 
 ---
 
 ## SECTION K — APIs added / fixed
 
-**Added (1):** `GET /api/super-admin/ai/agents/registry` — SUPER_ADMIN-guarded, paginated, audited on filtered queries.
+**Added (1):** `GET /api/super-admin/ai/agents/registry`.
+**Fixed (11):** `auth-middleware.ts` (both paths) · `portal-auth/acting-as/start` · `portal-auth/acting-as/stop` · `admin/security/lockdown` · `super-admin/global-search` · `super-admin/settings` (lockdown key excluded) · `super-admin/roles` · `super-admin/roles/{id}` · `super-admin/users/{id}/roles` · `super-admin/permissions/rollback` (2 sites) — the last five for provider-portable grant writes.
 
-**Fixed (6):**
-| Route | Defect fixed |
-|---|---|
-| `src/lib/auth-middleware.ts` (both paths) | Acting-As ignored on NextAuth path → effective identity now switched, `actingAs*` populated |
-| `POST /api/portal-auth/acting-as/start` | session row written against `users.id` (FK is `portal_users.id`) → resolves actor portal identity by id then email |
-| `POST /api/portal-auth/acting-as/stop` | looked up the session by the wrong id → uses the resolved portal identity |
-| `POST /api/admin/security/lockdown` | in-memory flag, no enforcement, any authenticated user could read state → durable state, real Super Admin only, same-origin, reason ≥ 10 chars, audited, enforced |
-| `GET /api/super-admin/global-search` | denied under Acting-As; hardcoded role label → `requireSuperAdminOrActing` + `actorLabel(auth)` |
-| `PATCH /api/super-admin/settings` | could silently rewrite the lockdown flag → rejected with a message pointing at the lockdown endpoint |
-
-All 61 `/api/super-admin/*` routes were audited for `withAuth` + a SUPER_ADMIN guard + audit: 58 use the shared guard helpers; the 3 exceptions are deliberate re-exports (`acting-as/start|stop` → `/api/portal-auth/acting-as/*`) and the global-search route (now using the shared guard).
+Coverage: 57 route files; 54 use `withAuth` + a guard, 2 are documented re-exports, 1 uses `authenticateRequest` + `requireSuperAdminOrActing`.
 
 ---
 
-## SECTION L — Database models / fields added or fixed
+## SECTION L — Database models / fields
 
-**No new table was required.** `system_settings` (existing) now also stores `system.emergency_lockdown` (`valueType: json`, `category: security`). No column, no migration, `prisma/schema.prisma` unchanged; `npx prisma validate` → valid; generated client → **618 models**. The `permission_groups`, `permission_group_grants`, `user_permission_overrides`, `reports`, `module_build_requests` tables introduced in the earlier pass remain in use and were exercised at runtime.
+No new table, no schema change, no migration: `prisma/schema.prisma` untouched, `prisma validate` valid, generated client **618 models**. `system_settings` now also persists `system.emergency_lockdown`. Existing `permission_groups`, `permission_group_grants`, `user_permission_overrides`, `employee_temporary_permissions`, `reports`, `module_build_requests`, `ai_agents` were reused and exercised.
 
 ---
 
-## SECTION M — RBAC permissions added / fixed
+## SECTION M — RBAC
 
-* Effective permission rule is unchanged and documented server-side: `effective = role grants ∪ ALLOW − DENY` (DENY wins) — read from `portal_role_permissions` + `user_permission_overrides`.
-* The **authority guard** `isSuperAdmin()` was corrected: a validated Acting-As session now counts as Super Admin **for reads** (the session can only exist if the real actor is a Super Admin), while `requireSuperAdmin()` still refuses every acting context, so mutation rights are not widened.
-* 24 permission-group definitions remain available to assign to roles or individual employees, with expiry.
-* Temporary permissions remain capped at 30 days with server-side expiry evaluation.
+* Effective rule unchanged: `role grants ∪ ALLOW − DENY` (DENY wins), computed from `portal_role_permissions` + `user_permission_overrides`.
+* `isSuperAdmin()` now counts a validated Acting-As session for **reads**; `requireSuperAdmin()` still refuses every acting context, so mutation authority is not widened.
+* 24 permission groups assignable to roles or employees, with expiry; temporary grants capped at 30 days and evaluated server-side.
 
 ---
 
 ## SECTION N — Security negative tests
 
-`npm run security:super-admin` → **43/43 PASS**.
+`npm run security:super-admin` → **45/45**. With a live server (`ALO_BASE_URL` + `ALO_USER_COOKIE`) → **54/54** (adds HTTP-01…09: anonymous 401/403 on dashboard/employees/RBAC-write/registry, anonymous redirect on both Super Admin pages, authenticated 200s on dashboard/registry/matrix).
 
-Guard tests executed against the real functions:
-
-| ID | Test | Result |
-|---|---|---|
-| GT-01 | Counsellor cannot read Super Admin dashboard/employees | PASS (403) |
-| GT-02 | Marketing cannot change RBAC | PASS (403) |
-| GT-03 | Acting-As may read, may never mutate | PASS (read allowed, mutation 403) |
-| GT-04 | Acting-As audit label = `SUPER_ADMIN acting_as ROLE` | PASS |
-| GT-05 | Real Super Admin labelled `SUPER_ADMIN` | PASS |
-| GT-06 | Cross-origin mutation rejected, same-origin accepted | PASS |
-| GT-07 | Inconsistent actor/effective identity cannot mutate | PASS |
-
-Source checks SEC-SA-01…36: PASS (includes lockdown enforcement, durable lockdown state, registry guard, AI-apply gate, report-download audit).
-
-Live probes executed against the running dev server:
-
-| # | Test (spec §30) | Evidence | Result |
+| # | Live test | Evidence | Result |
 |---|---|---|---|
-| 1 | Non-Super-Admin cannot access Super Admin API | counsellor → `/api/super-admin/dashboard` **403** | PASS |
-| 2 | Admin without permission cannot access employee control | counsellor → `/api/employees` **403** (edge role allow-list) | PASS |
-| 3 | Counsellor cannot access Super Admin reports | proxy 403 before handler | PASS |
-| 4 | Marketing cannot change RBAC | `POST /permission-groups` **403** | PASS |
-| 5 | Visa officer cannot open HR salary data | not executed (no HR row) — source guard only | NOT RUN |
-| 6 | Acting-As creates audit log | `ACTING_AS_START` + `SUPER_ADMIN acting_as COUNSELOR` rows | PASS |
-| 7 | Acting-As shows banner | `/acting-as/current` `active:true` + role/name | PASS |
-| 8 | Acting-As can be stopped | stop 200, current `active:false` | PASS |
-| 9 | Permission change creates audit log | `ROLE_UPDATED` / `PERMISSION_GROUP_ASSIGNED` written (matrix save blocked only by SQLite) | PARTIAL |
-| 10 | Temporary permission expires correctly | expiry evaluated server-side (`temporaryPermissionIsEffective`); grant call blocked in sandbox by server restart | PARTIAL |
-| 11 | Document download creates audit log | `SEC-SA-14` source check (`DOC_DOWNLOAD`) | SOURCE-ONLY |
-| 12 | AI agent cannot publish without approval | apply before approval **400** | PASS |
-| 13 | AI agent cannot change RBAC without approval | `requireSuperAdmin` on RBAC routes; acting sessions refused | PASS |
-| 14 | Bulk export requires confirmation | `SETTINGS`/report export require `confirmSensitive`/reason; source check | SOURCE-ONLY |
-| 15 | Suspended employee cannot login | auth middleware revalidates `status`/`emailVerified` every request | SOURCE-ONLY |
-| 16 | Super Admin can revoke employee sessions | `POST /employees/{id}/revoke-sessions` guarded + audited | SOURCE-ONLY |
-| 17 | Sensitive data view creates audit log | `SECURITY_CENTER_VIEWED`, `EMPLOYEE_DIRECTORY_VIEWED` observed | PASS |
-| 18 | Global search opens sensitive records with audit log | `SUPER_ADMIN_GLOBAL_SEARCH` audit row | PASS |
-| 19 | AI system builder cannot apply high-risk patch without approval | **400** before approval; dual control on approve | PASS |
-| 20 | Emergency lockdown blocks normal users | counsellor 200 → **503 `EMERGENCY_LOCKDOWN`** → persists across restart → Super Admin 200 → lift → counsellor 200 | PASS |
+| 1 | Non-Super-Admin cannot access Super Admin API | counsellor → `/api/super-admin/dashboard` 403 | PASS |
+| 2 | Admin without permission cannot reach employee control | counsellor → `/api/employees` 403 (edge allow-list) | PASS |
+| 3 | Counsellor cannot reach Super Admin reports | proxy 403 | PASS |
+| 4 | Marketing cannot change RBAC | `POST /permission-groups` 403 | PASS |
+| 5 | Visa officer cannot open HR salary data | no payroll fixture — source guard only | NOT RUN |
+| 6 | Acting-As creates an audit log | `ACTING_AS_START/STOP`, `SUPER_ADMIN acting_as <ROLE>` | PASS |
+| 7 | Acting-As banner data | `/acting-as/current` `active:true` + role/name | PASS |
+| 8 | Acting-As can be stopped | stop 200, `active:false` | PASS |
+| 9 | Permission change creates an audit log | `ROLE_UPDATED` (before/after) + `ROLE_UPDATED_ROLLED_BACK` | PASS |
+| 10 | Temporary permission expires | aged grant `effectiveNow:false`, fresh `true` | PASS |
+| 11 | Document download audited | `SEC-SA-14` source check (`DOC_DOWNLOAD`) | SOURCE-ONLY |
+| 12 | AI cannot publish without approval | apply before approval 400 | PASS |
+| 13 | AI cannot change RBAC without approval | `requireSuperAdmin` on RBAC routes; acting refused | PASS |
+| 14 | Bulk export requires confirmation | `confirmSensitive`/reason guards; source check | SOURCE-ONLY |
+| 15 | Suspended employee cannot log in | `status`/`emailVerified` revalidated per request | SOURCE-ONLY |
+| 16 | Super Admin can revoke sessions | `POST /employees/{id}/revoke-sessions`, audited | SOURCE-ONLY |
+| 17 | Sensitive view creates an audit log | `EMPLOYEE_DIRECTORY_VIEWED`, `SECURITY_CENTER_VIEWED` | PASS |
+| 18 | Global search opens records with an audit log | `SUPER_ADMIN_GLOBAL_SEARCH` | PASS |
+| 19 | High-risk patch cannot be applied without approval | 400 before approval; dual control on approve | PASS |
+| 20 | Emergency lockdown blocks normal users | counsellor 200 → **503** `EMERGENCY_LOCKDOWN` → survives restart → Super Admin 200 → lift → 200 | PASS |
 
 ---
 
 ## SECTION O — Files changed
 
-**Added (7):**
-`src/lib/acting-as.ts` · `src/lib/emergency-lockdown.ts` · `src/components/admin/super-admin-operating/RolePermissionMatrix.tsx` · `src/components/admin/super-admin-operating/AiAgentRegistry.tsx` · `src/app/api/super-admin/ai/agents/registry/route.ts` · `scripts/super-admin/run-security-tests.ts` · `scripts/dev-sqlite/seed-super-admin-proof.ts` (+ this report)
-
-**Modified (28):**
-15 `/admin/*` page wrappers · `api/admin/security/lockdown/route.ts` · `api/portal-auth/acting-as/{start,stop}/route.ts` · `api/super-admin/{global-search,settings}/route.ts` · `components/admin/super-admin-operating/SuperAdminOperatingDashboard.tsx` · `lib/auth-middleware.ts` · `lib/super-admin/{access,agent-network,security-tests}.ts` · `src/app/admin/ai-command-center/page.tsx` · `tsconfig.super-admin-check.json` · `package.json`
-
-**Deleted:** none. `package.json` gained one script (`security:super-admin`).
+**Added (9):** `src/lib/acting-as.ts` · `src/lib/emergency-lockdown.ts` · `RolePermissionMatrix.tsx` · `AiAgentRegistry.tsx` · `api/super-admin/ai/agents/registry/route.ts` · `scripts/super-admin/run-security-tests.ts` · `scripts/dev-sqlite/seed-super-admin-proof.ts` · `scripts/dev-sqlite/mint-dev-jwt.mjs` · this report.
+**Modified (33):** 15 `/admin/*` wrappers · lockdown route · acting-as start/stop · global-search · settings · roles · roles/{id} · users/{id}/roles · permissions/rollback · `SuperAdminOperatingDashboard.tsx` · `auth-middleware.ts` · `super-admin/{access,agent-network,security-tests}.ts` · `ai-command-center` page · `prisma/seed-super-admin-agent-network.ts` · `docs/DEV-SQLITE-SANDBOX.md` · `tsconfig.super-admin-check.json` · `package.json`.
+**Deleted:** none.
 
 ---
 
@@ -307,40 +299,37 @@ Live probes executed against the running dev server:
 | Command | Result |
 |---|---|
 | `npm install` | ✅ 1,282 packages |
-| `npx prisma validate` | ✅ schema valid |
-| `npx prisma generate` | ✅ client generated |
+| `npx prisma validate` | ✅ valid |
+| `npx prisma generate` | ✅ generated |
 | `node scripts/verify-prisma-client.mjs` | ✅ 618 models |
-| `npx tsc -p tsconfig.super-admin-check.json --noEmit` | ✅ **0 errors** (107 files incl. every new/changed one) |
-| `npx eslint <all changed files>` | ✅ 0 errors, 0 warnings |
-| `npm run security:super-admin` | ✅ **43/43** |
-| Runtime API probes (dev server, SQLite) | ✅ dashboard, employees, permissions, registry, reports, branches, countries, approvals, settings, security, ai/jobs, system-builder, audit-logs all 200 |
-| Runtime acting-as sequence | ✅ 7/7 steps as designed |
-| Runtime lockdown sequence | ✅ 6/6 steps incl. durability across restart |
-| `npm run build` | ⚠️ **not proven** — `Next.js build worker exited … SIGKILL` (OOM). Prisma generate + client verification inside the build both succeeded first. Sandbox has 2 vCPU / 3.9 GB, no swap. |
-| Server-rendered page check | ⚠️ **not proven** — `next dev` OOMs while compiling the dashboard page routes (API routes compile fine). |
-| `npm run lint` (whole repo) | not run (memory); scoped lint clean |
+| `npx tsc -p tsconfig.super-admin-check.json --noEmit` | ✅ **0 errors** (107 files) |
+| `npx eslint <changed files>` | ✅ 0 errors |
+| `npm run security:super-admin` | ✅ **45/45** (54/54 with live probes) |
+| Runtime probe suite (dev server, SQLite) | ✅ 16/16 pages + all Super Admin APIs |
+| Acting-As × 3 roles | ✅ 3/3 full sequences |
+| Lockdown sequence | ✅ 6/6 incl. durability across restart |
+| `npm run build` (webpack) | ⚠️ **not proven** — `Next.js build worker … SIGKILL` (OOM) |
+| `next build --turbopack` | ⚠️ **not proven** — compiled 25+ min then `Killed` (OOM) at 2.8 GB heap |
 | `node --check backend/server.js` | N/A — no `backend/server.js` in this checkout |
-| **Full project `npm run typecheck`** | not run (heap); scoped project used |
+| Full `npm run typecheck` / `npm run lint` | not run (OOM); scoped project + scoped lint used |
 
-Environment note: Prisma engine binaries are not downloadable here (`binaries.prisma.sh` unreachable); engines from `imports/alo-education-full/node_modules/@prisma/engines` were used for validate/generate. Runtime proofs used the repository’s documented SQLite dev sandbox (`docs/DEV-SQLITE-SANDBOX.md`).
+Environment: Prisma engine downloads are blocked here; engines were taken from `imports/alo-education-full/node_modules/@prisma/engines`. Runtime proofs used the repository’s documented SQLite sandbox.
 
 ---
 
 ## SECTION Q — Remaining missing items (exact)
 
-1. **Production build is not proven.** `next build` is OOM-killed in this sandbox. It must be run in CI/a larger runner. Until then “build passes” cannot be claimed.
-2. **Server-rendered page output is not proven.** The 16 Super Admin/alias routes compile under `tsc`/`eslint` and their data APIs were exercised, but `next dev` cannot compile those page routes in 3.9 GB. Their rendering must be verified in CI or a browser.
-3. **`2000` agents are not materialised in any real database.** The roster is definitional + honest about persistence. Needs `npx tsx prisma/seed-super-admin-agent-network.ts` against MySQL.
-4. **High-risk AI build requests use dual control**, so a single Super Admin cannot approve their own request (this is a deliberate control, stronger than the brief). End-to-end approve→apply is therefore untested here.
-5. **Matrix save (`PATCH /roles/{id}`) fails on the SQLite sandbox** because of `createMany({ skipDuplicates: true })`. Production (MySQL) supports it; if SQLite parity is wanted, replace it with a per-row `upsert`.
-6. **Per-branch and per-country financial/conversion breakdowns remain structurally incomplete** — applications have no branch column and students have no office relation, so those figures are 0/null by design. Fixing this is a schema change with backfill, not a UI patch.
-7. **Spec §30 tests 5, 11, 14, 15, 16 are source-verified only** in this run (no HR/payroll rows, no document fixture, no second live session with a suspended account). They need a seeded staging database to execute.
-8. **`/admin/students` and `/admin/partners` still render the older CRM pages** rather than the canonical Super Admin student/partner control panels described in §14/§15. They are API-backed, but not restyled/unified.
-9. **Visa / marketing / counsellor “act as” flows** were proven for COUNSELOR. The same code path handles MARKETING_MANAGER, VISA_OFFICER, APPLICATION_TEAM, but each was not individually executed.
-10. **`alerts` / `active users` per launcher card** are derived from the employee register (counts + open tasks). The spec’s per-dashboard “alerts” and “status” are simplified to employee presence + task count.
-11. **No report export permission key per report** beyond the SUPER_ADMIN gate + reason + audit; a per-report permission matrix row is not enforced.
-12. **Notification bell, language switch and logout** are provided by the existing portal shell, not by the dashboard header itself; the header shows notification counts only.
-13. **Migrations for the previous pass** (`20261027120000_super_admin_operating_models`) are still not applied to a live database (`prisma migrate deploy` needs MySQL).
+1. **Production build is not proven.** `next build` OOM-killed with both webpack and Turbopack on a 3.9 GB / 2 vCPU box. Must be run in CI or a larger runner before “build passes” is claimed.
+2. **No live MySQL database was touched.** Migrations (`20261027120000_super_admin_operating_models`) and the 2000-agent seed still need `prisma migrate deploy` + a seed run against production/staging.
+3. **High-risk AI build approval is dual-control by design**, so a single Super Admin cannot approve their own build; the approve→apply leg was therefore not executed end-to-end.
+4. **Per-branch / per-country financial breakdowns remain structurally incomplete** — applications carry no branch column and students have no office relation. Closing this is a schema change with backfill, not a UI patch.
+5. **`/admin/students` and `/admin/partners` still render the older CRM pages** (API-backed, but not unified with the canonical Super Admin student/partner panels of the brief).
+6. **Report export is gated by SUPER_ADMIN + reason + audit, not by a per-report permission row.**
+7. **Spec §30 tests 5, 11, 14, 15, 16 are source-verified only** — no payroll, document or suspended-account fixtures exist to execute them.
+8. **Launcher “alerts/status” are derived** from employee presence + open tasks, not per-dashboard alert rules.
+9. **Notification bell, language switch and logout come from the portal shell**, not the dashboard header.
+10. **The 2000 agents exist only in the dev SQLite database**; the registry reports `NOT_MATERIALISED` honestly on any database where the seed has not run.
+11. **Header/route rendering was proven under `next dev --turbopack`**, not from a production bundle (see 1).
 
-### Honest one-line verdict
-The Super Admin *control surface* is real and now materially more correct — two fake admin panels were replaced with live ones, Acting-As actually works on the login path the product uses, and emergency lockdown actually locks. **The overall brief is NOT COMPLETE**, for exactly the reasons 1–13 above.
+### One-line verdict
+The Super Admin control surface is real, was exercised end-to-end three times over — including the two paths that were silently broken (Acting-As on the login path, and a “2000-agent” seed that wrote nothing) — but the brief **cannot be marked COMPLETE** while the production build is unprovable in this environment.

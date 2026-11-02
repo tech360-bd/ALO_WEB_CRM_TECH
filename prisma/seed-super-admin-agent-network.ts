@@ -17,12 +17,18 @@
  * This script does NOT create demo students, fake leads or sample dashboards.
  */
 
-import { PrismaClient } from '@prisma/client';
-import { AGENT_DEPARTMENTS, AGENTS_PER_DEPARTMENT, logicalAgentCode } from '../src/lib/super-admin/agent-network';
+import { db } from '../src/lib/db';
+import {
+  AGENT_DEPARTMENTS,
+  AGENTS_PER_DEPARTMENT,
+  TOTAL_LOGICAL_AGENTS,
+  logicalAgentCode,
+} from '../src/lib/super-admin/agent-network';
 import { PERMISSION_GROUP_CATALOG } from '../src/lib/super-admin/permission-groups';
 import { DEFAULT_SETTINGS } from '../src/app/api/super-admin/settings/route';
 
-const db = new PrismaClient();
+// Shared client factory so the same seed runs against MySQL in production and
+// against the documented SQLite dev sandbox (see src/lib/db.ts).
 
 const AGENT_ROLES = [
   'intake', 'classification', 'drafting', 'verification', 'routing',
@@ -122,6 +128,15 @@ async function seedSettings(): Promise<{ created: number; skipped: number }> {
 }
 
 async function main() {
+  // Guard against a silently empty roster: an unexported loop bound once made
+  // this seed "succeed" while writing zero agents.
+  const expected = AGENT_DEPARTMENTS.length * AGENTS_PER_DEPARTMENT;
+  if (expected !== 2000 || expected !== TOTAL_LOGICAL_AGENTS) {
+    throw new Error(
+      `Agent network definition is inconsistent: ${AGENT_DEPARTMENTS.length} departments x ${AGENTS_PER_DEPARTMENT} = ${expected}, expected 2000.`,
+    );
+  }
+
   const agents = await seedAgentNetwork();
   const groups = await seedPermissionGroups();
   const settings = await seedSettings();

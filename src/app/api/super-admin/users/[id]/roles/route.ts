@@ -123,13 +123,15 @@ async function handlePatch(request: Request, auth: AuthContext, context?: { para
 
     await db.$transaction(async (tx) => {
       await tx.portalUserRole.deleteMany({ where: { userId: id } });
+      // Rows were just deleted; de-duplicate and insert without
+      // `skipDuplicates`, which SQLite's createMany does not accept.
+      const uniqueRoleIds = [...new Set(targetRoles.map((role) => role.id))];
       await tx.portalUserRole.createMany({
-        data: targetRoles.map((role) => ({
+        data: uniqueRoleIds.map((roleId) => ({
           userId: id,
-          roleId: role.id,
+          roleId,
           assignedBy: auth.actorUserId,
         })),
-        skipDuplicates: true,
       });
       await writePortalAudit(tx, auth, 'USER_ROLES_CHANGED', 'PortalUser', id, {
         reason,

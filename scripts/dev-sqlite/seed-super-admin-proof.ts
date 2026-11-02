@@ -12,7 +12,7 @@
  * NEVER run against production: it requires a `file:` DATABASE_URL.
  */
 
-import { PrismaClient } from '@prisma/client';
+import { db } from '../../src/lib/db';
 
 const url = process.env.DATABASE_URL || '';
 if (!url.startsWith('file:')) {
@@ -20,10 +20,34 @@ if (!url.startsWith('file:')) {
   process.exit(1);
 }
 
-const db = new PrismaClient();
+// `db` is the shared client factory: it selects the SQLite driver adapter for a
+// `file:` URL and the plain MySQL client otherwise (see src/lib/db.ts).
 
 const MODULES = ['students', 'leads', 'applications', 'visa', 'finance', 'marketing', 'hr', 'reports', 'settings', 'rbac'];
 const ACTIONS = ['view', 'create', 'update', 'delete', 'approve', 'export'];
+
+
+/**
+ * The NextAuth cookie path authenticates against the legacy `users` table while
+ * the Super Admin APIs authorise against `portal_users`. Mirror every fixture
+ * identity into `users` with the SAME id so a single session works for both
+ * halves of the app (this is exactly what the runtime probes exercise).
+ */
+async function mirrorLegacyUser(person: { id: string; email: string; name: string; role: string }) {
+  await db.user.upsert({
+    where: { email: person.email },
+    update: { status: 'ACTIVE', emailVerified: true, role: person.role, name: person.name },
+    create: {
+      id: person.id,
+      email: person.email,
+      name: person.name,
+      role: person.role,
+      status: 'ACTIVE',
+      emailVerified: true,
+      passwordHash: '',
+    },
+  });
+}
 
 async function main() {
   const permissions: Array<{ id: string }> = [];
@@ -92,6 +116,7 @@ async function main() {
     update: {},
     create: { userId: superUser.id, roleId: superRole.id },
   });
+  await mirrorLegacyUser({ id: superUser.id, email: superUser.email, name: 'Super Admin', role: 'SUPER_ADMIN' });
 
   await db.employee.upsert({
     where: { userId: superUser.id },
@@ -135,6 +160,7 @@ async function main() {
         create: { userId: user.id, roleId },
       });
     }
+    await mirrorLegacyUser({ id: user.id, email: person.email, name: person.name, role: person.role });
     await db.employee.upsert({
       where: { userId: user.id },
       update: { status: 'active', role: person.role },

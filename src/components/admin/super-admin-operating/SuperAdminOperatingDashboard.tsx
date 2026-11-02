@@ -266,7 +266,14 @@ interface ProfilePayload {
   roles?: { user?: { roles?: Array<{ name: string; label: string }> } } & Record<string, unknown>;
   permissions?: { effectivePermissions?: string[]; counts?: Record<string, number> } & Record<string, unknown>;
   access?: { dashboardAccess?: { primaryRole?: string; launchableDashboards?: Array<{ key: string; label: string; matchesCurrentRole: boolean }>; navigationItemCount?: number } };
-  activity?: { logs?: Array<{ id: string; action: string; entityType?: string; createdAt: string }>; tasks?: Array<{ id: string; title: string; status: string; priority?: string }> };
+  // Shape produced by GET /api/super-admin/employees/{id}/activity.
+  activity?: {
+    summary?: { actionsToday?: number; openTasks?: number; tasksCompletedToday?: number; lastLoginAt?: string | null; isOnline?: boolean };
+    actions?: Array<{ id: string; action: string; entityType?: string | null; entityId?: string | null; at: string }>;
+    openTasks?: Array<{ id: string; title: string; status: string; priority?: string | null }>;
+    completedTasks?: Array<{ id: string; title: string; completedAt?: string | null }>;
+    sessions?: Array<{ id: string; device: string; ip?: string | null; at: string }>;
+  };
 }
 
 function ProfileModal({
@@ -281,8 +288,9 @@ function ProfileModal({
   const roles = payload.roles?.user?.roles || [];
   const effective = payload.permissions?.effectivePermissions || [];
   const dashboards = payload.access?.dashboardAccess?.launchableDashboards || [];
-  const activity = payload.activity?.logs || [];
-  const tasks = payload.activity?.tasks || [];
+  const activity = payload.activity?.actions || [];
+  const tasks = payload.activity?.openTasks || [];
+  const sessions = payload.activity?.sessions || [];
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4" role="dialog" aria-modal="true">
@@ -346,11 +354,16 @@ function ProfileModal({
                 {activity.slice(0, 8).map((log) => (
                   <li key={log.id} className="flex justify-between gap-2">
                     <span className="truncate">{log.action} <span className="text-[var(--alo-text-muted)]">{log.entityType || ''}</span></span>
-                    <span className="whitespace-nowrap text-[var(--alo-text-muted)]">{new Date(log.createdAt).toLocaleString()}</span>
+                    <span className="whitespace-nowrap text-[var(--alo-text-muted)]">{new Date(log.at).toLocaleString()}</span>
                   </li>
                 ))}
                 {activity.length === 0 ? <li className="text-[var(--alo-text-muted)]">No activity recorded.</li> : null}
               </ul>
+              {sessions.length > 0 ? (
+                <p className="mt-2 text-[11px] text-[var(--alo-text-muted)]">
+                  {sessions.length} active session{sessions.length === 1 ? '' : 's'}: {sessions.slice(0, 3).map((row) => row.device).join(', ')}
+                </p>
+              ) : null}
             </div>
 
             <div className="md:col-span-2 flex flex-wrap gap-2">

@@ -127,14 +127,17 @@ async function handlePost(request: Request, auth: AuthContext) {
           where: { id: { in: permissionIds } },
           select: { id: true },
         });
+        // NOTE: `skipDuplicates` is not supported by every provider (SQLite's
+        // createMany rejects it). The role was just created, so the grant table
+        // holds no rows for it; a de-duplicated plain insert is equivalent.
+        const uniquePermissionIds = [...new Set(valid.map((permission) => permission.id))];
         await tx.portalRolePermission.createMany({
-          data: valid.map((permission) => ({
+          data: uniquePermissionIds.map((permissionId) => ({
             roleId: role.id,
-            permissionId: permission.id,
+            permissionId,
             granted: true,
             assignedBy: auth.actorUserId,
           })),
-          skipDuplicates: true,
         });
       }
 
