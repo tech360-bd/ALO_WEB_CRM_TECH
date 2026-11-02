@@ -34,6 +34,8 @@ export interface SecurityTest {
   file: string;
   /** Guard tokens, any one of which proves server-side enforcement. */
   requiredGuards: string[];
+  /** Tokens that must NOT appear in the file (e.g. provider-specific calls). */
+  forbiddenTokens?: string[];
   result: SecurityTestResult;
   evidence: string;
 }
@@ -44,6 +46,8 @@ interface Definition {
   expectation: string;
   file: string;
   requiredGuards: string[];
+  /** Tokens that must NOT appear in the file (provider-specific calls, etc.). */
+  forbiddenTokens?: string[];
 }
 
 const GUARD_TOKENS = [
@@ -312,6 +316,23 @@ const DEFINITIONS: Definition[] = [
     file: 'src/app/api/super-admin/reports/[id]/download/route.ts',
     requiredGuards: ['requireSuperAdminOrActing', 'REPORT_DOWNLOADED'],
   },
+  {
+    id: 'SEC-SA-37',
+    name: 'RBAC grant writes stay provider-portable and audit-complete',
+    expectation:
+      'Role/user grant writes de-duplicate in code instead of relying on createMany skipDuplicates, which silently fails on SQLite and would leave the audit row describing grants that were never written.',
+    file: 'src/app/api/super-admin/roles/[id]/route.ts',
+    requiredGuards: ['requireSuperAdmin', 'new Set(', 'ROLE_UPDATED'],
+    forbiddenTokens: ['skipDuplicates: true'],
+  },
+  {
+    id: 'SEC-SA-38',
+    name: 'The 2000-agent seed cannot silently write zero agents',
+    expectation:
+      'The seed asserts 40 departments x 50 agents = 2000 before writing, and the loop bounds are exported so an undefined bound cannot empty the roster.',
+    file: 'prisma/seed-super-admin-agent-network.ts',
+    requiredGuards: ['expected !== 2000', 'AGENTS_PER_DEPARTMENT'],
+  },
 ];
 
 /**
@@ -337,6 +358,15 @@ export function runSuperAdminSecurityChecks(root = process.cwd()): SecurityTest[
         ...definition,
         result: 'NOT_VERIFIED' as SecurityTestResult,
         evidence: `Could not read ${definition.file}.`,
+      };
+    }
+
+    const present = definition.forbiddenTokens?.filter((token) => source.includes(token)) ?? [];
+    if (present.length > 0) {
+      return {
+        ...definition,
+        result: 'FAIL' as SecurityTestResult,
+        evidence: `${definition.file} contains forbidden token(s): ${present.join(', ')}.`,
       };
     }
 

@@ -98,14 +98,16 @@ async function handlePost(request: Request, auth: AuthContext) {
             where: { id: { in: before } },
             select: { id: true },
           });
+          // Rows for this role were deleted just above; de-duplicate instead
+          // of relying on skipDuplicates (unsupported on SQLite).
+          const restoreIds = [...new Set(valid.map((permission) => permission.id))];
           await tx.portalRolePermission.createMany({
-            data: valid.map((permission) => ({
+            data: restoreIds.map((permissionId) => ({
               roleId: entry.entityId,
-              permissionId: permission.id,
+              permissionId,
               granted: true,
               assignedBy: auth.actorUserId,
             })),
-            skipDuplicates: true,
           });
         }
         await writePortalAudit(tx, auth, 'ROLE_UPDATED_ROLLED_BACK', 'PortalRole', entry.entityId, {
@@ -132,9 +134,13 @@ async function handlePost(request: Request, auth: AuthContext) {
           include: { role: { select: { name: true } } },
         });
         await tx.portalUserRole.deleteMany({ where: { userId: entry.entityId } });
+        const restoreRoleIds = [...new Set(roles.map((role) => role.id))];
         await tx.portalUserRole.createMany({
-          data: roles.map((role) => ({ userId: entry.entityId, roleId: role.id, assignedBy: auth.actorUserId })),
-          skipDuplicates: true,
+          data: restoreRoleIds.map((roleId) => ({
+            userId: entry.entityId,
+            roleId,
+            assignedBy: auth.actorUserId,
+          })),
         });
         await writePortalAudit(tx, auth, 'USER_ROLES_ROLLED_BACK', 'PortalUser', entry.entityId, {
           reason,

@@ -46,7 +46,9 @@ interface SettingDefinition {
 }
 
 /** Shipped defaults for the settings the specification names. */
-const DEFAULT_SETTINGS: readonly SettingDefinition[] = [
+// Exported so the seed script can create the default rows without duplicating
+// the catalogue (prisma/seed-super-admin-agent-network.ts).
+export const DEFAULT_SETTINGS: readonly SettingDefinition[] = [
   { key: 'company.name', category: 'company', label: 'Company name', value: 'ALO Education', valueType: 'string' },
   { key: 'company.supportEmail', category: 'company', label: 'Support email', value: '', valueType: 'string' },
   { key: 'mock.freeRules.fullStudent', category: 'english_test', label: 'Free full mocks — ALO full student', value: '3', valueType: 'number' },
