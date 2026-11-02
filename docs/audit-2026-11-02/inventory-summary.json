@@ -1,0 +1,880 @@
+{
+  "generatedAt": "2026-11-02T08:35:47.998458Z",
+  "root": "/home/user/ALO_WEB_CRM_TECH",
+  "inspectedFiles": 9789,
+  "inspectedBytes": 1046468881,
+  "trackedFiles": 9784,
+  "untrackedFiles": 5,
+  "unreadable": [],
+  "excludedTrees": [
+    {
+      "path": "node_modules/",
+      "reason": "third-party dependency tree (not first-party ALO code)",
+      "files": 81425,
+      "bytes": 1471206779,
+      "lockfileVersion": 3
+    },
+    {
+      "path": "imports/alo-education-full/node_modules/",
+      "reason": "third-party dependency tree (not first-party ALO code)",
+      "files": 58758,
+      "bytes": 866684493,
+      "lockfileVersion": ""
+    }
+  ],
+  "excludedFilesTotal": 140183,
+  "excludedBytesTotal": 2337891272,
+  "byRole": {
+    "imported_snapshot": {
+      "files": 2435,
+      "bytes": 49180355
+    },
+    "nested_project_copy": {
+      "files": 1508,
+      "bytes": 385462501
+    },
+    "api_route": {
+      "files": 1100,
+      "bytes": 4743366
+    },
+    "dataset_json": {
+      "files": 740,
+      "bytes": 81081937
+    },
+    "documentation": {
+      "files": 628,
+      "bytes": 23241450
+    },
+    "ui_component": {
+      "files": 555,
+      "bytes": 10553977
+    },
+    "lib_module": {
+      "files": 554,
+      "bytes": 5672271
+    },
+    "page_route": {
+      "files": 484,
+      "bytes": 1720944
+    },
+    "text_report": {
+      "files": 410,
+      "bytes": 71663461
+    },
+    "test": {
+      "files": 363,
+      "bytes": 2276669
+    },
+    "dataset_csv": {
+      "files": 296,
+      "bytes": 371929621
+    },
+    "script": {
+      "files": 198,
+      "bytes": 4585727
+    },
+    "public_asset": {
+      "files": 150,
+      "bytes": 14507256
+    },
+    "binary_asset": {
+      "files": 120,
+      "bytes": 9691605
+    },
+    "other": {
+      "files": 53,
+      "bytes": 505059
+    },
+    "db_migration": {
+      "files": 48,
+      "bytes": 860517
+    },
+    "db_schema_seed": {
+      "files": 43,
+      "bytes": 2698416
+    },
+    "root_config": {
+      "files": 32,
+      "bytes": 157363
+    },
+    "other_code": {
+      "files": 29,
+      "bytes": 120133
+    },
+    "audit_artifact": {
+      "files": 16,
+      "bytes": 397376
+    },
+    "dataset_sql": {
+      "files": 11,
+      "bytes": 5310991
+    },
+    "app_other": {
+      "files": 11,
+      "bytes": 75985
+    },
+    "ci_config": {
+      "files": 5,
+      "bytes": 31901
+    }
+  },
+  "byArea": {
+    "src": {
+      "files": 2704,
+      "bytes": 22766543
+    },
+    "imports": {
+      "files": 2435,
+      "bytes": 49180355
+    },
+    "alo-education-web-crm-final": {
+      "files": 1518,
+      "bytes": 385503735
+    },
+    "storage": {
+      "files": 918,
+      "bytes": 88970
+    },
+    "docs": {
+      "files": 515,
+      "bytes": 180146504
+    },
+    "(root)": {
+      "files": 397,
+      "bytes": 354829511
+    },
+    "tests": {
+      "files": 353,
+      "bytes": 2235435
+    },
+    "scripts": {
+      "files": 198,
+      "bytes": 4585727
+    },
+    "AUDIT": {
+      "files": 164,
+      "bytes": 4481088
+    },
+    "public": {
+      "files": 150,
+      "bytes": 14507256
+    },
+    "deploy-build": {
+      "files": 110,
+      "bytes": 8506652
+    },
+    "prisma": {
+      "files": 91,
+      "bytes": 3558933
+    },
+    "data": {
+      "files": 58,
+      "bytes": 5708619
+    },
+    "backend": {
+      "files": 28,
+      "bytes": 87462
+    },
+    "reports": {
+      "files": 24,
+      "bytes": 80531
+    },
+    "documentation": {
+      "files": 18,
+      "bytes": 59121
+    },
+    "agent-ctx": {
+      "files": 17,
+      "bytes": 121516
+    },
+    "AUDIT-2026-09-09": {
+      "files": 11,
+      "bytes": 13049
+    },
+    "delivery-evidence-20260731-043211": {
+      "files": 11,
+      "bytes": 1229111
+    },
+    "mini-services": {
+      "files": 10,
+      "bytes": 24778
+    },
+    ".repair-backup": {
+      "files": 8,
+      "bytes": 925612
+    },
+    "deploy": {
+      "files": 8,
+      "bytes": 4920693
+    },
+    ".zscripts": {
+      "files": 7,
+      "bytes": 16996
+    },
+    ".github": {
+      "files": 5,
+      "bytes": 31901
+    },
+    "database": {
+      "files": 5,
+      "bytes": 200132
+    },
+    "evidence": {
+      "files": 5,
+      "bytes": 8051
+    },
+    "audit": {
+      "files": 3,
+      "bytes": 14538
+    },
+    "monitoring": {
+      "files": 3,
+      "bytes": 8574
+    },
+    "services": {
+      "files": 3,
+      "bytes": 37006
+    },
+    "_original_archives": {
+      "files": 2,
+      "bytes": 267
+    },
+    "deliverables": {
+      "files": 2,
+      "bytes": 124462
+    },
+    "examples": {
+      "files": 2,
+      "bytes": 9846
+    },
+    "external": {
+      "files": 2,
+      "bytes": 7879
+    },
+    "agents": {
+      "files": 1,
+      "bytes": 2442164
+    },
+    "fixtures": {
+      "files": 1,
+      "bytes": 2089
+    },
+    "public_html": {
+      "files": 1,
+      "bytes": 3730
+    },
+    "test-results": {
+      "files": 1,
+      "bytes": 45
+    }
+  },
+  "duplicateHashGroups": 1576,
+  "duplicateRedundantFiles": 3372,
+  "duplicateWastedBytes": 550651265,
+  "topDuplicateGroups": [
+    {
+      "sha256": "b1cdc3c471352c7fc70e4893b450e6e837a51fd353fde608161e592191e0ba1b",
+      "files": [
+        "ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json",
+        "alo-education-web-crm-final/ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json"
+      ],
+      "bytes": 51548315
+    },
+    {
+      "sha256": "a7978a89b4bd1d8479e140040adac28dae5aa8cf9bec6cef5e54798eae2abb63",
+      "files": [
+        "FULL_PROJECT_MASTER_REPORT.txt",
+        "alo-education-web-crm-final/FULL_PROJECT_MASTER_REPORT.txt"
+      ],
+      "bytes": 47322783
+    },
+    {
+      "sha256": "7f3b4575c0ef7038efeccb6dbb465d87f30fc08fae283763156b18cb96fa6426",
+      "files": [
+        "alo-education-web-crm-final/02_ALO_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/02_ALO_COURSE_MASTER.csv",
+        "docs/import-templates/package-verified/02_ALO_COURSE_MASTER.csv"
+      ],
+      "bytes": 21652154
+    },
+    {
+      "sha256": "f20f51c11e5627be3506acf0d1d96cc066347cad7084552e1c0189deff321557",
+      "files": [
+        "03_course_intakes_fees.csv",
+        "05_ALO_TUITION_FEES.csv",
+        "07_ALO_TUITION_FEES.csv",
+        "ALO_TUITION_FEES.csv",
+        "tuition_fees.csv"
+      ],
+      "bytes": 8762455
+    },
+    {
+      "sha256": "ba88020487686da6f728485afc3b5ffb00627e08cca580bf7216612ebc05adab",
+      "files": [
+        "06_ALO_APPLICATION_DEADLINES.csv",
+        "08_ALO_APPLICATION_DEADLINES.csv",
+        "ALO_APPLICATION_DEADLINES.csv",
+        "application_deadlines.csv"
+      ],
+      "bytes": 11584303
+    },
+    {
+      "sha256": "6588a8eb60924d433f4cc8777b0a74601bf8e18df468e57512c051aed0367af5",
+      "files": [
+        "04_ALO_UNIVERSITY_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/04_ALO_UNIVERSITY_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/04_ALO_UNIVERSITY_COURSE_MASTER.csv",
+        "docs/import-templates/package-verified/04_ALO_UNIVERSITY_COURSE_MASTER.csv"
+      ],
+      "bytes": 10417683
+    },
+    {
+      "sha256": "fe859551b9edffe2971d706e0846704281e2bb9c7465664268ad59bf36669331",
+      "files": [
+        "03_ALO_COURSE_INTAKES_2027.csv",
+        "alo-education-web-crm-final/03_ALO_COURSE_INTAKES_2027.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/03_ALO_COURSE_INTAKES_2027.csv",
+        "docs/import-templates/package-verified/03_ALO_COURSE_INTAKES_2027.csv"
+      ],
+      "bytes": 8940353
+    },
+    {
+      "sha256": "d68b958ac5622dad7ef348f84e66e2d404164d70ae959f6f7a9f5d37ee32f268",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/package/02_ALO_COURSE_MASTER.csv",
+        "docs/import-templates/package/02_ALO_COURSE_MASTER.csv"
+      ],
+      "bytes": 21124455
+    },
+    {
+      "sha256": "afdc526dda5eebdedda0c137c85ab3e1f60006c4d84d1cb94db12495b0956940",
+      "files": [
+        "11_ALO_SOURCE_PROVENANCE.csv",
+        "alo-education-web-crm-final/11_ALO_SOURCE_PROVENANCE.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/11_ALO_SOURCE_PROVENANCE.csv",
+        "docs/import-templates/package-verified/11_ALO_SOURCE_PROVENANCE.csv"
+      ],
+      "bytes": 4035761
+    },
+    {
+      "sha256": "88d6cfab8a2b2d496c8e2668e5930346a01933b97206f7e7616b7f495df25075",
+      "files": [
+        "COMPLETE_PROJECT_MANIFEST.txt",
+        "alo-education-web-crm-final/COMPLETE_PROJECT_MANIFEST.txt"
+      ],
+      "bytes": 11410969
+    },
+    {
+      "sha256": "1b5d5615dda60293f625bbfc357f951e0dc7fab8568d9f661e148d1e56ccd7d8",
+      "files": [
+        "FULL_PROJECT_AUDIT.txt",
+        "alo-education-web-crm-final/FULL_PROJECT_AUDIT.txt"
+      ],
+      "bytes": 11023268
+    },
+    {
+      "sha256": "a5914cc4d39d66058263bc6714ed1100c93b611a1fd67069a0df01d914720d0f",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/package/04_ALO_UNIVERSITY_COURSE_MASTER.csv",
+        "docs/import-templates/package/04_ALO_UNIVERSITY_COURSE_MASTER.csv"
+      ],
+      "bytes": 9471345
+    },
+    {
+      "sha256": "1850f4643879931cdf95094d58007a11b849ff1efe043c94d8dc730f6a9a2a84",
+      "files": [
+        "ALO_UNIVERSITY_COURSE_MASTER.json",
+        "alo-education-web-crm-final/ALO_UNIVERSITY_COURSE_MASTER.json",
+        "alo-education-web-crm-final/data/ALO_UNIVERSITY_COURSE_MASTER.json",
+        "alo-education-web-crm-final/docs/import-templates/package-real/ALO_UNIVERSITY_COURSE_MASTER.json",
+        "data/ALO_UNIVERSITY_COURSE_MASTER.json",
+        "docs/import-templates/package-real/ALO_UNIVERSITY_COURSE_MASTER.json"
+      ],
+      "bytes": 1878348
+    },
+    {
+      "sha256": "bff01fb3e6adb9717d8b515bf8a254e31dd7316e16801406660d6cbe49e4c865",
+      "files": [
+        "alo-education-web-crm-final/05_ALO_COURSE_REQUIREMENTS.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/05_ALO_COURSE_REQUIREMENTS.csv",
+        "docs/import-templates/package-verified/05_ALO_COURSE_REQUIREMENTS.csv"
+      ],
+      "bytes": 4183615
+    },
+    {
+      "sha256": "cdefcae155ab5f913dc47948d5413b29842e9816d044d72b07bb6e44d2d8bf4d",
+      "files": [
+        "ALO_SYNTHETIC_DATA_REJECTED.csv",
+        "alo-education-web-crm-final/ALO_SYNTHETIC_DATA_REJECTED.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-real/ALO_SYNTHETIC_DATA_REJECTED.csv",
+        "docs/import-templates/package-real/ALO_SYNTHETIC_DATA_REJECTED.csv"
+      ],
+      "bytes": 2508678
+    },
+    {
+      "sha256": "1c8ab4952ea9f16f0073d58e96a5e4a04119b2e3d34e4996ec5d525d69465a37",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/package/03_ALO_COURSE_INTAKES_2027.csv",
+        "docs/import-templates/package/03_ALO_COURSE_INTAKES_2027.csv"
+      ],
+      "bytes": 7162812
+    },
+    {
+      "sha256": "a774fae47023a449ea45ddd82b91df6a4a215176343abc9ba979ca37d04f648a",
+      "files": [
+        "01_ALO_UNIVERSITY_MASTER.csv",
+        "ALO_UNIVERSITY_MASTER.csv",
+        "alo-education-web-crm-final/01_ALO_UNIVERSITY_MASTER.csv",
+        "alo-education-web-crm-final/ALO_UNIVERSITY_MASTER.csv",
+        "alo-education-web-crm-final/data/01_ALO_UNIVERSITY_MASTER.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-real/ALO_UNIVERSITY_MASTER.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/01_ALO_UNIVERSITY_MASTER.csv",
+        "alo-education-web-crm-final/docs/import-templates/uni-package/01_ALO_UNIVERSITY_MASTER.csv",
+        "data/01_ALO_UNIVERSITY_MASTER.csv",
+        "docs/import-templates/package-real/ALO_UNIVERSITY_MASTER.csv",
+        "docs/import-templates/package-verified/01_ALO_UNIVERSITY_MASTER.csv",
+        "docs/import-templates/uni-package/01_ALO_UNIVERSITY_MASTER.csv"
+      ],
+      "bytes": 625395
+    },
+    {
+      "sha256": "57d9beb168f4850323ade9dccee64823eb3433dc46b2087a3c59fe72295190c9",
+      "files": [
+        "01_ALO_COURSE_MASTER.csv",
+        "ALO_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/01_ALO_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/ALO_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/data/01_ALO_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/docs/import-templates/course-package/01_ALO_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-real/ALO_COURSE_MASTER.csv",
+        "data/01_ALO_COURSE_MASTER.csv",
+        "docs/import-templates/course-package/01_ALO_COURSE_MASTER.csv",
+        "docs/import-templates/package-real/ALO_COURSE_MASTER.csv"
+      ],
+      "bytes": 725763
+    },
+    {
+      "sha256": "a67474523605dd9722acfbc1667bc4477dec0ef2d6d7e09549c73ba3e59732cf",
+      "files": [
+        "12_ALO_VERIFICATION.csv",
+        "alo-education-web-crm-final/12_ALO_VERIFICATION.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/12_ALO_VERIFICATION.csv",
+        "docs/import-templates/package-verified/12_ALO_VERIFICATION.csv"
+      ],
+      "bytes": 2088659
+    },
+    {
+      "sha256": "8150bce5fc3ee45569fcb7d7e3b0eabaefe975288451cde6c7341dd8778a0c02",
+      "files": [
+        "03_ALO_COURSE_REQUIREMENTS.csv",
+        "04_course_requirements.csv",
+        "05_ALO_COURSE_REQUIREMENTS.csv",
+        "05_country_specific_requirements.csv",
+        "course_requirements.csv"
+      ],
+      "bytes": 1439625
+    },
+    {
+      "sha256": "5371c939bef6a588c25d7fee03f51215bf8779df4d2dcc55fc6b8da173912605",
+      "files": [
+        "alo-education-web-crm-final/course_intakes.csv",
+        "alo-education-web-crm-final/docs/import-templates/course_intakes.csv",
+        "docs/import-templates/course_intakes.csv"
+      ],
+      "bytes": 2733342
+    },
+    {
+      "sha256": "1981a5493eeac6e71504a98717bcf9e5755491f50ec32061d5fc37a062e07f4c",
+      "files": [
+        "ALO_DATA_INTEGRITY_AUDIT.csv",
+        "alo-education-web-crm-final/ALO_DATA_INTEGRITY_AUDIT.csv"
+      ],
+      "bytes": 5200256
+    },
+    {
+      "sha256": "b406fa3861f5b7fbb6957524f2f0f8113aa2980aaec4facda4b9b2c90fe9e147",
+      "files": [
+        "alo-education-web-crm-final/08_ALO_APPLICATION_DEADLINES.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/08_ALO_APPLICATION_DEADLINES.csv",
+        "docs/import-templates/package-verified/08_ALO_APPLICATION_DEADLINES.csv"
+      ],
+      "bytes": 2575898
+    },
+    {
+      "sha256": "0794c8d743b762efbcbd7b9f73b4cfa2d43c93d6d1cd0fd33e51b79faf16c14e",
+      "files": [
+        "06_ALO_MISSING_UNIVERSITY_INFO.csv",
+        "17_ALO_MISSING_UNIVERSITY_INFO.csv",
+        "ALO_MISSING_UNIVERSITY_INFO.csv",
+        "alo-education-web-crm-final/06_ALO_MISSING_UNIVERSITY_INFO.csv",
+        "alo-education-web-crm-final/17_ALO_MISSING_UNIVERSITY_INFO.csv",
+        "alo-education-web-crm-final/ALO_MISSING_UNIVERSITY_INFO.csv",
+        "alo-education-web-crm-final/data/06_ALO_MISSING_UNIVERSITY_INFO.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-real/ALO_MISSING_UNIVERSITY_INFO.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/17_ALO_MISSING_UNIVERSITY_INFO.csv",
+        "alo-education-web-crm-final/docs/import-templates/uni-package/06_ALO_MISSING_UNIVERSITY_INFO.csv",
+        "data/06_ALO_MISSING_UNIVERSITY_INFO.csv",
+        "docs/import-templates/package-real/ALO_MISSING_UNIVERSITY_INFO.csv",
+        "docs/import-templates/package-verified/17_ALO_MISSING_UNIVERSITY_INFO.csv",
+        "docs/import-templates/uni-package/06_ALO_MISSING_UNIVERSITY_INFO.csv"
+      ],
+      "bytes": 393817
+    },
+    {
+      "sha256": "f739203d85d4d86be5102c6b3e648dd0ed46e5bda84f9bd2465beee90a91b620",
+      "files": [
+        "alo-education-web-crm-final/course_documents.csv",
+        "alo-education-web-crm-final/docs/import-templates/course_documents.csv",
+        "course_documents.csv",
+        "docs/import-templates/course_documents.csv"
+      ],
+      "bytes": 1638068
+    },
+    {
+      "sha256": "7693fcf897b2deba73cb0839f3c8ce2d707404b42f2d44e0b76ac2a96c9a123d",
+      "files": [
+        "alo-education-web-crm-final/deploy/alo_education_production.sql",
+        "deploy/alo_education_production.sql"
+      ],
+      "bytes": 4904885
+    },
+    {
+      "sha256": "ff042aa2047646c4e788a85024fea7aa9fac5de6374033dbf8abb01978b7358c",
+      "files": [
+        "public/icons/icon-128x128.png",
+        "public/icons/icon-144x144.png",
+        "public/icons/icon-152x152.png",
+        "public/icons/icon-192x192.png",
+        "public/icons/icon-384x384.png",
+        "public/icons/icon-512x512.png",
+        "public/icons/icon-72x72.png",
+        "public/icons/icon-96x96.png"
+      ],
+      "bytes": 688266
+    },
+    {
+      "sha256": "40c33eb1ca8b6d4af98a7f026230de642bcaa790a0f00944fdd8fb67e022af47",
+      "files": [
+        "ALO_2027_INTAKE_VERIFICATION.csv",
+        "alo-education-web-crm-final/ALO_2027_INTAKE_VERIFICATION.csv"
+      ],
+      "bytes": 4812090
+    },
+    {
+      "sha256": "2beb7820f52cefb3fb5f2fdd00ddcbe460b3b9ebf0cb14f8ff341dedc8e2d509",
+      "files": [
+        "alo-education-web-crm-final/06_ALO_ENGLISH_REQUIREMENTS.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/06_ALO_ENGLISH_REQUIREMENTS.csv",
+        "docs/import-templates/package-verified/06_ALO_ENGLISH_REQUIREMENTS.csv"
+      ],
+      "bytes": 2297358
+    },
+    {
+      "sha256": "efca13bd2e7eea538a4a2cd647000771f2bfd178e66674a63e700865fb1c8a26",
+      "files": [
+        "alo-education-web-crm-final/07_ALO_TUITION_FEES.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-verified/07_ALO_TUITION_FEES.csv",
+        "docs/import-templates/package-verified/07_ALO_TUITION_FEES.csv"
+      ],
+      "bytes": 2271213
+    },
+    {
+      "sha256": "0f1d3f46693cf0720a4e8da86706df3ed00132f70d84398870ba0391ead8e95a",
+      "files": [
+        "ALO_MASTER_COURSE_DATABASE.csv",
+        "alo-education-web-crm-final/ALO_MASTER_COURSE_DATABASE.csv"
+      ],
+      "bytes": 4326670
+    },
+    {
+      "sha256": "a24208b93f695a50fa271bbffeb14ec53ea0f8a8d5d460add0fcb1b5e794889b",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/package/11_ALO_SOURCE_PROVENANCE.csv",
+        "docs/import-templates/package/11_ALO_SOURCE_PROVENANCE.csv"
+      ],
+      "bytes": 4131721
+    },
+    {
+      "sha256": "19e9fefd5a721aebdbca4e84c81956ff834fd911fe212eec50fc866aa654dec3",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/package/05_ALO_COURSE_REQUIREMENTS.csv",
+        "docs/import-templates/package/05_ALO_COURSE_REQUIREMENTS.csv"
+      ],
+      "bytes": 4048273
+    },
+    {
+      "sha256": "6e2eb4c7a8154a3fa2fb95cf300d8a67bdd57f8945c6a94e5b7e9a608d2a2009",
+      "files": [
+        "04_ALO_ENGLISH_REQUIREMENTS.csv",
+        "06_ALO_ENGLISH_REQUIREMENTS.csv",
+        "ALO_ENGLISH_REQUIREMENTS.csv",
+        "english_requirements.csv"
+      ],
+      "bytes": 986081
+    },
+    {
+      "sha256": "8b3a201b7cd8cc0d40bb63e562e2b1383afe4f141a6429a73e215fcfe2ea3b6c",
+      "files": [
+        "ALO_URL_VERIFICATION_REPORT.csv",
+        "alo-education-web-crm-final/ALO_URL_VERIFICATION_REPORT.csv"
+      ],
+      "bytes": 2926888
+    },
+    {
+      "sha256": "1ea4fbbdd77682a90ac4df6f37e15602c8fbc481fc3439714867b7abc4ad0a60",
+      "files": [
+        "alo-education-web-crm-final/course_sources.csv",
+        "alo-education-web-crm-final/docs/import-templates/course_sources.csv",
+        "course_sources.csv",
+        "docs/import-templates/course_sources.csv"
+      ],
+      "bytes": 920347
+    },
+    {
+      "sha256": "00c04963f61a34e4d2b51acaf7447bec2ce883dee84a1ce42511bc4c4a094d1f",
+      "files": [
+        "alo-education-web-crm-final/public/images/testimonials/Ummaye Mayesha Manna.PNG",
+        "deploy-build/public/images/testimonials/Ummaye Mayesha Manna.PNG",
+        "deploy-build/public/public/images/testimonials/Ummaye Mayesha Manna.PNG",
+        "imports/alo-education-full/public/images/team/Ummaye Mayesha Manna.PNG",
+        "imports/alo-education-source/public/images/team/Ummaye Mayesha Manna.PNG",
+        "public/images/testimonials/Ummaye Mayesha Manna.PNG"
+      ],
+      "bytes": 519261
+    },
+    {
+      "sha256": "629cd7e4504429a32430800da63ce08f71ed0704b5837448c0bbbfc5574e346a",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/package/08_ALO_APPLICATION_DEADLINES.csv",
+        "docs/import-templates/package/08_ALO_APPLICATION_DEADLINES.csv"
+      ],
+      "bytes": 2453502
+    },
+    {
+      "sha256": "b541a4fd79c4922774672cc642917c41a571899b6a34fabc172a93b9def339f0",
+      "files": [
+        "agents/agent_registry_1020.json",
+        "alo-education-web-crm-final/agents/agent_registry_1020.json"
+      ],
+      "bytes": 2442164
+    },
+    {
+      "sha256": "dc2915ac755d96fe9cc74cb23150e7cb2a73b51bac1da544d2eb6f06ff09fb6d",
+      "files": [
+        "02_ALO_COURSE_INTAKES_2027.csv",
+        "ALO_COURSE_INTAKES_2027.csv",
+        "alo-education-web-crm-final/02_ALO_COURSE_INTAKES_2027.csv",
+        "alo-education-web-crm-final/ALO_COURSE_INTAKES_2027.csv",
+        "alo-education-web-crm-final/data/02_ALO_COURSE_INTAKES_2027.csv",
+        "alo-education-web-crm-final/docs/import-templates/course-package/02_ALO_COURSE_INTAKES_2027.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-real/ALO_COURSE_INTAKES_2027.csv",
+        "data/02_ALO_COURSE_INTAKES_2027.csv",
+        "docs/import-templates/course-package/02_ALO_COURSE_INTAKES_2027.csv",
+        "docs/import-templates/package-real/ALO_COURSE_INTAKES_2027.csv"
+      ],
+      "bytes": 257437
+    },
+    {
+      "sha256": "68c13de937e813514e07c7ecd4f92b18bb9a9d02bb3ffecdc3c6e8f6f9ca572a",
+      "files": [
+        "alo-education-web-crm-final/application_deadlines.csv",
+        "alo-education-web-crm-final/docs/import-templates/application_deadlines.csv",
+        "docs/import-templates/application_deadlines.csv"
+      ],
+      "bytes": 1146475
+    },
+    {
+      "sha256": "9d5568fb1c09ff514e8ebec4122b3a9d5429d5529c36005dd86c7d498a4cda90",
+      "files": [
+        "alo-education-web-crm-final/course_requirements.csv",
+        "alo-education-web-crm-final/docs/import-templates/course_requirements.csv",
+        "docs/import-templates/course_requirements.csv"
+      ],
+      "bytes": 1121383
+    },
+    {
+      "sha256": "3298a2e1eddc3f2a58ef6a2fb755d7113136bec71e17eeaa6fe070bb33b2c44d",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/package/07_ALO_TUITION_FEES.csv",
+        "docs/import-templates/package/07_ALO_TUITION_FEES.csv"
+      ],
+      "bytes": 2156422
+    },
+    {
+      "sha256": "157d18dd5af46525818243e72b7ef2410555211211034bc4acfeea864f6e9cf9",
+      "files": [
+        "ALO_VERIFICATION_REPORT.csv",
+        "alo-education-web-crm-final/ALO_VERIFICATION_REPORT.csv"
+      ],
+      "bytes": 2155627
+    },
+    {
+      "sha256": "0979db9dd8b2145431b9b2949c81458690d070ef4e6e4a85f5dc30eb47182d70",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/package/12_ALO_VERIFICATION.csv",
+        "docs/import-templates/package/12_ALO_VERIFICATION.csv"
+      ],
+      "bytes": 2155551
+    },
+    {
+      "sha256": "713e0bd9c79fd5db7f7094cc45d0fe822eb436429b2fb110a088a93c87f985cd",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/package/06_ALO_ENGLISH_REQUIREMENTS.csv",
+        "docs/import-templates/package/06_ALO_ENGLISH_REQUIREMENTS.csv"
+      ],
+      "bytes": 2139112
+    },
+    {
+      "sha256": "218833d6eeaaa8af64ad1fb2594bbb12632e540425629918993a19f8250e5419",
+      "files": [
+        "06_scholarships.csv",
+        "07_ALO_SCHOLARSHIPS.csv",
+        "09_ALO_SCHOLARSHIPS.csv",
+        "ALO_SCHOLARSHIPS.csv",
+        "scholarships.csv"
+      ],
+      "bytes": 531864
+    },
+    {
+      "sha256": "46c4e6809fdfde75a7fd613529c7328347fcbfe2fe474e5ea4ada0bc21d238e5",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/tuition_fees.csv",
+        "alo-education-web-crm-final/tuition_fees.csv",
+        "docs/import-templates/tuition_fees.csv"
+      ],
+      "bytes": 1003904
+    },
+    {
+      "sha256": "bf99fa4d18d67d5030e5a3d56b36396bb2f7cc853e533e81a6f1b6a9268aeee7",
+      "files": [
+        "alo-education-web-crm-final/courses.csv",
+        "alo-education-web-crm-final/docs/import-templates/courses.csv",
+        "docs/import-templates/courses.csv"
+      ],
+      "bytes": 933299
+    },
+    {
+      "sha256": "6368922d1b3c607953f15ffb843e1dfc538137dc7ec6e8502aa6e3e823514048",
+      "files": [
+        "ALO_UNIVERSITY_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/ALO_UNIVERSITY_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/data/ALO_UNIVERSITY_COURSE_MASTER.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-real/ALO_UNIVERSITY_COURSE_MASTER.csv",
+        "data/ALO_UNIVERSITY_COURSE_MASTER.csv",
+        "docs/import-templates/package-real/ALO_UNIVERSITY_COURSE_MASTER.csv"
+      ],
+      "bytes": 336141
+    },
+    {
+      "sha256": "fb050b1e12d47514729089f3bc00b8dc0e8fe21bb22e6deb131487f1145ecb09",
+      "files": [
+        "alo-education-web-crm-final/public/images/brand/alo-edu-pad.jpg",
+        "deploy-build/public/images/brand/alo-edu-pad.jpg",
+        "deploy-build/public/public/images/brand/alo-edu-pad.jpg",
+        "public/images/brand/alo-edu-pad.jpg"
+      ],
+      "bytes": 544488
+    },
+    {
+      "sha256": "8b53a6507f1153b9f75ada2fd898fa55395ba454d4d38c7fe77c863d926980cc",
+      "files": [
+        "alo-education-web-crm-final/scripts/ref_home_full.png",
+        "scripts/ref_home_full.png"
+      ],
+      "bytes": 1503608
+    },
+    {
+      "sha256": "51de3a02125de1c95feee08171887362f12692655ec0a80ec561fec7cbf2b27b",
+      "files": [
+        "alo-education-web-crm-final/docs/import-templates/english_requirements.csv",
+        "alo-education-web-crm-final/english_requirements.csv",
+        "docs/import-templates/english_requirements.csv"
+      ],
+      "bytes": 648157
+    },
+    {
+      "sha256": "ac9355ce78378e87327298f1ba93b7264a781c273f8caec8910957e502c712fd",
+      "files": [
+        "08_source_evidence.csv",
+        "alo-education-web-crm-final/08_source_evidence.csv",
+        "alo-education-web-crm-final/docs/import-templates/08_source_evidence.csv",
+        "docs/import-templates/08_source_evidence.csv"
+      ],
+      "bytes": 425781
+    },
+    {
+      "sha256": "0dd0f7196dee0d90ec148654fdacb974ba377f6847103a17c4a01e4168ce3980",
+      "files": [
+        "alo-education-web-crm-final/03_course_intakes_fees.csv",
+        "alo-education-web-crm-final/docs/import-templates/03_course_intakes_fees.csv",
+        "docs/import-templates/03_course_intakes_fees.csv"
+      ],
+      "bytes": 552906
+    },
+    {
+      "sha256": "a09879783283069b3709609cc2122a7d188e59b8230b1d0024415ceab70e64dc",
+      "files": [
+        "08_ALO_COURSE_SOURCES.csv",
+        "ALO_SOURCE_PROVENANCE.csv",
+        "alo-education-web-crm-final/08_ALO_COURSE_SOURCES.csv",
+        "alo-education-web-crm-final/ALO_SOURCE_PROVENANCE.csv",
+        "alo-education-web-crm-final/data/08_ALO_COURSE_SOURCES.csv",
+        "alo-education-web-crm-final/docs/import-templates/course-package/08_ALO_COURSE_SOURCES.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-real/ALO_SOURCE_PROVENANCE.csv",
+        "data/08_ALO_COURSE_SOURCES.csv",
+        "docs/import-templates/course-package/08_ALO_COURSE_SOURCES.csv",
+        "docs/import-templates/package-real/ALO_SOURCE_PROVENANCE.csv"
+      ],
+      "bytes": 121239
+    },
+    {
+      "sha256": "37779d83500b0ff1fb617a65e0a1f64c999aabcf54f150438450a5b6b3454623",
+      "files": [
+        "ALO_REQUIREMENTS.csv",
+        "alo-education-web-crm-final/03_ALO_COURSE_REQUIREMENTS.csv",
+        "alo-education-web-crm-final/ALO_REQUIREMENTS.csv",
+        "alo-education-web-crm-final/data/03_ALO_COURSE_REQUIREMENTS.csv",
+        "alo-education-web-crm-final/docs/import-templates/course-package/03_ALO_COURSE_REQUIREMENTS.csv",
+        "alo-education-web-crm-final/docs/import-templates/package-real/ALO_REQUIREMENTS.csv",
+        "data/03_ALO_COURSE_REQUIREMENTS.csv",
+        "docs/import-templates/course-package/03_ALO_COURSE_REQUIREMENTS.csv",
+        "docs/import-templates/package-real/ALO_REQUIREMENTS.csv"
+      ],
+      "bytes": 112757
+    },
+    {
+      "sha256": "c745672b5357d567afd454ea6af46c9040718b5c849541f403337226ac070228",
+      "files": [
+        "02_courses.csv",
+        "alo-education-web-crm-final/02_courses.csv",
+        "alo-education-web-crm-final/docs/import-templates/02_courses.csv",
+        "docs/import-templates/02_courses.csv"
+      ],
+      "bytes": 297655
+    },
+    {
+      "sha256": "6c8be2732153b01954449b09437c292e5c39aad093aec6368bed22ddf0a8ab47",
+      "files": [
+        "alo-education-web-crm-final/public/images/landing/Copy of pexels-rdne-7092364.webp",
+        "deploy-build/public/images/landing/Copy of pexels-rdne-7092364.webp",
+        "deploy-build/public/public/images/landing/Copy of pexels-rdne-7092364.webp",
+        "imports/alo-education-full/public/images/blogs/Copy of pexels-rdne-7092364.webp",
+        "imports/alo-education-source/public/images/blogs/Copy of pexels-rdne-7092364.webp",
+        "public/images/landing/Copy of pexels-rdne-7092364.webp"
+      ],
+      "bytes": 177960
+    },
+    {
+      "sha256": "47fbb86ccf80ab2b04a5809b045442726f1ffeed9930d285d4f414a86e2b2616",
+      "files": [
+        "alo-education-web-crm-final/public/images/landing/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp",
+        "deploy-build/public/images/landing/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp",
+        "deploy-build/public/public/images/landing/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp",
+        "imports/alo-education-full/public/images/blogs/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp",
+        "imports/alo-education-source/public/images/blogs/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp",
+        "public/images/landing/Copy of marvin-meyer-SYTO3xs06fU-unsplash.webp"
+      ],
+      "bytes": 163050
+    }
+  ]
+}

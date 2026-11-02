@@ -1,0 +1,71 @@
+{
+  "routes": 1099,
+  "byVerdict": {
+    "auth-only": 77,
+    "handler-gated": 261,
+    "public": 69,
+    "public-write-gap": 33,
+    "role-gated": 659
+  },
+  "mutatingByVerdict": {
+    "auth-only": 3,
+    "handler-gated": 59,
+    "public": 14,
+    "public-write-gap": 33,
+    "role-gated": 337
+  },
+  "authOnlyMutating": [
+    "/api/agent/course-advisor",
+    "/api/course-finder/eligibility",
+    "/api/inbox/reply"
+  ],
+  "publicWriteGaps": [
+    "/api/ai/eligibility",
+    "/api/ai/match",
+    "/api/ai/scholarship-match",
+    "/api/ai/sop",
+    "/api/ai/student-intake",
+    "/api/auth/register",
+    "/api/auth/reset-password",
+    "/api/auth/verify-otp",
+    "/api/behavior/track",
+    "/api/crm/leads/public",
+    "/api/email/unsubscribe",
+    "/api/employee/activate",
+    "/api/events",
+    "/api/facebook/webhook",
+    "/api/integrations/3cx/webhooks",
+    "/api/integrations/httpsms/webhook",
+    "/api/integrations/opensms/webhook",
+    "/api/lead-forms",
+    "/api/marketing/consent/revoke",
+    "/api/marketing/webhooks/google-business",
+    "/api/partner/activate",
+    "/api/portal-auth/forgot-password",
+    "/api/portal-auth/login",
+    "/api/portal-auth/register",
+    "/api/portal-auth/reset-password",
+    "/api/portal-auth/verify-otp",
+    "/api/referrals/track",
+    "/api/reviews/feedback",
+    "/api/reviews/submit/[token]",
+    "/api/student/auth/login",
+    "/api/student/auth/otp",
+    "/api/website/search-log",
+    "/api/whatsapp/status"
+  ],
+  "guardHelpersObserved": {
+    "withAuth": 441,
+    "authenticate": 213,
+    "guard": 23,
+    "can": 2,
+    "requireX": 141,
+    "getServerSession": 74,
+    "authorize": 8,
+    "hasXAccess": 21,
+    "isXManager/Admin": 58,
+    "resolveStudentX": 8,
+    "secret": 1,
+    "hmac/signature": 1
+  }
+}

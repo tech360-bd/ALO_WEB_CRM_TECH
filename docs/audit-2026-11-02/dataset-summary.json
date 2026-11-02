@@ -1,0 +1,119 @@
+{
+  "datasetFiles": 2014,
+  "datasetRows": 3933878,
+  "bySubject": {
+    "other": {
+      "files": 1655,
+      "rows": 347482
+    },
+    "course": {
+      "files": 113,
+      "rows": 1860872
+    },
+    "university": {
+      "files": 87,
+      "rows": 152412
+    },
+    "source": {
+      "files": 51,
+      "rows": 190412
+    },
+    "campus": {
+      "files": 21,
+      "rows": 11390
+    },
+    "intake": {
+      "files": 45,
+      "rows": 1190569
+    },
+    "requirement": {
+      "files": 27,
+      "rows": 177030
+    },
+    "deadline": {
+      "files": 9,
+      "rows": 1951
+    },
+    "ranking": {
+      "files": 6,
+      "rows": 1760
+    }
+  },
+  "largest": [
+    {
+      "path": "ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json",
+      "bytes": 51548315,
+      "rows": ""
+    },
+    {
+      "path": "alo-education-web-crm-final/ALO_UNIVERSITY_COURSE_MASTER_VERIFIED.json",
+      "bytes": 51548315,
+      "rows": ""
+    },
+    {
+      "path": "course_intakes.csv",
+      "bytes": 36123078,
+      "rows": 145600
+    },
+    {
+      "path": "02_ALO_COURSE_MASTER.csv",
+      "bytes": 21674213,
+      "rows": 17653
+    },
+    {
+      "path": "alo-education-web-crm-final/02_ALO_COURSE_MASTER.csv",
+      "bytes": 21652154,
+      "rows": 17653
+    },
+    {
+      "path": "alo-education-web-crm-final/docs/import-templates/package-verified/02_ALO_COURSE_MASTER.csv",
+      "bytes": 21652154,
+      "rows": 17653
+    },
+    {
+      "path": "docs/import-templates/package-verified/02_ALO_COURSE_MASTER.csv",
+      "bytes": 21652154,
+      "rows": 17653
+    },
+    {
+      "path": "alo-education-web-crm-final/docs/import-templates/package/02_ALO_COURSE_MASTER.csv",
+      "bytes": 21124455,
+      "rows": 17231
+    },
+    {
+      "path": "docs/import-templates/package/02_ALO_COURSE_MASTER.csv",
+      "bytes": 21124455,
+      "rows": 17231
+    },
+    {
+      "path": "docs/deployment-ownership/search-index.json",
+      "bytes": 15728130,
+      "rows": 2057
+    },
+    {
+      "path": "06_ALO_APPLICATION_DEADLINES.csv",
+      "bytes": 11584303,
+      "rows": 145600
+    },
+    {
+      "path": "08_ALO_APPLICATION_DEADLINES.csv",
+      "bytes": 11584303,
+      "rows": 145600
+    },
+    {
+      "path": "ALO_APPLICATION_DEADLINES.csv",
+      "bytes": 11584303,
+      "rows": 145600
+    },
+    {
+      "path": "application_deadlines.csv",
+      "bytes": 11584303,
+      "rows": 145600
+    },
+    {
+      "path": "04_ALO_UNIVERSITY_COURSE_MASTER.csv",
+      "bytes": 10417683,
+      "rows": 32033
+    }
+  ]
+}

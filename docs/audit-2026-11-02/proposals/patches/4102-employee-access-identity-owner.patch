@@ -1,0 +1,40 @@
+diff --git a/tests/unit/employee-access-acceptance.test.ts b/tests/unit/employee-access-acceptance.test.ts
+index 16c9e152..83b5d370 100644
+--- a/tests/unit/employee-access-acceptance.test.ts
++++ b/tests/unit/employee-access-acceptance.test.ts
+@@ -19,6 +19,11 @@ const MATRIX = "src/lib/employee-access-engine.ts";
+ const SCOPE = "src/lib/access-control/object-scope.ts";
+ const SELFAUDIT = "src/app/api/employee-access/self-audit/route.ts";
+ const WEBHOOK = "src/app/api/crm/ucc/webhooks/whatsapp/route.ts";
++// Inbound WhatsApp identity is owned by the provider webhook. The UCC webhook
++// deliberately does not duplicate contact or message handling, so pinning this
++// behaviour to the UCC route tested the wrong file.
++const INBOUND_WEBHOOK = "src/app/api/whatsapp/webhook/route.ts";
++const IDENTITY_MATCHER = "src/app/api/communications/contacts/match/[id]/resolve/route.ts";
+ 
+ describe("Activation & lifecycle (self-audit 1-5)", () => {
+   it("hashed one-time activation tokens with expiry + resend routes", () => {
+@@ -109,10 +114,19 @@ describe("WhatsApp contact identity (spec: phone_normalized, country_code, exter
+       expect(block, `WhatsAppContact.${f}`).toContain(f);
+     }
+   });
+-  it("webhook upserts identity on every inbound message and never auto-creates duplicates", () => {
+-    const w = src(WEBHOOK);
+-    expect(w).toContain("whatsAppContact.upsert");
+-    expect(w).toContain("deriveCountryCode");
++  it("inbound webhook upserts identity on every message and never auto-creates duplicates", () => {
++    const w = src(INBOUND_WEBHOOK);
++    // Upsert keyed on the normalised phone is what prevents duplicate contacts.
++    expect(w).toMatch(/db\.whatsAppContact\.upsert\(\{\s*where:\s*\{\s*normalizedPhone/);
++    expect(w).toContain("externalContactId");
++    // The duplicate-decision surface lives in the identity matcher, not the webhook.
++    const matcher = src(IDENTITY_MATCHER);
++    for (const decision of ["OPEN_EXISTING", "MERGE_REQUEST", "CREATE_NEW"]) {
++      expect(matcher, `matcher.${decision}`).toContain(decision);
++    }
++    // Candidates are resolved centrally; the public lead route consumes them.
++    expect(src("src/app/api/communications/contacts/match/route.ts")).toContain("identity candidates");
++    expect(src("src/app/api/crm/leads/public/route.ts")).toContain("identity.candidates");
+   });
+ });
+ 
