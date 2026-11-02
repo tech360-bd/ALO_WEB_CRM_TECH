@@ -15,7 +15,7 @@ export default function OfflinePage() {
         </div>
         <h1 className="text-xl font-bold text-[var(--alo-text)] dark:text-white mb-2">You are offline</h1>
         <p className="text-sm text-[var(--alo-body)] dark:text-[var(--alo-text-muted)] mb-6 leading-relaxed">
-          No internet connection. Some cached pages and CRM data may still be available. Your actions will sync when you reconnect.
+          Some features require an internet connection. Please reconnect to continue.
         </p>
         <div className="space-y-3">
           <RetryConnectionButton />

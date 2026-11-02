@@ -1,0 +1,165 @@
+{
+  "admin": {
+    "total": 90,
+    "referenced": 59,
+    "unreferenced": [
+      "/admin/agent-center",
+      "/admin/ai-monitor",
+      "/admin/attention",
+      "/admin/branches",
+      "/admin/countries/create",
+      "/admin/countries/edit/[id]",
+      "/admin/crm-command",
+      "/admin/data-freshness",
+      "/admin/destinations",
+      "/admin/google-stack",
+      "/admin/import-center/city-living-costs",
+      "/admin/import-center/countries",
+      "/admin/import-center/country-facts",
+      "/admin/import-center/country-pages",
+      "/admin/import-center/scholarships",
+      "/admin/import-center/students",
+      "/admin/import-center/visa-rules",
+      "/admin/opportunity-graph",
+      "/admin/parents",
+      "/admin/risk",
+      "/admin/rule-versions",
+      "/admin/settings/digital-assets",
+      "/admin/sla-monitor",
+      "/admin/social-media-management",
+      "/admin/source-verification",
+      "/admin/verification-agents",
+      "/admin/video-studio",
+      "/admin/webhooks",
+      "/admin/whatsapp-analytics",
+      "/admin/whatsapp-followup",
+      "/admin/whatsapp-numbers"
+    ]
+  },
+  "application-manager": {
+    "total": 19,
+    "referenced": 19,
+    "unreferenced": []
+  },
+  "counselor": {
+    "total": 26,
+    "referenced": 8,
+    "unreferenced": [
+      "/counselor/applications",
+      "/counselor/attendance",
+      "/counselor/bonus",
+      "/counselor/commission",
+      "/counselor/cv",
+      "/counselor/email",
+      "/counselor/increment",
+      "/counselor/leads",
+      "/counselor/marketing/campaigns",
+      "/counselor/marketing/content",
+      "/counselor/marketing/image",
+      "/counselor/marketing/posts",
+      "/counselor/marketing/video",
+      "/counselor/social-inbox",
+      "/counselor/social-media",
+      "/counselor/sop",
+      "/counselor/visa-readiness",
+      "/counselor/whatsapp"
+    ]
+  },
+  "crm": {
+    "total": 63,
+    "referenced": 44,
+    "unreferenced": [
+      "/crm/b2b-applications",
+      "/crm/cas-i20-coe",
+      "/crm/communications/settings",
+      "/crm/communications/social-inbox",
+      "/crm/communications/templates",
+      "/crm/countries",
+      "/crm/country-data-review",
+      "/crm/country/[id]",
+      "/crm/decision-pending",
+      "/crm/integration-center",
+      "/crm/language-prep",
+      "/crm/offer-letter-management",
+      "/crm/sla",
+      "/crm/super-admin",
+      "/crm/super-admin/roles",
+      "/crm/visa-interviews/[caseId]",
+      "/crm/visa-readiness",
+      "/crm/visa-reports",
+      "/crm/whatsapp"
+    ]
+  },
+  "dashboard": {
+    "total": 1,
+    "referenced": 1,
+    "unreferenced": []
+  },
+  "employee": {
+    "total": 49,
+    "referenced": 38,
+    "unreferenced": [
+      "/employee/calendar",
+      "/employee/help",
+      "/employee/inbox",
+      "/employee/leave",
+      "/employee/my-accounts",
+      "/employee/social-media",
+      "/employee/visa-documents",
+      "/employee/visa-interview-officer",
+      "/employee/visa-officer",
+      "/employee/visa-readiness",
+      "/employee/whatsapp"
+    ]
+  },
+  "parent-portal": {
+    "total": 1,
+    "referenced": 1,
+    "unreferenced": []
+  },
+  "partner-admin": {
+    "total": 24,
+    "referenced": 23,
+    "unreferenced": [
+      "/partner-admin/social-media-management"
+    ]
+  },
+  "partner": {
+    "total": 22,
+    "referenced": 20,
+    "unreferenced": [
+      "/partner/apply/[student_id]/[course_id]",
+      "/partner/english-prep"
+    ]
+  },
+  "student": {
+    "total": 57,
+    "referenced": 47,
+    "unreferenced": [
+      "/student/mock-tests/available",
+      "/student/mock-tests/result/[sessionId]",
+      "/student/mock-tests/session/[sessionId]",
+      "/student/mock-tests/start/[testId]",
+      "/student/phd/applications",
+      "/student/phd/documents",
+      "/student/phd/timeline",
+      "/student/phd/verification",
+      "/student/referrals/[id]",
+      "/student/visa-checklist"
+    ]
+  },
+  "super-admin": {
+    "total": 5,
+    "referenced": 2,
+    "unreferenced": [
+      "/super-admin/ai-workforce",
+      "/super-admin/command-center",
+      "/super-admin/control-center"
+    ]
+  },
+  "university-portal": {
+    "total": 1,
+    "referenced": 1,
+    "unreferenced": []
+  }
+}

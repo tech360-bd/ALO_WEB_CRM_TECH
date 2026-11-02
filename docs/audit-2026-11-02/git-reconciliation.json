@@ -1,0 +1,1008 @@
+{
+  "prs": [
+    {
+      "closedAt": "2026-10-31T08:43:16Z",
+      "createdAt": "2026-10-31T08:38:44Z",
+      "headRefName": "arena/972113dd-alo-web-crm-tech",
+      "mergedAt": "2026-10-31T08:43:16Z",
+      "number": 48,
+      "state": "MERGED",
+      "title": "Design system: apply Master palette tokens across website and CRM"
+    },
+    {
+      "closedAt": "2026-10-31T07:26:33Z",
+      "createdAt": "2026-10-31T07:00:06Z",
+      "headRefName": "arena/8093e6ec-alo-web-crm-tech",
+      "mergedAt": "2026-10-31T07:26:33Z",
+      "number": 47,
+      "state": "MERGED",
+      "title": "feat(crm): verify and harden OpenSMS, Social OAuth, SEO Auditor, Funnel Attribution, and Super Admin panels"
+    },
+    {
+      "closedAt": "2026-10-30T00:51:42Z",
+      "createdAt": "2026-10-30T00:45:27Z",
+      "headRefName": "arena/5a62805a-alo-web-crm-tech",
+      "mergedAt": "2026-10-30T00:51:42Z",
+      "number": 46,
+      "state": "MERGED",
+      "title": "Add standalone DreamFrame landing page"
+    },
+    {
+      "closedAt": "2026-10-29T10:20:14Z",
+      "createdAt": "2026-10-29T10:00:35Z",
+      "headRefName": "arena/22bb9882-alo-web-crm-tech",
+      "mergedAt": "2026-10-29T10:20:14Z",
+      "number": 45,
+      "state": "MERGED",
+      "title": "Design system + Phase 1 homepage and Language Prep navigation"
+    },
+    {
+      "closedAt": "2026-10-29T04:52:56Z",
+      "createdAt": "2026-10-29T04:51:53Z",
+      "headRefName": "arena/b7f5410e-alo-web-crm-tech",
+      "mergedAt": "2026-10-29T04:52:56Z",
+      "number": 43,
+      "state": "MERGED",
+      "title": "Add source-backed course month coverage staging"
+    },
+    {
+      "closedAt": "2026-10-29T04:46:53Z",
+      "createdAt": "2026-10-29T03:11:14Z",
+      "headRefName": "arena/629c03a0-alo-web-crm-tech",
+      "mergedAt": "2026-10-29T04:46:53Z",
+      "number": 42,
+      "state": "MERGED",
+      "title": "Verified 2027/28 university catalogue + 13-month coverage pipeline"
+    },
+    {
+      "closedAt": "2026-10-29T02:00:05Z",
+      "createdAt": "2026-10-29T01:34:38Z",
+      "headRefName": "arena/95c5f3a5-alo-web-crm-tech",
+      "mergedAt": "2026-10-29T02:00:05Z",
+      "number": 41,
+      "state": "MERGED",
+      "title": "Harden catalogue publication and communications safeguards"
+    },
+    {
+      "closedAt": "2026-10-27T13:49:28Z",
+      "createdAt": "2026-10-27T13:38:52Z",
+      "headRefName": "arena/1bb65ae0-alo-web-crm-tech",
+      "mergedAt": "2026-10-27T13:49:28Z",
+      "number": 40,
+      "state": "MERGED",
+      "title": "docs(audit): Phase 1 read-only audit \u2014 AgentOS AI call center readiness"
+    },
+    {
+      "closedAt": "2026-10-27T04:20:29Z",
+      "createdAt": "2026-10-27T02:24:05Z",
+      "headRefName": "arena/5e872afd-alo-web-crm-tech",
+      "mergedAt": "2026-10-27T04:20:28Z",
+      "number": 39,
+      "state": "MERGED",
+      "title": "feat(super-admin): real operating dashboard, /api/super-admin endpoin\u2026"
+    },
+    {
+      "closedAt": "2026-10-27T00:41:42Z",
+      "createdAt": "2026-10-27T00:01:06Z",
+      "headRefName": "arena/00d5c43f-alo-web-crm-tech",
+      "mergedAt": "2026-10-27T00:41:42Z",
+      "number": 38,
+      "state": "MERGED",
+      "title": "Repair, audit and super-admin feature work"
+    },
+    {
+      "closedAt": "2026-10-26T05:41:00Z",
+      "createdAt": "2026-10-26T04:22:26Z",
+      "headRefName": "codex/language-prep-catalog-20261026",
+      "mergedAt": "2026-10-26T05:40:59Z",
+      "number": 37,
+      "state": "MERGED",
+      "title": "Complete Language Prep catalogue, dedicated guides and comparison"
+    },
+    {
+      "closedAt": "2026-10-26T03:37:04Z",
+      "createdAt": "2026-10-26T03:24:15Z",
+      "headRefName": "arena/55e679fd-alo-web-crm-tech",
+      "mergedAt": "2026-10-26T03:37:04Z",
+      "number": 36,
+      "state": "MERGED",
+      "title": "ALO Web + CRM: complete audit & improvement plan; fix offline dev DB pipeline"
+    },
+    {
+      "closedAt": "2026-10-26T02:53:16Z",
+      "createdAt": "2026-10-26T02:21:11Z",
+      "headRefName": "codex/alo-brand-visual-refinements-20261026",
+      "mergedAt": "2026-10-26T02:53:16Z",
+      "number": 35,
+      "state": "MERGED",
+      "title": "Unify ALO branding and refine shared public/CRM visual components"
+    },
+    {
+      "closedAt": "2026-10-25T23:37:32Z",
+      "createdAt": "2026-10-25T23:14:12Z",
+      "headRefName": "arena/2d226bae-alo-web-crm-tech",
+      "mergedAt": "2026-10-25T23:37:32Z",
+      "number": 34,
+      "state": "MERGED",
+      "title": "fix(brand): take the official seal off the public web, close footer gaps, drop duplicated assets"
+    },
+    {
+      "closedAt": "2026-10-25T23:13:32Z",
+      "createdAt": "2026-10-25T22:55:44Z",
+      "headRefName": "arena/e6632dd0-alo-web-crm-tech",
+      "mergedAt": "2026-10-25T23:13:32Z",
+      "number": 33,
+      "state": "MERGED",
+      "title": "Brand chrome: one footer owner, B2B partner footer branding, letterhead + official seal"
+    },
+    {
+      "closedAt": "2026-10-25T22:41:16Z",
+      "createdAt": "2026-10-25T22:19:53Z",
+      "headRefName": "arena/fd119d66-alo-web-crm-tech",
+      "mergedAt": "2026-10-25T22:41:16Z",
+      "number": 32,
+      "state": "MERGED",
+      "title": "ci(build): give the production build a controllable heap so quality-gates stops OOMing"
+    },
+    {
+      "closedAt": "2026-10-25T22:16:17Z",
+      "createdAt": "2026-10-25T21:56:23Z",
+      "headRefName": "arena/fd119d66-alo-web-crm-tech",
+      "mergedAt": "2026-10-25T22:16:17Z",
+      "number": 31,
+      "state": "MERGED",
+      "title": "feat(phd): research workspace, SOP builder and public research directory"
+    },
+    {
+      "closedAt": "2026-10-24T15:30:13Z",
+      "createdAt": "2026-10-24T15:29:49Z",
+      "headRefName": "codex/public-brand-and-platform-audit",
+      "mergedAt": "2026-10-24T15:30:13Z",
+      "number": 30,
+      "state": "MERGED",
+      "title": "Audit public branding and repair webhook security, history and backups"
+    },
+    {
+      "closedAt": "2026-10-24T14:43:39Z",
+      "createdAt": "2026-10-24T14:14:19Z",
+      "headRefName": "codex/repair-main-ci-acceptance",
+      "mergedAt": "2026-10-24T14:43:39Z",
+      "number": 29,
+      "state": "MERGED",
+      "title": "Repair main CI: interview migrations, security fixtures and employee workflows"
+    },
+    {
+      "closedAt": "2026-10-24T14:02:56Z",
+      "createdAt": "2026-10-24T14:02:44Z",
+      "headRefName": "revert-24-codex/employee-partner-quota-acceptance",
+      "mergedAt": "2026-10-24T14:02:56Z",
+      "number": 28,
+      "state": "MERGED",
+      "title": "Revert \"Close private profile bypasses, scope partner metrics and reserve employee quotas atomically\""
+    },
+    {
+      "closedAt": "2026-10-24T13:51:50Z",
+      "createdAt": "2026-10-24T12:19:27Z",
+      "headRefName": "arena/2c99a107-alo-web-crm-tech",
+      "mergedAt": "2026-10-24T13:51:50Z",
+      "number": 27,
+      "state": "MERGED",
+      "title": "AI-native journey OS: interview research provenance + CRM AI command center"
+    },
+    {
+      "closedAt": "2026-10-24T11:44:45Z",
+      "createdAt": "2026-10-24T11:32:16Z",
+      "headRefName": "arena/07a873f9-alo-web-crm-tech",
+      "mergedAt": "2026-10-24T11:44:45Z",
+      "number": 26,
+      "state": "MERGED",
+      "title": "Harden admin workflows and add Super Admin AI Copilot"
+    },
+    {
+      "closedAt": "2026-10-24T11:10:45Z",
+      "createdAt": "2026-10-24T10:01:16Z",
+      "headRefName": "codex/unorouter-owner-free-chat",
+      "mergedAt": "2026-10-24T11:10:45Z",
+      "number": 25,
+      "state": "MERGED",
+      "title": "Add Super Admin owner chat with verified UnoRouter free-only models"
+    },
+    {
+      "closedAt": "2026-10-24T11:45:07Z",
+      "createdAt": "2026-10-24T09:15:13Z",
+      "headRefName": "codex/employee-partner-quota-acceptance",
+      "mergedAt": "2026-10-24T11:45:07Z",
+      "number": 24,
+      "state": "MERGED",
+      "title": "Close private profile bypasses, scope partner metrics and reserve employee quotas atomically"
+    },
+    {
+      "closedAt": "2026-10-24T08:54:00Z",
+      "createdAt": "2026-10-24T08:49:52Z",
+      "headRefName": "codex/fix-employee-salary-ci",
+      "mergedAt": "2026-10-24T08:54:00Z",
+      "number": 23,
+      "state": "MERGED",
+      "title": "Fix employee salary Prisma projection and stale environment classification"
+    },
+    {
+      "closedAt": "2026-10-24T07:44:50Z",
+      "createdAt": "2026-10-24T06:39:34Z",
+      "headRefName": "codex/employee-scopes-reference-followup",
+      "mergedAt": "2026-10-24T07:44:50Z",
+      "number": 22,
+      "state": "MERGED",
+      "title": "Close legacy employee access bypasses and add scoped packages and diagram drafts"
+    },
+    {
+      "closedAt": "2026-10-24T06:14:33Z",
+      "createdAt": "2026-10-24T06:01:38Z",
+      "headRefName": "codex/employee-access-audit",
+      "mergedAt": "2026-10-24T06:14:33Z",
+      "number": 21,
+      "state": "MERGED",
+      "title": "Harden employee access and connect existing HR views to real data"
+    },
+    {
+      "closedAt": "2026-10-24T01:27:53Z",
+      "createdAt": "2026-10-24T01:09:08Z",
+      "headRefName": "arena/a95f5448-alo-web-crm-tech",
+      "mergedAt": "2026-10-24T01:27:53Z",
+      "number": 20,
+      "state": "MERGED",
+      "title": "Fix CI: patch the zod advisory and make the production smoke gate diagnosable"
+    },
+    {
+      "closedAt": "2026-10-23T23:54:32Z",
+      "createdAt": "2026-10-23T23:53:22Z",
+      "headRefName": "arena/a37d47ac-alo-web-crm-tech",
+      "mergedAt": "2026-10-23T23:54:32Z",
+      "number": 19,
+      "state": "MERGED",
+      "title": "Add international university catalogue and harden monitoring and application flows"
+    },
+    {
+      "closedAt": "2026-10-23T21:01:49Z",
+      "createdAt": "2026-10-23T21:01:37Z",
+      "headRefName": "arena/65a95bf2-alo-web-crm-tech",
+      "mergedAt": "2026-10-23T21:01:49Z",
+      "number": 18,
+      "state": "MERGED",
+      "title": "Arena/65a95bf2 alo web crm tech"
+    },
+    {
+      "closedAt": "2026-10-23T15:11:11Z",
+      "createdAt": "2026-10-23T13:22:40Z",
+      "headRefName": "arena/137a6507-alo-web-crm-tech",
+      "mergedAt": "2026-10-23T15:11:11Z",
+      "number": 17,
+      "state": "MERGED",
+      "title": "Harden CRM workflows, access controls, and public experience"
+    },
+    {
+      "closedAt": "2026-10-19T08:19:07Z",
+      "createdAt": "2026-10-19T06:30:38Z",
+      "headRefName": "arena/11fdac10-alo-web-crm-tech",
+      "mergedAt": "2026-10-19T08:19:07Z",
+      "number": 16,
+      "state": "MERGED",
+      "title": "Google Free Stack: analytics, consent, lead attribution, Search Console + Business Profile clients, funnel reporting"
+    },
+    {
+      "closedAt": "2026-10-18T18:26:09Z",
+      "createdAt": "2026-10-18T14:56:19Z",
+      "headRefName": "arena/ef31f574-alo-web-crm-tech",
+      "mergedAt": "2026-10-18T18:26:09Z",
+      "number": 15,
+      "state": "MERGED",
+      "title": "Production integration hardening: duplicate-safe Student IDs, malware scanning, OAuth security"
+    },
+    {
+      "closedAt": "2026-10-17T14:28:48Z",
+      "createdAt": "2026-10-17T14:02:41Z",
+      "headRefName": "arena/6eed5ba9-alo-web-crm-tech",
+      "mergedAt": "2026-10-17T14:28:48Z",
+      "number": 14,
+      "state": "MERGED",
+      "title": "Consolidate all branch histories safely, integrate monitoring hardening, and fix CI"
+    },
+    {
+      "closedAt": "2026-10-17T11:11:58Z",
+      "createdAt": "2026-10-17T10:12:25Z",
+      "headRefName": "arena/8e2beff7-alo-web-crm-tech",
+      "mergedAt": "2026-10-17T11:11:58Z",
+      "number": 13,
+      "state": "MERGED",
+      "title": "Complete ALO Education website + CRM premium redesign and course catalogue"
+    },
+    {
+      "closedAt": "2026-10-14T13:25:51Z",
+      "createdAt": "2026-10-13T23:49:34Z",
+      "headRefName": "arena/06d71c20-alo-web-crm-tech",
+      "mergedAt": "2026-10-14T13:25:51Z",
+      "number": 12,
+      "state": "MERGED",
+      "title": "CI recovery after PR #10: marketing workflow, credential fixtures, lint and reviewer tests"
+    },
+    {
+      "closedAt": "2026-10-14T13:27:29Z",
+      "createdAt": "2026-10-13T23:44:51Z",
+      "headRefName": "arena/57b0809e-alo-web-crm-tech",
+      "mergedAt": "2026-10-14T13:27:29Z",
+      "number": 11,
+      "state": "MERGED",
+      "title": "SEO growth system + cron locking + document authorization + CPANEL removal"
+    },
+    {
+      "closedAt": "2026-10-13T23:03:29Z",
+      "createdAt": "2026-10-13T22:08:49Z",
+      "headRefName": "arena/1cf1296a-alo-web-crm-tech",
+      "mergedAt": "2026-10-13T23:03:29Z",
+      "number": 10,
+      "state": "MERGED",
+      "title": "Post-merge repairs (sitemap, AuthContext, partner-marketing) + Phase 0 master-instruction audit"
+    },
+    {
+      "closedAt": "2026-10-13T08:13:06Z",
+      "createdAt": "2026-10-13T08:12:44Z",
+      "headRefName": "arena/5656dd34-alo-web-crm-tech",
+      "mergedAt": "2026-10-13T08:13:06Z",
+      "number": 9,
+      "state": "MERGED",
+      "title": "PR #7 Safe Conflict Resolution and Security Remediation \u2014 Manual reco\u2026"
+    },
+    {
+      "closedAt": "2026-10-13T06:01:52Z",
+      "createdAt": "2026-10-13T06:01:35Z",
+      "headRefName": "integration/developer-projects-20261013",
+      "mergedAt": "2026-10-13T06:01:52Z",
+      "number": 8,
+      "state": "MERGED",
+      "title": "Integration/developer projects 20261013"
+    },
+    {
+      "closedAt": "2026-10-14T13:31:40Z",
+      "createdAt": "2026-10-12T22:52:11Z",
+      "headRefName": "integration/ai-builder-full-20261013",
+      "mergedAt": null,
+      "number": 7,
+      "state": "CLOSED",
+      "title": "Integrate ALO Education AI Builder source \u2014 verification required"
+    },
+    {
+      "closedAt": "2026-10-12T21:59:52Z",
+      "createdAt": "2026-10-12T15:33:06Z",
+      "headRefName": "arena/712caef6-alo-web-crm-tech",
+      "mergedAt": "2026-10-12T21:59:52Z",
+      "number": 6,
+      "state": "MERGED",
+      "title": "CI recovery: fix schema duplicate relation, restore fail-closed audit gate, repair merge-damaged build/tests"
+    },
+    {
+      "closedAt": "2026-10-12T09:41:12Z",
+      "createdAt": "2026-10-12T09:40:54Z",
+      "headRefName": "codex/fix-whatsapp-duplicate-get",
+      "mergedAt": "2026-10-12T09:41:12Z",
+      "number": 5,
+      "state": "MERGED",
+      "title": "Fix duplicate GET export in WhatsApp webhook route"
+    },
+    {
+      "closedAt": "2026-10-12T15:06:45Z",
+      "createdAt": "2026-10-12T09:40:25Z",
+      "headRefName": "arena/01a0f2b5-alo-education-z-ai",
+      "mergedAt": "2026-10-12T15:06:45Z",
+      "number": 4,
+      "state": "MERGED",
+      "title": "Arena/01a0f2b5 alo education z ai"
+    },
+    {
+      "closedAt": "2026-10-12T09:39:48Z",
+      "createdAt": "2026-10-12T09:37:01Z",
+      "headRefName": "arena/8bfa5154-alo-education-z-ai",
+      "mergedAt": "2026-10-12T09:39:47Z",
+      "number": 3,
+      "state": "MERGED",
+      "title": "Arena/8bfa5154 alo education z ai"
+    },
+    {
+      "closedAt": "2026-10-12T09:36:32Z",
+      "createdAt": "2026-10-12T09:32:38Z",
+      "headRefName": "arena/16786e58-alo-education-z-ai",
+      "mergedAt": "2026-10-12T09:36:32Z",
+      "number": 2,
+      "state": "MERGED",
+      "title": "Fix tenant isolation, seat limit, quota and voucher integrity in B2B \u2026"
+    },
+    {
+      "closedAt": "2026-10-12T09:32:11Z",
+      "createdAt": "2026-10-12T09:27:28Z",
+      "headRefName": "codex/aloeducation-access-content-repair",
+      "mergedAt": "2026-10-12T09:32:11Z",
+      "number": 1,
+      "state": "MERGED",
+      "title": "Codex/aloeducation access content repair"
+    }
+  ],
+  "merged": [
+    "arena/00d5c43f-alo-web-crm-tech",
+    "arena/01a0f2b5-alo-education-z-ai",
+    "arena/06d71c20-alo-web-crm-tech",
+    "arena/07a873f9-alo-web-crm-tech",
+    "arena/11fdac10-alo-web-crm-tech",
+    "arena/137a6507-alo-web-crm-tech",
+    "arena/16786e58-alo-education-z-ai",
+    "arena/1bb65ae0-alo-web-crm-tech",
+    "arena/1cf1296a-alo-web-crm-tech",
+    "arena/22bb9882-alo-web-crm-tech",
+    "arena/2c99a107-alo-web-crm-tech",
+    "arena/2d226bae-alo-web-crm-tech",
+    "arena/55e679fd-alo-web-crm-tech",
+    "arena/5656dd34-alo-web-crm-tech",
+    "arena/57b0809e-alo-web-crm-tech",
+    "arena/5a62805a-alo-web-crm-tech",
+    "arena/5e872afd-alo-web-crm-tech",
+    "arena/629c03a0-alo-web-crm-tech",
+    "arena/65a95bf2-alo-web-crm-tech",
+    "arena/6eed5ba9-alo-web-crm-tech",
+    "arena/712caef6-alo-web-crm-tech",
+    "arena/8093e6ec-alo-web-crm-tech",
+    "arena/8bfa5154-alo-education-z-ai",
+    "arena/8e2beff7-alo-web-crm-tech",
+    "arena/95c5f3a5-alo-web-crm-tech",
+    "arena/972113dd-alo-web-crm-tech",
+    "arena/a37d47ac-alo-web-crm-tech",
+    "arena/a95f5448-alo-web-crm-tech",
+    "arena/b7f5410e-alo-web-crm-tech",
+    "arena/e6632dd0-alo-web-crm-tech",
+    "arena/ef31f574-alo-web-crm-tech",
+    "arena/fd119d66-alo-web-crm-tech",
+    "codex/alo-brand-visual-refinements-20261026",
+    "codex/aloeducation-access-content-repair",
+    "codex/employee-access-audit",
+    "codex/employee-partner-quota-acceptance",
+    "codex/employee-scopes-reference-followup",
+    "codex/fix-employee-salary-ci",
+    "codex/fix-whatsapp-duplicate-get",
+    "codex/language-prep-catalog-20261026",
+    "codex/public-brand-and-platform-audit",
+    "codex/repair-main-ci-acceptance",
+    "codex/unorouter-owner-free-chat",
+    "integration/developer-projects-20261013",
+    "revert-24-codex/employee-partner-quota-acceptance"
+  ],
+  "unmergedBranches": [
+    "arena/01a098f3-alo-education-z-ai",
+    "arena/01a09a6f-alo-education-z-ai",
+    "arena/01a09c20-alo-education-z-ai",
+    "arena/01a0a165-alo-education-z-ai",
+    "arena/01a0a165-alo-education-z-ai-app-fixes",
+    "arena/01a0a5b2-alo-education-z-ai",
+    "arena/01a0aa5e-alo-education-z-ai",
+    "arena/01a0b15b-alo-education-z-ai",
+    "arena/01a0b26d-alo-education-z-ai",
+    "arena/01a0c218-alo-education-z-ai",
+    "arena/01a0e4dc-alo-education-z-ai",
+    "arena/01a0e685-alo-education-z-ai",
+    "arena/01a0f6e7-alo-education-z-ai",
+    "arena/01a0f889-alo-education-z-ai",
+    "arena/01a0fbce-alo-education-z-ai",
+    "arena/01a0feba-alo-education-z-ai",
+    "arena/176a6835-alo-education-z-ai",
+    "arena/227cb663-alo-education-z-ai",
+    "arena/3f536e7b-alo-education-z-ai",
+    "arena/3fec094f-alo-education-z-ai",
+    "arena/44842eb6-alo-education-z-ai",
+    "arena/70fff683-alo-education-z-ai",
+    "arena/7e179efb-alo-education-z-ai",
+    "arena/8b727e17-alo-education-z-ai",
+    "arena/8d540fcc-alo-education-z-ai",
+    "arena/adfaa77f-alo-education-z-ai",
+    "arena/bec1d052-alo-web-crm-tech",
+    "arena/c2f1b27c-alo-education-z-ai",
+    "arena/d36e2d29-alo-education-z-ai",
+    "arena/ea4e9140-alo-education-z-ai",
+    "arena/ececf40c-alo-web-crm-tech",
+    "arena/f5576c6b-alo-education-z-ai",
+    "arena/fd40db6d-alo-education-z-ai",
+    "arena/final-mysql-ddl-validation",
+    "arena/integration-2026-09-14",
+    "codex/alo-recovery-20261008",
+    "codex/ci-env-repair-20261008",
+    "codex/page-agent-audit-20261008",
+    "fix/alo-production-deploy-pipeline",
+    "fix/hostinger-typescript-repair",
+    "fix/reconciliation-mysql-ddl",
+    "fix/reconciliation-mysql-ddl-final",
+    "imports/alo-education-full-20261013",
+    "imports/alo-education-source-20261013",
+    "integration/ai-builder-alo-verified-20261013",
+    "integration/ai-builder-full-20261013",
+    "other-ai-builder-2026-09-13",
+    "repair/complete-system-hardening-2026-10-07"
+  ],
+  "branches": [
+    "arena/00d5c43f-alo-web-crm-tech",
+    "arena/01a098f3-alo-education-z-ai",
+    "arena/01a09a6f-alo-education-z-ai",
+    "arena/01a09c20-alo-education-z-ai",
+    "arena/01a0a165-alo-education-z-ai",
+    "arena/01a0a165-alo-education-z-ai-app-fixes",
+    "arena/01a0a5b2-alo-education-z-ai",
+    "arena/01a0aa5e-alo-education-z-ai",
+    "arena/01a0b15b-alo-education-z-ai",
+    "arena/01a0b26d-alo-education-z-ai",
+    "arena/01a0c218-alo-education-z-ai",
+    "arena/01a0e4dc-alo-education-z-ai",
+    "arena/01a0e685-alo-education-z-ai",
+    "arena/01a0f2b5-alo-education-z-ai",
+    "arena/01a0f6e7-alo-education-z-ai",
+    "arena/01a0f889-alo-education-z-ai",
+    "arena/01a0fbce-alo-education-z-ai",
+    "arena/01a0feba-alo-education-z-ai",
+    "arena/06d71c20-alo-web-crm-tech",
+    "arena/07a873f9-alo-web-crm-tech",
+    "arena/11fdac10-alo-web-crm-tech",
+    "arena/137a6507-alo-web-crm-tech",
+    "arena/16786e58-alo-education-z-ai",
+    "arena/176a6835-alo-education-z-ai",
+    "arena/1bb65ae0-alo-web-crm-tech",
+    "arena/1cf1296a-alo-web-crm-tech",
+    "arena/227cb663-alo-education-z-ai",
+    "arena/22bb9882-alo-web-crm-tech",
+    "arena/2c99a107-alo-web-crm-tech",
+    "arena/2d226bae-alo-web-crm-tech",
+    "arena/3f536e7b-alo-education-z-ai",
+    "arena/3fec094f-alo-education-z-ai",
+    "arena/44842eb6-alo-education-z-ai",
+    "arena/55e679fd-alo-web-crm-tech",
+    "arena/5656dd34-alo-web-crm-tech",
+    "arena/57b0809e-alo-web-crm-tech",
+    "arena/5a62805a-alo-web-crm-tech",
+    "arena/5e872afd-alo-web-crm-tech",
+    "arena/629c03a0-alo-web-crm-tech",
+    "arena/65a95bf2-alo-web-crm-tech",
+    "arena/6eed5ba9-alo-web-crm-tech",
+    "arena/70fff683-alo-education-z-ai",
+    "arena/712caef6-alo-web-crm-tech",
+    "arena/7e179efb-alo-education-z-ai",
+    "arena/8093e6ec-alo-web-crm-tech",
+    "arena/8b727e17-alo-education-z-ai",
+    "arena/8bfa5154-alo-education-z-ai",
+    "arena/8d540fcc-alo-education-z-ai",
+    "arena/8e2beff7-alo-web-crm-tech",
+    "arena/95c5f3a5-alo-web-crm-tech",
+    "arena/972113dd-alo-web-crm-tech",
+    "arena/a37d47ac-alo-web-crm-tech",
+    "arena/a95f5448-alo-web-crm-tech",
+    "arena/adfaa77f-alo-education-z-ai",
+    "arena/b7f5410e-alo-web-crm-tech",
+    "arena/bec1d052-alo-web-crm-tech",
+    "arena/c2f1b27c-alo-education-z-ai",
+    "arena/d36e2d29-alo-education-z-ai",
+    "arena/e6632dd0-alo-web-crm-tech",
+    "arena/ea4e9140-alo-education-z-ai",
+    "arena/ececf40c-alo-web-crm-tech",
+    "arena/ef31f574-alo-web-crm-tech",
+    "arena/f5576c6b-alo-education-z-ai",
+    "arena/fd119d66-alo-web-crm-tech",
+    "arena/fd40db6d-alo-education-z-ai",
+    "arena/final-mysql-ddl-validation",
+    "arena/integration-2026-09-14",
+    "codex/alo-brand-visual-refinements-20261026",
+    "codex/alo-recovery-20261008",
+    "codex/aloeducation-access-content-repair",
+    "codex/ci-env-repair-20261008",
+    "codex/employee-access-audit",
+    "codex/employee-partner-quota-acceptance",
+    "codex/employee-scopes-reference-followup",
+    "codex/fix-employee-salary-ci",
+    "codex/fix-whatsapp-duplicate-get",
+    "codex/language-prep-catalog-20261026",
+    "codex/page-agent-audit-20261008",
+    "codex/public-brand-and-platform-audit",
+    "codex/repair-main-ci-acceptance",
+    "codex/unorouter-owner-free-chat",
+    "fix/alo-production-deploy-pipeline",
+    "fix/hostinger-typescript-repair",
+    "fix/reconciliation-mysql-ddl",
+    "fix/reconciliation-mysql-ddl-final",
+    "imports/alo-education-full-20261013",
+    "imports/alo-education-source-20261013",
+    "integration/ai-builder-alo-verified-20261013",
+    "integration/ai-builder-full-20261013",
+    "integration/developer-projects-20261013",
+    "main",
+    "other-ai-builder-2026-09-13",
+    "repair/complete-system-hardening-2026-10-07",
+    "revert-24-codex/employee-partner-quota-acceptance"
+  ],
+  "compare": {
+    "arena/01a098f3-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 610,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a09a6f-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 595,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a09c20-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 534,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0a165-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 498,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0a165-alo-education-z-ai-app-fixes": {
+      "ahead": 0,
+      "behind": 494,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0a5b2-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 480,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0aa5e-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 467,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0b15b-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 462,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0b26d-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 444,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0c218-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 415,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0e4dc-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 432,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0e685-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 229,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0f6e7-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 410,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0f889-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 401,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0fbce-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 381,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/01a0feba-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 360,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/176a6835-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 298,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/227cb663-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 322,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/3f536e7b-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 341,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/3fec094f-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 237,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/44842eb6-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 343,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/70fff683-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 357,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/7e179efb-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 267,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/8b727e17-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 224,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/8d540fcc-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 312,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/adfaa77f-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 334,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/bec1d052-alo-web-crm-tech": {
+      "ahead": 0,
+      "behind": 144,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/c2f1b27c-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 246,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/d36e2d29-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 309,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/ea4e9140-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 253,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/ececf40c-alo-web-crm-tech": {
+      "ahead": 1,
+      "behind": 0,
+      "files": 5,
+      "msgs": [
+        "fix(catalogue): approved records now pass the public gate; add visibility diagnostic"
+      ],
+      "sha": "7e4c392244d06aae3f6e8bf3429ca049eea957c1",
+      "status": "ahead"
+    },
+    "arena/f5576c6b-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 226,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/fd40db6d-alo-education-z-ai": {
+      "ahead": 0,
+      "behind": 251,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/final-mysql-ddl-validation": {
+      "ahead": 0,
+      "behind": 348,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "arena/integration-2026-09-14": {
+      "ahead": 0,
+      "behind": 579,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "codex/alo-recovery-20261008": {
+      "ahead": 0,
+      "behind": 271,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "codex/ci-env-repair-20261008": {
+      "ahead": 0,
+      "behind": 302,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "codex/page-agent-audit-20261008": {
+      "ahead": 0,
+      "behind": 307,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "fix/alo-production-deploy-pipeline": {
+      "ahead": 0,
+      "behind": 440,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "fix/hostinger-typescript-repair": {
+      "ahead": 0,
+      "behind": 326,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "fix/reconciliation-mysql-ddl": {
+      "ahead": 0,
+      "behind": 387,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "fix/reconciliation-mysql-ddl-final": {
+      "ahead": 0,
+      "behind": 382,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "imports/alo-education-full-20261013": {
+      "ahead": 0,
+      "behind": 191,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "imports/alo-education-source-20261013": {
+      "ahead": 0,
+      "behind": 191,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "integration/ai-builder-alo-verified-20261013": {
+      "ahead": 0,
+      "behind": 191,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "integration/ai-builder-full-20261013": {
+      "ahead": 0,
+      "behind": 222,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "other-ai-builder-2026-09-13": {
+      "ahead": 0,
+      "behind": 624,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    },
+    "repair/complete-system-hardening-2026-10-07": {
+      "ahead": 0,
+      "behind": 344,
+      "files": 0,
+      "msgs": [],
+      "sha": null,
+      "status": "behind"
+    }
+  }
+}

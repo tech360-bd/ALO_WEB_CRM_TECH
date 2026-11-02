@@ -1,0 +1,66 @@
+{
+  "coursesAnalyzed": 8,
+  "coreFieldGroups": 10,
+  "coursesWithAllCoreFieldsEvidenced": 0,
+  "coursesByCoverageRatio": {
+    "6/10": 2,
+    "4/10": 5,
+    "5/10": 1
+  },
+  "assertedVsProposed": {
+    "VERIFIED -> PARTIALLY_VERIFIED": 7,
+    "PARTIALLY_VERIFIED -> PARTIALLY_VERIFIED": 1
+  },
+  "fieldAvailabilityAcrossCourses": {
+    "identity": {
+      "evidenced": 4,
+      "notEvidenced": 4
+    },
+    "duration": {
+      "evidenced": 5,
+      "notEvidenced": 3
+    },
+    "study_mode": {
+      "evidenced": 4,
+      "notEvidenced": 4
+    },
+    "campus": {
+      "evidenced": 5,
+      "notEvidenced": 3
+    },
+    "fee": {
+      "evidenced": 3,
+      "notEvidenced": 5
+    },
+    "entry_requirement": {
+      "evidenced": 3,
+      "notEvidenced": 5
+    },
+    "english_requirement": {
+      "evidenced": 2,
+      "notEvidenced": 6
+    },
+    "start_months": {
+      "evidenced": 4,
+      "notEvidenced": 4
+    },
+    "application_deadline": {
+      "evidenced": 4,
+      "notEvidenced": 4
+    },
+    "academic_year": {
+      "evidenced": 3,
+      "notEvidenced": 5
+    }
+  },
+  "institutionsIdentityVerified": 79,
+  "evidenceIDsOrphaned": [
+    "cent-biotech-admission",
+    "cent-biotech-fees",
+    "dbs-international-intakes-2027",
+    "kyoto-academic-calendar-2027",
+    "man-masters-catalogue-2027",
+    "mon-b6005-requirements",
+    "ulster-pg-2027-28-filter-empty"
+  ]
+}

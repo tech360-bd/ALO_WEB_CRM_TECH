@@ -46,6 +46,7 @@
     "verified:report": "tsx scripts/verified-catalogue/report-coverage.ts",
     "verified:e2e": "tsx scripts/verified-catalogue/e2e-verify.ts",
     "verified:coverage-monitor": "tsx scripts/verified-catalogue/run-coverage-monitor.ts",
+    "catalogue:diagnose": "tsx scripts/diagnose-public-catalogue.ts",
     "typecheck:verified": "tsc --project tsconfig.verified-catalogue-check.json --noEmit"
   },
   "dependencies": {

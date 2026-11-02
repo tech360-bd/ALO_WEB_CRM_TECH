@@ -1,0 +1,76 @@
+{
+  "candidatePairs": 33,
+  "byClassification": {
+    "CONFIRMED_ALIAS": 12,
+    "DUPLICATE_SUSPECT": 21
+  },
+  "confirmedAliasPairs": 12,
+  "duplicateSuspectPairs": 21,
+  "suspectsAffectingVerifiedCount": 1,
+  "identityVerifiedRowsBefore": 79,
+  "redundantVerifiedRows": 0,
+  "identityVerifiedDistinctAfter": 79,
+  "redundantVerifiedExamples": [],
+  "confirmedAliases": [
+    {
+      "country": "Australia",
+      "keep": "Australian Catholic University",
+      "merge": "Australian Catholic University"
+    },
+    {
+      "country": "Australia",
+      "keep": "Bond University Limited",
+      "merge": "Bond University"
+    },
+    {
+      "country": "Australia",
+      "keep": "RMIT University",
+      "merge": "RMIT University"
+    },
+    {
+      "country": "Australia",
+      "keep": "The University of Adelaide",
+      "merge": "University of Adelaide"
+    },
+    {
+      "country": "Australia",
+      "keep": "The University of Melbourne",
+      "merge": "University of Melbourne"
+    },
+    {
+      "country": "Australia",
+      "keep": "The University of Queensland",
+      "merge": "University of Queensland"
+    },
+    {
+      "country": "Australia",
+      "keep": "The University of Western Australia",
+      "merge": "University of Western Australia"
+    },
+    {
+      "country": "Australia",
+      "keep": "University of Notre Dame Australia",
+      "merge": "University of Notre Dame Australia"
+    },
+    {
+      "country": "Australia",
+      "keep": "University of Sydney",
+      "merge": "University of Sydney"
+    },
+    {
+      "country": "Ireland",
+      "keep": "Dún Laoghaire Institute of Art, Design and Technology",
+      "merge": "Dún Laoghaire Institute of Art, Design & Technology"
+    },
+    {
+      "country": "New Zealand",
+      "keep": "The University of Auckland",
+      "merge": "University of Auckland"
+    },
+    {
+      "country": "United Kingdom",
+      "keep": "The University of Manchester",
+      "merge": "University of Manchester"
+    }
+  ]
+}

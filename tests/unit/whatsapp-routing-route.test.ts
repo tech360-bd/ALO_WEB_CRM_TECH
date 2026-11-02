@@ -11,11 +11,22 @@ vi.mock('@/lib/auth-middleware', () => ({
   withAuth: (handler: (request: Request, auth: Record<string, any>) => Promise<Response>) =>
     (request: Request) => handler(request, mocks.auth()),
 }));
+// The route imports six names from the sender registry. A partial mock leaves
+// the rest `undefined`, so any call to them throws and the route's catch-all
+// answers 503 — which is what these tests used to see. Mirror the whole surface.
 vi.mock('@/lib/whatsapp-number-pool', () => ({
   determineSenderNumber: (...args: unknown[]) => mocks.determine(...args),
   MAIN_NUMBER: '01805020100',
   COO_NUMBER: '01805020101',
   OFFICIAL_NUMBERS: Array.from({ length: 20 }, (_, index) => `018050201${String(index).padStart(2, '0')}`),
+  EMPLOYEE_POOL: Array.from({ length: 18 }, (_, index) => `0180502${String(102 + index).padStart(4, '0')}`),
+  toBdDisplayPhone: (value: string) => value,
+  getWhatsAppNumberConfigStatus: () => ({
+    configuredCount: 20,
+    mainConfigured: true,
+    urgentSupportConfigured: true,
+    invalidConfiguredCount: 0,
+  }),
 }));
 
 import { GET, POST } from '@/app/api/whatsapp/routing/route';

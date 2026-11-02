@@ -111,6 +111,52 @@ interface CoverageRowLike {
   evidenceId: string | null;
 }
 
+/**
+ * Canonical publication patch for a CrmCourse.
+ *
+ * The public catalogue (src/lib/public-catalog.ts → publicCourseWhere) exposes a
+ * course only when `status === 'active'` AND `publicationStatus === 'published'`
+ * AND `verificationStatus === 'VERIFIED'`. Approval used to write
+ * `status: 'published_verified'`, so every approved course stayed hidden from
+ * the Course Finder, /courses and the sitemap even though the Super Admin had
+ * approved it. The patch lives here (and is unit-tested) so the writer can never
+ * drift from the reader again.
+ */
+export function coursePublicationPatch(actorUserId: string, now: Date) {
+  return {
+    publicationStatus: 'published',
+    verificationStatus: 'VERIFIED',
+    status: 'active',
+    lastApprovedUpdateAt: now.toISOString(),
+    updatedBy: actorUserId,
+  };
+}
+
+/**
+ * Same rule for the parent CrmUniversity: an approved course is only public when
+ * its university is public too (`publicCourseWhere` requires
+ * `university: { is: publicUniversityWhere() }`). Ingest stages universities as
+ * `status: 'verified_pending_approval'`, so publishing the course had to leave
+ * the university non-public and therefore every course of that university
+ * invisible. Archived universities are never republished.
+ *
+ * Verification of the university itself is NOT set here: that remains a separate
+ * decision recorded on the university record.
+ */
+export function universityPublicationPatch(
+  existing: { status?: string | null; publicationStatus?: string | null },
+  actorUserId: string,
+  now: Date,
+) {
+  if (String(existing.status ?? '').trim().toLowerCase() === 'archived') return null;
+  return {
+    publicationStatus: 'published',
+    status: 'active',
+    lastApprovedUpdateAt: now.toISOString(),
+    updatedBy: actorUserId,
+  };
+}
+
 async function applyToCrm(
   prisma: PrismaClient,
   row: CoverageRowLike,
@@ -187,22 +233,14 @@ async function applyToCrm(
 
   await prisma.crmCourse.update({
     where: { courseId: row.courseId },
-    data: {
-      publicationStatus: 'published',
-      verificationStatus: 'VERIFIED',
-      lastApprovedUpdateAt: now.toISOString(),
-      updatedBy: actorUserId,
-      status: 'published_verified',
-    },
+    data: coursePublicationPatch(actorUserId, now),
   });
 
   const universityId = row.universityId;
   const university = await prisma.crmUniversity.findUnique({ where: { universityId } });
-  if (university && university.publicationStatus !== 'published') {
-    await prisma.crmUniversity.update({
-      where: { universityId },
-      data: { publicationStatus: 'published', lastApprovedUpdateAt: now.toISOString(), updatedBy: actorUserId },
-    });
+  const universityPatch = university ? universityPublicationPatch(university, actorUserId, now) : null;
+  if (university && universityPatch) {
+    await prisma.crmUniversity.update({ where: { universityId }, data: universityPatch });
   }
 }
 

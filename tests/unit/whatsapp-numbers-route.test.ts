@@ -1,5 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+// Deployment configuration fixture (see section D): the sender registry reads
+// operator numbers from the environment at module load and ships blank.
+vi.hoisted(() => {
+  process.env.ALO_MAIN_WHATSAPP_NUMBER = '01805020100';
+  process.env.ALO_COO_WHATSAPP_NUMBER = '01805020101';
+  process.env.ALO_EMPLOYEE_WHATSAPP_NUMBERS = Array.from(
+    { length: 18 },
+    (_, index) => `0${1805020102 + index}`,
+  ).join(',');
+});
+
+
 const mocks = vi.hoisted(() => ({
   auth: vi.fn(), numberFindMany: vi.fn(), numberFindUnique: vi.fn(), numberUpdate: vi.fn(), numberCreate: vi.fn(),
   numberCreateMany: vi.fn(), numberCount: vi.fn(), employeeFindFirst: vi.fn(), numberAuditCreate: vi.fn(),

@@ -1,0 +1,32 @@
+{
+  "institutionsTotal": 593,
+  "institutionsIdentityVerified": 79,
+  "institutionsSyntheticOnly": 514,
+  "institutionsOutOfScope": 302,
+  "coursesTotal": 8746,
+  "coursesVerified": 7,
+  "coursesNonSyntheticUnverified": 4,
+  "coursesSynthetic": 8735,
+  "intakesTotal": 927,
+  "intakesVerifiedDataset": 104,
+  "intakesVerifiedAvailable": 15,
+  "intakesSynthetic": 823,
+  "evidenceTotal": 76,
+  "evidenceByClass": {
+    "CATALOGUE_EVIDENCE": 30,
+    "UNIVERSE_SOURCE": 32,
+    "URL_CHECK": 14
+  },
+  "conflicts": 159,
+  "conflictsBySeverity": {
+    "MEDIUM": 4,
+    "HIGH": 154,
+    "LOW": 1
+  },
+  "written": {
+    "institutions": 593,
+    "courses": 8746,
+    "intakes": 927,
+    "evidence": 76
+  }
+}

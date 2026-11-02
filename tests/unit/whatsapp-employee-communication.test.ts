@@ -1,5 +1,32 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
+// Deployment configuration fixture (see section D). Sender numbers are operator
+// configuration and ship blank in source; this test declares the 20-number pool.
+vi.hoisted(() => {
+  process.env.ALO_MAIN_WHATSAPP_NUMBER = '01805020100';
+  process.env.ALO_COO_WHATSAPP_NUMBER = '01805020101';
+  process.env.ALO_EMPLOYEE_WHATSAPP_NUMBERS = Array.from(
+    { length: 18 },
+    (_, index) => `0${1805020102 + index}`,
+  ).join(',');
+});
+
+
+// The sender registry is deployment configuration and ships blank on purpose
+// (src/lib/whatsapp-number-pool.ts forbids numbers in source). This test asserts
+// the operator-configured 20-number pool named in the rollout brief:
+// main 01805020100, COO 01805020101, employees 01805020102-01805020119.
+// Declared here, before the module under test reads process.env.
+vi.hoisted(() => {
+  process.env.ALO_MAIN_WHATSAPP_NUMBER = '01805020100';
+  process.env.ALO_COO_WHATSAPP_NUMBER = '01805020101';
+  process.env.ALO_EMPLOYEE_WHATSAPP_NUMBERS = Array.from(
+    { length: 18 },
+    (_, index) => `0${1805020102 + index}`,
+  ).join(',');
+});
+
+
 // Mock db for whatsapp number pool tests
 vi.mock('@/lib/db', () => ({
   db: {

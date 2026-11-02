@@ -162,14 +162,19 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
   }
 
   if (!canAssign(auth)) return NextResponse.json({ success: false, error: 'WhatsApp number assignment permission required.' }, { status: 403 });
-  const inputPhone = typeof body.phoneNumber === 'string' ? toBdDisplayPhone(body.phoneNumber) : '';
-  if (!inputPhone || !OFFICIAL_NUMBERS.includes(inputPhone)) {
-    return NextResponse.json({ success: false, error: 'Phone must be a valid Bangladesh mobile number listed in the deployment configuration.' }, { status: 400 });
-  }
+  // Authorisation before validation. A caller without the Super Admin role must
+  // learn only that the operation is forbidden, never whether their payload was
+  // well-formed: a 400 for malformed input and a 403 for a valid one would let
+  // them probe the validator. The sensitive-field probe reads body keys only and
+  // reveals nothing that /api/whatsapp/numbers/[id] GET does not already show.
   const sensitiveFields = ['metaPhoneNumberId', 'metaBusinessAccountId'];
   const attemptsSensitiveUpdate = sensitiveFields.some((field) => Object.prototype.hasOwnProperty.call(body, field));
   if (attemptsSensitiveUpdate && !isSuperAdmin(auth)) {
     return NextResponse.json({ success: false, error: 'Only Super Admin may configure Meta number identifiers.' }, { status: 403 });
+  }
+  const inputPhone = typeof body.phoneNumber === 'string' ? toBdDisplayPhone(body.phoneNumber) : '';
+  if (!inputPhone || !OFFICIAL_NUMBERS.includes(inputPhone)) {
+    return NextResponse.json({ success: false, error: 'Phone must be a valid Bangladesh mobile number listed in the deployment configuration.' }, { status: 400 });
   }
   const stringField = (name: string, max: number): string | undefined => {
     if (!Object.prototype.hasOwnProperty.call(body, name)) return undefined;

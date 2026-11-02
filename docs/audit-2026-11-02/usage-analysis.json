@@ -1,0 +1,2394 @@
+{
+  "srcCodeFiles": 2699,
+  "stats": {
+    "pages": 465,
+    "api_routes": 1099,
+    "layouts": 6
+  },
+  "entryPoints": 1575,
+  "orphanModules": [
+    "src/components/admin/AICommandingCenter.tsx",
+    "src/components/admin/super-admin-command-center/ai-eos/data.ts",
+    "src/components/admin/super-admin-operating/primitives.tsx",
+    "src/components/ai/WebChatWidget.tsx",
+    "src/components/alo/ai-chat-widget.tsx",
+    "src/components/alo/card-system.tsx",
+    "src/components/alo/command-palette.tsx",
+    "src/components/alo/views/access-control-center.tsx",
+    "src/components/alo/views/admin-course-management.tsx",
+    "src/components/alo/views/ai-command-center.tsx",
+    "src/components/alo/views/ai-interview.tsx",
+    "src/components/alo/views/application-manager-portal.tsx",
+    "src/components/alo/views/application-team-dashboard.tsx",
+    "src/components/alo/views/approval-center.tsx",
+    "src/components/alo/views/audit-logs.tsx",
+    "src/components/alo/views/auth-login.tsx",
+    "src/components/alo/views/auth-register.tsx",
+    "src/components/alo/views/auth-reset-password.tsx",
+    "src/components/alo/views/central-ai-command.tsx",
+    "src/components/alo/views/comm-templates.tsx",
+    "src/components/alo/views/crm-analytics.tsx",
+    "src/components/alo/views/crm-appointments.tsx",
+    "src/components/alo/views/crm-calls.tsx",
+    "src/components/alo/views/crm-dashboard.tsx",
+    "src/components/alo/views/crm-followups.tsx",
+    "src/components/alo/views/crm-invoices.tsx",
+    "src/components/alo/views/crm-settings.tsx",
+    "src/components/alo/views/crm-sms.tsx",
+    "src/components/alo/views/csv-import-center.tsx",
+    "src/components/alo/views/employee-management.tsx",
+    "src/components/alo/views/employee-workspace.tsx",
+    "src/components/alo/views/english-test-dashboard.tsx",
+    "src/components/alo/views/english-test.tsx",
+    "src/components/alo/views/enterprise-ai-command.tsx",
+    "src/components/alo/views/finance-dashboard.tsx",
+    "src/components/alo/views/hrm-dashboard.tsx",
+    "src/components/alo/views/import-center.tsx",
+    "src/components/alo/views/knowledge-center.tsx",
+    "src/components/alo/views/landing.tsx",
+    "src/components/alo/views/marketing-ai.tsx",
+    "src/components/alo/views/nexabroad-dashboard.tsx",
+    "src/components/alo/views/partner-admin-dashboard.tsx",
+    "src/components/alo/views/partner-comm-hub.tsx",
+    "src/components/alo/views/partner-portal.tsx",
+    "src/components/alo/views/permission-matrix.tsx",
+    "src/components/alo/views/phone-call-center.tsx",
+    "src/components/alo/views/public-about.tsx",
+    "src/components/alo/views/public-accessibility.tsx",
+    "src/components/alo/views/public-admission-requirements.tsx",
+    "src/components/alo/views/public-blog.tsx",
+    "src/components/alo/views/public-careers.tsx",
+    "src/components/alo/views/public-contact.tsx",
+    "src/components/alo/views/public-cookie.tsx",
+    "src/components/alo/views/public-country.tsx",
+    "src/components/alo/views/public-course-finder.tsx",
+    "src/components/alo/views/public-course.tsx",
+    "src/components/alo/views/public-courses.tsx",
+    "src/components/alo/views/public-destinations.tsx",
+    "src/components/alo/views/public-events.tsx",
+    "src/components/alo/views/public-exam.tsx",
+    "src/components/alo/views/public-exams.tsx",
+    "src/components/alo/views/public-faq.tsx",
+    "src/components/alo/views/public-higher-study.tsx",
+    "src/components/alo/views/public-home.tsx",
+    "src/components/alo/views/public-journey.tsx",
+    "src/components/alo/views/public-news.tsx",
+    "src/components/alo/views/public-offices.tsx",
+    "src/components/alo/views/public-partners.tsx",
+    "src/components/alo/views/public-refund-policy.tsx",
+    "src/components/alo/views/public-resources.tsx",
+    "src/components/alo/views/public-search.tsx",
+    "src/components/alo/views/public-services.tsx",
+    "src/components/alo/views/public-success-stories.tsx",
+    "src/components/alo/views/public-team.tsx",
+    "src/components/alo/views/public-terms.tsx",
+    "src/components/alo/views/public-universities.tsx",
+    "src/components/alo/views/public-university.tsx",
+    "src/components/alo/views/public-visa-support.tsx",
+    "src/components/alo/views/review-dashboard.tsx",
+    "src/components/alo/views/scholarship-finder.tsx",
+    "src/components/alo/views/storage-monitoring.tsx",
+    "src/components/alo/views/student-appointments.tsx",
+    "src/components/alo/views/student-cas.tsx",
+    "src/components/alo/views/student-compare.tsx",
+    "src/components/alo/views/student-course-finder.tsx",
+    "src/components/alo/views/student-dashboard.tsx",
+    "src/components/alo/views/student-help.tsx",
+    "src/components/alo/views/student-messages.tsx",
+    "src/components/alo/views/student-mock-tests.tsx",
+    "src/components/alo/views/student-notifications.tsx",
+    "src/components/alo/views/student-offers.tsx",
+    "src/components/alo/views/student-payments.tsx",
+    "src/components/alo/views/student-profile-form.tsx",
+    "src/components/alo/views/student-referrals.tsx",
+    "src/components/alo/views/student-shortlist.tsx",
+    "src/components/alo/views/student-sop.tsx",
+    "src/components/alo/views/student-timeline.tsx",
+    "src/components/alo/views/student-visa-checklist.tsx",
+    "src/components/alo/views/student-visa-readiness.tsx",
+    "src/components/alo/views/super-admin-dashboard.tsx",
+    "src/components/alo/views/unified-inbox.tsx",
+    "src/components/alo/views/university-monitoring.tsx",
+    "src/components/alo/views/visa-dashboard.tsx",
+    "src/components/alo/views/weekly-reports.tsx",
+    "src/components/communication/AIDraftButton.tsx",
+    "src/components/communication/BroadcastBuilder.tsx",
+    "src/components/communication/CallLogModal.tsx",
+    "src/components/communication/DocumentVersionTimeline.tsx",
+    "src/components/communication/LinkedEntityCard.tsx",
+    "src/components/communication/OTPVerificationModal.tsx",
+    "src/components/communication/PriorityBadge.tsx",
+    "src/components/communication/ReplyBox.tsx",
+    "src/components/communication/SocialMessageCard.tsx",
+    "src/components/communication/TimelineItem.tsx",
+    "src/components/communication/UnifiedCommunicationTimeline.tsx",
+    "src/components/communication/VisibilityBadge.tsx",
+    "src/components/communication/WhatsAppCommandCenter.tsx",
+    "src/components/course-finder/EnhancedCourseFinder.tsx",
+    "src/components/course-finder/course-compare-enhanced.tsx",
+    "src/components/course-finder/course-detail-enhanced.tsx",
+    "src/components/course-finder/course-finder-enhanced.tsx",
+    "src/components/course-finder/eligibility-checker.tsx",
+    "src/components/course-finder/index.ts",
+    "src/components/course-finder/university-detail-enhanced.tsx",
+    "src/components/course-finder/university-directory-enhanced.tsx",
+    "src/components/crm/SalesHierarchy.tsx",
+    "src/components/shared/PortalDashboards.tsx",
+    "src/components/shared/UnifiedPortalShell.tsx",
+    "src/components/student/StudentSopDrafts.tsx",
+    "src/components/student/portal-section.tsx",
+    "src/components/ui/aspect-ratio.tsx",
+    "src/components/ui/breadcrumb.tsx",
+    "src/components/ui/carousel.tsx",
+    "src/components/ui/chart.tsx",
+    "src/components/ui/collapsible.tsx",
+    "src/components/ui/command.tsx",
+    "src/components/ui/context-menu.tsx",
+    "src/components/ui/drawer.tsx",
+    "src/components/ui/dropdown-menu.tsx",
+    "src/components/ui/form.tsx",
+    "src/components/ui/hover-card.tsx",
+    "src/components/ui/input-otp.tsx",
+    "src/components/ui/menubar.tsx",
+    "src/components/ui/navigation-menu.tsx",
+    "src/components/ui/pagination.tsx",
+    "src/components/ui/resizable.tsx",
+    "src/components/ui/sidebar.tsx",
+    "src/components/ui/sonner.tsx",
+    "src/components/ui/toast.tsx",
+    "src/components/ui/toggle-group.tsx",
+    "src/components/website/LiveUniversityCount.tsx",
+    "src/components/website/MasterCountryDestinationView.tsx",
+    "src/components/website/MasterLanguagePrepLandingView.tsx",
+    "src/components/website/MasterTestPrepView.tsx",
+    "src/components/website/YouTubeEmbed.tsx",
+    "src/components/website/public-pages/index.ts",
+    "src/cron/worker.ts",
+    "src/lib/ai-agents/campus-course-mapper.ts",
+    "src/lib/ai-agents/international-course-agent.ts",
+    "src/lib/ai-agents/research-assistant.ts",
+    "src/lib/ai-agents/supervisor-matcher.ts",
+    "src/lib/ai-tool-loop.ts",
+    "src/lib/all-universities.ts",
+    "src/lib/attribution/lead-attribution.ts",
+    "src/lib/cap-recording.ts",
+    "src/lib/chatwoot-inbox.ts",
+    "src/lib/communication/ucc-service.ts",
+    "src/lib/communications/ai-safety.ts",
+    "src/lib/communications/channel-registry.ts",
+    "src/lib/communications/document-match.ts",
+    "src/lib/communications/document-policy.ts",
+    "src/lib/comprehensive-evidence-audit.ts",
+    "src/lib/course-finder/intake-window-backfill.ts",
+    "src/lib/course-month-coverage-schema.ts",
+    "src/lib/crm/source-verification.ts",
+    "src/lib/cron/cron-lock.ts",
+    "src/lib/dashboard-config.ts",
+    "src/lib/data-normalizer.ts",
+    "src/lib/data-quality-engine.ts",
+    "src/lib/deep-repo-health-check.ts",
+    "src/lib/diagnose-system-status.ts",
+    "src/lib/doodle-note-engine.ts",
+    "src/lib/eligibility-engine.ts",
+    "src/lib/evidence-ledger.ts",
+    "src/lib/facebook-lead-sync.ts",
+    "src/lib/file-validator.ts",
+    "src/lib/finance/service-charge-declaration.ts",
+    "src/lib/find-missing-pages.ts",
+    "src/lib/ghost-publishing.ts",
+    "src/lib/hrms/payroll-controls.ts",
+    "src/lib/hrms/payroll.ts",
+    "src/lib/httpsms-client.ts",
+    "src/lib/identity/inbound-provisioning.ts",
+    "src/lib/import-column-mapper.ts",
+    "src/lib/import/old-crm-student-import.ts",
+    "src/lib/language-prep/data.ts",
+    "src/lib/languagetool-client.ts",
+    "src/lib/lead-validation.ts",
+    "src/lib/marketing/permissions.ts",
+    "src/lib/nextcloud-client.ts",
+    "src/lib/notifications/employee-events.ts",
+    "src/lib/official-crawlers/aston-adapter.ts",
+    "src/lib/official-crawlers/base-adapter.ts",
+    "src/lib/opensms-client.ts",
+    "src/lib/permissions.ts",
+    "src/lib/phd/exports/csv.ts",
+    "src/lib/phd/exports/xlsx.ts",
+    "src/lib/populate-slugs.ts",
+    "src/lib/publish-engine.ts",
+    "src/lib/quote-invoice-pdf.ts",
+    "src/lib/rbac/permission-service.ts",
+    "src/lib/rbac/role-service.ts",
+    "src/lib/realtime.ts",
+    "src/lib/research/lead-enrichment-pipeline.ts",
+    "src/lib/research/market-intel-radar.ts",
+    "src/lib/research/structured-extractor.ts",
+    "src/lib/rfm-engine.ts",
+    "src/lib/runninghub-client.ts",
+    "src/lib/scholarships-data.ts",
+    "src/lib/social/providers.ts",
+    "src/lib/softphone-engine.ts",
+    "src/lib/source-evidence-engine.ts",
+    "src/lib/student-profile/profile-sections.ts",
+    "src/lib/test-all-api-endpoints.ts",
+    "src/lib/test-b2b-partner-access-control.ts",
+    "src/lib/test-employee-dashboard-system.ts",
+    "src/lib/test-homepage-destinations-system.ts",
+    "src/lib/test-language-prep-system.ts",
+    "src/lib/test-super-admin-master-system.ts",
+    "src/lib/test-visa-system.ts",
+    "src/lib/twenty-custom-objects.ts",
+    "src/lib/ucc/ai-assistant-core.ts",
+    "src/lib/ucc/providers/index.ts",
+    "src/lib/umami-analytics.ts",
+    "src/lib/university-courses-uk.ts",
+    "src/lib/university-data-brics.ts",
+    "src/lib/university-data-extended.ts",
+    "src/lib/university-data-intl.ts",
+    "src/lib/university-portal.ts",
+    "src/lib/university-website-enrichment.ts",
+    "src/lib/vaultwarden-client.ts",
+    "src/lib/verified-catalogue/ingest.ts",
+    "src/lib/video-engine/captioning/index.ts",
+    "src/lib/video-engine/n8n/webhook-manager.ts",
+    "src/lib/video-engine/n8n/workflows.ts",
+    "src/lib/video-engine/remotion/entry.tsx",
+    "src/lib/video-engine/remotion/remotion.d.ts",
+    "src/lib/video-engine/utils/brand-overlay.ts",
+    "src/lib/video-engine/utils/storage.ts",
+    "src/lib/voip/electron-ipc.ts",
+    "src/lib/voip/ipftrace.ts",
+    "src/lib/voip/linphone.ts",
+    "src/lib/wacrm-broadcast.ts",
+    "src/lib/webhook-validator.ts",
+    "src/lib/weekly-university-agent.ts",
+    "src/lib/whatsapp-media-ingestion.ts",
+    "src/lib/whatsapp-media.ts",
+    "src/types/smtp-mailer.d.ts"
+  ],
+  "orphanCount": 258,
+  "apiRoutes": 1099,
+  "apiRoutesWithoutClientReference": [
+    {
+      "route": "src/app/api/accounting/fiscal-periods/[name]/close/route.ts",
+      "url_base": "/api/accounting/fiscal-periods/close",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/accounting/journal-entries/[id]/reverse/route.ts",
+      "url_base": "/api/accounting/journal-entries/reverse",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/acting-as/route.ts",
+      "url_base": "/api/admin/acting-as",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/audit/route.ts",
+      "url_base": "/api/admin/audit",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/course-month-coverage/[id]/route.ts",
+      "url_base": "/api/admin/course-month-coverage",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/course-month-coverage/route.ts",
+      "url_base": "/api/admin/course-month-coverage",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/courses/intakes/backfill/route.ts",
+      "url_base": "/api/admin/courses/intakes/backfill",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/employees/[id]/deactivate/route.ts",
+      "url_base": "/api/admin/employees/deactivate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/import/batches/[id]/approve/route.ts",
+      "url_base": "/api/admin/import/batches/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/import/batches/[id]/execute/route.ts",
+      "url_base": "/api/admin/import/batches/execute",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/import/batches/[id]/preview/route.ts",
+      "url_base": "/api/admin/import/batches/preview",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/import/batches/[id]/rollback/route.ts",
+      "url_base": "/api/admin/import/batches/rollback",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/import/duplicates/route.ts",
+      "url_base": "/api/admin/import/duplicates",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/import/field-mappings/route.ts",
+      "url_base": "/api/admin/import/field-mappings",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/metrics/route.ts",
+      "url_base": "/api/admin/metrics",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/packages/route.ts",
+      "url_base": "/api/admin/packages",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/partner-assignments/route.ts",
+      "url_base": "/api/admin/partner-assignments",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/quota-requests/route.ts",
+      "url_base": "/api/admin/quota-requests",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/quotas/route.ts",
+      "url_base": "/api/admin/quotas",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/resource-categories/[id]/route.ts",
+      "url_base": "/api/admin/resource-categories",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/resource-categories/route.ts",
+      "url_base": "/api/admin/resource-categories",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/resources/[id]/faqs/[faqId]/route.ts",
+      "url_base": "/api/admin/resources/faqs",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/resources/[id]/faqs/route.ts",
+      "url_base": "/api/admin/resources/faqs",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/scholarships/[id]/faqs/[faqId]/route.ts",
+      "url_base": "/api/admin/scholarships/faqs",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/scholarships/[id]/faqs/route.ts",
+      "url_base": "/api/admin/scholarships/faqs",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/search/route.ts",
+      "url_base": "/api/admin/search",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/services/[id]/faqs/[faqId]/route.ts",
+      "url_base": "/api/admin/services/faqs",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/services/[id]/faqs/route.ts",
+      "url_base": "/api/admin/services/faqs",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/services/[id]/relationships/[relId]/route.ts",
+      "url_base": "/api/admin/services/relationships",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/services/[id]/relationships/route.ts",
+      "url_base": "/api/admin/services/relationships",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/student-benefits/route.ts",
+      "url_base": "/api/admin/student-benefits",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data-updates/route.ts",
+      "url_base": "/api/admin/university-data-updates",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data/duplicates/merge/route.ts",
+      "url_base": "/api/admin/university-data/duplicates/merge",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data/duplicates/route.ts",
+      "url_base": "/api/admin/university-data/duplicates",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data/publish/route.ts",
+      "url_base": "/api/admin/university-data/publish",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data/source-logs/route.ts",
+      "url_base": "/api/admin/university-data/source-logs",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data/updates/[id]/approve/route.ts",
+      "url_base": "/api/admin/university-data/updates/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data/updates/[id]/edit/route.ts",
+      "url_base": "/api/admin/university-data/updates/edit",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data/updates/[id]/publish/route.ts",
+      "url_base": "/api/admin/university-data/updates/publish",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data/updates/[id]/reject/route.ts",
+      "url_base": "/api/admin/university-data/updates/reject",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/admin/university-data/updates/[id]/rollback/route.ts",
+      "url_base": "/api/admin/university-data/updates/rollback",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/agent/course-advisor/route.ts",
+      "url_base": "/api/agent/course-advisor",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/agentos/approvals/route.ts",
+      "url_base": "/api/agentos/approvals",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/agentos/capacity-test/route.ts",
+      "url_base": "/api/agentos/capacity-test",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/agentos/rollout/route.ts",
+      "url_base": "/api/agentos/rollout",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/agentos/schedules/route.ts",
+      "url_base": "/api/agentos/schedules",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/agentos/skills/route.ts",
+      "url_base": "/api/agentos/skills",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/agentos/tools/route.ts",
+      "url_base": "/api/agentos/tools",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-command/lineage/route.ts",
+      "url_base": "/api/ai-command/lineage",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-command/replicate/route.ts",
+      "url_base": "/api/ai-command/replicate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-command/retry/route.ts",
+      "url_base": "/api/ai-command/retry",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-memory/route.ts",
+      "url_base": "/api/ai-memory",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-models/[id]/departments/route.ts",
+      "url_base": "/api/ai-models/departments",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-models/[id]/versions/route.ts",
+      "url_base": "/api/ai-models/versions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-models/route.ts",
+      "url_base": "/api/ai-models",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-providers/[slug]/verify/route.ts",
+      "url_base": "/api/ai-providers/verify",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/agents/[slug]/compare/route.ts",
+      "url_base": "/api/ai-workforce/agents/compare",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/agents/[slug]/lifecycle/route.ts",
+      "url_base": "/api/ai-workforce/agents/lifecycle",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/agents/[slug]/versions/route.ts",
+      "url_base": "/api/ai-workforce/agents/versions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/automation/route.ts",
+      "url_base": "/api/ai-workforce/automation",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/events/route.ts",
+      "url_base": "/api/ai-workforce/events",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/knowledge/route.ts",
+      "url_base": "/api/ai-workforce/knowledge",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/seed/route.ts",
+      "url_base": "/api/ai-workforce/seed",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/skills/route.ts",
+      "url_base": "/api/ai-workforce/skills",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/tools/grants/route.ts",
+      "url_base": "/api/ai-workforce/tools/grants",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/ai-workforce/workflows/[slug]/run/route.ts",
+      "url_base": "/api/ai-workforce/workflows/run",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/application-documents/[id]/approve/route.ts",
+      "url_base": "/api/application-documents/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/application-documents/[id]/reject/route.ts",
+      "url_base": "/api/application-documents/reject",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/application-documents/[id]/request-again/route.ts",
+      "url_base": "/api/application-documents/request-again",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/assign/route.ts",
+      "url_base": "/api/applications/assign",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/cas-i20-coe/route.ts",
+      "url_base": "/api/applications/cas-i20-coe",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/comments/route.ts",
+      "url_base": "/api/applications/comments",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/documents/route.ts",
+      "url_base": "/api/applications/documents",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/offer-letter/route.ts",
+      "url_base": "/api/applications/offer-letter",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/offer/route.ts",
+      "url_base": "/api/applications/offer",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/status/route.ts",
+      "url_base": "/api/applications/status",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/submit/route.ts",
+      "url_base": "/api/applications/submit",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/timeline/route.ts",
+      "url_base": "/api/applications/timeline",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/[id]/visa-handover/route.ts",
+      "url_base": "/api/applications/visa-handover",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/dashboard/route.ts",
+      "url_base": "/api/applications/dashboard",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/integration-tests/route.ts",
+      "url_base": "/api/applications/integration-tests",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/applications/security-tests/route.ts",
+      "url_base": "/api/applications/security-tests",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/agents/[id]/extensions/route.ts",
+      "url_base": "/api/brains/agents/extensions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/agents/[id]/skills/route.ts",
+      "url_base": "/api/brains/agents/skills",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/agents/[id]/tools/route.ts",
+      "url_base": "/api/brains/agents/tools",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/agents/by-brain/route.ts",
+      "url_base": "/api/brains/agents/by-brain",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/content/opportunities/[id]/advance/route.ts",
+      "url_base": "/api/brains/content/opportunities/advance",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/content/opportunities/[id]/assign/route.ts",
+      "url_base": "/api/brains/content/opportunities/assign",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/content/opportunities/route.ts",
+      "url_base": "/api/brains/content/opportunities",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/content/stats/route.ts",
+      "url_base": "/api/brains/content/stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/marketing/attribution-stats/route.ts",
+      "url_base": "/api/brains/marketing/attribution-stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/marketing/attribution/route.ts",
+      "url_base": "/api/brains/marketing/attribution",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/marketing/performance/route.ts",
+      "url_base": "/api/brains/marketing/performance",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/marketing/recommendations/route.ts",
+      "url_base": "/api/brains/marketing/recommendations",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/seed/route.ts",
+      "url_base": "/api/brains/seed",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/seo/dependency/route.ts",
+      "url_base": "/api/brains/seo/dependency",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/seo/dna/route.ts",
+      "url_base": "/api/brains/seo/dna",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/seo/impact-analysis/route.ts",
+      "url_base": "/api/brains/seo/impact-analysis",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/seo/related/route.ts",
+      "url_base": "/api/brains/seo/related",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/seo/stale/route.ts",
+      "url_base": "/api/brains/seo/stale",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/stats/route.ts",
+      "url_base": "/api/brains/stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/student/funnel-stats/route.ts",
+      "url_base": "/api/brains/student/funnel-stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/student/intelligence/route.ts",
+      "url_base": "/api/brains/student/intelligence",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/student/journey-stage/route.ts",
+      "url_base": "/api/brains/student/journey-stage",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/student/next-action/route.ts",
+      "url_base": "/api/brains/student/next-action",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/university/intelligence/route.ts",
+      "url_base": "/api/brains/university/intelligence",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/university/knowledge/route.ts",
+      "url_base": "/api/brains/university/knowledge",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/university/outdated/route.ts",
+      "url_base": "/api/brains/university/outdated",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/brains/university/twin/route.ts",
+      "url_base": "/api/brains/university/twin",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/communications/contacts/match/[id]/resolve/route.ts",
+      "url_base": "/api/communications/contacts/match/resolve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/communications/sla/justifications/[id]/review/route.ts",
+      "url_base": "/api/communications/sla/justifications/review",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/content-engine/assets/[id]/approve/route.ts",
+      "url_base": "/api/content-engine/assets/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/content-engine/assets/[id]/publish/route.ts",
+      "url_base": "/api/content-engine/assets/publish",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/content-engine/assets/[id]/quality-gate/route.ts",
+      "url_base": "/api/content-engine/assets/quality-gate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/content-engine/assets/[id]/repurpose/route.ts",
+      "url_base": "/api/content-engine/assets/repurpose",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/content-engine/assets/route.ts",
+      "url_base": "/api/content-engine/assets",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/content-engine/stats/route.ts",
+      "url_base": "/api/content-engine/stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/applications/route.ts",
+      "url_base": "/api/counselor/applications",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/comments/route.ts",
+      "url_base": "/api/counselor/comments",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/documents/request/route.ts",
+      "url_base": "/api/counselor/documents/request",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/documents/upload-on-behalf/route.ts",
+      "url_base": "/api/counselor/documents/upload-on-behalf",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/effective-permissions/route.ts",
+      "url_base": "/api/counselor/effective-permissions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/email/route.ts",
+      "url_base": "/api/counselor/email",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/inbox/route.ts",
+      "url_base": "/api/counselor/inbox",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/marketing/campaigns/route.ts",
+      "url_base": "/api/counselor/marketing/campaigns",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/marketing/content/route.ts",
+      "url_base": "/api/counselor/marketing/content",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/marketing/image/route.ts",
+      "url_base": "/api/counselor/marketing/image",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/marketing/posts/route.ts",
+      "url_base": "/api/counselor/marketing/posts",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/marketing/video/route.ts",
+      "url_base": "/api/counselor/marketing/video",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/social-inbox/route.ts",
+      "url_base": "/api/counselor/social-inbox",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/visa-readiness/route.ts",
+      "url_base": "/api/counselor/visa-readiness",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/weekly-report/route.ts",
+      "url_base": "/api/counselor/weekly-report",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/counselor/whatsapp/route.ts",
+      "url_base": "/api/counselor/whatsapp",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/course-finder/guide/route.ts",
+      "url_base": "/api/course-finder/guide",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/course-finder/journey/route.ts",
+      "url_base": "/api/course-finder/journey",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/course-month-coverage/route.ts",
+      "url_base": "/api/course-month-coverage",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/analytics/route.ts",
+      "url_base": "/api/crm/analytics",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/communications/after-hours/route.ts",
+      "url_base": "/api/crm/communications/after-hours",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/communications/timeline/route.ts",
+      "url_base": "/api/crm/communications/timeline",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/course-import/map-university/route.ts",
+      "url_base": "/api/crm/course-import/map-university",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/course-import/rollback/route.ts",
+      "url_base": "/api/crm/course-import/rollback",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/course-import/stats/route.ts",
+      "url_base": "/api/crm/course-import/stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/course-import/validate/route.ts",
+      "url_base": "/api/crm/course-import/validate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/documents/verification-queue/route.ts",
+      "url_base": "/api/crm/documents/verification-queue",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/hrm/route.ts",
+      "url_base": "/api/crm/hrm",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/reports/route.ts",
+      "url_base": "/api/crm/reports",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/seed-universities/route.ts",
+      "url_base": "/api/crm/seed-universities",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/analytics/route.ts",
+      "url_base": "/api/crm/ucc/analytics",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/conversations/[id]/assign/route.ts",
+      "url_base": "/api/crm/ucc/conversations/assign",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/conversations/[id]/lead/route.ts",
+      "url_base": "/api/crm/ucc/conversations/lead",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/conversations/[id]/notes/route.ts",
+      "url_base": "/api/crm/ucc/conversations/notes",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/conversations/[id]/reply/route.ts",
+      "url_base": "/api/crm/ucc/conversations/reply",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/documents/[id]/download/route.ts",
+      "url_base": "/api/crm/ucc/documents/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/employee-profiles/offboard/route.ts",
+      "url_base": "/api/crm/ucc/employee-profiles/offboard",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/employee-profiles/route.ts",
+      "url_base": "/api/crm/ucc/employee-profiles",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/form-fill/approve/route.ts",
+      "url_base": "/api/crm/ucc/form-fill/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/ocr/process/route.ts",
+      "url_base": "/api/crm/ucc/ocr/process",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/ucc/phone/route.ts",
+      "url_base": "/api/crm/ucc/phone",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/users/route.ts",
+      "url_base": "/api/crm/users",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/crm/whatsapp/route.ts",
+      "url_base": "/api/crm/whatsapp",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/cron/followup/route.ts",
+      "url_base": "/api/cron/followup",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/cron/phd-maintenance/route.ts",
+      "url_base": "/api/cron/phd-maintenance",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/cron/retry/route.ts",
+      "url_base": "/api/cron/retry",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/cron/webhook-dispatch/route.ts",
+      "url_base": "/api/cron/webhook-dispatch",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/cron/weekly-university-update/route.ts",
+      "url_base": "/api/cron/weekly-university-update",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/cv/review-request/route.ts",
+      "url_base": "/api/cv/review-request",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/data-quality/route.ts",
+      "url_base": "/api/data-quality",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/documents/[id]/download/route.ts",
+      "url_base": "/api/documents/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/documents/auto-upload/route.ts",
+      "url_base": "/api/documents/auto-upload",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/email/campaigns/[id]/queue/route.ts",
+      "url_base": "/api/email/campaigns/queue",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/email/campaigns/[id]/status/route.ts",
+      "url_base": "/api/email/campaigns/status",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/email/import-update/route.ts",
+      "url_base": "/api/email/import-update",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/application-workflow/route.ts",
+      "url_base": "/api/employee-access/application-workflow",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/comments/route.ts",
+      "url_base": "/api/employee-access/comments",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/document-versions/route.ts",
+      "url_base": "/api/employee-access/document-versions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/documents/route.ts",
+      "url_base": "/api/employee-access/documents",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/employee-dashboard/route.ts",
+      "url_base": "/api/employee-access/employee-dashboard",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/hr-dashboard/route.ts",
+      "url_base": "/api/employee-access/hr-dashboard",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/manager-dashboard/route.ts",
+      "url_base": "/api/employee-access/manager-dashboard",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/permissions/route.ts",
+      "url_base": "/api/employee-access/permissions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/profile/route.ts",
+      "url_base": "/api/employee-access/profile",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/self-audit/route.ts",
+      "url_base": "/api/employee-access/self-audit",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/service-declaration/route.ts",
+      "url_base": "/api/employee-access/service-declaration",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/super-admin-dashboard/route.ts",
+      "url_base": "/api/employee-access/super-admin-dashboard",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-access/workflows/route.ts",
+      "url_base": "/api/employee-access/workflows",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-learning/resources/[id]/publish/route.ts",
+      "url_base": "/api/employee-learning/resources/publish",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee-learning/resources/route.ts",
+      "url_base": "/api/employee-learning/resources",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/activity/route.ts",
+      "url_base": "/api/employee/activity",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/branch-stats/route.ts",
+      "url_base": "/api/employee/branch-stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/country-stats/route.ts",
+      "url_base": "/api/employee/country-stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/documents/[id]/download/route.ts",
+      "url_base": "/api/employee/documents/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/documents/request/route.ts",
+      "url_base": "/api/employee/documents/request",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/followups/[id]/route.ts",
+      "url_base": "/api/employee/followups",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/followups/route.ts",
+      "url_base": "/api/employee/followups",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/leave/route.ts",
+      "url_base": "/api/employee/leave",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/metrics/route.ts",
+      "url_base": "/api/employee/metrics",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/partner-stats/route.ts",
+      "url_base": "/api/employee/partner-stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/salary/view/route.ts",
+      "url_base": "/api/employee/salary/view",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/visa-cases/route.ts",
+      "url_base": "/api/employee/visa-cases",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employee/visa-interviews/route.ts",
+      "url_base": "/api/employee/visa-interviews",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/employees/activate/route.ts",
+      "url_base": "/api/employees/activate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/event-bus/events/route.ts",
+      "url_base": "/api/event-bus/events",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/event-bus/stats/route.ts",
+      "url_base": "/api/event-bus/stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/health/live/route.ts",
+      "url_base": "/api/health/live",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/inbox/handover/route.ts",
+      "url_base": "/api/inbox/handover",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/inbox/reply/route.ts",
+      "url_base": "/api/inbox/reply",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/intelligence/opportunity-graph/[studentId]/materialise/route.ts",
+      "url_base": "/api/intelligence/opportunity-graph/materialise",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/intelligence/opportunity-graph/[studentId]/recommendations/route.ts",
+      "url_base": "/api/intelligence/opportunity-graph/recommendations",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/interview-questions/answers/route.ts",
+      "url_base": "/api/interview-questions/answers",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/knowledge-base/articles/route.ts",
+      "url_base": "/api/knowledge-base/articles",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/knowledge-base/stats/route.ts",
+      "url_base": "/api/knowledge-base/stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/knowledge-sharing/[id]/comment/route.ts",
+      "url_base": "/api/knowledge-sharing/comment",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/knowledge-sharing/[id]/upvote/route.ts",
+      "url_base": "/api/knowledge-sharing/upvote",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/language-prep/acceptance/route.ts",
+      "url_base": "/api/language-prep/acceptance",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/lead-scoring/calculate/route.ts",
+      "url_base": "/api/lead-scoring/calculate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/marketing/dm/convert-lead/route.ts",
+      "url_base": "/api/marketing/dm/convert-lead",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/marketing/whatsapp-doc-upload/route.ts",
+      "url_base": "/api/marketing/whatsapp-doc-upload",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/messages/document-auto-upload/route.ts",
+      "url_base": "/api/messages/document-auto-upload",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/parents/[id]/consents/route.ts",
+      "url_base": "/api/parents/consents",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/parents/[id]/responsibilities/[responsibilityId]/pay/route.ts",
+      "url_base": "/api/parents/responsibilities/pay",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/parents/[id]/responsibilities/route.ts",
+      "url_base": "/api/parents/responsibilities",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/partner/documents/[id]/download/route.ts",
+      "url_base": "/api/partner/documents/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/partner/marketing/approve/route.ts",
+      "url_base": "/api/partner/marketing/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/partner/marketing/requests/route.ts",
+      "url_base": "/api/partner/marketing/requests",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/partner/marketing/usage/route.ts",
+      "url_base": "/api/partner/marketing/usage",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/partner/programs/route.ts",
+      "url_base": "/api/partner/programs",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/partner/referrals/route.ts",
+      "url_base": "/api/partner/referrals",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/partner/student-benefits/route.ts",
+      "url_base": "/api/partner/student-benefits",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/applications/[applicationId]/tasks/route.ts",
+      "url_base": "/api/phd/applications/tasks",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/commission/agreements/route.ts",
+      "url_base": "/api/phd/commission/agreements",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/commission/documents/[documentId]/route.ts",
+      "url_base": "/api/phd/commission/documents",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/commission/documents/route.ts",
+      "url_base": "/api/phd/commission/documents",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/commission/records/[recordId]/calculate/route.ts",
+      "url_base": "/api/phd/commission/records/calculate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/commission/records/[recordId]/review/route.ts",
+      "url_base": "/api/phd/commission/records/review",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/commission/records/route.ts",
+      "url_base": "/api/phd/commission/records",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/commission/route.ts",
+      "url_base": "/api/phd/commission",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/literature/[sourceId]/route.ts",
+      "url_base": "/api/phd/literature",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/notifications/route.ts",
+      "url_base": "/api/phd/notifications",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/applications/route.ts",
+      "url_base": "/api/phd/projects/applications",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/claims/route.ts",
+      "url_base": "/api/phd/projects/claims",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/deadlines/route.ts",
+      "url_base": "/api/phd/projects/deadlines",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/documents/route.ts",
+      "url_base": "/api/phd/projects/documents",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/literature/route.ts",
+      "url_base": "/api/phd/projects/literature",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/proposals/route.ts",
+      "url_base": "/api/phd/projects/proposals",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/sops/route.ts",
+      "url_base": "/api/phd/projects/sops",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/supervisors/match/route.ts",
+      "url_base": "/api/phd/projects/supervisors/match",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/supervisors/outreach/route.ts",
+      "url_base": "/api/phd/projects/supervisors/outreach",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/timeline/route.ts",
+      "url_base": "/api/phd/projects/timeline",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/projects/[projectId]/topics/route.ts",
+      "url_base": "/api/phd/projects/topics",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/proposals/[proposalId]/citations/route.ts",
+      "url_base": "/api/phd/proposals/citations",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/proposals/[proposalId]/export/route.ts",
+      "url_base": "/api/phd/proposals/export",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/proposals/[proposalId]/quality/route.ts",
+      "url_base": "/api/phd/proposals/quality",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/proposals/[proposalId]/restore/route.ts",
+      "url_base": "/api/phd/proposals/restore",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/sops/[sopId]/export/route.ts",
+      "url_base": "/api/phd/sops/export",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/sops/[sopId]/generate/route.ts",
+      "url_base": "/api/phd/sops/generate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/sops/[sopId]/review/route.ts",
+      "url_base": "/api/phd/sops/review",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/sops/[sopId]/sections/route.ts",
+      "url_base": "/api/phd/sops/sections",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/sops/[sopId]/status/route.ts",
+      "url_base": "/api/phd/sops/status",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/sops/[sopId]/versions/route.ts",
+      "url_base": "/api/phd/sops/versions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/topics/[topicId]/evaluation/route.ts",
+      "url_base": "/api/phd/topics/evaluation",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/phd/topics/[topicId]/select/route.ts",
+      "url_base": "/api/phd/topics/select",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/policy-changes/[id]/dismiss/route.ts",
+      "url_base": "/api/policy-changes/dismiss",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/policy-changes/[id]/resolve/route.ts",
+      "url_base": "/api/policy-changes/resolve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/policy-changes/[id]/triage/route.ts",
+      "url_base": "/api/policy-changes/triage",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/risk/students/[id]/route.ts",
+      "url_base": "/api/risk/students",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/route.ts",
+      "url_base": "/api",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/rules/versions/[id]/approve/route.ts",
+      "url_base": "/api/rules/versions/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/rules/versions/[id]/reject/route.ts",
+      "url_base": "/api/rules/versions/reject",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/rules/versions/[id]/verify/route.ts",
+      "url_base": "/api/rules/versions/verify",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/seo/keywords/cluster/route.ts",
+      "url_base": "/api/seo/keywords/cluster",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/seo/keywords/prioritize/route.ts",
+      "url_base": "/api/seo/keywords/prioritize",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/seo/keywords/stats/route.ts",
+      "url_base": "/api/seo/keywords/stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/seo/search-console/status/route.ts",
+      "url_base": "/api/seo/search-console/status",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/seo/stats/route.ts",
+      "url_base": "/api/seo/stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/seo/tasks/[id]/complete/route.ts",
+      "url_base": "/api/seo/tasks/complete",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/seo/tasks/route.ts",
+      "url_base": "/api/seo/tasks",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/social/[provider]/auth/route.ts",
+      "url_base": "/api/social/auth",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/social/[provider]/callback/route.ts",
+      "url_base": "/api/social/callback",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/social/[provider]/health/route.ts",
+      "url_base": "/api/social/health",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/social/analytics/route.ts",
+      "url_base": "/api/social/analytics",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/social/content/route.ts",
+      "url_base": "/api/social/content",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/social/inbox/route.ts",
+      "url_base": "/api/social/inbox",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/social/platforms/route.ts",
+      "url_base": "/api/social/platforms",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/social/reply/route.ts",
+      "url_base": "/api/social/reply",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/sop/review-request/route.ts",
+      "url_base": "/api/sop/review-request",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/sop/student/[studentId]/route.ts",
+      "url_base": "/api/sop/student",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/source-intelligence/changes/[id]/review/route.ts",
+      "url_base": "/api/source-intelligence/changes/review",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/source-intelligence/changes/route.ts",
+      "url_base": "/api/source-intelligence/changes",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/source-intelligence/evidence/[id]/verify/route.ts",
+      "url_base": "/api/source-intelligence/evidence/verify",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/source-intelligence/evidence/route.ts",
+      "url_base": "/api/source-intelligence/evidence",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/source-logs/route.ts",
+      "url_base": "/api/source-logs",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/storage/download/[id]/route.ts",
+      "url_base": "/api/storage/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/storage/download/route.ts",
+      "url_base": "/api/storage/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/storage/upload/route.ts",
+      "url_base": "/api/storage/upload",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student-portal/dashboard/route.ts",
+      "url_base": "/api/student-portal/dashboard",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student-portal/documents/[id]/download/route.ts",
+      "url_base": "/api/student-portal/documents/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student-portal/documents/route.ts",
+      "url_base": "/api/student-portal/documents",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student-portal/mock-tests/route.ts",
+      "url_base": "/api/student-portal/mock-tests",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student-portal/profile/sections/route.ts",
+      "url_base": "/api/student-portal/profile/sections",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student-portal/referrals/route.ts",
+      "url_base": "/api/student-portal/referrals",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student-portal/scholarships/route.ts",
+      "url_base": "/api/student-portal/scholarships",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student/applications/create-draft/route.ts",
+      "url_base": "/api/student/applications/create-draft",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student/benefits/route.ts",
+      "url_base": "/api/student/benefits",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student/documents/[id]/download/route.ts",
+      "url_base": "/api/student/documents/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student/messages/route.ts",
+      "url_base": "/api/student/messages",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student/next-action/route.ts",
+      "url_base": "/api/student/next-action",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student/next-best-action/[id]/complete/route.ts",
+      "url_base": "/api/student/next-best-action/complete",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student/next-best-action/route.ts",
+      "url_base": "/api/student/next-best-action",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/student/vouchers/redeem/route.ts",
+      "url_base": "/api/student/vouchers/redeem",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/acting-as/start/route.ts",
+      "url_base": "/api/super-admin/acting-as/start",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/acting-as/stop/route.ts",
+      "url_base": "/api/super-admin/acting-as/stop",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/ai/departments/route.ts",
+      "url_base": "/api/super-admin/ai/departments",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/ai/jobs/[id]/approve/route.ts",
+      "url_base": "/api/super-admin/ai/jobs/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/ai/jobs/[id]/reject/route.ts",
+      "url_base": "/api/super-admin/ai/jobs/reject",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/ai/system-builder/requests/[id]/apply/route.ts",
+      "url_base": "/api/super-admin/ai/system-builder/requests/apply",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/ai/system-builder/requests/[id]/approve/route.ts",
+      "url_base": "/api/super-admin/ai/system-builder/requests/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/approvals/[id]/approve/route.ts",
+      "url_base": "/api/super-admin/approvals/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/approvals/[id]/reject/route.ts",
+      "url_base": "/api/super-admin/approvals/reject",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/approvals/[id]/revision-needed/route.ts",
+      "url_base": "/api/super-admin/approvals/revision-needed",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/branches/[id]/report/route.ts",
+      "url_base": "/api/super-admin/branches/report",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/countries/[id]/assign-team/route.ts",
+      "url_base": "/api/super-admin/countries/assign-team",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/countries/[id]/report/route.ts",
+      "url_base": "/api/super-admin/countries/report",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/countries/[id]/trigger-data-scan/route.ts",
+      "url_base": "/api/super-admin/countries/trigger-data-scan",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/employees/[id]/activity/route.ts",
+      "url_base": "/api/super-admin/employees/activity",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/employees/[id]/dashboard-access/route.ts",
+      "url_base": "/api/super-admin/employees/dashboard-access",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/employees/[id]/force-password-change/route.ts",
+      "url_base": "/api/super-admin/employees/force-password-change",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/employees/[id]/revoke-sessions/route.ts",
+      "url_base": "/api/super-admin/employees/revoke-sessions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/employees/[id]/status/route.ts",
+      "url_base": "/api/super-admin/employees/status",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/metrics/route.ts",
+      "url_base": "/api/super-admin/metrics",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/overview/route.ts",
+      "url_base": "/api/super-admin/overview",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/permissions/temporary/route.ts",
+      "url_base": "/api/super-admin/permissions/temporary",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/reports/[id]/download/route.ts",
+      "url_base": "/api/super-admin/reports/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/users/[id]/permissions/route.ts",
+      "url_base": "/api/super-admin/users/permissions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/super-admin/users/[id]/roles/route.ts",
+      "url_base": "/api/super-admin/users/roles",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/university-catalogue/coverage/decide/route.ts",
+      "url_base": "/api/university-catalogue/coverage/decide",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/university-catalogue/coverage/route.ts",
+      "url_base": "/api/university-catalogue/coverage",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/university-portal/accounts/[id]/route.ts",
+      "url_base": "/api/university-portal/accounts",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/university-portal/accounts/route.ts",
+      "url_base": "/api/university-portal/accounts",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/university-portal/applications/[id]/documents/route.ts",
+      "url_base": "/api/university-portal/applications/documents",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/university-portal/applications/[id]/propose-status/route.ts",
+      "url_base": "/api/university-portal/applications/propose-status",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/university-portal/applications/[id]/request-document/route.ts",
+      "url_base": "/api/university-portal/applications/request-document",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/users/[userId]/permissions/route.ts",
+      "url_base": "/api/users/permissions",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/ai-interview/[sessionId]/answer/route.ts",
+      "url_base": "/api/visa/ai-interview/answer",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/ai-interview/[sessionId]/finish/route.ts",
+      "url_base": "/api/visa/ai-interview/finish",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/ai-interview/[sessionId]/result/route.ts",
+      "url_base": "/api/visa/ai-interview/result",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/cases/[id]/assign/route.ts",
+      "url_base": "/api/visa/cases/assign",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/cases/[id]/risk-level/route.ts",
+      "url_base": "/api/visa/cases/risk-level",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/cases/[id]/stage/route.ts",
+      "url_base": "/api/visa/cases/stage",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/cases/[id]/student-feedback/route.ts",
+      "url_base": "/api/visa/cases/student-feedback",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/cases/[id]/timeline/route.ts",
+      "url_base": "/api/visa/cases/timeline",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/checklist/[caseId]/items/route.ts",
+      "url_base": "/api/visa/checklist/items",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/checklist/[caseId]/route.ts",
+      "url_base": "/api/visa/checklist",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/checklist/items/[id]/route.ts",
+      "url_base": "/api/visa/checklist/items",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/documents/[id]/approve/route.ts",
+      "url_base": "/api/visa/documents/approve",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/documents/[id]/download/route.ts",
+      "url_base": "/api/visa/documents/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/documents/[id]/needs-update/route.ts",
+      "url_base": "/api/visa/documents/needs-update",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/documents/[id]/reject/route.ts",
+      "url_base": "/api/visa/documents/reject",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/interviews/[id]/answer/route.ts",
+      "url_base": "/api/visa/interviews/answer",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/interviews/[id]/finish/route.ts",
+      "url_base": "/api/visa/interviews/finish",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/interviews/[id]/question/route.ts",
+      "url_base": "/api/visa/interviews/question",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/interviews/[id]/student-feedback/route.ts",
+      "url_base": "/api/visa/interviews/student-feedback",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/metrics/route.ts",
+      "url_base": "/api/visa/metrics",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/overview/route.ts",
+      "url_base": "/api/visa/overview",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/readiness/[caseId]/calculate/route.ts",
+      "url_base": "/api/visa/readiness/calculate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/reports/[id]/download/route.ts",
+      "url_base": "/api/visa/reports/download",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/reports/generate/route.ts",
+      "url_base": "/api/visa/reports/generate",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/visa/reports/route.ts",
+      "url_base": "/api/visa/reports",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/webhooks/deliveries/[id]/replay/route.ts",
+      "url_base": "/api/webhooks/deliveries/replay",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/website/english-tests/route.ts",
+      "url_base": "/api/website/english-tests",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/website/stats/route.ts",
+      "url_base": "/api/website/stats",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/whatsapp/contacts/route.ts",
+      "url_base": "/api/whatsapp/contacts",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/whatsapp/portal-invitations/route.ts",
+      "url_base": "/api/whatsapp/portal-invitations",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/workforce/approval/route.ts",
+      "url_base": "/api/workforce/approval",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/workforce/classify/route.ts",
+      "url_base": "/api/workforce/classify",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/workforce/gateway/route.ts",
+      "url_base": "/api/workforce/gateway",
+      "referenced_by_client_code": false
+    },
+    {
+      "route": "src/app/api/workforce/orchestrate/route.ts",
+      "url_base": "/api/workforce/orchestrate",
+      "referenced_by_client_code": false
+    }
+  ],
+  "apiRoutesWithClientReference": 723,
+  "srcDuplicateGroups": {
+    "6c97fb2d364d66db67a0f69f35bb06a5b876bd967b350dcb733344f935928110": [
+      "src/app/api/admin/university-data/publish/route.ts",
+      "src/app/api/admin/university-data/run-scan/route.ts",
+      "src/app/api/admin/university-data/updates/[id]/publish/route.ts",
+      "src/app/api/admin/university-data/updates/[id]/rollback/route.ts"
+    ],
+    "67d5e59fc663a623ee9eb9552af1dde4552c7eebb8d0de89f4431c200ad3de84": [
+      "src/app/api/visa/metrics/route.ts",
+      "src/app/api/visa/overview/route.ts"
+    ],
+    "ffc7a7d4cfc68ff82a73d23290e5458c5720e780d9728bc7969a4ab796f2bbb1": [
+      "src/app/counselor/marketing/campaigns/page.tsx",
+      "src/app/counselor/marketing/content/page.tsx",
+      "src/app/counselor/marketing/image/page.tsx",
+      "src/app/counselor/marketing/posts/page.tsx",
+      "src/app/counselor/marketing/video/page.tsx"
+    ],
+    "ae531f831ecf85c99bdff1afe56ad06668a43373d077fcefe28f2f1c741415ec": [
+      "src/app/student/mock-tests/available/page.tsx",
+      "src/app/student/mock-tests/result/[sessionId]/page.tsx",
+      "src/app/student/mock-tests/session/[sessionId]/page.tsx",
+      "src/app/student/mock-tests/start/[testId]/page.tsx"
+    ]
+  },
+  "prismaModels": 618,
+  "prismaModelsUnreferencedInCode": [
+    "MarketingCampaign",
+    "MarketingContentIdea",
+    "MarketingGeneratedContent",
+    "MarketingAsset",
+    "MarketingTemplate",
+    "MarketingVideo",
+    "MarketingSocialMessage",
+    "MarketingDMThread",
+    "MarketingComment",
+    "MarketingLeadScore",
+    "MarketingCampaignSource",
+    "MarketingReport",
+    "MarketingAgentJob",
+    "MarketingAgentMemory",
+    "MarketingRagSource",
+    "MarketingRagChunk",
+    "MarketingImprovementProposal",
+    "SocialWebhookEvent",
+    "StudentWorkExperience",
+    "StudentRecommendation",
+    "StudentVisaHistory",
+    "SavedCourse",
+    "CourseComparison",
+    "ScholarshipMatch",
+    "CvReview",
+    "EnglishTest",
+    "TestAnswer",
+    "TestResult",
+    "AiExamFeedback",
+    "AiInterviewAnswer",
+    "VisaChecklistItem",
+    "ImportBatch",
+    "ImportStagingStudent",
+    "VisaInterviewQuestion",
+    "VisaMockResult",
+    "VisaRiskAssessment",
+    "VisaSensitiveReview",
+    "VisaTask",
+    "VisaReport",
+    "AiStudentMemory",
+    "InboundMessage",
+    "AloDocument",
+    "AloMessage",
+    "AloAppointment",
+    "AloSop",
+    "AloEnglishTest",
+    "CrmDiscoverySource",
+    "CrmDiscoveryRecord",
+    "CrmSourceVerificationEvent",
+    "EmployeeHRProfile",
+    "UserRole",
+    "CommunicationThreadParticipant",
+    "CommunicationSlaRule",
+    "CommunicationEscalation",
+    "CallLog",
+    "AiReplyDraft",
+    "AiGeneratedDocument",
+    "SensitiveDataRevealLog",
+    "PortalTimelineEvent",
+    "StudentEducationRecord",
+    "StudentWorkExpRecord",
+    "StudentEnglishTestRecord",
+    "StudentVisaRefusal",
+    "StudentReferral",
+    "CountryQuickFact",
+    "CountryCity",
+    "CountryEducationPathway",
+    "CountryStudyReason",
+    "CountryEntryRequirement",
+    "CountryEnglishTest",
+    "CountryVisaStep",
+    "CountryWorkRight",
+    "CountrySource",
+    "PartnerQuota",
+    "UccRoutingRule",
+    "UccOfficeHours",
+    "UccWebhookEvent",
+    "OcrFieldExtraction",
+    "FormFillSuggestion",
+    "IntegrationAuditLog",
+    "ProviderErrorLog",
+    "ContentApproval",
+    "AiLeadScore",
+    "CommunicationRoutingLog",
+    "CommunicationDeleteRequest",
+    "CommunicationNoteVersion",
+    "EmployeeDepartment",
+    "EmployeeBranch",
+    "EmployeeOffice",
+    "EmployeeLeaveBalance",
+    "EmployeePayrollItem",
+    "EmployeeDevice",
+    "EmployeeLoginLog",
+    "EmployeeAgreement",
+    "EmployeeAgreementAcceptance",
+    "EmployeeDocumentVersion",
+    "EmployeePermissionRequest",
+    "EmployeeReassignment",
+    "EmployeeBreakGlassAccess",
+    "EnglishPrepTest",
+    "EnglishPrepModule",
+    "EnglishPrepAcceptance",
+    "EnglishPrepRequirement",
+    "EnglishPrepFaq",
+    "EnglishPrepResource",
+    "EnglishPrepSuccessStory",
+    "LanguagePrepLead",
+    "StudentEnglishPrepProfile",
+    "EnglishTestComparison",
+    "ApplicationOffer",
+    "ApplicationCasI20Coe",
+    "ApplicationFinance",
+    "RelatedContent",
+    "Campus",
+    "StudyLevel",
+    "StudyArea",
+    "Discipline",
+    "CourseTag",
+    "EntryRequirement",
+    "EnglishRequirement",
+    "CourseComparisonList",
+    "DataQualityScore",
+    "SourceLog",
+    "UpdateRequest",
+    "CommunicationAttachment",
+    "ContactMatchReview",
+    "AgentReplicationCycle",
+    "AiAgentLineage",
+    "ReviewInvitation",
+    "StudentReview",
+    "CallOutcome",
+    "UnknownIncomingContact",
+    "ApprovalAction",
+    "B2BContact",
+    "CommunicationTask",
+    "EscalationEvent",
+    "ImportError",
+    "InterviewAnswer",
+    "InterviewAssessment",
+    "InterviewReviewDecision",
+    "InterviewPracticeWindow",
+    "StudentInterviewFact",
+    "InterviewQuestion",
+    "LearningPost",
+    "LiveEditOverride",
+    "UniversityHistory",
+    "CourseHistory",
+    "ScholarshipHistory",
+    "OfficialDocument",
+    "OfficialEmail",
+    "QuickReply",
+    "SlaIncidentCounter",
+    "SlaJustification",
+    "SlaPolicy",
+    "SocialAccountOwnership",
+    "UniversityAgreement",
+    "UniversityFaculty",
+    "HrmEmployeeExperience",
+    "HrmEmployeeSkill",
+    "HrmEmployeeLanguage",
+    "HrmAttendanceHoliday",
+    "HrmPayrollConfig",
+    "HrmPayrollRun",
+    "HrmNotice",
+    "HrmExit",
+    "HrmDeviceLog",
+    "HrmLoginSecurityExtended",
+    "HrmHrPolicy",
+    "ApplicationPaymentInstruction",
+    "ApplicationSerial",
+    "ApplicationSubmissionReceipt",
+    "CommunicationSlaJustification",
+    "CounselorResponseMetric",
+    "DocumentChecklist",
+    "FinderEligibilityResult",
+    "PhoneCallRecord",
+    "StudentNextBestAction",
+    "VideoProject",
+    "VideoEngineJob",
+    "VideoTemplate",
+    "VideoProviderConfig",
+    "VideoAsset",
+    "VideoCaption",
+    "VideoRecording",
+    "VideoAnalytics",
+    "KnowledgeSharingPost",
+    "KnowledgeSharingComment",
+    "KnowledgeSharingUpvote",
+    "InternationalOfficerProfile",
+    "UniversityResearchActivity",
+    "PartnershipCommunication",
+    "PartnershipBusinessStrategy",
+    "InternationalOfficerDashboardMetric",
+    "JournalLine",
+    "PurchaseRequestLine",
+    "StudentIdSequence",
+    "PhdResearchPreference",
+    "PhdResearchQuestion",
+    "PhdResearchObjective",
+    "PhdResearchMethodology",
+    "PhdResearchNote",
+    "PhdSchool",
+    "PhdResearchArea",
+    "PhdSupervisorExpertise",
+    "PhdSupervisorPublication",
+    "PhdCommissionCondition",
+    "PhdExportRecord",
+    "PermissionGroupGrant",
+    "UserPermissionOverride",
+    "Report",
+    "ModuleBuildRequest",
+    "StudentChannelIdentity"
+  ]
+}
