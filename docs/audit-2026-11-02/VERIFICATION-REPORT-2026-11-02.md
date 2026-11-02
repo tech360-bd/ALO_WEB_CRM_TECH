@@ -15,7 +15,7 @@ Read this with `docs/audit-2026-11-02/proposals/README.md` (the Section A packag
 | Working branch | `arena/ececf40c-alo-web-crm-tech` | **VERIFIED** |
 | HEAD at start of this turn | `1e30e812` (= `main`, 0 ahead / 0 behind) | **VERIFIED** |
 | Remote branch head at start | `7e4c3922` (`fix(catalogue): approved records now pass the public gate`) | **VERIFIED** |
-| HEAD now | `c9edee3f` | **VERIFIED** |
+| HEAD now | `ab162322` (report commit); code+test head `c9edee3f` | **VERIFIED** |
 | PR | **#49** — https://github.com/tech360-bd/ALO_WEB_CRM_TECH/pull/49 (OPEN, `MERGEABLE`, not merged) | **VERIFIED** |
 | Node / npm | v22.22.3 / 10.9.8; `npm ci --no-audit` → 1,282 packages | **PASSED** |
 
@@ -292,15 +292,16 @@ Title: *fix(whatsapp): BD phone normalisation, authz order, offline copy + Secti
 (9002/9003 unapplied)*. State: **OPEN**, `MERGEABLE`, **not merged** (approval required).
 
 Commits: `7e4c3922` (fetched), `5ce71440` (fixes + tests), `6d11814e` (audit docs),
-`c142c95d` (env classification), `c9edee3f` (CI re-trigger, empty).
+`c142c95d` (env classification), `c9edee3f` (CI re-trigger, empty), `ab162322` (this report).
 
 ## 14. CI results and evidence links
 
 | Check | Result | Link |
 |---|---|---|
-| Lint · Typecheck · Tests · Prisma · Build | **PASSED** (17m14s) | https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/41439607157/job/125257865796 |
-| MySQL 8 · Migrate · Integrate · Boot | **FAILED** (pre-existing, drift step) | https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/41439607157/job/125257865713 |
-| CodeQL (actions, python, javascript-typescript) | **PASSED** | https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/41439607134 |
+| Lint · Typecheck · Tests · Prisma · Build (final SHA `ab162322`) | **PASSED** (15m04s) | https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/41442086742/job/125266176868 |
+| Same job, previous SHA `c9edee3f` | **PASSED** (17m14s) | https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/41439607157/job/125257865796 |
+| MySQL 8 · Migrate · Integrate · Boot | **FAILED** (pre-existing, drift step) | https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/41442086742/job/125266176518 |
+| CodeQL (actions, python, javascript-typescript) | **PASSED** | https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/41442086716 |
 | Code scanning AI findings | **BLOCKED (platform)** | https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/41437514001 |
 | Same drift step on `main` (proof of pre-existence) | **FAILED** | https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/41185748051 |
 
