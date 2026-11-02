@@ -1,6 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({ recorded: vi.fn(), crm: vi.fn(), countries: vi.fn() }));
 vi.mock('@/lib/db', () => ({ db: { englishPrepRequirement: { findMany: mocks.recorded }, crmCourseRequirement: { findMany: mocks.crm }, country: { findMany: mocks.countries } } }));
+// The route first asks the language-prep service which test records are
+// currently source-reviewed and offers nothing else. Without this mock the
+// service returns no tests under a mocked db, the route short-circuits, and the
+// query these tests inspect is never issued.
+vi.mock('@/lib/language-prep/service', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/lib/language-prep/service')>()),
+  getAllEnglishPrepTestsFromDB: async () => [{ slug: 'pte-academic', name: 'PTE Academic' }],
+}));
+
 import { GET } from '@/app/api/language-prep/requirements/route';
 
 describe('language requirement lookup authorization-free public catalogue filtering', () => {

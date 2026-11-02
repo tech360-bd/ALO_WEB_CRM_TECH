@@ -22,13 +22,26 @@ function sourceFiles(dir: string): string[] {
 
 describe('one footer landmark per page', () => {
   it('has exactly one public footer and one portal footer component', () => {
+    // Footers in shared chrome. Every other <footer> in src/ must be a
+    // self-contained page that does not also mount shared chrome, or that page
+    // would show two footer landmarks.
+    const sharedChrome = [
+      'src/components/portals/PortalFooter.tsx',
+      'src/components/website/PublicFooter.tsx',
+    ];
+    const selfContainedPageFooters = ['src/app/dreamframe/page.tsx'];
+
     const footerOwners = sourceFiles('src')
       .filter((path) => /<footer\b/.test(readFileSync(path, 'utf8')))
       .sort();
-    expect(footerOwners).toEqual([
-      'src/components/portals/PortalFooter.tsx',
-      'src/components/website/PublicFooter.tsx',
-    ]);
+    expect(footerOwners).toEqual([...sharedChrome, ...selfContainedPageFooters].sort());
+
+    for (const path of selfContainedPageFooters) {
+      const text = readFileSync(path, 'utf8');
+      // A page-level footer is only safe when the page owns its whole document.
+      expect(text, path).not.toMatch(/<PublicFooter\b|<PortalFooter\b/);
+      expect(text, path).not.toMatch(/from '@\/components\/website\/PublicFooter'/);
+    }
   });
 
   it('never nests a portal shell inside a layout that already renders one', () => {

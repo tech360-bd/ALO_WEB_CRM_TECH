@@ -1,4 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// The public contact block is deployment configuration, not a source constant:
+// src/lib/alo-site-info.ts deliberately ships blank. Declare the deployment this
+// test assumes, before the module under test reads process.env.
+vi.hoisted(() => {
+  process.env.NEXT_PUBLIC_ALO_CONTACT_PHONE = '+8801805020101-10';
+  process.env.NEXT_PUBLIC_ALO_WHATSAPP_NUMBER = '+8801805020101';
+});
+
 import {
   ALO_STUDY_STEPS,
   buildStudyGuideText,
@@ -19,7 +28,9 @@ describe('ALO 7-step study guide (homepage Smart Course Finder download)', () =>
   it('builds a country-specific downloadable guide with real ALO contact details', () => {
     const text = buildStudyGuideText('United Kingdom', 'uk');
     expect(text).toContain('Your 7-Step Study Guide — United Kingdom');
-    expect(text).toContain('Step 1: Free Counseling & Profile Assessment');
+    // The step title is the product name of step 1. "Free" is stated inside the
+    // description, not the title — do not duplicate it into the heading.
+    expect(text).toContain('Step 1: Counseling & Profile Assessment');
     expect(text).toContain('Step 7: Pre-Departure Briefing & Fly');
     expect(text).toContain('https://aloeducation.com/destinations/uk');
     expect(text).toContain('https://aloeducation.com/course-finder?country=United%20Kingdom');
