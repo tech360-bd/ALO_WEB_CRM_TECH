@@ -30,6 +30,24 @@ async function handleStart(request: Request, auth: AuthContext) {
   }
 
   try {
+    // The acting session row (and the employee link it validates) live in the
+    // portal_users namespace. A NextAuth Super Admin is identified in `users`,
+    // so their portal identity is resolved by id and then by email before a
+    // session row is written — otherwise the FK would be invalid and the
+    // cookie would point at a session the middleware cannot verify.
+    const { resolveActorPortalUserId } = await import('@/lib/acting-as');
+    const actorPortalUserId = await resolveActorPortalUserId(auth.actorUserId, auth.actorEmail);
+    if (!actorPortalUserId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            'Acting-As requires the Super Admin to have a linked portal identity. No portal account matches this user.',
+        },
+        { status: 409 },
+      );
+    }
+
     const [target, employee] = await Promise.all([
       db.portalUser.findUnique({
         where: { id: targetUserId },
@@ -63,7 +81,7 @@ async function handleStart(request: Request, auth: AuthContext) {
     const actingAsSession = await db.$transaction(async (tx) => {
       const session = await tx.portalSession.create({
         data: {
-          userId: auth.actorUserId,
+          userId: actorPortalUserId,
           token,
           deviceName: `ALO_ACTING_AS:${target.id}`,
           ipAddress,
