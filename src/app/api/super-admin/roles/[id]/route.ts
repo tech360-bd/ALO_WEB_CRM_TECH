@@ -91,9 +91,12 @@ async function handlePatch(request: Request, auth: AuthContext, context?: { para
           where: { id: { in: permissionIds } },
           select: { id: true },
         });
-        const validIds = valid.map((permission) => permission.id);
+        const validIds = [...new Set(valid.map((permission) => permission.id))];
         await tx.portalRolePermission.deleteMany({ where: { roleId: id } });
         if (validIds.length) {
+          // Every row for this role was deleted just above, so a plain
+          // de-duplicated insert is equivalent to skipDuplicates and works on
+          // SQLite as well as MySQL.
           await tx.portalRolePermission.createMany({
             data: validIds.map((permissionId) => ({
               roleId: id,
@@ -101,7 +104,6 @@ async function handlePatch(request: Request, auth: AuthContext, context?: { para
               granted: true,
               assignedBy: auth.actorUserId,
             })),
-            skipDuplicates: true,
           });
         }
       }

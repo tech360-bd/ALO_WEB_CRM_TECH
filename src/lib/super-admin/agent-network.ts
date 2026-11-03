@@ -17,7 +17,7 @@
 import { db } from '@/lib/db';
 import type { AgentNetworkDepartment, AgentNetworkSummary } from './types';
 
-const AGENTS_PER_DEPARTMENT = 50;
+export const AGENTS_PER_DEPARTMENT = 50;
 const CLUSTER_NAME = 'ALO 2000 Protected Self-Learning Agent Network';
 
 interface DepartmentDefinition {
