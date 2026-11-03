@@ -272,6 +272,7 @@ interface PortalDocumentRow {
   id: string; studentProfileId: string; name?: string | null; category?: string | null;
   fileName?: string | null; storagePath?: string | null; mimeType?: string | null; fileSize?: number | null;
   status?: string | null; rejectionReason?: string | null; reviewedBy?: string | null;
+  version?: number | null; previousVersionId?: string | null; isArchived?: boolean | null;
   createdAt: Date | string; updatedAt: Date | string;
 }
 
@@ -320,11 +321,12 @@ export function fromPortalDocument(row: PortalDocumentRow, studentId: string): N
     rejectionReason: row.rejectionReason || null,
     reviewerNote: null,
     reviewedBy: row.reviewedBy || null,
-    // The portal table has no versioning columns; a portal upload is v1 of its slot
-    // until the version policy is extended to it.
-    version: 1,
-    previousVersionId: null,
-    isArchived: false,
+    // Portal documents carry the same version/archive columns as the student
+    // table (migration 20261102180000_portal_student_document_versioning), so the
+    // merged view reports the real version instead of assuming 1.
+    version: row.version ?? 1,
+    previousVersionId: row.previousVersionId || null,
+    isArchived: !!row.isArchived,
     hasFile: !!row.storagePath,
     createdAt: iso(row.createdAt),
     updatedAt: iso(row.updatedAt),

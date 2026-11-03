@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, logAuditAction } from '@/lib/auth-middleware';
 import { requireDocumentReviewer } from '@/lib/documents/document-access-resolver';
+import { canReadDocumentsByRole, canReviewDocuments, isAdminLike } from '@/lib/documents/document-access';
 
 // ============================================================
 // CRM DOCUMENTS API — PortalStudentDocument with status filters
@@ -14,6 +15,22 @@ const VALID_STATUSES = [
 export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
     try {
+      // SECURITY FIX: this list previously ran under `withAuth` alone, so ANY
+      // authenticated account — including a partner or student portal identity —
+      // could page through every student's documents, together with the
+      // student's name, email and phone. It is a staff document queue, so it now
+      // requires a document-read role, and non-administrative readers (counselor,
+      // senior counselor, finance) only see students assigned to them.
+      if (!canReadDocumentsByRole(auth.roles)) {
+        return NextResponse.json(
+          { success: false, error: 'Your role cannot list student documents.' },
+          { status: 403 },
+        );
+      }
+      const actorIsAdmin = isAdminLike(auth.roles);
+      const actorIsReviewer = canReviewDocuments(auth.roles);
+      const assignedOnly = !actorIsAdmin && !actorIsReviewer;
+
       const { searchParams } = new URL(req.url);
       const search = searchParams.get('search') || '';
       const status = searchParams.get('status') || '';
@@ -25,8 +42,9 @@ export async function GET(request: NextRequest) {
       const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
       const skip = (page - 1) * limit;
 
-      // Build where clause
-      const where: Record<string, unknown> = {};
+      // Build where clause. Archived documents are history and never part of the
+      // live review queue.
+      const where: Record<string, unknown> = { isArchived: false };
 
       if (status) {
         const statuses = status.split(',').map(s => s.trim()).filter(Boolean);
@@ -43,6 +61,11 @@ export async function GET(request: NextRequest) {
 
       if (studentProfileId) {
         where.studentProfileId = studentProfileId;
+      }
+
+      if (assignedOnly) {
+        // Deny-by-default: an unassigned student simply does not match.
+        where.studentProfile = { counselorId: auth.userId };
       }
 
       if (search) {
@@ -74,17 +97,14 @@ export async function GET(request: NextRequest) {
           take: limit,
           include: {
             studentProfile: {
+              // Contact details are deliberately not returned: this is a
+              // document queue, not a contact sheet, and the review UI never
+              // renders them.
               select: {
                 id: true,
                 studentId: true,
                 fullName: true,
                 city: true,
-                user: {
-                  select: {
-                    email: true,
-                    phone: true,
-                  },
-                },
               },
             },
           },
@@ -95,10 +115,15 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        data: documents,
+        // Staff can open either table through the authorized staff download route.
+        data: documents.map((document) => ({
+          ...document,
+          downloadUrl: `/api/counselor/documents/${document.id}/download`,
+        })),
         total,
         page,
         totalPages,
+        scope: assignedOnly ? 'assigned_students' : 'all_students',
       });
     } catch (error) {
       console.error('CRM Documents API error:', error);
@@ -209,6 +234,25 @@ export async function PUT(request: NextRequest) {
         },
       });
 
+      // Review policy for versioned slots: approving a replacement supersedes the
+      // earlier versions of the same document type, but only now — never at
+      // upload time — so an unreviewed file can never masquerade as approved and
+      // the previously approved file stays downloadable until this point.
+      let supersededCount = 0;
+      if (String(status || '').toLowerCase() === 'approved') {
+        const superseded = await db.portalStudentDocument.updateMany({
+          where: {
+            studentProfileId: existing.studentProfileId,
+            category: existing.category,
+            id: { not: id },
+            isArchived: false,
+            status: { in: ['pending', 'pending_review', 'uploaded', 'needs_update', 'approved'] },
+          },
+          data: { status: 'superseded' },
+        });
+        supersededCount = superseded.count;
+      }
+
       // Log audit action
       await logAuditAction(auth, 'document_review', 'PortalStudentDocument', id, {
         documentName: document.name,
@@ -216,6 +260,8 @@ export async function PUT(request: NextRequest) {
         newStatus: status,
         studentId: existing.studentProfile?.studentId,
         rejectionReason,
+        version: document.version,
+        supersededEarlierVersions: supersededCount,
       });
 
       return NextResponse.json({

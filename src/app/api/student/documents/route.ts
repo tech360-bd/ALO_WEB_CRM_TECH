@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withStudentAuth } from '@/lib/student-auth';
@@ -48,11 +49,22 @@ export const GET = withStudentAuth(async (_request, auth) => {
     await db.portalAuditLog.create({
       data: { actorUserId: auth.studentId, action: 'STUDENT_DOCUMENTS_VIEW', entityType: 'StudentDocument', entityId: auth.studentId, metadata: JSON.stringify({ studentId: auth.studentId, count: documents.length }), ipAddress: '', userAgent: '' },
     });
+    // Identify the current version per document slot. History is retained (a
+    // rejected or superseded upload is never deleted), so without this flag the
+    // student cannot tell which accepted file is the live one.
+    const highestVersionByCategory = new Map<string, number>();
+    for (const document of documents) {
+      highestVersionByCategory.set(
+        document.category,
+        Math.max(highestVersionByCategory.get(document.category) || 0, document.version || 0),
+      );
+    }
     return NextResponse.json({
       success: true,
       data: documents.map((document) => ({
         ...document,
         uploadedAt: document.createdAt,
+        isCurrentVersion: (document.version || 0) === (highestVersionByCategory.get(document.category) || 0),
         downloadUrl: `/api/student/documents/${document.id}/download`,
       })),
     });
@@ -81,6 +93,35 @@ export const POST = withStudentAuth(async (request, auth) => {
     return NextResponse.json({ success: false, error: 'File content does not match an allowed PDF or image type.' }, { status: 400 });
   }
 
+  // Idempotency: a double submit or a client retry of the SAME bytes into the
+  // same slot must not create a second row (and must not burn a version).
+  // A rejected upload is excluded so a genuine correction of an identical file
+  // after a rejection is still accepted.
+  const incomingHash = createHash('sha256').update(bytes).digest('hex');
+  const duplicate = await db.studentDocument.findFirst({
+    where: {
+      studentId: auth.studentId,
+      category,
+      fileHash: incomingHash,
+      isArchived: false,
+      status: { not: 'rejected' },
+    },
+    orderBy: { version: 'desc' },
+    select: { id: true, category: true, fileName: true, fileSize: true, status: true, version: true, createdAt: true },
+  });
+  if (duplicate) {
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...duplicate,
+        uploadedAt: duplicate.createdAt,
+        deduplicated: true,
+        downloadUrl: `/api/student/documents/${duplicate.id}/download`,
+      },
+      message: 'This exact file is already on record for that document type; the existing upload was kept.',
+    }, { status: 200 });
+  }
+
   const stored = await storePrivateFile(bytes, fileName);
   try {
     const document = await db.$transaction(async (tx) => {
@@ -97,7 +138,7 @@ export const POST = withStudentAuth(async (request, auth) => {
           fileUrl: '',
           storagePath: stored.storagePath,
           mimeType,
-          fileHash: stored.fileHash,
+          fileHash: incomingHash,
           fileSize: stored.fileSize,
           status: 'pending_review',
           version: (prior?.version || 0) + 1,

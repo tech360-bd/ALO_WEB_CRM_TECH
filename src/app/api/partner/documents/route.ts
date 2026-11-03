@@ -26,6 +26,23 @@ function safeOriginalName(value: string): string | null {
   return name;
 }
 
+/**
+ * Mark the live version of every document slot (same student + category).
+ * Versions are retained, so the newest row is not automatically the trusted one:
+ * `isCurrentVersion` marks the newest upload, while `status` still says whether
+ * that upload has actually been verified.
+ */
+function applyCurrentVersion<T extends { category: string; version?: number | null }>(rows: T[]): Array<T & { isCurrentVersion: boolean }> {
+  const highest = new Map<string, number>();
+  for (const row of rows) {
+    highest.set(row.category, Math.max(highest.get(row.category) || 0, row.version || 0));
+  }
+  return rows.map((row) => ({
+    ...row,
+    isCurrentVersion: (row.version || 0) === (highest.get(row.category) || 0),
+  }));
+}
+
 async function getPartner(authUserId: string) {
   return db.partnerProfile.findUnique({ where: { userId: authUserId } });
 }
@@ -46,7 +63,11 @@ export async function GET(request: Request) {
     const page = Number.isFinite(requestedPage) ? Math.max(1, requestedPage) : 1;
     const limit = Number.isFinite(requestedLimit) ? Math.min(100, Math.max(1, requestedLimit)) : 20;
 
-    const where: Record<string, unknown> = { studentProfile: { partnerId: partner.partnerId } };
+    // Archived rows are history, not the live queue.
+    const where: Record<string, unknown> = {
+      isArchived: false,
+      studentProfile: { partnerId: partner.partnerId },
+    };
     if (category) where.category = category;
     if (status) where.status = status;
     if (search) {
@@ -70,18 +91,20 @@ export async function GET(request: Request) {
           status: true,
           rejectionReason: true,
           uploadedAt: true,
+          version: true,
+          previousVersionId: true,
           createdAt: true,
           updatedAt: true,
           studentProfile: { select: { id: true, fullName: true, studentId: true } },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ version: 'desc' }, { createdAt: 'desc' }],
         skip: (page - 1) * limit,
         take: limit,
       }),
       db.portalStudentDocument.count({ where }),
       db.portalStudentDocument.groupBy({
         by: ['status'],
-        where: { studentProfile: { partnerId: partner.partnerId } },
+        where: { isArchived: false, studentProfile: { partnerId: partner.partnerId } },
         _count: { id: true },
       }),
     ]);
@@ -89,7 +112,7 @@ export async function GET(request: Request) {
     const statusCounts = Object.fromEntries(stats.map((entry) => [entry.status, entry._count.id]));
     return NextResponse.json({
       success: true,
-      data: documents.map((document) => ({
+      data: applyCurrentVersion(documents).map((document) => ({
         ...document,
         downloadUrl: `/api/partner/documents/${document.id}/download`,
       })),
@@ -136,6 +159,43 @@ export async function POST(request: Request) {
     });
     if (!studentProfile) return NextResponse.json({ success: false, error: 'Student profile not found for this partner.' }, { status: 404 });
 
+    // Idempotency: replaying the same bytes into the same slot must not create a
+    // second row or consume a version number. A rejected upload is excluded so an
+    // identical correction after a rejection is still accepted.
+    const incomingHash = createHash('sha256').update(bytes).digest('hex');
+    const duplicate = await db.portalStudentDocument.findFirst({
+      where: {
+        studentProfileId: studentProfile.id,
+        category,
+        fileHash: incomingHash,
+        isArchived: false,
+        status: { not: 'rejected' },
+      },
+      orderBy: { version: 'desc' },
+      select: {
+        id: true, name: true, category: true, fileName: true, fileSize: true, status: true,
+        version: true, previousVersionId: true, uploadedAt: true, createdAt: true,
+        studentProfile: { select: { id: true, fullName: true, studentId: true } },
+      },
+    });
+    if (duplicate) {
+      return NextResponse.json({
+        success: true,
+        data: { ...duplicate, isCurrentVersion: true, deduplicated: true, downloadUrl: `/api/partner/documents/${duplicate.id}/download` },
+        message: 'This exact file is already on record for that document type; the existing upload was kept.',
+      }, { status: 200 });
+    }
+
+    // Version chain — previous rows are never overwritten, so a rejected or
+    // verified upload keeps its own file, status and review comment.
+    const priorVersions = await db.portalStudentDocument.findMany({
+      where: { studentProfileId: studentProfile.id, category, isArchived: false },
+      select: { id: true, version: true },
+      orderBy: { version: 'desc' },
+    });
+    const previousVersion = priorVersions[0] || null;
+    const nextVersion = Math.max(0, ...priorVersions.map((row) => row.version || 0)) + 1;
+
     stored = await storePrivateFile(bytes, fileName);
     const document = await db.$transaction(async (tx) => {
       const created = await tx.portalStudentDocument.create({
@@ -146,9 +206,12 @@ export async function POST(request: Request) {
           fileName,
           storagePath: stored!.storagePath,
           mimeType,
-          fileHash: stored!.fileHash,
+          fileHash: incomingHash,
           fileSize: stored!.fileSize,
+          // A replacement never inherits "verified" from the file it replaces.
           status: 'pending',
+          version: nextVersion,
+          previousVersionId: previousVersion?.id || '',
           uploadedAt: new Date().toISOString(),
         },
         select: {
@@ -158,6 +221,8 @@ export async function POST(request: Request) {
           fileName: true,
           fileSize: true,
           status: true,
+          version: true,
+          previousVersionId: true,
           uploadedAt: true,
           createdAt: true,
           studentProfile: { select: { id: true, fullName: true, studentId: true } },
@@ -180,7 +245,14 @@ export async function POST(request: Request) {
           action: 'PARTNER_DOCUMENT_UPLOADED',
           entityType: 'PortalStudentDocument',
           entityId: created.id,
-          metadata: JSON.stringify({ studentId: studentProfile.studentId, category, fileHash: stored!.fileHash }),
+          metadata: JSON.stringify({
+            studentId: studentProfile.studentId,
+            category,
+            fileHash: incomingHash,
+            version: nextVersion,
+            previousVersionId: previousVersion?.id || '',
+            replacedStatus: previousVersion ? 'retained' : 'none',
+          }),
         },
       });
       return created;
@@ -188,8 +260,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      data: { ...document, downloadUrl: `/api/partner/documents/${document.id}/download` },
-      message: 'File bytes were stored privately and queued for document review.',
+      data: { ...document, isCurrentVersion: true, downloadUrl: `/api/partner/documents/${document.id}/download` },
+      message: 'File bytes were stored privately and queued for document review. Earlier versions were kept.',
     }, { status: 201 });
   } catch (error) {
     if (stored?.storagePath) await removePrivateFile(stored.storagePath).catch(() => {});

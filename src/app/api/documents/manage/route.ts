@@ -83,13 +83,14 @@ export async function POST(request: NextRequest) {
               : { isArchived: true, archivedAt: now },
         });
       } else {
-        // The portal table has no archive column. Rather than inventing a schema
-        // change in this pass, an archived portal document is marked with the
-        // existing status vocabulary so the row is preserved and excluded from
-        // listings, and the limitation is recorded in the audit entry.
+        // Portal documents now carry the same archive columns as the student
+        // table (additive migration 20261102180000_portal_student_document_
+        // versioning), so archival no longer has to overwrite the review status.
         await db.portalStudentDocument.update({
           where: { id },
-          data: action === 'restore' ? { status: 'pending' } : { status: 'archived' },
+          data: action === 'restore'
+            ? { isArchived: false, archivedAt: null }
+            : { isArchived: true, archivedAt: now },
         });
       }
 
