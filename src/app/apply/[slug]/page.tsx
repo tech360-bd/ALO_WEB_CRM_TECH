@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { publicCourseIdentifierWhere, publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
 import ApplyNowForm from '@/components/apply/ApplyNowForm';
+import { applicationIntakeLabel } from '@/lib/course-finder/application-intake';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -94,7 +95,7 @@ export default async function ApplyNowPage({ params }: { params: Promise<{ slug:
 
   const intakes = (course.intakeFees || [])
     .map((intake) => ({
-      label: intake.intakeName || [intake.intakeMonth, intake.intakeYear].filter(Boolean).join(' '),
+      label: applicationIntakeLabel(intake),
       deadline: intake.applicationDeadline || '',
       tuition: intake.yearlyTuition || 0,
       currency: intake.tuitionCurrency || course.currency,

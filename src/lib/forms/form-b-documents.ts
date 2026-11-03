@@ -5,7 +5,7 @@ export function requiredFormBDocumentCategories(values: Record<string, unknown>)
   if (yes(values.hasPassport)) categories.push('PASSPORT');
   const tests = Array.isArray(values.englishTests) ? values.englishTests as Record<string, unknown>[] : [];
   if (yes(values.testStatus ?? values.englishTestStatus) || tests.some((test) => yes(test.testStatus ?? test.englishTestStatus))) categories.push('IELTS_CERT');
-  if (yes(values.hasVisaRefusal)) categories.push('REFUSAL_LETTER');
+  if (yes(values.hasVisaRefusal) || yes(values.visaRefusal)) categories.push('REFUSAL_LETTER');
   if (yes(values.hasWorkExp)) categories.push('CV');
   const sponsor = String(values.sponsor ?? values.sponsorType ?? '').toLowerCase();
   if (sponsor && sponsor !== 'applicant') categories.push('SPONSOR_DOC');

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { returnPathFromLocation } from '@/lib/safe-return-path';
 import { GraduationCap, Eye, EyeOff, Phone, Mail, Lock, ArrowRight, Shield, AlertCircle, Loader2 } from 'lucide-react';
 
 type LoginMethod = 'password' | 'otp';
@@ -10,6 +11,7 @@ type LoginMethod = 'password' | 'otp';
 export default function StudentLoginPage() {
   const router = useRouter();
   const [method, setMethod] = useState<LoginMethod>('password');
+  const [registerHref, setRegisterHref] = useState('/student/register');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -25,9 +27,10 @@ export default function StudentLoginPage() {
   // If already logged in, redirect
   useEffect(() => {
     localStorage.removeItem('student_token');
+    setRegisterHref(`/student/register?next=${encodeURIComponent(returnPathFromLocation())}`);
     // HttpOnly cookies are not visible to document.cookie. Verify server-side.
     fetch('/api/student/auth/me', { credentials: 'include' })
-      .then(async res => { if (res.ok && (await res.json()).success) router.replace('/student/dashboard'); })
+      .then(async res => { if (res.ok && (await res.json()).success) router.replace(returnPathFromLocation()); })
       .catch(() => {});
   }, [router]);
 
@@ -103,7 +106,7 @@ export default function StudentLoginPage() {
       if (data.success) {
         localStorage.removeItem('student_token');
         localStorage.setItem('student_user', JSON.stringify(data.student));
-        router.push('/student/dashboard');
+        router.push(returnPathFromLocation());
       } else {
         setError(data.error || 'Login failed. Please check your credentials.');
       }
@@ -317,7 +320,7 @@ export default function StudentLoginPage() {
           <div className="mt-6 text-center">
             <p className="text-[var(--alo-text-muted)] text-sm">
               Not registered yet?{' '}
-              <Link href="/register" className="text-alo-on-brand-soft hover:text-[var(--alo-info-text)] font-medium">
+              <Link href={registerHref} className="text-alo-on-brand-soft hover:text-[var(--alo-info-text)] font-medium">
                 Create an account
               </Link>
             </p>

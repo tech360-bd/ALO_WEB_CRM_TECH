@@ -107,11 +107,11 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
   const [leadError, setLeadError] = useState('');
 
   const loginHref = useMemo(
-    () => `/login?callbackUrl=${encodeURIComponent(nextPath)}`,
+    () => `/student/login?next=${encodeURIComponent(nextPath)}`,
     [nextPath]
   );
   const registerHref = useMemo(
-    () => `/register?next=${encodeURIComponent(nextPath)}`,
+    () => `/student/register?next=${encodeURIComponent(nextPath)}`,
     [nextPath]
   );
 
@@ -212,7 +212,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
         const applicationCode = json.data?.applicationCode || json.application?.applicationCode || '';
         setResult({
           ok: true,
-          message: 'Application draft created. Your counselor has been notified and will review it with you.',
+          message: 'Application draft created. Nothing has been sent to the university yet.',
           applicationCode,
         });
         // `application_reference` is ALO's own application code — an opaque
@@ -546,7 +546,7 @@ export default function ApplyNowForm({ course, intakes }: { course: CourseSummar
             {needsProfile ? 'Complete Form B to enable Apply Now' : 'Apply Now — create my application draft'}
           </button>
           <p className="mt-2 text-center text-[11px] text-alo-text-muted">
-            Applying creates a draft, a document checklist, a timeline entry and a counselor notification. Nothing is sent to the university without your counselor.
+            Applying creates a draft for the application team to review. Nothing is sent to the university without your counselor.
           </p>
 
           {result && (

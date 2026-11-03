@@ -1,5 +1,7 @@
 import { reportServerEvent } from '@/lib/analytics/server-conversions';
 import { db } from '@/lib/db';
+import { publicCourseIdentifierWhere, publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
+import { applicationIntakeLabel } from '@/lib/course-finder/application-intake';
 import { NextResponse } from 'next/server';
 import { getFormBReadiness } from '@/lib/application-readiness';
 import { authenticateUnified } from '@/lib/unified-auth';
@@ -214,6 +216,39 @@ export async function POST(req: Request) {
         },
         { status: 422 },
       );
+    }
+  }
+  // Student applications must reference a real public course and one of its
+  // published intakes. Never trust names, ownership or catalogue fields sent by
+  // the browser; staff retain their existing manual-entry workflow.
+  if (authRes.type === 'student') {
+    const identifier = typeof body.courseId === 'string' ? publicCourseIdentifierWhere(body.courseId.trim()) : null;
+    if (!identifier || typeof body.intake !== 'string' || !body.intake.trim()) {
+      return NextResponse.json({ success: false, error: 'A published course and recorded intake are required.' }, { status: 400 });
+    }
+    try {
+      const course = await db.crmCourse.findFirst({
+        where: { AND: [identifier, publicCourseWhere()] } as any,
+        select: {
+          courseId: true, courseTitle: true, universityId: true, country: true, studyLevel: true,
+          university: { select: { name: true, country: true } },
+          intakeFees: { where: publicIntakeWhere() as any, select: { intakeName: true, intakeMonth: true, intakeYear: true } },
+        },
+      });
+      if (!course) return NextResponse.json({ success: false, error: 'The selected course is no longer available.' }, { status: 404 });
+      const selectedIntake = course.intakeFees.find((entry) => applicationIntakeLabel(entry) === body.intake.trim());
+      if (!selectedIntake) return NextResponse.json({ success: false, error: 'The selected intake is not available for this course.' }, { status: 422 });
+      Object.assign(body, {
+        courseId: course.courseId, courseName: course.courseTitle,
+        universityId: course.universityId, universityName: course.university?.name || '',
+        country: course.country || course.university?.country || '', level: course.studyLevel || '',
+        intake: applicationIntakeLabel(selectedIntake),
+        counselorId: '', counselorName: '', applicationOfficer: '', appTeamOfficerId: '',
+        visaOfficerId: '', internalNotes: '', partnerId: '', deadline: '',
+      });
+    } catch (error) {
+      console.error('[applications] course validation failed', error);
+      return NextResponse.json({ success: false, error: 'Course validation is temporarily unavailable.' }, { status: 503 });
     }
   }
   if (!APPLICATION_SOURCES.includes(applicationSource as any)) {

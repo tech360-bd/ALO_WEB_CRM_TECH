@@ -1,5 +1,7 @@
 "use client";
 
+import { returnPathFromLocation } from '@/lib/safe-return-path';
+
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -197,7 +199,7 @@ export function AuthVerifyOtp({ onNavigate }: AuthVerifyOtpProps) {
                 </div>
                 <Button
                   type="button"
-                  onClick={() => canonicalStudent ? router.push("/student/login") : onNavigate("auth-login")}
+                  onClick={() => canonicalStudent ? router.push(`/student/login?next=${encodeURIComponent(returnPathFromLocation())}`) : onNavigate("auth-login")}
                   className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-white hover:bg-[var(--alo-cta)]/90"
                 >
                   <Icon name="LogIn" className="size-4" />
