@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { authorizeStaffDocumentRead } from '@/lib/documents/document-access-resolver';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
 
 export const runtime = 'nodejs';
@@ -61,11 +62,17 @@ export const POST = withAuth(async (req, auth) => {
       return NextResponse.json({ success: false, error: 'Active student profile not found.' }, { status: 404 });
     }
 
-    const isAdmin = ['ADMIN', 'SUPER_ADMIN'].includes(auth.userType.toUpperCase()) || auth.roles.some((role) => ['ADMIN', 'SUPER_ADMIN'].includes(role.toUpperCase()));
-    const isCounselor = auth.roles.some((role) => role.toUpperCase() === 'COUNSELOR');
-    const assignedCounselorId = portalProfile?.counselorId || student?.counselorId || '';
-    if (isCounselor && !isAdmin && assignedCounselorId !== auth.userId) {
-      return NextResponse.json({ success: false, error: 'Student is not assigned to this counselor.' }, { status: 403 });
+    // Authorization uses the shared document policy, not a counselor-only check:
+    // before this, an application/visa/document staff member could upload into ANY
+    // student — including a partner student with no application submitted through
+    // ALO, which internal staff must not reach — and an unassigned counselor was
+    // refused correctly but through a different code path than the read routes.
+    // One policy now governs both reading and writing documents.
+    const studentIdentifier =
+      portalProfile?.studentId || portalProfile?.id || student?.studentId || student?.id || requestedStudentId;
+    const guard = await authorizeStaffDocumentRead({ userId: auth.userId, roles: auth.roles }, studentIdentifier);
+    if (!guard.ok) {
+      return NextResponse.json({ success: false, error: guard.error }, { status: guard.status });
     }
 
     const stored = await storePrivateFile(bytes, file.name);

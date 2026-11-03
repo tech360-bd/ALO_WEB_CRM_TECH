@@ -3245,10 +3245,21 @@ model PortalStudentDocument {
   rejectionReason  String   @default("")
   uploadedAt       String   @default("")
   reviewedBy       String   @default("")
+  // Non-destructive versioning for portal (student/partner) uploads. The student
+  // document table has carried these since it was created; this table did not,
+  // so every partner re-upload of the same document type was an unrelated row
+  // with no history link. Additive only — defaults keep existing rows valid.
+  version          Int      @default(1)
+  previousVersionId String  @default("")
+  isArchived       Boolean  @default(false)
+  archivedAt       DateTime?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   studentProfile PortalStudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@index([studentProfileId, category])
+  @@index([isArchived])
 }
 
 // ==========================================

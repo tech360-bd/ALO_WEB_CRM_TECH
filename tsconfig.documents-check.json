@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "incremental": false
+  },
+  "include": [
+    "src/lib/documents/**/*.ts",
+    "src/app/api/crm/documents/**/*.ts",
+    "src/app/api/counselor/documents/**/*.ts",
+    "src/app/api/partner/documents/**/*.ts",
+    "src/app/api/student/documents/**/*.ts",
+    "src/app/api/student-portal/documents/**/*.ts",
+    "src/app/api/student-portal/profile/**/*.ts",
+    "src/app/api/documents/manage/**/*.ts",
+    "src/lib/student-profile/**/*.ts",
+    "tests/unit/crm-documents-list-authz.test.ts",
+    "tests/unit/partner-documents-route.test.ts",
+    "tests/unit/student-documents-versioning.test.ts",
+    "src/app/api/crm/documents/verification-queue/route.ts",
+    "src/app/api/crm/documents/dashboard/route.ts",
+    "src/app/api/counselor/documents/upload-on-behalf/route.ts",
+    "src/app/api/messages/document-auto-upload/route.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

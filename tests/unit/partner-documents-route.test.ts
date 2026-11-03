@@ -148,3 +148,75 @@ describe('partner document private storage and tenant boundaries', () => {
     expect(mocks.readPrivateFile).not.toHaveBeenCalled();
   });
 });
+
+describe('partner document versions and idempotency', () => {
+  const pdfForm = (name = 'passport.pdf') => {
+    const form = new FormData();
+    form.set('studentProfileId', 'student-profile-1');
+    form.set('category', 'Passport');
+    form.set('file', new File([pdfBytes], name, { type: 'application/pdf' }));
+    return form;
+  };
+
+  it('keeps the existing row when the same bytes are retried into the same slot', async () => {
+    mocks.db.portalStudentDocument.findFirst.mockResolvedValue({
+      id: 'existing-document', name: 'passport.pdf', category: 'Passport', fileName: 'passport.pdf',
+      fileSize: pdfBytes.length, status: 'pending', version: 1, previousVersionId: '',
+      uploadedAt: new Date().toISOString(), createdAt: new Date(),
+      studentProfile: { id: 'student-profile-1', fullName: 'Student One', studentId: 'STU-1' },
+    });
+
+    const response = await uploadDocument(nextRequest('/api/partner/documents', { method: 'POST', body: pdfForm() }));
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.data).toMatchObject({ id: 'existing-document', deduplicated: true, version: 1 });
+    // No new file was written and no second row was created.
+    expect(mocks.storePrivateFile).not.toHaveBeenCalled();
+    expect(mocks.db.$transaction).not.toHaveBeenCalled();
+    expect(mocks.tx.portalStudentDocument.create).not.toHaveBeenCalled();
+  });
+
+  it('chains a replacement to the previous version and never inherits a verified status', async () => {
+    mocks.db.portalStudentDocument.findMany.mockResolvedValue([
+      { id: 'version-2', version: 2 },
+      { id: 'version-1', version: 1 },
+    ]);
+
+    const response = await uploadDocument(nextRequest('/api/partner/documents', { method: 'POST', body: pdfForm('passport-v3.pdf') }));
+    expect(response.status).toBe(201);
+    expect(mocks.tx.portalStudentDocument.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        status: 'pending',
+        version: 3,
+        previousVersionId: 'version-2',
+      }),
+    }));
+    // The earlier rows are untouched: nothing is deleted or rewritten.
+    expect(mocks.tx.portalStudentDocument.create).toHaveBeenCalledOnce();
+    expect((mocks.tx.portalStudentDocument as unknown as { update?: unknown }).update).toBeUndefined();
+    expect((await response.json()).data).toMatchObject({ isCurrentVersion: true });
+  });
+
+  it('marks the newest version of each slot as current in the list', async () => {
+    mocks.db.portalStudentDocument.findMany.mockResolvedValue([
+      { id: 'passport-v2', category: 'Passport', version: 2, status: 'pending', studentProfile: { id: 'sp', fullName: 'S', studentId: 'STU-1' } },
+      { id: 'passport-v1', category: 'Passport', version: 1, status: 'rejected', studentProfile: { id: 'sp', fullName: 'S', studentId: 'STU-1' } },
+      { id: 'cv-v1', category: 'CV', version: 1, status: 'approved', studentProfile: { id: 'sp', fullName: 'S', studentId: 'STU-1' } },
+    ]);
+
+    const response = await listDocuments(nextRequest('/api/partner/documents'));
+    const body = await response.json();
+    const byId = Object.fromEntries(body.data.map((row: { id: string; isCurrentVersion: boolean }) => [row.id, row.isCurrentVersion]));
+    expect(byId).toEqual({ 'passport-v2': true, 'passport-v1': false, 'cv-v1': true });
+  });
+
+  it('excludes archived rows from the partner queue and its counts', async () => {
+    await listDocuments(nextRequest('/api/partner/documents'));
+    expect(mocks.db.portalStudentDocument.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ isArchived: false }),
+    }));
+    expect(mocks.db.portalStudentDocument.groupBy).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ isArchived: false }),
+    }));
+  });
+});
