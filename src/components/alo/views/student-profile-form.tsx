@@ -818,7 +818,7 @@ export function StudentProfileForm() {
                     className={cn(
                       "group flex min-w-[8.5rem] flex-1 items-center gap-3 rounded-xl border-2 p-3 text-left transition-all lg:min-w-[12rem]",
                       isCurrent
-                        ? "border-[var(--alo-brand)] bg-gradient-to-br from-[var(--alo-brand)] to-[#0077E0] text-white shadow-md"
+                        ? "border-[var(--alo-brand)] bg-gradient-to-br from-[var(--alo-brand)] to-alo-brand text-white shadow-md"
                         : isPast
                         ? "border-[var(--alo-brand)]/30 bg-[var(--alo-brand-light)]/60 hover:border-[var(--alo-brand)]/60"
                         : "border-muted bg-muted/30 opacity-70"
@@ -865,7 +865,7 @@ export function StudentProfileForm() {
         </div>
 
         {/* AI help banner */}
-        <div className="flex flex-col items-start gap-3 rounded-xl border border-[var(--alo-cta)]/20 bg-[#fef5f0] p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col items-start gap-3 rounded-xl border border-[var(--alo-cta)]/20 bg-alo-cta-soft p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-2.5">
             <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-cta)] text-white">
               <Icon name="Sparkles" className="size-4" />
@@ -1165,7 +1165,7 @@ export function StudentProfileForm() {
               </RadioGroup>
 
               {/* Free mock eligibility banner */}
-              <div className="mt-4 flex flex-col items-start gap-3 rounded-xl border border-[var(--alo-cta)]/20 bg-[#fef5f0] p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="mt-4 flex flex-col items-start gap-3 rounded-xl border border-[var(--alo-cta)]/20 bg-alo-cta-soft p-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-cta)] text-white">
                     <Icon name="Gift" className="size-4" />

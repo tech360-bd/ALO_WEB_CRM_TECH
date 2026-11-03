@@ -2,62 +2,12 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 import { mutationOriginAllowed } from '@/lib/request-origin';
-import { getScopeForAuth } from '@/lib/data-scope';
 import { isPlausiblePhone, phoneVariants } from '@/lib/communications/contact-identity';
+// Shared scope helper — the Company Contact Hub and this API must never drift.
+import { contactScopeWhere, combineContactScopeAndSearch } from '@/lib/contacts/access-scope';
 
 export const dynamic = 'force-dynamic';
 const MAX_PAGE_SIZE = 100;
-
-function hasCompanyWideContactAccess(auth: { roles: string[]; permissions: string[] }): boolean {
-  const roles = auth.roles.map((role) => role.toLowerCase());
-  return roles.includes('super_admin')
-    || (auth.permissions.includes('ad2') && auth.permissions.includes('contacts.view'))
-    || auth.permissions.includes('data.view_all');
-}
-
-async function contactScopeWhere(auth: AuthContext): Promise<Record<string, unknown>> {
-  if (hasCompanyWideContactAccess(auth)) return {};
-  if (auth.partnerId && auth.roles.some((role) => role.toLowerCase().includes('partner'))) {
-    return { partnerId: auth.partnerId };
-  }
-
-  const scope = getScopeForAuth(auth);
-  if (scope === 'ASSIGNED') {
-    const [students, leads] = await Promise.all([
-      db.student.findMany({ where: { counselorId: auth.userId }, select: { id: true }, take: 5000 }),
-      db.lead.findMany({ where: { counselorId: auth.userId }, select: { id: true }, take: 5000 }),
-    ]);
-    const linked: Record<string, unknown>[] = [{ assignedCounselorId: auth.userId }];
-    if (students.length) linked.push({ studentId: { in: students.map((row) => row.id) } });
-    if (leads.length) linked.push({ leadId: { in: leads.map((row) => row.id) } });
-    return { OR: linked };
-  }
-
-  if (scope === 'BRANCH' && auth.branch) {
-    const employees = await db.employee.findMany({
-      where: { branch: auth.branch, status: 'active' },
-      select: { userId: true },
-      take: 2000,
-    });
-    const counselorIds = [...new Set([auth.userId, ...employees.map((employee) => employee.userId)])];
-    const [students, leads] = await Promise.all([
-      db.student.findMany({ where: { counselorId: { in: counselorIds } }, select: { id: true }, take: 5000 }),
-      db.lead.findMany({ where: { OR: [
-        { branch: auth.branch },
-        { counselorId: { in: counselorIds } },
-      ] }, select: { id: true }, take: 5000 }),
-    ]);
-    const linked: Record<string, unknown>[] = [
-      { branch: auth.branch },
-      { assignedCounselorId: { in: counselorIds } },
-    ];
-    if (students.length) linked.push({ studentId: { in: students.map((row) => row.id) } });
-    if (leads.length) linked.push({ leadId: { in: leads.map((row) => row.id) } });
-    return { OR: linked };
-  }
-
-  return { id: '__NO_CONTACT_SCOPE__' };
-}
 
 export const GET = withAuth(async (req, auth) => {
   try {
@@ -68,21 +18,19 @@ export const GET = withAuth(async (req, auth) => {
     const requestedLimit = Number(searchParams.get('limit') || MAX_PAGE_SIZE);
     const take = Number.isInteger(requestedLimit) ? Math.max(1, Math.min(requestedLimit, MAX_PAGE_SIZE)) : MAX_PAGE_SIZE;
     const scopeWhere = await contactScopeWhere(auth);
-    const where: Record<string, unknown> = { ...scopeWhere };
+    const where: Record<string, unknown> = {};
     if (studentId) where.studentId = studentId;
     if (optedOutParam === 'true' || optedOutParam === 'false') where.isOptedOut = optedOutParam === 'true';
     if (rawSearch) {
-      where.OR = [
+      // Keep the scope guard outside the search OR so a broad search never
+      // bypasses branch/assignment/partner restrictions.
+      Object.assign(where, combineContactScopeAndSearch(scopeWhere, [
         { phone: { contains: rawSearch } },
         { normalizedPhone: { contains: rawSearch } },
         { displayName: { contains: rawSearch } },
-      ];
-      // Keep the scope guard outside the search OR so a broad search never
-      // bypasses branch/assignment/partner restrictions.
-      if ('OR' in scopeWhere) {
-        where.AND = [scopeWhere, { OR: where.OR }];
-        delete where.OR;
-      }
+      ]));
+    } else {
+      Object.assign(where, scopeWhere);
     }
 
     const contacts = await db.whatsAppContact.findMany({

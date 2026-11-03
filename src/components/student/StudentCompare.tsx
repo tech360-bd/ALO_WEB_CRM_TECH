@@ -116,7 +116,7 @@ const INITIAL_SHORTLIST: ShortlistedCourse[] = [
     accommodationEst: '£7,000 - £9,000/yr',
     level: 'Masters',
     subject: 'Computer Science',
-    logoColor: 'bg-[#6B2D5B]',
+    logoColor: 'bg-alo-brand',
     matchScore: 90,
   },
   {
@@ -142,7 +142,7 @@ const INITIAL_SHORTLIST: ShortlistedCourse[] = [
     accommodationEst: '£5,500 - £7,000/yr',
     level: 'Masters',
     subject: 'Business',
-    logoColor: 'bg-[#8B0000]',
+    logoColor: 'bg-alo-error',
     matchScore: 82,
   },
 ];

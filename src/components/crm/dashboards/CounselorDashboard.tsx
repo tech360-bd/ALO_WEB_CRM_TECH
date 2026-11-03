@@ -22,7 +22,7 @@ const aiActions = [
 ];
 
 function UrgencyBadge({ urgency }: { urgency: string }) {
-  if (urgency === 'hot') return <Badge variant="danger" className="text-[11px]">🔥 Hot</Badge>;
+  if (urgency === 'hot') return <Badge variant="danger" className="text-[11px]"><Flame aria-hidden="true" className="size-3" /> Hot</Badge>;
   return <Badge variant="warning" className="text-[11px]">Warm</Badge>;
 }
 

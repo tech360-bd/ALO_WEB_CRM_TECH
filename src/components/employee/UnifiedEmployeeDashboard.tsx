@@ -179,7 +179,7 @@ export default function UnifiedEmployeeDashboard({
       {/* 2. Top Header Shell */}
       <header className="bg-white border-b border-[var(--alo-border)] sticky top-0 z-40 px-4 sm:px-6 py-3 shadow-sm flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--alo-brand)] to-[#003C80] text-white flex items-center justify-center font-black text-lg shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--alo-brand)] to-alo-brand-hover text-white flex items-center justify-center font-black text-lg shadow-sm">
             ALO
           </div>
           <div>

@@ -695,10 +695,10 @@ export function SocialPostCard({
 }: SocialPostCardProps) {
   const platformMap = {
     facebook: { icon: "Facebook", color: "bg-[#1877F2]" },
-    instagram: { icon: "Instagram", color: "bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#FCB045]" },
-    linkedin: { icon: "Linkedin", color: "bg-[#0A66C2]" },
-    twitter: { icon: "Twitter", color: "bg-[#1DA1F2]" },
-    youtube: { icon: "Youtube", color: "bg-[#FF0000]" },
+    instagram: { icon: "Instagram", color: "bg-gradient-to-br from-alo-brand via-alo-cta-vivid to-alo-cta" },
+    linkedin: { icon: "Linkedin", color: "bg-alo-brand" },
+    twitter: { icon: "Twitter", color: "bg-alo-info" },
+    youtube: { icon: "Youtube", color: "bg-alo-error" },
   };
   const p = platformMap[platform];
   const statusMap = {

@@ -205,7 +205,7 @@ export function SuperAdminCrmCommandCenter() {
         </div>
         <div className="flex gap-2">
           <input placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchData()} className="border rounded-lg px-3 py-2 text-sm w-48" />
-          <button onClick={fetchData} className="px-4 py-2 bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] rounded-lg text-sm">🔍 Search</button>
+          <button onClick={fetchData} className="px-4 py-2 bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] rounded-lg text-sm"><NamedIcon name="Search" className="mr-1 inline size-3.5" />Search</button>
         </div>
       </div>
 

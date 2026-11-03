@@ -33,7 +33,7 @@ export function StatCard({
   const accentMap: Record<string, string> = {
     blue: "bg-[var(--alo-info-bg)] text-[var(--alo-brand)]",
     orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-hover)]",
-    emerald: "bg-[#DCFCE7] text-[var(--alo-success-dark)]",
+    emerald: "bg-alo-success-soft text-[var(--alo-success-dark)]",
     amber: "bg-[var(--alo-warning-soft)] text-[var(--alo-warning-strong)]",
     violet: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
     rose: "bg-[var(--alo-error-soft)] text-[var(--alo-danger-strong)]",

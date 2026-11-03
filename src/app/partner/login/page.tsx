@@ -118,7 +118,7 @@ export default function PartnerLoginPage() {
             <Button
  type="submit"
  disabled={loading}
- className="w-full bg-[var(--alo-brand)] hover:bg-[#004694] text-white font-semibold text-sm rounded-lg"
+ className="w-full bg-[var(--alo-brand)] hover:bg-alo-brand text-white font-semibold text-sm rounded-lg"
  >
               {loading ? (
                 <span className="flex items-center gap-2">

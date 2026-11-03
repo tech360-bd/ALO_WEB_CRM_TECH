@@ -488,7 +488,7 @@ function CampusPreviewCard({ university }: { university: MatchedUniversity }) {
             <Icon name="MapPin" className="mr-1 size-3" />
             Campus Tour
           </Button>
-          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[var(--alo-brand-hover)] text-[var(--alo-text)] hover:bg-[#1E3A8A] rounded-xl">
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" size="sm" className="flex-1 bg-[var(--alo-brand-hover)] text-[var(--alo-text)] hover:bg-alo-brand-hover rounded-xl">
             <Icon name="BookOpen" className="mr-1 size-3" />
             Courses
           </Button>
@@ -642,7 +642,7 @@ function FinTechCard() {
         {/* Living Cost */}
         <div>
           <div className="mb-1.5 flex items-center justify-between">
-            <span className="text-sm font-semibold text-[var(--alo-text)]">🏠 Living Cost Proof</span>
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--alo-text)]"><Icon name="Home" className="size-4" />Living Cost Proof</span>
             <span className="text-sm font-bold text-[var(--alo-info)]">£{livingCost.current.toLocaleString()} / £{livingCost.target.toLocaleString()}</span>
           </div>
           <div className="nx-progress-track">

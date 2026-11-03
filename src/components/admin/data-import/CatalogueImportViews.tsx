@@ -125,7 +125,7 @@ export function ImportDashboard() {
         </div>
         <div className="flex gap-2">
           <Link href="/admin/data-import/history"><Button variant="outline" className="text-sm">History</Button></Link>
-          <Link href="/admin/data-import/new"><Button className="bg-[var(--alo-brand)] hover:bg-[#00469a] text-white text-sm flex items-center gap-1.5"><Upload className="w-4 h-4" aria-hidden="true" /> New import</Button></Link>
+          <Link href="/admin/data-import/new"><Button className="bg-[var(--alo-brand)] hover:bg-alo-brand text-white text-sm flex items-center gap-1.5"><Upload className="w-4 h-4" aria-hidden="true" /> New import</Button></Link>
         </div>
       </div>
       {error && <ErrorNote message={`Import history unavailable: ${error}`} />}
@@ -214,7 +214,7 @@ export function NewCatalogueImport() {
           className="block w-full text-sm text-[var(--alo-body)] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[var(--alo-brand-pale)] file:text-[var(--alo-brand)]"
         />
         {error && <ErrorNote message={error} />}
-        <Button onClick={() => send('preview')} disabled={!file || busy !== null} className="bg-[var(--alo-brand)] hover:bg-[#00469a] text-white text-sm flex items-center gap-2">
+        <Button onClick={() => send('preview')} disabled={!file || busy !== null} className="bg-[var(--alo-brand)] hover:bg-alo-brand text-white text-sm flex items-center gap-2">
           {busy === 'preview' ? <RefreshCw className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Upload className="w-4 h-4" aria-hidden="true" />}
           {busy === 'preview' ? 'Checking…' : 'Preview import'}
         </Button>

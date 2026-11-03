@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Users, Plus, Search, Shield, UserCheck, UserX, Mail, Phone, Clock } from 'lucide-react';
+import { Users, Plus, Search, Shield, UserCheck, UserX, Mail, Phone, Clock, RefreshCw } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface RealUser {
@@ -141,7 +141,7 @@ export default function CrmUsersPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div><h1 className="text-2xl font-bold text-[var(--alo-text)]">User Management</h1><p className="text-[var(--alo-text-muted)] text-sm">Manage every user account and its access, with audit logging and role-based permissions.</p></div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={fetchUsers} className="">🔄 Refresh Real Data</Button>
+          <Button variant="outline" size="sm" onClick={fetchUsers} className=""><RefreshCw aria-hidden="true" className="size-4" />Refresh Real Data</Button>
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] "><Plus className="w-4 h-4 mr-1" />Invite User</Button>
         </div>
       </div>

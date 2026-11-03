@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { withAuth } from "@/lib/auth-middleware";
+import type { AuthContext } from "@/lib/auth-middleware";
+import { STAFF_POLICIES, staffGuardDenied } from "@/lib/api/staff-endpoint-guard";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+const NO_STORE = { "Cache-Control": "private, no-store" };
 
 // POST — review a SLA justification (§155 manager review).
 //   decision: ACCEPTED | REJECTED | CLARIFICATION_REQUESTED
@@ -10,20 +14,22 @@ export const dynamic = "force-dynamic";
 //   createCoachingTask: true — also create a coaching follow-up task for the
 //                   counselor. All decisions stay auditable via SlaJustification
 //                   review columns + the linked SlaEvent resolution marker.
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const POST = withAuth(async (req: Request, auth: AuthContext, context?: { params: Promise<{ id: string }> }) => {
+  const denied = staffGuardDenied(auth, STAFF_POLICIES.slaPolicies, { write: true, request: req });
+  if (denied) return denied;
   try {
-    const { id } = await params;
+    const { id } = await (context?.params ?? Promise.resolve({ id: "" }));
+    if (!id) return NextResponse.json({ error: "Justification id is required" }, { status: 400, headers: NO_STORE });
     const body = await req.json();
-    const { reviewedBy, decision, reviewNotes, incidentEffect, createCoachingTask } = body;
+    const { decision, reviewNotes, incidentEffect, createCoachingTask } = body;
+    // The reviewer is bound to the authenticated session, never the request body.
+    const reviewedBy = auth.actorUserId || auth.userId;
 
     if (!decision || !["ACCEPTED", "REJECTED", "CLARIFICATION_REQUESTED"].includes(decision)) {
-      return NextResponse.json({ error: "decision must be ACCEPTED, REJECTED, or CLARIFICATION_REQUESTED" }, { status: 400 });
-    }
-    if (!reviewedBy) {
-      return NextResponse.json({ error: "reviewedBy is required" }, { status: 400 });
+      return NextResponse.json({ error: "decision must be ACCEPTED, REJECTED, or CLARIFICATION_REQUESTED" }, { status: 400, headers: NO_STORE });
     }
     if (incidentEffect !== undefined && !["EXCLUDE", "KEEP"].includes(incidentEffect)) {
-      return NextResponse.json({ error: "incidentEffect must be EXCLUDE or KEEP" }, { status: 400 });
+      return NextResponse.json({ error: "incidentEffect must be EXCLUDE or KEEP" }, { status: 400, headers: NO_STORE });
     }
 
     const existing = await db.slaJustification.findUnique({ where: { id } });
@@ -84,13 +90,24 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       coachingTaskId = task?.id ?? null;
     }
 
+    await db.portalAuditLog.create({
+      data: {
+        actorUserId: reviewedBy,
+        action: "SLA_JUSTIFICATION_REVIEWED",
+        entityType: "SlaJustification",
+        entityId: id,
+        metadata: JSON.stringify({ decision, incidentEffect: effect, actorRole: auth.roles.join(",") }),
+      },
+    });
+
     return NextResponse.json({
       justification: updated,
       reviewed: true,
       incidentUpdated,
       coachingTaskId,
-    });
+    }, { headers: NO_STORE });
   } catch (error: any) {
-    return NextResponse.json({ error: error?.message || "Failed to review justification" }, { status: 500 });
+    console.error("[sla-justification-review] failed", error?.message || "unknown error");
+    return NextResponse.json({ success: false, error: "Justification review could not be completed." }, { status: 503, headers: NO_STORE });
   }
-}
+});

@@ -113,7 +113,7 @@ const PLATFORM_META: Record<
     label: "Instagram",
     icon: "Instagram",
     brand: "#E1306C",
-    bg: "bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#FCB045]",
+    bg: "bg-gradient-to-br from-alo-brand via-alo-cta-vivid to-alo-cta",
     text: "text-white",
   },
   WHATSAPP: {
@@ -127,21 +127,21 @@ const PLATFORM_META: Record<
     label: "LinkedIn",
     icon: "Linkedin",
     brand: "#0A66C2",
-    bg: "bg-[#0A66C2]",
+    bg: "bg-alo-brand",
     text: "text-white",
   },
   GMAIL: {
     label: "Gmail",
     icon: "Mail",
     brand: "#EA4335",
-    bg: "bg-[#EA4335]",
+    bg: "bg-alo-error",
     text: "text-white",
   },
   OUTLOOK: {
     label: "Outlook",
     icon: "Mail",
     brand: "#0078D4",
-    bg: "bg-[#0078D4]",
+    bg: "bg-alo-brand",
     text: "text-white",
   },
 };

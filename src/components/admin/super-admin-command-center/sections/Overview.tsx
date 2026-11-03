@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { NamedIcon } from "@/components/ui/named-icon";
 import {
   DEPARTMENT_CATEGORY_COUNTS,
   DEPARTMENTS,
@@ -115,7 +116,7 @@ export function OverviewSection() {
           <div className="space-y-3">
             {ACTIVE_WORKFLOWS.map((w) => (
               <div key={w.name} className="flex items-center gap-3 p-3 rounded-lg bg-[var(--cc-bg-2)]">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${w.tone === "blue" ? "bg-[var(--cc-blue)]/20" : w.tone === "green" ? "bg-[var(--cc-green)]/20" : w.tone === "purple" ? "bg-[var(--cc-purple)]/20" : "bg-[var(--cc-orange)]/20"}`}>{w.icon}</div>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${w.tone === "blue" ? "bg-[var(--cc-blue)]/20" : w.tone === "green" ? "bg-[var(--cc-green)]/20" : w.tone === "purple" ? "bg-[var(--cc-purple)]/20" : "bg-[var(--cc-orange)]/20"}`}><NamedIcon name={w.icon} className="size-4" /></div>
                 <div className="flex-1">
                   <div className="text-sm font-medium">{w.name}</div>
                   <div className="text-xs text-[var(--cc-text-3)]">{w.department} • {w.agents} agents</div>

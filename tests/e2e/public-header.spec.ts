@@ -8,7 +8,8 @@ import { expect, test } from '@playwright/test';
  *   • logo (ALO Education) + italic orange tagline
  *   • menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
  *     Resources ▾ · Portal ▾ · AI SUPPORT ▾
- *   • CTA "Book Free Counseling" (ALO Orange) → /book-consultation
+ *   • CTA "Book Free Counseling" (accessible ALO Deep Orange #C93D13,
+ *     white label) → /book-consultation
  */
 
 const PUBLIC_ROUTES = [
@@ -54,8 +55,8 @@ test.describe('desktop header (before login)', () => {
       }
       const cta = header.getByRole('link', { name: 'Book Free Counseling' });
       await expect(cta).toBeVisible();
-      await expect(cta).toHaveCSS('background-color', 'rgb(243, 112, 33)');
-      await expect(cta).toHaveCSS('color', 'rgb(0, 0, 0)');
+      await expect(cta).toHaveCSS('background-color', 'rgb(201, 61, 19)');
+      await expect(cta).toHaveCSS('color', 'rgb(255, 255, 255)');
     }
   });
 
@@ -139,8 +140,8 @@ test.describe('mobile header (before login)', () => {
     }
     const mobileCta = mobileMenu.getByRole('link', { name: 'Book Free Counseling' });
     await expect(mobileCta).toBeVisible();
-    await expect(mobileCta).toHaveCSS('background-color', 'rgb(243, 112, 33)');
-    await expect(mobileCta).toHaveCSS('color', 'rgb(0, 0, 0)');
+    await expect(mobileCta).toHaveCSS('background-color', 'rgb(201, 61, 19)');
+    await expect(mobileCta).toHaveCSS('color', 'rgb(255, 255, 255)');
     await mobileMenu.getByRole('button', { name: 'Resources', exact: true }).click();
     await expect(mobileMenu.getByRole('link', { name: 'English Test' })).toBeVisible();
   });

@@ -366,7 +366,7 @@ export function SuperAdminWebsiteCmsHub() {
         </div>
         <div className="flex gap-2">
           <input placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchItems()} className="border rounded-lg px-3 py-2 text-sm w-48" />
-          <button onClick={fetchItems} className="px-4 py-2 bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] rounded-lg text-sm font-medium">🔍 Search</button>
+          <button onClick={fetchItems} className="px-4 py-2 bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] rounded-lg text-sm font-medium"><NamedIcon name="Search" className="mr-1 inline size-3.5" />Search</button>
           <button onClick={handleCreate} className="px-4 py-2 bg-[var(--alo-brand)] hover:bg-[var(--alo-brand-hover)] text-white rounded-lg text-sm font-semibold">+ New</button>
         </div>
       </div>
@@ -423,7 +423,7 @@ export function SuperAdminWebsiteCmsHub() {
                   <td className="px-4 py-2.5"><span className={`text-xs px-2 py-1 rounded-full ${item.status==="active"||item.status==="published"||item.status==="verified" ? "bg-crm-success-bg text-crm-success-text" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>{item.status||"—"}</span></td>
                   <td className="px-4 py-2.5 text-right space-x-1">
                     <button onClick={()=>handleEdit(item)} className="px-2.5 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded-lg text-xs font-medium">Edit</button>
-                    <button onClick={()=>handleHistory(item)} className="px-2.5 py-1 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-lg text-xs font-medium">🕘 History</button>
+                    <button onClick={()=>handleHistory(item)} className="px-2.5 py-1 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-lg text-xs font-medium"><NamedIcon name="History" className="mr-1 inline size-3.5" />History</button>
                     <button onClick={()=>handleDelete(item.id)} className="px-2.5 py-1 bg-crm-danger-bg hover:bg-crm-danger-bg text-crm-danger-text rounded-lg text-xs font-medium">Delete</button>
                   </td>
                 </tr>

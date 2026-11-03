@@ -8,6 +8,7 @@ import {
   AUDIT_EVENTS,
   type DccLevel,
 } from "../catalog";
+import { NamedIcon } from "@/components/ui/named-icon";
 import { Card, MiniStat, ProgressBar, SectionTitle, StatCard, dccBadgeClass, ringClass, TONE } from "../ui";
 import { LineChart, TabButton } from "../charts";
 
@@ -213,7 +214,7 @@ function AuditPanel() {
         <div className="space-y-2">
           {AUDIT_EVENTS.map((e, i) => (
             <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-[var(--cc-bg-2)]">
-              <span className={`${iconColor[e.type]} text-lg`}>{e.icon}</span>
+              <span className={`${iconColor[e.type]}`}><NamedIcon name={e.icon} className="size-4" /></span>
               <div className="flex-1">
                 <div className="text-sm">{e.message}</div>
                 <div className="text-xs text-[var(--cc-text-3)]">{e.time}</div>

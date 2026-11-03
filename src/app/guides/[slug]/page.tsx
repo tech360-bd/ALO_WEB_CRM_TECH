@@ -143,7 +143,7 @@ export default async function PublishedGuidePage({ params }: { params: Promise<{
 
             {/* Master §02/§11: pale-orange CTA panel — no dark or navy block
                 behind the photograph, no dark scrim over it. */}
-            <section className="mt-10 overflow-hidden rounded-[20px] border border-[#FFD5C4] bg-[var(--alo-cta-soft)]">
+            <section className="mt-10 overflow-hidden rounded-[20px] border border-alo-cta-light bg-[var(--alo-cta-soft)]">
               <div className="grid gap-0 md:grid-cols-[1fr_260px]">
                 <div className="p-6 sm:p-8"><div className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--alo-cta)]">Take the next step</div><h2 className="mt-2 max-w-xl text-2xl font-black tracking-tight text-[var(--alo-text)]">Build a plan around verified information.</h2><p className="mt-2 max-w-xl text-xs leading-6 text-[var(--alo-text-secondary)]">An ALO Education counsellor can help you confirm course choices, source requirements and next steps for your situation.</p><Link href="/book-consultation" className="mt-5 inline-flex h-12 items-center gap-2 rounded-xl bg-alo-cta-solid px-5 text-sm font-bold text-white transition-colors hover:bg-alo-cta-solid-hover">{document.input.cta || 'Book counselling'}<ArrowRight className="h-4 w-4" /></Link></div>
                 <div className="relative hidden min-h-[220px] md:block"><Image src={supportImage.url} alt={supportImage.alt} fill sizes="260px" className="object-cover" /></div>

@@ -22,8 +22,8 @@ const MANAGED_TYPES = [
   { key: "announcement", label: "Announcements", icon: "Megaphone", desc: "Dismissible info bar above the navbar" },
   { key: "banner", label: "Banners", icon: "Tag", desc: "Persistent strip below the page" },
   { key: "crm-label", label: "CRM Labels", icon: "Tag", desc: "CRM UI label overrides (e.g. crm.kpi.myLeads)" },
-  { key: "crm-template", label: "CRM Templates", icon: "✉️", desc: "Canned message templates for counselors" },
-  { key: "crm-widget", label: "CRM Widgets", icon: "🧩", desc: "Dashboard widget toggles & ordering" },
+  { key: "crm-template", label: "CRM Templates", icon: "Mail", desc: "Canned message templates for counselors" },
+  { key: "crm-widget", label: "CRM Widgets", icon: "Puzzle", desc: "Dashboard widget toggles & ordering" },
 ];
 
 interface ManagedItem {
@@ -231,7 +231,7 @@ export function ManagedContentManager() {
                   ) : (
                     <button onClick={() => post({ action: "publish", id: item.id }, "Published — now live")} disabled={busy} className="px-2.5 py-1 bg-crm-success-bg hover:bg-crm-success-bg text-crm-success-text rounded-lg text-xs font-semibold">Publish</button>
                   )}
-                  <button onClick={() => openHistory(item)} className="px-2.5 py-1 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-lg text-xs font-medium">🕘 History</button>
+                  <button onClick={() => openHistory(item)} className="px-2.5 py-1 bg-[var(--alo-page)] hover:bg-[var(--alo-surface-muted)] text-[var(--alo-body)] rounded-lg text-xs font-medium"><NamedIcon name="History" className="mr-1 inline size-3.5" />History</button>
                   <button onClick={() => { if (confirm("Delete this item? A revision snapshot is retained, so it can be restored from History.")) post({ action: "delete", id: item.id }, "Deleted (snapshot retained)"); }} disabled={busy} className="px-2.5 py-1 bg-crm-danger-bg hover:bg-crm-danger-bg text-crm-danger-text rounded-lg text-xs font-medium">Delete</button>
                 </td>
               </tr>

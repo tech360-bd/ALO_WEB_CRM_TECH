@@ -140,7 +140,7 @@ function formatDate(iso: string | null | undefined): string {
 // ─── Skeletons ─────────────────────────────────────────────────────────────────
 function HeroSkeleton() {
   return (
-    <div className="bg-gradient-to-br from-[var(--alo-brand)] to-[#003A7D] text-white">
+    <div className="bg-gradient-to-br from-[var(--alo-brand)] to-alo-brand-hover text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <Skeleton className="h-8 w-72 mb-4 bg-white/20" />
         <Skeleton className="h-5 w-96 mb-8 bg-white/15" />
@@ -946,7 +946,7 @@ export function UniversityDirectoryEnhanced() {
   return (
     <div className="min-h-screen bg-white">
       {/* ═══ HERO SECTION ═══ */}
-      <div className="bg-gradient-to-br from-[var(--alo-brand)] to-[#003A7D] text-white">
+      <div className="bg-gradient-to-br from-[var(--alo-brand)] to-alo-brand-hover text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* Title */}
           <div className="flex items-center gap-2.5 mb-3">

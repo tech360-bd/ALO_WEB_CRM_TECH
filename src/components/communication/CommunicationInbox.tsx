@@ -139,7 +139,7 @@ export default function CommunicationInbox({ canViewB2B = false }: { canViewB2B?
               </SelectContent>
             </Select>
             <Input placeholder="Lead/Student/App/Partner" value={filters.search} onChange={e => setFilters(s => ({ ...s, search: e.target.value }))} className="h-8 text-xs" />
-            <Button size="sm" className=" bg-[var(--alo-brand)] hover:bg-[#004a9e]" onClick={fetchInbox}><Search className="w-3.5 h-3.5 mr-1" /> Search</Button>
+            <Button size="sm" className=" bg-[var(--alo-brand)] hover:bg-alo-brand" onClick={fetchInbox}><Search className="w-3.5 h-3.5 mr-1" /> Search</Button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[11px]">
             <Input placeholder="Office" value={filters.office} onChange={e => setFilters(s => ({ ...s, office: e.target.value }))} className="h-7 text-xs" />

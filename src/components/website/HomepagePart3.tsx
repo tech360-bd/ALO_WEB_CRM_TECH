@@ -171,7 +171,7 @@ function ScholarshipsSection() {
                 <CardContent className="p-6 flex flex-col h-full">
                   {/* Country badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#F0F7FF] text-[var(--alo-brand)]">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-alo-brand-pale text-[var(--alo-brand)]">
                       <span className="text-base">{sch.flag}</span>
                       {sch.country}
                     </span>

@@ -153,9 +153,9 @@ export default function AiEosMasterBlueprint() {
           <div className="flex items-center gap-3 shrink-0">
             <div className="relative hidden sm:block">
               <input className="w-40 lg:w-56 text-sm bg-[var(--cc-bg-2)] border border-[var(--cc-border)] rounded-lg pl-9 pr-3 py-1.5 text-[var(--cc-text)] placeholder:text-[var(--cc-text-3)] focus:outline-none focus:border-[var(--cc-blue)]" placeholder="Search..." />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--cc-text-3)]">🔍</span>
+              <NamedIcon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--cc-text-3)]" />
             </div>
-            <button className="px-3 py-1.5 text-xs rounded-lg bg-[var(--cc-blue)]/20 text-[var(--cc-blue)] hover:bg-[var(--cc-blue)]/30 transition">📤 Export</button>
+            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-[var(--cc-blue)]/20 text-[var(--cc-blue)] hover:bg-[var(--cc-blue)]/30 transition"><NamedIcon name="Upload" className="size-3.5" />Export</button>
           </div>
         </header>
 
@@ -186,7 +186,7 @@ export default function AiEosMasterBlueprint() {
 function DashboardView() {
   const hero = [
     { icon: "Smartphone", value: "4", label: "Mobile Apps", tone: "blue" },
-    { icon: "🏢", value: "100", label: "Departments", tone: "cyan" },
+    { icon: "Building2", value: "100", label: "Departments", tone: "cyan" },
     { icon: "Bot", value: "2,000", label: "AI Agents", tone: "green" },
     { icon: "Zap", value: "10K+", label: "Skills", tone: "purple" },
     { icon: "FileEdit", value: "50K+", label: "Prompts", tone: "orange" },
@@ -550,7 +550,7 @@ function InfrastructureView() {
           <div className="space-y-1 text-xs">
             {SECURITY_INFRA.map((s) => (
               <div key={s} className="flex items-center gap-2 p-2 rounded-lg bg-[var(--cc-bg-2)]">
-                <span className="text-[var(--cc-red)]">🛡️</span> {s}
+                <NamedIcon name="ShieldCheck" className="size-4 shrink-0 text-[var(--cc-red)]" /> <span>{s}</span>
               </div>
             ))}
           </div>
@@ -566,7 +566,7 @@ function GovernanceView() {
     { icon: "ScrollText", value: "500+", label: "Constitutional Rules", tone: "blue" },
     { icon: "Award", value: "9", label: "DCC Criteria", tone: "green" },
     { icon: "Search", value: "100%", label: "Actions Logged", tone: "orange" },
-    { icon: "👤", value: "Founder", label: "Ultimate Authority", tone: "purple" },
+    { icon: "User", value: "Founder", label: "Ultimate Authority", tone: "purple" },
   ];
   const criteria = [
     { label: "SOP", val: 96, thr: "≥95%", tone: "green" as const },

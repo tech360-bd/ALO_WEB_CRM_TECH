@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { staffGuardDenied, STAFF_POLICIES } from '@/lib/api/staff-endpoint-guard';
 import { validateInterviewGuidance } from '@/lib/interview/honesty';
 import { buildQuestionPack, normalizeConfidence, normalizeSourceType } from '@/lib/interview/research';
 
@@ -19,12 +21,15 @@ export const dynamic = 'force-dynamic';
  * The response keeps the historical `questions` array so existing consumers
  * keep working; `meta` and `groups` are additive.
  */
-export async function GET(req: NextRequest) {
-  const universitySlug = req.nextUrl.searchParams.get('universitySlug');
-  const countrySlug = req.nextUrl.searchParams.get('countrySlug');
-  const courseSlug = req.nextUrl.searchParams.get('courseSlug');
-  const category = req.nextUrl.searchParams.get('category');
-  const includeStale = req.nextUrl.searchParams.get('includeStale') === 'true';
+export const GET = withAuth(async (req: Request, auth: AuthContext) => {
+  const denied = staffGuardDenied(auth, STAFF_POLICIES.interviewQuestions, { write: false, request: req });
+  if (denied) return denied;
+  const params = new URL(req.url).searchParams;
+  const universitySlug = params.get('universitySlug');
+  const countrySlug = params.get('countrySlug');
+  const courseSlug = params.get('courseSlug');
+  const category = params.get('category');
+  const includeStale = params.get('includeStale') === 'true';
 
   const where: Record<string, unknown> = { isActive: true };
   if (category) where.category = category;
@@ -94,13 +99,15 @@ export async function GET(req: NextRequest) {
       { status: 503, headers: { 'Cache-Control': 'no-store' } },
     );
   }
-}
+});
 
 /**
  * Create a question. Guidance that claims guaranteed outcomes, leaked or exact
  * questions is rejected outright (spec §96) rather than stored and served.
  */
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: Request, auth: AuthContext) => {
+  const denied = staffGuardDenied(auth, STAFF_POLICIES.interviewQuestions, { write: true, request: req });
+  if (denied) return denied;
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     return NextResponse.json({ error: 'A JSON body is required.' }, { status: 400 });
@@ -159,8 +166,18 @@ export async function POST(req: NextRequest) {
         frequency: Number.isFinite(Number(frequency)) ? Math.max(0, Math.trunc(Number(frequency))) : 0,
       },
     });
+    await db.auditLog.create({
+      data: {
+        userId: auth.userId,
+        action: 'INTERVIEW_QUESTION_CREATED',
+        resource: 'InterviewQuestion',
+        resourceId: created.id,
+        actorRole: auth.roles.join(','),
+        details: JSON.stringify({ category: String(category), sourceType: normalizedSourceType }),
+      },
+    }).catch(() => null);
     return NextResponse.json({ question: created }, { status: 201 });
   } catch {
     return NextResponse.json({ error: 'Question could not be saved.' }, { status: 503 });
   }
-}
+});

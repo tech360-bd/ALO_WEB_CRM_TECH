@@ -117,7 +117,7 @@ export default function StudentLoginPage() {
   return (
     <div className="min-h-screen bg-[var(--alo-page)] flex">
       {/* Left Panel — Brand */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[var(--alo-brand)] via-[var(--alo-brand-hover)] to-[#002d6b] flex-col justify-between p-12">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[var(--alo-brand)] via-[var(--alo-brand-hover)] to-alo-brand-hover flex-col justify-between p-12">
         <div>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-[var(--alo-brand-light)] backdrop-blur flex items-center justify-center">
@@ -253,7 +253,7 @@ export default function StudentLoginPage() {
                   </button>
                 </div>
                 <div className="mt-1 text-right">
-                  <Link href="/forgot-password" className="text-[#60a5fa] text-xs hover:text-[var(--alo-info-text)]">
+                  <Link href="/forgot-password" className="text-alo-on-brand-soft text-xs hover:text-[var(--alo-info-text)]">
                     Forgot password?
                   </Link>
                 </div>
@@ -317,7 +317,7 @@ export default function StudentLoginPage() {
           <div className="mt-6 text-center">
             <p className="text-[var(--alo-text-muted)] text-sm">
               Not registered yet?{' '}
-              <Link href="/register" className="text-[#60a5fa] hover:text-[var(--alo-info-text)] font-medium">
+              <Link href="/register" className="text-alo-on-brand-soft hover:text-[var(--alo-info-text)] font-medium">
                 Create an account
               </Link>
             </p>
