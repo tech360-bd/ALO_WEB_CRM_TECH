@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { returnPathFromLocation } from '@/lib/safe-return-path';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -140,7 +141,7 @@ export default function RegisterPage() {
     }, { source: 'register-page' });
 
     if (usePortalStore.getState().currentView === 'verify-otp') {
-      router.push('/verify-email');
+      router.push(isStudent ? `/verify-email?next=${encodeURIComponent(returnPathFromLocation())}` : '/verify-email');
       return;
     }
     if (success && !isStudent && usePortalStore.getState().currentView !== 'verify-otp') {

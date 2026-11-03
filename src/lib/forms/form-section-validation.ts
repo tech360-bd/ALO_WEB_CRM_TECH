@@ -17,7 +17,11 @@ export function isFormSectionComplete(key: FormSectionKey, data: unknown): boole
       const text = String(value).trim();
       if (!text || (field.options && !field.options.includes(text))) return false;
       if (field.type === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
-      if (field.type === 'date') return /^\d{4}-\d{2}-\d{2}$/.test(text) && Number.isFinite(Date.parse(text));
+      if (field.type === 'date') {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
+        const date = new Date(`${text}T00:00:00Z`);
+        return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === text;
+      }
       return true;
     });
   });

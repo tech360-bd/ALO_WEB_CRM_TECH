@@ -101,3 +101,13 @@ describe('Form B document gate', () => {
     expect(isFormSectionComplete('admission', sections.admission)).toBe(false);
   });
 });
+
+describe('readiness regression checks', () => {
+  it('requires refusal evidence for either shared-form declaration', () => {
+    expect(requiredFormBDocumentCategories({ visaRefusal: 'Yes', hasVisaRefusal: 'No' })).toContain('REFUSAL_LETTER');
+  });
+  it('rejects impossible calendar dates', () => {
+    expect(isFormSectionComplete('personal', { fullName: 'Student', nationality: 'Bangladeshi', dateOfBirth: '2023-02-29' })).toBe(false);
+    expect(isFormSectionComplete('personal', { fullName: 'Student', nationality: 'Bangladeshi', dateOfBirth: '2024-02-29' })).toBe(true);
+  });
+});
