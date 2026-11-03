@@ -227,19 +227,19 @@ export interface SkillCategory {
 }
 
 export const SKILL_CATEGORIES: SkillCategory[] = [
-  { name: "Automation & Workflows", count: 1240, icon: "⚡", tone: "blue" },
-  { name: "Communication & Messaging", count: 980, icon: "💬", tone: "cyan" },
-  { name: "Data & Analytics", count: 1150, icon: "📊", tone: "green" },
-  { name: "Design & Creative", count: 870, icon: "🎨", tone: "purple" },
-  { name: "Development & Code", count: 1340, icon: "💻", tone: "blue" },
-  { name: "Education & Training", count: 720, icon: "🎓", tone: "orange" },
-  { name: "Finance & Accounting", count: 560, icon: "💰", tone: "green" },
-  { name: "HR & Recruitment", count: 480, icon: "👤", tone: "cyan" },
-  { name: "Legal & Compliance", count: 420, icon: "⚖️", tone: "purple" },
-  { name: "Marketing & SEO", count: 920, icon: "📈", tone: "orange" },
-  { name: "Research & Analysis", count: 680, icon: "🔍", tone: "blue" },
-  { name: "Security & Monitoring", count: 540, icon: "🔐", tone: "red" },
-  { name: "Writing & Content", count: 847, icon: "✏️", tone: "cyan" },
+  { name: "Automation & Workflows", count: 1240, icon: "Zap", tone: "blue" },
+  { name: "Communication & Messaging", count: 980, icon: "MessageSquare", tone: "cyan" },
+  { name: "Data & Analytics", count: 1150, icon: "BarChart3", tone: "green" },
+  { name: "Design & Creative", count: 870, icon: "Palette", tone: "purple" },
+  { name: "Development & Code", count: 1340, icon: "Laptop", tone: "blue" },
+  { name: "Education & Training", count: 720, icon: "GraduationCap", tone: "orange" },
+  { name: "Finance & Accounting", count: 560, icon: "Wallet", tone: "green" },
+  { name: "HR & Recruitment", count: 480, icon: "User", tone: "cyan" },
+  { name: "Legal & Compliance", count: 420, icon: "Scale", tone: "purple" },
+  { name: "Marketing & SEO", count: 920, icon: "TrendingUp", tone: "orange" },
+  { name: "Research & Analysis", count: 680, icon: "Search", tone: "blue" },
+  { name: "Security & Monitoring", count: 540, icon: "LockKeyhole", tone: "red" },
+  { name: "Writing & Content", count: 847, icon: "PencilLine", tone: "cyan" },
 ];
 
 export interface PromptTemplate {
@@ -270,16 +270,16 @@ export interface AuditEvent {
 }
 
 export const AUDIT_EVENTS: AuditEvent[] = [
-  { time: "2 min ago", type: "info", icon: "✓", message: "DCC quarterly audit completed for DEPT-012" },
-  { time: "15 min ago", type: "warning", icon: "⚠", message: "MCP Integration Layer degraded — 2 connections failed" },
-  { time: "32 min ago", type: "info", icon: "🔄", message: "Self-Healing Engine recovered 3 failed tasks" },
-  { time: "1 hour ago", type: "critical", icon: "🔒", message: "Security Engine blocked unauthorized access from 192.168.x.x" },
-  { time: "2 hours ago", type: "info", icon: "🤖", message: "Agent Factory created 20 new agents for DEPT-087" },
-  { time: "3 hours ago", type: "info", icon: "🧠", message: "Memory Engine completed hot→warm migration (15,000 memories)" },
-  { time: "4 hours ago", type: "warning", icon: "⚠", message: "Human Escalation queue backlog growing (35 pending)" },
-  { time: "5 hours ago", type: "info", icon: "💰", message: "Cost Optimization Engine saved $340 in API costs" },
-  { time: "6 hours ago", type: "info", icon: "📜", message: "Constitutional Rules Engine: 14,832 rules passed, 3 blocked" },
-  { time: "8 hours ago", type: "info", icon: "💾", message: "Daily backup completed successfully (48TB)" },
+  { time: "2 min ago", type: "info", icon: "Check", message: "DCC quarterly audit completed for DEPT-012" },
+  { time: "15 min ago", type: "warning", icon: "AlertTriangle", message: "MCP Integration Layer degraded — 2 connections failed" },
+  { time: "32 min ago", type: "info", icon: "RefreshCw", message: "Self-Healing Engine recovered 3 failed tasks" },
+  { time: "1 hour ago", type: "critical", icon: "Lock", message: "Security Engine blocked unauthorized access from 192.168.x.x" },
+  { time: "2 hours ago", type: "info", icon: "Bot", message: "Agent Factory created 20 new agents for DEPT-087" },
+  { time: "3 hours ago", type: "info", icon: "Brain", message: "Memory Engine completed hot→warm migration (15,000 memories)" },
+  { time: "4 hours ago", type: "warning", icon: "AlertTriangle", message: "Human Escalation queue backlog growing (35 pending)" },
+  { time: "5 hours ago", type: "info", icon: "Wallet", message: "Cost Optimization Engine saved $340 in API costs" },
+  { time: "6 hours ago", type: "info", icon: "ScrollText", message: "Constitutional Rules Engine: 14,832 rules passed, 3 blocked" },
+  { time: "8 hours ago", type: "info", icon: "Database", message: "Daily backup completed successfully (48TB)" },
 ];
 
 export interface SecurityEvent {
@@ -307,11 +307,11 @@ export interface RbacRole {
 }
 
 export const RBAC_ROLES: RbacRole[] = [
-  { icon: "👑", name: "Super Admin", description: "Full system access", users: 1, tone: "red" },
-  { icon: "🛡️", name: "Admin", description: "Department management", users: 5, tone: "orange" },
-  { icon: "👤", name: "Manager", description: "Team & task management", users: 12, tone: "blue" },
-  { icon: "✏️", name: "Operator", description: "Daily operations", users: 18, tone: "green" },
-  { icon: "👁️", name: "Viewer", description: "Read-only access", users: 11, tone: "purple" },
+  { icon: "Crown", name: "Super Admin", description: "Full system access", users: 1, tone: "red" },
+  { icon: "ShieldCheck", name: "Admin", description: "Department management", users: 5, tone: "orange" },
+  { icon: "User", name: "Manager", description: "Team & task management", users: 12, tone: "blue" },
+  { icon: "PencilLine", name: "Operator", description: "Daily operations", users: 18, tone: "green" },
+  { icon: "Eye", name: "Viewer", description: "Read-only access", users: 11, tone: "purple" },
 ];
 
 export interface SystemToggle {
@@ -339,10 +339,10 @@ export interface ActiveWorkflow {
 }
 
 export const ACTIVE_WORKFLOWS: ActiveWorkflow[] = [
-  { icon: "🔄", name: "Lead Qualification Pipeline", department: "CRM & Automation Dept", agents: 12, tone: "blue", status: "operational" },
-  { icon: "📊", name: "Q3 Analytics Report Generation", department: "Data & Analytics Dept", agents: 8, tone: "green", status: "operational" },
-  { icon: "🎓", name: "Student Admission Processing", department: "Education Agency Dept", agents: 15, tone: "purple", status: "operational" },
-  { icon: "🔍", name: "Security Audit Scan", department: "Security Monitoring Dept", agents: 6, tone: "orange", status: "degraded" },
+  { icon: "RefreshCw", name: "Lead Qualification Pipeline", department: "CRM & Automation Dept", agents: 12, tone: "blue", status: "operational" },
+  { icon: "BarChart3", name: "Q3 Analytics Report Generation", department: "Data & Analytics Dept", agents: 8, tone: "green", status: "operational" },
+  { icon: "GraduationCap", name: "Student Admission Processing", department: "Education Agency Dept", agents: 15, tone: "purple", status: "operational" },
+  { icon: "Search", name: "Security Audit Scan", department: "Security Monitoring Dept", agents: 6, tone: "orange", status: "degraded" },
 ];
 
 export interface RecentEvent {

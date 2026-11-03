@@ -26,7 +26,7 @@ export default function TimelineItem({ entry }: { entry: any }) {
             <span className="text-xs font-bold text-[var(--alo-text)]">{entry.senderName}</span>
             <Badge variant="outline" className={`text-[11px] ${vis} border`}>{entry.visibility}</Badge>
             {entry.aiDrafted && <Badge className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]"><Sparkles className="w-3 h-3 mr-1" />AI Draft</Badge>}
-            {entry.b2bConfidential && <Badge className="text-[11px] bg-crm-warning-bg text-crm-warning-text">🔒 B2B</Badge>}
+            {entry.b2bConfidential && <Badge className="text-[11px] bg-crm-warning-bg text-crm-warning-text"><Lock aria-hidden="true" className="size-3" /> B2B</Badge>}
           </div>
           <span className="text-[11px] text-[var(--alo-text-muted)]">{entry.createdAt}</span>
         </div>

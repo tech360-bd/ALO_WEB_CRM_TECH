@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
 import {
-  User, FileText, CheckCircle2, Clock, AlertTriangle, Sparkles, Upload, Search, ArrowRight, CalendarDays, MessageSquare, Phone, BookOpen, Award, Briefcase, DollarSign, GraduationCap, ShieldCheck, Users, Star, Send, FileCheck, Calculator, Compass
+  User, FileText, CheckCircle2, Clock, AlertTriangle, Sparkles, Upload, Search, ArrowRight, CalendarDays, MessageSquare, Phone, BookOpen, Award, Briefcase, DollarSign, GraduationCap, ShieldCheck, Users, Star, Send, FileCheck, Calculator, Compass, Lock
 } from 'lucide-react';
 
 interface DashboardData {
@@ -433,7 +433,7 @@ export default function PremiumStudentDashboard() {
                   const isLocked = currentIndex >= 0 && i > currentIndex;
                   return (
                     <div key={stage} className="flex items-center gap-2">
-                      <Badge className={`${isCompleted ? 'bg-[var(--alo-success)] text-white' : isCurrent ? 'bg-[var(--alo-brand)] text-white animate-pulse' : isLocked ? 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] border-[var(--alo-border)]' : 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]'} text-[11px] px-3 py-1.5`}>{isCompleted ? '✓' : isLocked ? '🔒' : '•'} {stage} {isCurrent ? '(Current)' : isCompleted ? '(Done)' : isLocked ? '(Locked)' : ''}</Badge>
+                      <Badge className={`${isCompleted ? 'bg-[var(--alo-success)] text-white' : isCurrent ? 'bg-[var(--alo-brand)] text-white animate-pulse' : isLocked ? 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] border-[var(--alo-border)]' : 'bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]'} text-[11px] px-3 py-1.5`}>{isCompleted ? '✓' : isLocked ? <Lock aria-hidden="true" className="inline size-3" /> : '•'} {stage} {isCurrent ? '(Current)' : isCompleted ? '(Done)' : isLocked ? '(Locked)' : ''}</Badge>
                       {i < FINAL_JOURNEY_INDICATOR.length - 1 && <ArrowRight className="w-3 h-3 text-[var(--alo-placeholder)]" />}
                     </div>
                   );

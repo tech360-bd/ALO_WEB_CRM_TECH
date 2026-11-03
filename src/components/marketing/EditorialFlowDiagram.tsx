@@ -19,7 +19,7 @@ const ICONS = {
 
 const TONES = {
   blue: 'border-[var(--alo-brand)]/30 bg-[var(--alo-brand)]/[0.04] text-[var(--alo-brand)]',
-  orange: 'border-[var(--alo-cta)]/30 bg-[var(--alo-cta)]/[0.04] text-[#B63A12]',
+  orange: 'border-[var(--alo-cta)]/30 bg-[var(--alo-cta)]/[0.04] text-alo-cta',
   green: 'border-crm-success-border bg-crm-success-bg text-crm-success-text',
   slate: 'border-[var(--alo-border-strong)] bg-[var(--alo-page)] text-[var(--alo-body)]',
 };

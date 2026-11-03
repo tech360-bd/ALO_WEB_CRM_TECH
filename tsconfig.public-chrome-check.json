@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "tsBuildInfoFile": "/tmp/alo-public-chrome-check.tsbuildinfo"
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/lib/alo-site-info.ts",
+    "src/lib/brand/brand-assets.ts",
+    "src/components/website/PublicNavbar.tsx",
+    "src/components/website/PublicFooter.tsx",
+    "src/components/website/PublicLayoutWrapper.tsx",
+    "src/components/website/public-chrome-policy.ts",
+    "src/app/layout.tsx"
+  ],
+  "exclude": ["node_modules", "prisma", "scripts", ".next", "tests"]
+}

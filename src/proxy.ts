@@ -431,8 +431,24 @@ export const ROLE_ROUTES: Record<string, string[]> = {
   EMPLOYEE: ["/employee"],
   VISA_OFFICER: ["/visa", "/employee"],
   VISA_INTERVIEW_OFFICER: ["/visa", "/employee"],
-  MARKETING_MANAGER: ["/marketing", "/employee"],
-  MARKETING: ["/marketing", "/employee"],
+  // Marketing roles keep their original allow-list and gain only the specific
+  // spec-named CRM pages/aliases they are entitled to open. Backend APIs still
+  // enforce the real permission check; a page allow-list is never an RBAC grant.
+  MARKETING_MANAGER: [
+    "/marketing", "/employee",
+    "/crm/marketing", "/crm/marketing-manager", "/crm/marketing-studio",
+    "/crm/content-calendar", "/crm/campaign-approval", "/crm/social-inbox",
+    "/crm/seo-manager", "/crm/contacts", "/crm/ucc",
+    "/crm/whatsapp/inbox", "/crm/whatsapp/conversations",
+    "/crm/whatsapp/templates", "/crm/whatsapp/sla",
+    "/crm/whatsapp/analytics", "/crm/whatsapp/settings",
+  ],
+  MARKETING: [
+    "/marketing", "/employee",
+    "/crm/marketing", "/crm/marketing-studio", "/crm/content-calendar",
+    "/crm/social-inbox", "/crm/contacts", "/crm/ucc",
+    "/crm/whatsapp/inbox", "/crm/whatsapp/conversations",
+  ],
   FINANCE: ["/finance", "/employee"],
   HR_MANAGER: ["/hrm", "/employee"],
   BRANCH_MANAGER: ["/crm", "/counselor", "/employee"],

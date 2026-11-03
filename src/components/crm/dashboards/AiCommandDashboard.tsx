@@ -33,7 +33,7 @@ function TypeBadge({ type }: { type: string }) {
     'Course Match': 'bg-[var(--alo-brand-pale)] border border-[var(--alo-brand-border)]/50 text-[var(--alo-brand)]',
     'SOP Draft': 'bg-[var(--alo-brand-pale)] border border-[var(--alo-brand-border)]/50 text-[var(--alo-brand)]',
     'CV Draft': 'bg-[var(--alo-info-bg)] border border-[var(--alo-info-border)]/50 text-[var(--alo-info-text)]',
-    'Doc Check': 'bg-[var(--alo-warning-soft)] border border-[var(--alo-warning)]/30 text-[#92400E]',
+    'Doc Check': 'bg-[var(--alo-warning-soft)] border border-[var(--alo-warning)]/30 text-crm-warning-text',
     'Visa Risk': 'bg-[var(--alo-error-soft)] border border-[var(--alo-error)]/30 text-[var(--alo-error)]',
   };
   return <span className={`text-[11px] px-1.5 py-0.5 rounded font-medium ${colors[type] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]'}`}>{type}</span>;

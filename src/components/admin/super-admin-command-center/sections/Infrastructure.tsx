@@ -9,6 +9,7 @@ import {
   RBAC_ROLES,
   SYSTEM_TOGGLES,
 } from "../catalog";
+import { NamedIcon } from "@/components/ui/named-icon";
 import { Card, MiniStat, ProgressBar, SectionTitle, StatCard, statusBadgeClass, healthColor, healthBarColor, TONE, TONE_BG } from "../ui";
 import { LineChart, TabButton } from "../charts";
 
@@ -53,7 +54,7 @@ function SkillsPanel() {
         {SKILL_CATEGORIES.map((c) => (
           <div key={c.name} className="p-4 rounded-xl bg-[var(--cc-bg-2)] hover:bg-[var(--cc-card-hover)] transition-colors cursor-pointer">
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${TONE_BG[c.tone]}`}>{c.icon}</div>
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${TONE_BG[c.tone]}`}><NamedIcon name={c.icon} className="size-5" /></div>
               <div className="flex-1">
                 <div className="text-sm font-medium">{c.name}</div>
                 <div className="text-xs text-[var(--cc-text-3)]">{c.count} skills</div>
@@ -279,7 +280,7 @@ function RbacPanel() {
         <div className="space-y-2">
           {RBAC_ROLES.map((r) => (
             <div key={r.name} className="flex items-center gap-3 p-3 rounded-lg bg-[var(--cc-bg-2)]">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs ${toneBg[r.tone]}`}>{r.icon}</div>
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${toneBg[r.tone]}`}><NamedIcon name={r.icon} className="size-4" /></div>
               <div className="flex-1">
                 <div className="text-sm font-medium">{r.name}</div>
                 <div className="text-xs text-[var(--cc-text-3)]">{r.description}</div>

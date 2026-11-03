@@ -1,15 +1,15 @@
+import { LoadingState } from "@/components/ui/state-panel";
+
+/**
+ * Global loading state (Master §14): stable dimensions, visible spinner and
+ * a text label. No fake progress percentage and no invented content.
+ */
 export default function Loading() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--alo-page)]">
-      <div className="flex flex-col items-center gap-4">
-        <div className="flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--alo-brand)] to-[var(--alo-info)] text-white shadow-lg">
-          <span className="text-2xl font-black">A</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="size-5 animate-spin rounded-full border-2 border-[var(--alo-brand)] border-t-transparent" />
-          <span className="text-sm font-medium text-[var(--alo-text-muted)]">Loading ALO Education...</span>
-        </div>
+    <main className="flex min-h-screen items-center justify-center bg-alo-page p-4">
+      <div className="w-full max-w-lg">
+        <LoadingState label="Loading ALO Education…" />
       </div>
-    </div>
+    </main>
   );
 }

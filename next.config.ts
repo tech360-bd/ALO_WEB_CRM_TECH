@@ -187,7 +187,19 @@ const nextConfig: NextConfig = {
       { source: "/marketing/dashboard", destination: "/crm/marketing" },
       { source: "/crm/social-inbox", destination: "/crm/communications/social-inbox" },
       { source: "/crm/ai-command-center", destination: "/admin/ai-command-center" },
-
+      // Spec-named Central WhatsApp CRM URLs. The implementations already
+      // exist under different canonical paths; these aliases avoid a second
+      // copy of the inbox/timeline, number registry, templates, SLA, analytics
+      // and settings. See docs/WHATSAPP_NUMBER_REGISTRY.md for the mapping and
+      // the two aliases that open a shared inbox rather than a deep-linked id.
+      { source: "/crm/whatsapp/inbox", destination: "/crm/whatsapp" },
+      { source: "/crm/whatsapp/conversations/:id", destination: "/crm/ucc?conversation=:id" },
+      { source: "/crm/whatsapp/numbers", destination: "/admin/whatsapp-numbers" },
+      { source: "/crm/whatsapp/templates", destination: "/crm/communications/templates" },
+      { source: "/crm/whatsapp/routing", destination: "/crm/whatsapp" },
+      { source: "/crm/whatsapp/sla", destination: "/crm/sla" },
+      { source: "/crm/whatsapp/analytics", destination: "/admin/whatsapp-analytics" },
+      { source: "/crm/whatsapp/settings", destination: "/crm/communications/settings" },
 
     ];
   },

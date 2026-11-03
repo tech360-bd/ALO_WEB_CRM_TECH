@@ -140,9 +140,9 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                   <p className="text-sm font-black text-[var(--alo-text)]">{linkedUniversities.length || countryData.quickFacts.find(f=>f.label.includes('University'))?.value || '100+'} • {countryData.name}</p>
                 </div>
                 <div className="absolute bottom-4 right-4 bg-[var(--alo-brand)] text-white rounded-2xl p-3 shadow-lg">
-                  <p className="text-[11px] font-bold text-[#D6E6FF] uppercase">Courses</p>
+                  <p className="text-[11px] font-bold text-alo-on-brand-soft uppercase">Courses</p>
                   <p className="text-sm font-black">{linkedCourses.length > 0 ? `${linkedCourses.length} Courses` : 'Explore Courses'}</p>
-                  <p className="text-[11px] text-[#D6E6FF] mt-1">Last Verified: {countryData.lastVerifiedAt}</p>
+                  <p className="text-[11px] text-alo-on-brand-soft mt-1">Last Verified: {countryData.lastVerifiedAt}</p>
                 </div>
               </div>
             </div>

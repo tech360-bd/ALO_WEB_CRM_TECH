@@ -2570,7 +2570,7 @@ export default function StudentProfilePage() {
                 type="button"
                 onClick={handleSaveAndContinue}
                 disabled={saving || profileLoading || profileLoadError}
-                className="bg-[var(--alo-cta-hover)] hover:bg-[#9a3412] text-white"
+                className="bg-[var(--alo-cta-hover)] hover:bg-alo-cta-hover text-white"
               >
                 Save &amp; Continue
                 <ChevronRight className="size-4 ml-1" />
@@ -2580,7 +2580,7 @@ export default function StudentProfilePage() {
                 type="button"
                 onClick={handleSave}
                 disabled={saving || profileLoading || profileLoadError}
-                className="bg-[var(--alo-cta-hover)] hover:bg-[#9a3412] text-white"
+                className="bg-[var(--alo-cta-hover)] hover:bg-alo-cta-hover text-white"
               >
                 <Save className="size-4 mr-1" />
                 {saving ? 'Saving...' : 'Complete Profile'}

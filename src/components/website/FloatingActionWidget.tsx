@@ -135,7 +135,7 @@ export default function FloatingActionWidget() {
               href={WHATSAPP_URL}
               {...(ALO_CONTACT.hasWhatsApp ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               aria-label={ALO_CONTACT.hasWhatsApp ? 'Message ALO Education on WhatsApp' : 'Contact ALO Education'}
-              className="flex items-center gap-2.5 bg-[var(--alo-whatsapp)] text-white px-4 py-2.5 rounded-full shadow-xl hover:bg-[#20bd5a] transition-all hover:scale-105 group border-2 border-white"
+              className="flex items-center gap-2.5 bg-[var(--alo-whatsapp)] text-white px-4 py-2.5 rounded-full shadow-xl hover:bg-alo-success transition-all hover:scale-105 group border-2 border-white"
             >
               <span className="h-7 w-7 rounded-full bg-white/20 flex items-center justify-center">
                 <MessageCircle className="h-4 w-4 text-white" />
@@ -152,7 +152,7 @@ export default function FloatingActionWidget() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Message ALO Education on Facebook Messenger (opens in a new tab)"
-              className="flex items-center gap-2.5 bg-[#1877F2] text-white px-4 py-2.5 rounded-full shadow-xl hover:bg-[#166fe5] transition-all hover:scale-105 group border-2 border-white"
+              className="flex items-center gap-2.5 bg-[#1877F2] text-white px-4 py-2.5 rounded-full shadow-xl hover:bg-alo-brand transition-all hover:scale-105 group border-2 border-white"
             >
               <span className="h-7 w-7 rounded-full bg-white/20 flex items-center justify-center">
                 <Facebook className="h-4 w-4 text-white" />
@@ -235,7 +235,7 @@ export default function FloatingActionWidget() {
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-full border border-[var(--alo-whatsapp)] px-3 py-1.5 text-[11px] font-semibold text-[#128C4A] hover:bg-[var(--alo-success-soft)]"
+                  className="inline-flex items-center rounded-full border border-[var(--alo-whatsapp)] px-3 py-1.5 text-[11px] font-semibold text-alo-success-dark hover:bg-[var(--alo-success-soft)]"
                 >
                   Talk to a counselor
                 </a>

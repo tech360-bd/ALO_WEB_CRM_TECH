@@ -1,0 +1,40 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "tsBuildInfoFile": "/tmp/alo-contact-hub-check.tsbuildinfo"
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/lib/contacts/**/*.ts",
+    "src/lib/api/staff-endpoint-guard.ts",
+    "src/app/api/crm/contacts/**/*.ts",
+    "src/app/api/whatsapp/contacts/route.ts",
+    "src/app/api/hr/leave/route.ts",
+    "src/app/api/hr/devices/route.ts",
+    "src/app/api/official-emails/route.ts",
+    "src/app/api/university-agreements/route.ts",
+    "src/app/api/b2b-contacts/route.ts",
+    "src/app/api/communications/templates/route.ts",
+    "src/app/api/communications/templates/[id]/route.ts",
+    "src/app/api/interview-questions/route.ts",
+    "src/app/api/website/search-log/route.ts",
+    "src/app/api/partner-packages/route.ts",
+    "src/app/api/communications/tasks/route.ts",
+    "src/app/api/communications/tasks/[id]/route.ts",
+    "src/app/api/communications/escalations/route.ts",
+    "src/app/api/communications/escalations/[id]/route.ts",
+    "src/app/api/communications/sla/policies/route.ts",
+    "src/app/api/communications/sla/justifications/[id]/review/route.ts",
+    "src/app/crm/contacts/**/*.tsx",
+    "src/app/crm/marketing-studio/page.tsx",
+    "src/app/crm/content-calendar/page.tsx",
+    "src/app/crm/campaign-approval/page.tsx",
+    "src/components/contacts/contact-hub-view.tsx",
+    "src/components/marketing/marketing-command-center-compat.tsx",
+    "src/lib/permissions.ts",
+    "src/proxy.ts",
+    "next.config.ts"
+  ],
+  "exclude": ["node_modules", "prisma", "scripts", ".next"]
+}

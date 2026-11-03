@@ -166,7 +166,7 @@ export default function StudentAiInterviewPage() {
       <div className="space-y-6 max-w-4xl mx-auto text-[var(--alo-text)] p-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--alo-border)] pb-6">
           <div>
-            <div className="flex items-center gap-2"><Badge className="bg-[var(--alo-brand)]/20 text-[#60a5fa] border-[var(--alo-brand)]/30"><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Simulator</Badge><h1 className="text-2xl font-bold">Visa Mock Interview Practice</h1></div>
+            <div className="flex items-center gap-2"><Badge className="bg-[var(--alo-brand)]/20 text-alo-on-brand-soft border-[var(--alo-brand)]/30"><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Simulator</Badge><h1 className="text-2xl font-bold">Visa Mock Interview Practice</h1></div>
             <p className="text-[var(--alo-text-muted)] text-xs mt-1">Practise embassy credibility questions one at a time. The AI is accent-tolerant — it evaluates the meaning, clarity and consistency of your answers, never your accent — and follows up where an answer is incomplete. This is practice only: it cannot guarantee a visa outcome, and a human officer makes the final internal assessment.</p>
           </div>
           <Link href="/student/visa"><Button variant="outline" className="border-[var(--alo-border)] text-[var(--alo-placeholder)] hover:text-[var(--alo-text)] ">Back to Visa Readiness</Button></Link>
@@ -198,7 +198,7 @@ export default function StudentAiInterviewPage() {
     <div className="space-y-6 max-w-4xl mx-auto text-[var(--alo-text)] p-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--alo-border)] pb-6">
         <div>
-          <div className="flex items-center gap-2"><Badge className="bg-[var(--alo-brand)]/20 text-[#60a5fa] border-[var(--alo-brand)]/30"><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Simulator — Session {sessionId}</Badge><h1 className="text-2xl font-bold">Visa Mock Interview Practice</h1></div>
+          <div className="flex items-center gap-2"><Badge className="bg-[var(--alo-brand)]/20 text-alo-on-brand-soft border-[var(--alo-brand)]/30"><Sparkles className="w-3.5 h-3.5 mr-1" /> AI Simulator — Session {sessionId}</Badge><h1 className="text-2xl font-bold">Visa Mock Interview Practice</h1></div>
           <p className="text-[var(--alo-text-muted)] text-xs mt-1">One general practice question at a time. Responses are saved for officer review; automated language, risk, and eligibility scoring is not enabled.</p>
         </div>
         <Link href="/student/visa"><Button variant="outline" className="border-[var(--alo-border)] text-[var(--alo-placeholder)] hover:text-[var(--alo-text)] ">Back to Visa Readiness</Button></Link>
@@ -212,7 +212,7 @@ export default function StudentAiInterviewPage() {
           <Card className="bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-text)]">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-[var(--alo-brand)]/20 text-[#60a5fa] flex items-center justify-center flex-shrink-0 mt-0.5"><span className="font-bold text-sm">Q{currentIdx + 1}</span></div>
+                <div className="w-8 h-8 rounded-full bg-[var(--alo-brand)]/20 text-alo-on-brand-soft flex items-center justify-center flex-shrink-0 mt-0.5"><span className="font-bold text-sm">Q{currentIdx + 1}</span></div>
                 <div><h2 className="text-lg font-semibold text-[var(--alo-text)] leading-relaxed">{currentQ?.question}</h2><p className="text-[11px] text-[var(--alo-info-text)] mt-2 bg-[var(--alo-surface-muted)] p-2.5 rounded-lg border border-[var(--alo-brand)]/20">Counsellor tip: Focus on specific curriculum modules, faculty, research facilities, your legitimate source of funds and your career plan after graduation. Keep every answer truthful and consistent with your documents.</p></div>
               </div>
             </CardContent>

@@ -403,7 +403,7 @@ export function StudentDashboard({ onNavigate }: { onNavigate: (v: ViewKey) => v
         </div>
 
         {/* Recommended action banner */}
-        <div className="relative overflow-hidden rounded-2xl border-2 border-[var(--alo-cta)]/30 bg-gradient-to-r from-[var(--alo-cta-soft)] via-[#fef5f0] to-white p-5 sm:p-6">
+        <div className="relative overflow-hidden rounded-2xl border-2 border-[var(--alo-cta)]/30 bg-gradient-to-r from-[var(--alo-cta-soft)] via-alo-cta-soft to-white p-5 sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-cta)] text-white shadow-md">

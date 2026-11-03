@@ -140,7 +140,7 @@ function NewsList({ onNavigate }: { onNavigate: (v: ViewKey, slug?: string) => v
         {/* Pinned */}
         {!loading && pinned.length > 0 && category === "All" && (
           <div className="mb-10">
-            <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">📌 Pinned News</h2>
+            <h2 className="alo-ds-eyebrow mb-4 inline-flex items-center gap-1.5"><Icon name="Pin" className="size-3.5" />Pinned News</h2>
             <div className="grid gap-5 lg:grid-cols-2">
               {pinned.slice(0, 2).map((article) => (
                 <Card

@@ -1055,7 +1055,7 @@ function CommentAutomationTab({ triggers, onTriggersChanged }: { triggers: Keywo
       </div>
 
       {/* Spec 8 default triggers — one-click seed */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[#eef4ff] px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-alo-brand-pale px-4 py-3">
         <div><p className="text-sm font-bold text-[var(--alo-brand)]">Spec 8 Keyword Triggers</p><p className="text-[11px] text-muted-foreground">Study Abroad • IELTS • Visa • UK • Canada • Australia • Scholarship • Apply — auto-reply + DM + lead + portal link</p></div>
         <Button size="sm" className=" bg-[var(--alo-brand)] text-white" onClick={seedDefaults}><Icon name="Zap" className="size-3.5"/> Seed 8 Defaults</Button>
       </div>
@@ -1251,7 +1251,7 @@ function CampaignPostsTab({ data, onDataChanged }: { data: CampaignPostsResponse
   return (
     <div className="space-y-4">
       {/* Content drafts and prompts only; image generation/publishing remain unconfigured. */}
-      <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/30 bg-gradient-to-br from-[#fff7f0] to-white">
+      <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/30 bg-gradient-to-br from-alo-cta-soft to-white">
         <CardContent className="pt-5 space-y-3">
           <div className="flex items-center gap-2"><div className="size-8 rounded-lg bg-[var(--alo-cta)] text-white flex items-center justify-center"><Icon name="Sparkles" className="size-4"/></div><div><p className="font-bold text-[var(--alo-cta)] text-sm">Content Drafts & Image Prompts</p><p className="text-[11px] text-muted-foreground">Create internal campaign drafts and size-specific prompts. Image rendering, blog publication, calendar scheduling, lead capture and social delivery are not connected.</p></div></div>
           <div className="grid md:grid-cols-[1fr_1fr_auto] gap-3">
@@ -2509,7 +2509,7 @@ function BrandKitEditor({ data, onDataChanged }: { data: BrandAssetsResponse | n
     } catch { toast({ title:"Save failed", variant:"destructive"});} finally { setSaving(false); }
   };
   return (
-    <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[#eef4ff]">
+    <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-alo-brand-pale">
       <CardContent className="pt-6 space-y-4">
         <div className="flex items-center justify-between">
           <div><p className="text-sm font-bold text-[var(--alo-brand)] flex items-center gap-2"><Icon name="BadgeCheck" className="size-4"/> Education Partner Brand Kit — Logo / Address / Phone / WhatsApp</p><p className="text-[11px] text-muted-foreground">এখানে আপলোড করা তথ্য দিয়ে সব ইমেজ/ভিডিওতে প্রফেশনাল overlay হবে (logo bottom-right 8%, footer bar + phone/WhatsApp/website)।</p></div>

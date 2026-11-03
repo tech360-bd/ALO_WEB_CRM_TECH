@@ -1,10 +1,33 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
-const m = vi.hoisted(() => ({ findMany: vi.fn(), create: vi.fn() }));
+const m = vi.hoisted(() => ({
+  findMany: vi.fn(),
+  create: vi.fn(),
+  auditCreate: vi.fn(),
+  auth: {
+    userId: 'staff-1',
+    email: 'staff@aloeducation.dev',
+    name: 'Staff',
+    userType: 'EMPLOYEE',
+    roles: ['ADMIN'],
+    permissions: [],
+    authenticationMethod: 'bearer',
+  } as Record<string, unknown>,
+}));
 
 vi.mock('@/lib/db', () => ({
-  db: { interviewQuestion: { findMany: m.findMany, create: m.create } },
+  db: {
+    interviewQuestion: { findMany: m.findMany, create: m.create },
+    auditLog: { create: m.auditCreate },
+  },
+}));
+
+// The real wrapper authenticates the request; the identity is injected here so
+// each test can exercise an authorized or a denied staff context.
+vi.mock('@/lib/auth-middleware', () => ({
+  withAuth: (handler: (req: Request, auth: unknown) => unknown) =>
+    (req: Request) => handler(req, m.auth),
 }));
 
 import { GET, POST } from '@/app/api/interview-questions/route';
@@ -40,8 +63,24 @@ const row = (overrides: Record<string, unknown> = {}) => ({
 
 beforeEach(() => {
   vi.resetAllMocks();
+  m.auth.userId = 'staff-1';
+  m.auth.userType = 'EMPLOYEE';
+  m.auth.roles = ['ADMIN'];
+  m.auth.authenticationMethod = 'bearer';
   m.findMany.mockResolvedValue([]);
   m.create.mockResolvedValue({ id: 'new-question' });
+  m.auditCreate.mockResolvedValue({});
+});
+
+describe('backend RBAC (not just the proxy gate)', () => {
+  it('refuses a student identity on reads and writes without touching the database', async () => {
+    m.auth.userType = 'STUDENT';
+    m.auth.roles = ['STUDENT'];
+    expect((await GET(get())).status).toBe(403);
+    expect((await POST(post({ category: 'COURSE', question: 'Why?' }))).status).toBe(403);
+    expect(m.findMany).not.toHaveBeenCalled();
+    expect(m.create).not.toHaveBeenCalled();
+  });
 });
 
 describe('GET /api/interview-questions', () => {

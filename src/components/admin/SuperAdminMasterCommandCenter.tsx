@@ -16,13 +16,13 @@ export function SuperAdminMasterCommandCenter() {
       <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white px-6 py-4">
         <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">🛡️ Super Admin — Master Command Center <span className="text-xs bg-white/20 px-2 py-1 rounded-full font-medium">Paid-App Quality</span></h1>
+            <h1 className="text-xl md:text-2xl font-heading font-bold flex items-center gap-2"><NamedIcon name="ShieldCheck" className="size-6" />Super Admin — Master Command Center <span className="text-xs bg-white/20 px-2 py-1 rounded-full font-medium">Paid-App Quality</span></h1>
             <p className="text-sm text-[var(--alo-brand-pale)] mt-1">Edit any part of website & CRM directly • Perform any agent task • Live data • Audit logged • RBAC protected</p>
           </div>
           <div className="flex gap-2 text-xs">
             <span className="bg-[var(--alo-success)]/20 border border-[var(--alo-success)]/30 px-3 py-1.5 rounded-full">✓ Live Operations</span>
             <span className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-full">✓ Audit logged</span>
-            <span className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-full">📱 PWA Mobile App</span>
+            <span className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 px-3 py-1.5 rounded-full"><NamedIcon name="Smartphone" className="size-3.5" />PWA Mobile App</span>
           </div>
         </div>
       </div>
@@ -91,9 +91,9 @@ export function SuperAdminMasterCommandCenter() {
           {activeTab==="system" && (
             <div className="space-y-6">
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-xl border p-5"><h3 className="font-semibold text-sm">🔐 RBAC & Audit</h3><ul className="mt-3 space-y-2 text-xs text-[var(--alo-body)]"><li>✓ SUPER_ADMIN/ADMIN role check on all /api/admin/* routes</li><li>✓ authenticateRequest validates PortalSession + NextAuth</li><li>✓ Acting-as audited in PortalAuditLog</li><li>✓ Every website/CRM write calls logAuditAction</li><li>✓ Content audit log for services, countries, etc</li><li>✓ CrmAuditLog for data changes</li></ul></div>
-                <div className="bg-white rounded-xl border p-5"><h3 className="font-semibold text-sm">✅ Validation & Realism</h3><ul className="mt-3 space-y-2 text-xs text-[var(--alo-body)]"><li>✓ Required fields validated (title, slug, name etc)</li><li>✓ Duplicate detection (slug unique, course code etc)</li><li>✓ Status workflow enforced (draft → pending → published)</li><li>✓ Country sub-data requires countryId</li><li>✓ Lead → Student → Application pipeline enforced</li><li>✓ Document versioning & review status</li></ul></div>
-                <div className="bg-white rounded-xl border p-5"><h3 className="font-semibold text-sm">📱 PWA Mobile</h3><ul className="mt-3 space-y-2 text-xs text-[var(--alo-body)]"><li>✓ manifest.json with standalone display</li><li>✓ Service worker sw.js with offline cache</li><li>✓ Icons 72→512 for all devices</li><li>✓ Apple meta tags & theme-color</li><li>✓ Install prompt (beforeinstallprompt)</li><li>✓ Offline page /offline with retry</li></ul></div>
+                <div className="bg-white rounded-xl border p-5"><h3 className="font-semibold text-sm flex items-center gap-1.5"><NamedIcon name="LockKeyhole" className="size-4" />RBAC &amp; Audit</h3><ul className="mt-3 space-y-2 text-xs text-[var(--alo-body)]"><li>✓ SUPER_ADMIN/ADMIN role check on all /api/admin/* routes</li><li>✓ authenticateRequest validates PortalSession + NextAuth</li><li>✓ Acting-as audited in PortalAuditLog</li><li>✓ Every website/CRM write calls logAuditAction</li><li>✓ Content audit log for services, countries, etc</li><li>✓ CrmAuditLog for data changes</li></ul></div>
+                <div className="bg-white rounded-xl border p-5"><h3 className="font-semibold text-sm flex items-center gap-1.5"><NamedIcon name="BadgeCheck" className="size-4" />Validation &amp; Realism</h3><ul className="mt-3 space-y-2 text-xs text-[var(--alo-body)]"><li>✓ Required fields validated (title, slug, name etc)</li><li>✓ Duplicate detection (slug unique, course code etc)</li><li>✓ Status workflow enforced (draft → pending → published)</li><li>✓ Country sub-data requires countryId</li><li>✓ Lead → Student → Application pipeline enforced</li><li>✓ Document versioning & review status</li></ul></div>
+                <div className="bg-white rounded-xl border p-5"><h3 className="font-semibold text-sm flex items-center gap-1.5"><NamedIcon name="Smartphone" className="size-4" />PWA Mobile</h3><ul className="mt-3 space-y-2 text-xs text-[var(--alo-body)]"><li>✓ manifest.json with standalone display</li><li>✓ Service worker sw.js with offline cache</li><li>✓ Icons 72→512 for all devices</li><li>✓ Apple meta tags & theme-color</li><li>✓ Install prompt (beforeinstallprompt)</li><li>✓ Offline page /offline with retry</li></ul></div>
               </div>
 
               <div className="bg-white rounded-xl border p-5">
@@ -135,7 +135,7 @@ export function SuperAdminMasterCommandCenter() {
           {activeTab==="mobile" && (
             <div className="space-y-6">
               <div className="bg-white rounded-xl border p-6">
-                <h2 className="text-xl font-bold">📱 Mobile PWA — Web-based yet Native App-like</h2>
+                <h2 className="text-xl font-heading font-bold flex items-center gap-2"><NamedIcon name="Smartphone" className="size-5" />Mobile PWA — Web-based yet Native App-like</h2>
                 <p className="text-sm text-[var(--alo-body)] mt-2">Entire platform web-based but designed so users can access/use it on mobile devices just like native app. Paid-app quality mobile experience.</p>
 
                 <div className="grid md:grid-cols-2 gap-6 mt-6">

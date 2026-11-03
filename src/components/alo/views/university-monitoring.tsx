@@ -726,7 +726,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
               <div className="text-sm font-semibold text-[var(--alo-text)]">Official source registry</div>
               <div className="mt-1 text-xs text-[var(--alo-body)]">New entries remain paused until a Super Admin confirms official ownership and a safe HTTPS probe succeeds. Page facts still require separate review.</div>
             </div>
-            {canManageSources && <Button onClick={() => setSourceDialogOpen(true)} className="shrink-0 bg-[#2563EB] text-white hover:bg-[#1D4ED8]">Register Source Candidate</Button>}
+            {canManageSources && <Button onClick={() => setSourceDialogOpen(true)} className="shrink-0 bg-alo-brand text-white hover:bg-alo-brand">Register Source Candidate</Button>}
           </div>
           <Card className="rounded-2xl border-2 border-[var(--alo-border)] overflow-hidden">
             <div className="max-h-[640px] overflow-auto alo-scroll">
@@ -806,7 +806,7 @@ export function UniversityMonitoring({ onNavigate }: { onNavigate: (v: any, slug
                 </div>
                 <DialogFooter>
                   <Button type="button" variant="outline" onClick={() => setSourceDialogOpen(false)} disabled={sourceSaving}>Cancel</Button>
-                  <Button type="submit" disabled={sourceSaving} className="bg-[#2563EB] text-white hover:bg-[#1D4ED8]">{sourceSaving ? 'Registering…' : 'Register paused candidate'}</Button>
+                  <Button type="submit" disabled={sourceSaving} className="bg-alo-brand text-white hover:bg-alo-brand">{sourceSaving ? 'Registering…' : 'Register paused candidate'}</Button>
                 </DialogFooter>
               </form>
             </DialogContent>

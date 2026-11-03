@@ -179,7 +179,7 @@ export default function StudentPortalLayout({
                 </div>
                 <div className="min-w-0">
                   <p className="text-[var(--alo-text)] text-sm font-semibold truncate">{student.name}</p>
-                  <p className="text-[#60a5fa] text-xs font-mono">{student.studentId}</p>
+                  <p className="text-alo-on-brand-soft text-xs font-mono">{student.studentId}</p>
                 </div>
               </div>
               {student.profileComplete < 100 && (

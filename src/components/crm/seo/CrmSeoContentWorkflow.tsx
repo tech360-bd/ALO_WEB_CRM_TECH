@@ -91,7 +91,7 @@ const reviewQueue: ReviewItem[] = [
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-const priorityColor: Record<Priority, string> = { P0: 'bg-[var(--alo-error)]/10 text-crm-danger-text border-crm-danger-border/20', P1: 'bg-[var(--alo-warning)]/10 text-crm-warning-text border-crm-warning-border/20', P2: 'bg-zinc-500/10 text-zinc-600 border-zinc-500/20' };
+const priorityColor: Record<Priority, string> = { P0: 'bg-[var(--alo-error)]/10 text-crm-danger-text border-crm-danger-border/20', P1: 'bg-[var(--alo-warning)]/10 text-crm-warning-text border-crm-warning-border/20', P2: 'bg-zinc-500/10 text-alo-text-secondary border-zinc-500/20' };
 const contentTypeColor: Record<ContentType, string> = { 'Money Page': 'bg-[var(--alo-brand-pale)]0/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20', 'Support': 'bg-sky-500/10 text-sky-600 border-sky-500/20', 'Trust': 'bg-teal-500/10 text-teal-600 border-teal-500/20', 'Cluster': 'bg-[var(--alo-error)]/10 text-crm-danger-text border-crm-danger-border/20' };
 const riskColor: Record<ReviewRisk, string> = { High: 'bg-[var(--alo-error)]/10 text-crm-danger-text border-crm-danger-border/20', Medium: 'bg-[var(--alo-warning)]/10 text-crm-warning-text border-crm-warning-border/20', Low: 'bg-[var(--alo-success)]/10 text-crm-success-text border-[var(--alo-success)]/20' };
 const reviewTypeIcon: Record<ReviewType, React.ElementType> = { 'Immigration Fact-check': ShieldCheck, 'SEO Review': BarChart3, 'Compliance': Gavel };
@@ -101,7 +101,7 @@ const kanbanColumns: KanbanStatus[] = ['TO DO', 'DRAFT', 'IN REVIEW', 'PUBLISHED
 
 const destinationColor = (d: string) => {
   const map: Record<string, string> = { UK: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]', USA: 'bg-crm-danger-bg text-crm-danger-text', Canada: 'bg-crm-danger-bg text-crm-danger-text', Australia: 'bg-crm-warning-bg text-crm-warning-text', Germany: 'bg-yellow-100 text-yellow-700' };
-  return map[d] || 'bg-zinc-100 text-zinc-700';
+  return map[d] || 'bg-zinc-100 text-alo-body';
 };
 
 // ── Sub-components ───────────────────────────────────────────────────────────

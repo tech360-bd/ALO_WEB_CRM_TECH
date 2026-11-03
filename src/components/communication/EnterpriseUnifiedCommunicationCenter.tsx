@@ -22,7 +22,8 @@ import {
   Tag,
   Zap,
   Globe,
-  FileCheck
+  FileCheck,
+  Lightbulb
 } from 'lucide-react';
 
 export default function EnterpriseUnifiedCommunicationCenter() {
@@ -461,7 +462,7 @@ export default function EnterpriseUnifiedCommunicationCenter() {
                     onClick={() => setMessageInput(sug)}
                     className="w-full text-left p-2.5 bg-white dark:bg-[var(--alo-navy)] hover:bg-[var(--alo-brand-pale)] dark:hover:bg-[var(--alo-navy)] border border-[var(--alo-border)] dark:border-[var(--alo-border)] rounded-lg text-[11px] text-[var(--alo-body)] dark:text-[var(--alo-body)] transition line-clamp-2"
                   >
-                    💡 {sug}
+                    <Lightbulb aria-hidden="true" className="mr-1 inline size-3.5" /> {sug}
                   </button>
                 ))}
               </div>

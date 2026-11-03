@@ -99,7 +99,7 @@ export default function HrmAgreementsPage() {
                 <h1 className="font-heading text-[20pt] font-extrabold text-alo-brand">
                   {title || 'Untitled official document'}
                 </h1>
-                <p className="mt-2 text-sm text-neutral-500">Category: {category}</p>
+                <p className="mt-2 text-sm text-alo-text-muted">Category: {category}</p>
                 <div className="mt-6 space-y-4 whitespace-pre-wrap">
                   {content || 'Document content will appear here as you type.'}
                 </div>

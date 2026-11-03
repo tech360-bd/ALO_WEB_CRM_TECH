@@ -76,7 +76,7 @@ export default function OfficialLetterhead({
       </header>
 
       {/* ── Document body ──────────────────────────────────────────── */}
-      <div className="flex-1 px-[10mm] py-[10mm] text-[11pt] leading-relaxed text-neutral-800">
+      <div className="flex-1 px-[10mm] py-[10mm] text-[11pt] leading-relaxed text-alo-text">
         {children}
       </div>
 
@@ -90,14 +90,14 @@ export default function OfficialLetterhead({
             height={124}
             onError={() => setSealVisible(false)}
           />
-          <p className="mt-1 text-[8pt] text-neutral-500">
+          <p className="mt-1 text-[8pt] text-alo-text-muted">
             {issuedByName ? `Issued by ${issuedByName}` : 'Officially sealed'}
           </p>
         </div>
       )}
 
       {(note || documentReference) && (
-        <div className="space-y-1 px-[10mm] pb-[4mm] text-[8.5pt] text-neutral-500">
+        <div className="space-y-1 px-[10mm] pb-[4mm] text-[8.5pt] text-alo-text-muted">
           {note && <p>{note}</p>}
           {documentReference && <p>Reference: {documentReference}</p>}
         </div>

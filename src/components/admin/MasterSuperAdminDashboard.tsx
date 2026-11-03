@@ -277,7 +277,7 @@ export default function MasterSuperAdminDashboard() {
           </div>
           <Button
  size="sm"
- className=" bg-crm-warning-bg font-semibold text-crm-warning-text border border-crm-warning-border hover:bg-[#FFF7E6]"
+ className=" bg-crm-warning-bg font-semibold text-crm-warning-text border border-crm-warning-border hover:bg-alo-warning-soft"
  onClick={() => void handleExitActingAs()}
             disabled={actingAsBusy}
           >

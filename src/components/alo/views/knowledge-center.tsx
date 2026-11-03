@@ -640,7 +640,7 @@ export function KnowledgeCenter() {
             description="Browse internal SOPs, templates, country guides, and policy documents."
             icon="FolderOpen"
             action={
-              <Button onClick={() => setUploadOpen(true)} className="h-10 bg-[var(--alo-cta-hover)] text-white hover:bg-[#9A3412]">
+              <Button onClick={() => setUploadOpen(true)} className="h-10 bg-[var(--alo-cta-hover)] text-white hover:bg-alo-cta-hover">
                 <Icon name="Upload" className="size-4" />
                 Upload Document
               </Button>
@@ -985,7 +985,7 @@ export function KnowledgeCenter() {
                                 description: `${t.title} — your progress will be tracked in your employee profile.`,
                               })
                             }
-                            className="h-8 bg-[var(--alo-cta-hover)] text-white hover:bg-[#9A3412]"
+                            className="h-8 bg-[var(--alo-cta-hover)] text-white hover:bg-alo-cta-hover"
                           >
                             <Icon name="PlayCircle" className="size-3.5" />
                             Start Training

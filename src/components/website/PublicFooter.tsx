@@ -428,7 +428,7 @@ export default function PublicFooter() {
               href="/book-consultation"
               className="inline-flex w-fit items-center gap-2 rounded-button bg-alo-cta px-5 py-3 font-heading text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-alo-cta-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-alo-cta-accent focus-visible:ring-offset-2"
             >
-              Request Counseling
+              Book Free Counseling
             </Link>
           </div>
 

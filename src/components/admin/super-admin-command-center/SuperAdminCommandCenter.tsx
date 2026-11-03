@@ -255,7 +255,7 @@ export default function SuperAdminCommandCenter() {
               onClick={() => setMobileNav((v) => !v)}
               aria-label="Toggle navigation"
             >
-              ☰
+              <NamedIcon name="Menu" className="size-5" />
             </button>
             <h1 className="text-lg font-bold truncate">{TITLES[tab]}</h1>
             <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-[var(--cc-green)]">
@@ -268,13 +268,12 @@ export default function SuperAdminCommandCenter() {
                 className="w-40 lg:w-64 text-sm bg-[var(--cc-bg-2)] border border-[var(--cc-border)] rounded-lg pl-9 pr-3 py-1.5 text-[var(--cc-text)] placeholder:text-[var(--cc-text-3)] focus:outline-none focus:border-[var(--cc-blue)]"
                 placeholder="Search departments, agents, skills..."
               />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--cc-text-3)]">🔍</span>
+              <NamedIcon name="Search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--cc-text-3)]" />
             </div>
-            <button className="hidden sm:inline-block px-3 py-1.5 text-xs rounded-lg bg-[var(--cc-blue)]/20 text-[var(--cc-blue)] hover:bg-[var(--cc-blue)]/30 transition">📤 Export Report</button>
-            <button className="px-3 py-1.5 text-xs rounded-lg bg-[var(--cc-green)]/20 text-[var(--cc-green)] hover:bg-[var(--cc-green)]/30 transition">⚡ Deploy Agent</button>
-            <button className="relative px-3 py-1.5 text-sm rounded-lg hover:bg-[var(--cc-card)] transition">
-              🔔
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[var(--cc-red)] text-white text-[11px] rounded-full flex items-center justify-center">3</span>
+            <button className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-[var(--cc-blue)]/20 text-[var(--cc-blue)] hover:bg-[var(--cc-blue)]/30 transition"><NamedIcon name="Upload" className="size-3.5" />Export Report</button>
+            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg bg-[var(--cc-green)]/20 text-[var(--cc-green)] hover:bg-[var(--cc-green)]/30 transition"><NamedIcon name="Zap" className="size-3.5" />Deploy Agent</button>
+            <button className="inline-flex items-center px-3 py-1.5 text-sm rounded-lg hover:bg-[var(--cc-card)] transition" aria-label="Notifications">
+              <NamedIcon name="Bell" className="size-4" />
             </button>
           </div>
         </header>

@@ -1,9 +1,23 @@
 /**
  * ALO Education — shared public contact details, social accounts and policy links.
- * Public phone/WhatsApp links are deployment configuration. Blank values are
- * intentionally omitted. Configuration does not prove phone ownership or Meta
- * connectivity; the separate sender registry/provider check controls sending.
+ *
+ * The ALO-provided public contact numbers below are compiled in as brand
+ * defaults so the header/footer show them on EVERY pre-login page, including a
+ * deployment that has not set the optional NEXT_PUBLIC_* overrides. Operators
+ * may override them through protected environment configuration; a blank value
+ * falls back to these defaults rather than hiding the required contact block.
+ *
+ * These are DISPLAY / CONTACT details only. They do not prove phone ownership,
+ * Meta WhatsApp Business registration, approved templates or Cloud API
+ * connectivity. Automated sending is controlled separately by the number
+ * registry and provider configuration (see docs/WHATSAPP_NUMBER_REGISTRY.md).
  */
+const ALO_BRAND_CONTACT_DEFAULTS = {
+  /** Display range, e.g. "+8801805020101-10"; the dial link uses the first number. */
+  contactPhone: '+8801805020101-10',
+  whatsappPhone: '+8801805020101',
+} as const;
+
 function readPublicPhone(value: string | undefined, requireInternational = false): { display: string; digits: string } | null {
   const raw = (value || '').trim();
   if (!raw || !/^[+()\d\s.-]+$/.test(raw)) return null;
@@ -12,8 +26,23 @@ function readPublicPhone(value: string | undefined, requireInternational = false
   return { display: raw, digits };
 }
 
-const configuredContactPhone = readPublicPhone(process.env.NEXT_PUBLIC_ALO_CONTACT_PHONE);
-const configuredWhatsAppPhone = readPublicPhone(process.env.NEXT_PUBLIC_ALO_WHATSAPP_NUMBER, true);
+/**
+ * A display value may be a short range such as "+8801805020101-10". Only the
+ * first number is dialable; appending the range suffix would produce a
+ * non-existent 15-digit telephone number.
+ */
+function dialDigits(display: string): string {
+  return display.replace(/\s*[-–]\s*\d{1,4}\s*$/, '').replace(/\D/g, '');
+}
+
+// An invalid operator override must never make the required brand contact
+// block disappear: fall back to the ALO-provided numbers on a parse failure.
+const configuredContactPhone =
+  readPublicPhone(process.env.NEXT_PUBLIC_ALO_CONTACT_PHONE || ALO_BRAND_CONTACT_DEFAULTS.contactPhone)
+  ?? readPublicPhone(ALO_BRAND_CONTACT_DEFAULTS.contactPhone);
+const configuredWhatsAppPhone =
+  readPublicPhone(process.env.NEXT_PUBLIC_ALO_WHATSAPP_NUMBER || ALO_BRAND_CONTACT_DEFAULTS.whatsappPhone, true)
+  ?? readPublicPhone(ALO_BRAND_CONTACT_DEFAULTS.whatsappPhone, true);
 
 export const ALO_CONTACT = {
   /** Confirm address with the owner before production publication. */
@@ -22,7 +51,7 @@ export const ALO_CONTACT = {
   mapsUrl: 'https://share.google/aarau5V2GfBrICZTj',
   mobileDisplay: configuredContactPhone?.display || '',
   mobileHref: configuredContactPhone
-    ? `tel:${configuredContactPhone.display.trim().startsWith('+') ? '+' : ''}${configuredContactPhone.digits}`
+    ? `tel:${configuredContactPhone.display.trim().startsWith('+') ? '+' : ''}${dialDigits(configuredContactPhone.display)}`
     : '',
   hasContactPhone: Boolean(configuredContactPhone),
   whatsappHref: configuredWhatsAppPhone ? `https://wa.me/${configuredWhatsAppPhone.digits}` : '',

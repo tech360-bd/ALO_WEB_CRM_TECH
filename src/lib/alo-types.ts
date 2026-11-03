@@ -271,8 +271,8 @@ export const STAGE_LABELS: Record<string, string> = {
 };
 
 export const STAGE_COLORS: Record<string, string> = {
-  COUNSELING: "bg-slate-100 text-slate-700",
-  ELIGIBILITY_CHECKED: "bg-slate-100 text-slate-700",
+  COUNSELING: "bg-slate-100 text-alo-body",
+  ELIGIBILITY_CHECKED: "bg-slate-100 text-alo-body",
   DOCUMENTS_PENDING: "bg-amber-100 text-amber-700",
   DOCUMENTS_RECEIVED: "bg-sky-100 text-sky-700",
   UNIVERSITY_SHORTLISTED: "bg-sky-100 text-sky-700",

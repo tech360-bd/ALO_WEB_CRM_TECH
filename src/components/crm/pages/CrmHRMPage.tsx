@@ -204,7 +204,7 @@ export default function CrmHRMPage() {
           >
             <ArrowRight className="w-4 h-4 text-[var(--alo-cta)]" /> Work Reassignment
           </Button>
-          <Button asChild className="bg-[var(--alo-brand)] hover:bg-[#004088] text-white font-bold gap-2"><a href="/admin/access-control-center">
+          <Button asChild className="bg-[var(--alo-brand)] hover:bg-alo-brand text-white font-bold gap-2"><a href="/admin/access-control-center">
               <ShieldCheck className="w-4 h-4" /> Control Center
             </a></Button>
         </div>
@@ -365,7 +365,7 @@ export default function CrmHRMPage() {
                 <Button
  onClick={handleGeneratePayroll}
  disabled={payrollLoading}
- className="bg-[var(--alo-brand)] hover:bg-[#004088] text-white font-bold px-4 py-2 rounded-xl"
+ className="bg-[var(--alo-brand)] hover:bg-alo-brand text-white font-bold px-4 py-2 rounded-xl"
  >
                   {payrollLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : '1. Prepare AI Draft Payroll'}
                 </Button>

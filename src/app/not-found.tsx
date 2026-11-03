@@ -1,23 +1,25 @@
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+import { StatePanel } from "@/components/ui/state-panel";
+
+/** Global empty / not-found state — same surface language as the CRM. */
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--alo-page)] p-4">
-      <div className="max-w-md text-center">
-        <div className="mx-auto flex size-20 items-center justify-center rounded-2xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
-          <span className="text-4xl font-black">404</span>
-        </div>
-        <h1 className="mt-6 text-2xl font-bold text-[var(--alo-text)]">Page Not Found</h1>
-        <p className="mt-2 text-sm text-[var(--alo-text-muted)]">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <Link
-          href="/"
-          className="mt-6 inline-flex items-center rounded-xl bg-[var(--alo-brand)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--alo-brand-hover)]"
-        >
-          Back to Home
-        </Link>
+    <main className="flex min-h-screen items-center justify-center bg-alo-page p-4">
+      <div className="w-full max-w-lg">
+        <StatePanel
+          tone="info"
+          icon={<span className="font-heading text-2xl font-bold">404</span>}
+          title="Page Not Found"
+          description="The page you're looking for doesn't exist or has been moved."
+          actions={
+            <Button asChild className="bg-alo-brand text-white hover:bg-alo-brand-hover">
+              <Link href="/">Back to Home</Link>
+            </Button>
+          }
+        />
       </div>
-    </div>
+    </main>
   );
 }

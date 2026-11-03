@@ -607,7 +607,7 @@ export default function MarketingKitPanel({ kits = DEFAULT_MARKETING_KITS }: { k
             <article key={item.id} className="rounded-2xl border border-[var(--alo-border)] bg-white p-4">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F0FDF4] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-crm-success-text">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-alo-success-soft px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-crm-success-text">
                     <TrendingUp className="h-3 w-3" />
                     {item.page}
                   </span>

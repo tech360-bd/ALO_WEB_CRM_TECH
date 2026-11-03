@@ -50,16 +50,16 @@ export interface Deliverable {
 }
 
 export const DELIVERABLES: Deliverable[] = [
-  { num: 1, name: "Executive Summary", icon: "📋", description: "One-page vision, ROI, timeline, investment, risk assessment, success metrics" },
-  { num: 2, name: "Master Architecture Diagram", icon: "🏗️", description: "Complete system architecture: mobile, AI agents, integration, data, security layers" },
-  { num: 3, name: "52-Week Master Roadmap", icon: "📅", description: "Week-by-week deliverables, milestones, resources, dependencies, risk mitigation" },
-  { num: 4, name: "Mobile App Specifications", icon: "📱", description: "4 apps: feature lists, wireframes, user flows, tech architecture, dev plans" },
-  { num: 5, name: "First 5 Departments Complete", icon: "🏢", description: "DEPT-001 to 005: full specs, AI rosters, SOPs, skills, prompts, integrations" },
-  { num: 6, name: "AI Agent Factory Blueprint", icon: "🤖", description: "Standard agent creation process, templates, testing, deployment, monitoring" },
-  { num: 7, name: "Integration Playbook", icon: "🔌", description: "System connections, API specs, data migration, testing, rollback procedures" },
-  { num: 8, name: "Technology Stack Recommendation", icon: "⚙️", description: "Tech choices with rationale, cost estimates, vendor comparisons, build vs buy" },
-  { num: 9, name: "Team & Resources Plan", icon: "👥", description: "Human team, roles, hiring plan, training, consultants/vendors needed" },
-  { num: 10, name: "Business Model Evolution", icon: "💰", description: "Revenue streams, pricing strategy, market expansion, competitive positioning" },
+  { num: 1, name: "Executive Summary", icon: "ClipboardList", description: "One-page vision, ROI, timeline, investment, risk assessment, success metrics" },
+  { num: 2, name: "Master Architecture Diagram", icon: "Building2", description: "Complete system architecture: mobile, AI agents, integration, data, security layers" },
+  { num: 3, name: "52-Week Master Roadmap", icon: "CalendarRange", description: "Week-by-week deliverables, milestones, resources, dependencies, risk mitigation" },
+  { num: 4, name: "Mobile App Specifications", icon: "Smartphone", description: "4 apps: feature lists, wireframes, user flows, tech architecture, dev plans" },
+  { num: 5, name: "First 5 Departments Complete", icon: "Building2", description: "DEPT-001 to 005: full specs, AI rosters, SOPs, skills, prompts, integrations" },
+  { num: 6, name: "AI Agent Factory Blueprint", icon: "Bot", description: "Standard agent creation process, templates, testing, deployment, monitoring" },
+  { num: 7, name: "Integration Playbook", icon: "Plug", description: "System connections, API specs, data migration, testing, rollback procedures" },
+  { num: 8, name: "Technology Stack Recommendation", icon: "Settings2", description: "Tech choices with rationale, cost estimates, vendor comparisons, build vs buy" },
+  { num: 9, name: "Team & Resources Plan", icon: "Users", description: "Human team, roles, hiring plan, training, consultants/vendors needed" },
+  { num: 10, name: "Business Model Evolution", icon: "Wallet", description: "Revenue streams, pricing strategy, market expansion, competitive positioning" },
 ];
 
 export interface Strategy {
@@ -71,21 +71,21 @@ export interface Strategy {
 }
 
 export const STRATEGIES: Strategy[] = [
-  { num: 1, title: "Start Small, Scale Fast", icon: "🚀", description: "5 departments in 30 days → 15 in 3 months → 40 in 6 months → 100 in 12 months. Prove ROI before scaling.", color: "blue" },
-  { num: 2, title: "Mobile-First Approach", icon: "📱", description: "90%+ BD users on mobile. Flutter single codebase. Customer App → Admin → Agent → Reseller.", color: "cyan" },
-  { num: 3, title: "Language Strategy", icon: "🌐", description: "Bengali (300M+ speakers, underserved AI market) → English → Hindi → Arabic → Spanish → Urdu.", color: "green" },
-  { num: 4, title: "Payment Integration Priority", icon: "💳", description: "bKash + Nagad (must-have) + Rocket + Cards + SSLCommerz. Stripe/PayPal for international.", color: "orange" },
-  { num: 5, title: "AI Model Strategy", icon: "🤖", description: "Hybrid: Claude/GPT-4/Gemini for complex, fine-tuned smaller models for volume, local models for privacy.", color: "purple" },
-  { num: 6, title: "Data Strategy", icon: "📊", description: "Collect every interaction. Build Knowledge Graph, Customer 360°, predictive models. Own your data moat.", color: "pink" },
-  { num: 7, title: "Security is Non-Negotiable", icon: "🛡️", description: "E2E encryption, MFA, pen testing. SOC 2, ISO 27001, PCI-DSS targets. 10-15% of tech budget.", color: "red" },
-  { num: 8, title: "Team Structure", icon: "👥", description: "5-8 core (Months 1-6) → 8-12 (Months 7-12) → 15-20 (Year 2). Bangladesh dev talent = cost-effective.", color: "blue" },
-  { num: 9, title: "Revenue Strategy", icon: "💰", description: "Enhance existing + add 7 new AI revenue streams. Freemium + subscription + usage-based + enterprise. Target 5-10x in 12 months.", color: "green" },
-  { num: 10, title: "Cost Management", icon: "📉", description: "AI API costs (40%), Infrastructure (25%), Team (20%), Security (10%), Misc (5%). Break-even Month 6-9.", color: "orange" },
-  { num: 11, title: "Marketing & Growth", icon: "📈", description: "WhatsApp Marketing, Facebook Ads, YouTube Bengali, SEO, Referral, Reseller network. 'First AI-native hosting in Bangladesh'.", color: "purple" },
-  { num: 12, title: "Competitive Positioning", icon: "🎯", description: "vs GoDaddy: AI-first, Bengali, local payments. vs Local: AI, global infra, enterprise. vs AI startups: existing business, local knowledge.", color: "cyan" },
-  { num: 13, title: "Risk Management", icon: "⚠️", description: "10 top risks: API costs, security breach, competition, regulation, team scaling, tech debt, customer concentration, AI reliability, data loss, founder burnout.", color: "red" },
-  { num: 14, title: "Quality Assurance Framework", icon: "✅", description: "100+ test scenarios per agent. 24/7 monitoring. Weekly reviews. Monthly audits. Quarterly certification. 99.9% uptime target.", color: "blue" },
-  { num: 15, title: "Long-Term Vision", icon: "🌟", description: "Y1: $500K-$1M ARR. Y2: $2M-$5M. Y3: $10M-$20M. Y5: $50M+ ARR. 'Power 1M businesses globally with AI-native infrastructure.'", color: "gold" },
+  { num: 1, title: "Start Small, Scale Fast", icon: "Rocket", description: "5 departments in 30 days → 15 in 3 months → 40 in 6 months → 100 in 12 months. Prove ROI before scaling.", color: "blue" },
+  { num: 2, title: "Mobile-First Approach", icon: "Smartphone", description: "90%+ BD users on mobile. Flutter single codebase. Customer App → Admin → Agent → Reseller.", color: "cyan" },
+  { num: 3, title: "Language Strategy", icon: "Globe", description: "Bengali (300M+ speakers, underserved AI market) → English → Hindi → Arabic → Spanish → Urdu.", color: "green" },
+  { num: 4, title: "Payment Integration Priority", icon: "CreditCard", description: "bKash + Nagad (must-have) + Rocket + Cards + SSLCommerz. Stripe/PayPal for international.", color: "orange" },
+  { num: 5, title: "AI Model Strategy", icon: "Bot", description: "Hybrid: Claude/GPT-4/Gemini for complex, fine-tuned smaller models for volume, local models for privacy.", color: "purple" },
+  { num: 6, title: "Data Strategy", icon: "BarChart3", description: "Collect every interaction. Build Knowledge Graph, Customer 360°, predictive models. Own your data moat.", color: "pink" },
+  { num: 7, title: "Security is Non-Negotiable", icon: "ShieldCheck", description: "E2E encryption, MFA, pen testing. SOC 2, ISO 27001, PCI-DSS targets. 10-15% of tech budget.", color: "red" },
+  { num: 8, title: "Team Structure", icon: "Users", description: "5-8 core (Months 1-6) → 8-12 (Months 7-12) → 15-20 (Year 2). Bangladesh dev talent = cost-effective.", color: "blue" },
+  { num: 9, title: "Revenue Strategy", icon: "Wallet", description: "Enhance existing + add 7 new AI revenue streams. Freemium + subscription + usage-based + enterprise. Target 5-10x in 12 months.", color: "green" },
+  { num: 10, title: "Cost Management", icon: "TrendingDown", description: "AI API costs (40%), Infrastructure (25%), Team (20%), Security (10%), Misc (5%). Break-even Month 6-9.", color: "orange" },
+  { num: 11, title: "Marketing & Growth", icon: "TrendingUp", description: "WhatsApp Marketing, Facebook Ads, YouTube Bengali, SEO, Referral, Reseller network. 'First AI-native hosting in Bangladesh'.", color: "purple" },
+  { num: 12, title: "Competitive Positioning", icon: "Target", description: "vs GoDaddy: AI-first, Bengali, local payments. vs Local: AI, global infra, enterprise. vs AI startups: existing business, local knowledge.", color: "cyan" },
+  { num: 13, title: "Risk Management", icon: "AlertTriangle", description: "10 top risks: API costs, security breach, competition, regulation, team scaling, tech debt, customer concentration, AI reliability, data loss, founder burnout.", color: "red" },
+  { num: 14, title: "Quality Assurance Framework", icon: "CheckCircle2", description: "100+ test scenarios per agent. 24/7 monitoring. Weekly reviews. Monthly audits. Quarterly certification. 99.9% uptime target.", color: "blue" },
+  { num: 15, title: "Long-Term Vision", icon: "Sparkles", description: "Y1: $500K-$1M ARR. Y2: $2M-$5M. Y3: $10M-$20M. Y5: $50M+ ARR. 'Power 1M businesses globally with AI-native infrastructure.'", color: "gold" },
 ];
 
 export interface EosApp {
@@ -105,7 +105,7 @@ export const EOS_APPS: EosApp[] = [
   {
     key: "customer",
     name: "ALO Customer App",
-    icon: "📱",
+    icon: "Smartphone",
     color: "blue",
     platforms: "iOS + Android (Flutter)",
     purpose: "Customer self-service + AI assistance",
@@ -117,7 +117,7 @@ export const EOS_APPS: EosApp[] = [
   {
     key: "admin",
     name: "ALO Admin App",
-    icon: "🔐",
+    icon: "LockKeyhole",
     color: "green",
     platforms: "iOS + Android (Flutter)",
     purpose: "Monitor and control entire AI-EOS from mobile",
@@ -129,7 +129,7 @@ export const EOS_APPS: EosApp[] = [
   {
     key: "agent",
     name: "ALO Agent Management App",
-    icon: "🤖",
+    icon: "Bot",
     color: "purple",
     platforms: "iOS + Android (Flutter)",
     purpose: "Manage 2,000 AI agents from mobile",
@@ -141,7 +141,7 @@ export const EOS_APPS: EosApp[] = [
   {
     key: "reseller",
     name: "ALO Reseller/Partner App",
-    icon: "💼",
+    icon: "Briefcase",
     color: "orange",
     platforms: "iOS + Android (Flutter)",
     purpose: "Grow business through resellers with AI support",
@@ -238,14 +238,14 @@ export const ROI_TARGETS = [
 ];
 
 export const TEAM_ROLES = [
-  { icon: "👑", name: "Founder / CEO", desc: "Vision + AI strategy" },
-  { icon: "💻", name: "CTO / Lead Developer", desc: "Full stack + AI" },
-  { icon: "📱", name: "Mobile Developer", desc: "Flutter / React Native" },
-  { icon: "🤖", name: "AI Engineer", desc: "Prompt engineering + integrations" },
-  { icon: "🎨", name: "UI/UX Designer", desc: "Mobile-first design" },
-  { icon: "💬", name: "Customer Success Lead", desc: "Human touch" },
-  { icon: "🌐", name: "Content/Language Specialist", desc: "Bengali + English" },
-  { icon: "⚙️", name: "Operations Manager", desc: "Coordination" },
+  { icon: "Crown", name: "Founder / CEO", desc: "Vision + AI strategy" },
+  { icon: "Laptop", name: "CTO / Lead Developer", desc: "Full stack + AI" },
+  { icon: "Smartphone", name: "Mobile Developer", desc: "Flutter / React Native" },
+  { icon: "Bot", name: "AI Engineer", desc: "Prompt engineering + integrations" },
+  { icon: "Palette", name: "UI/UX Designer", desc: "Mobile-first design" },
+  { icon: "MessageSquare", name: "Customer Success Lead", desc: "Human touch" },
+  { icon: "Globe", name: "Content/Language Specialist", desc: "Bengali + English" },
+  { icon: "Settings2", name: "Operations Manager", desc: "Coordination" },
 ];
 
 export const API_INTEGRATIONS = [
@@ -271,7 +271,7 @@ export const AGENT_ROLE_DISTRIBUTION = [
 
 export const STREAM_DETAILS: Record<string, { title: string; tone: string; items: string[]; footer: string }> = {
   stream1: {
-    title: "📱 STREAM 1: Mobile Applications",
+    title: "STREAM 1: Mobile Applications",
     tone: "blue",
     items: [
       "Customer App — 30+ screens, 8 weeks",
@@ -282,7 +282,7 @@ export const STREAM_DETAILS: Record<string, { title: string; tone: string; items
     footer: "Tech: Flutter, Node.js, PostgreSQL, Redis, Firebase, Stripe+bKash/Nagad",
   },
   stream2: {
-    title: "🤖 STREAM 2: AI Agent Army",
+    title: "STREAM 2: AI Agent Army",
     tone: "green",
     items: [
       "Phase A (Wk 1-4): 5 depts, 130 agents",
@@ -293,7 +293,7 @@ export const STREAM_DETAILS: Record<string, { title: string; tone: string; items
     footer: "Total: 100 departments, 2,000 AI agents, 10K+ skills, 50K+ prompts",
   },
   stream3: {
-    title: "⚙️ STREAM 3: Infrastructure",
+    title: "️ STREAM 3: Infrastructure",
     tone: "orange",
     items: [
       "AI Orchestration (LangChain + Vector DB)",
@@ -305,7 +305,7 @@ export const STREAM_DETAILS: Record<string, { title: string; tone: string; items
     footer: "Timeline: Weeks 1-12 for core infrastructure",
   },
   stream4: {
-    title: "🛡️ STREAM 4: Governance",
+    title: "️ STREAM 4: Governance",
     tone: "purple",
     items: [
       "500+ Constitutional Rules (Day 1)",

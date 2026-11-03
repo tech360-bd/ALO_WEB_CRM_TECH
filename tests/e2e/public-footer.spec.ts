@@ -96,8 +96,8 @@ test.describe('site-wide footer', () => {
     const footer = page.locator('#alo-public-footer');
 
     const consultationCta = footer.getByRole('link', { name: 'Book Free Counseling' });
-    await expect(consultationCta).toHaveCSS('background-color', 'rgb(243, 112, 33)');
-    await expect(consultationCta).toHaveCSS('color', 'rgb(0, 0, 0)');
+    await expect(consultationCta).toHaveCSS('background-color', 'rgb(201, 61, 19)');
+    await expect(consultationCta).toHaveCSS('color', 'rgb(255, 255, 255)');
 
     await expect(footer.getByRole('link', { name: 'Open in Google Maps' })).toHaveAttribute(
       'href',
@@ -147,14 +147,18 @@ test.describe('site-wide footer', () => {
     await page.goto('/');
     const footer = page.locator('#alo-public-footer');
 
-    // Decorative strip: one row per brand colour (Education Blue, ALO Orange, Accent).
+    // Decorative strip: one row per brand colour (ALO Blue, vivid orange, deep orange).
     const strip = footer.getByTestId('alo-cap-strip');
     await expect(strip).toHaveCount(1);
     await expect(strip.locator('svg.lucide-graduation-cap').first()).toBeAttached();
 
-    for (const colour of ['#0066CC', '#F37021', '#FFB347']) {
-      await expect(strip.locator(`div[style*="${colour}"]`), `${colour} row missing`).toHaveCount(1);
-    }
+    // Brand colours come from the accessible master palette (globals.css):
+    // #0057B8 / #E8501A / #C93D13. Read the computed colour rather than the
+    // raw style attribute, which browsers serialise as rgb(...) values.
+    const capColours = await strip.locator('.alo-cap-track').evaluateAll((nodes) =>
+      nodes.map((node) => getComputedStyle(node).color),
+    );
+    expect(capColours).toEqual(['rgb(0, 87, 184)', 'rgb(232, 80, 26)', 'rgb(201, 61, 19)']);
 
     // The strip is "live moving": three animated tracks, each holding the cap
     // sequence four times so the loop never shows a gap.

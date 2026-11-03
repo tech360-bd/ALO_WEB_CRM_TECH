@@ -49,7 +49,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Facebook post that is engaging, community-oriented, with a clear call-to-action. Include emojis sparingly, ask a question to drive comments. Keep it under 500 chars but informative.',
     icon: 'Facebook',
     color: '#1877F2',
-    bgGradient: 'bg-blue-600',
+    bgGradient: 'bg-alo-brand',
     priority: 'critical',
     aloUseCase: 'Main brand presence, education fairs, student success stories, community building',
     contentTips: ['Use Groups for student communities', 'Reels for campus tours', 'Stories for daily updates', 'Live for Q&A sessions']
@@ -73,7 +73,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create an Instagram caption that is visually descriptive, inspirational, with 5-10 relevant hashtags. Use emojis naturally. Focus on visual storytelling. Keep caption 150-300 chars with strong hook in first line.',
     icon: 'Instagram',
     color: '#E4405F',
-    bgGradient: 'bg-gradient-to-r from-purple-600 to-pink-500',
+    bgGradient: 'bg-alo-brand',
     priority: 'critical',
     aloUseCase: 'Visual campus tours, student life, success reels, behind-the-scenes',
     contentTips: ['Reels get 2x reach vs posts', 'Use 5-10 hashtags', 'Stories daily for engagement', 'Carousels for tips/guides']
@@ -97,7 +97,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a WhatsApp message that is personal, helpful, concise (under 200 chars), with clear next step. Use friendly tone, avoid formal language. Include quick reply options if relevant.',
     icon: 'MessageCircle',
     color: '#25D366',
-    bgGradient: 'bg-green-600',
+    bgGradient: 'bg-alo-success',
     priority: 'critical',
     aloUseCase: 'Direct student support, application updates, document reminders, counselor chat',
     contentTips: ['Status for daily tips', 'Catalog for courses', 'Quick replies for FAQs', 'Broadcast lists for updates']
@@ -121,7 +121,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a YouTube title (under 60 chars, SEO optimized) + description (500 chars, with timestamps, links, keywords) + 10 tags. Focus on educational value, search intent, and watch time optimization.',
     icon: 'Youtube',
     color: '#FF0000',
-    bgGradient: 'bg-red-600',
+    bgGradient: 'bg-alo-error',
     priority: 'critical',
     aloUseCase: 'Long-form guides, university reviews, visa processes, student testimonials, SEO',
     contentTips: ['Shorts for reach, long-form for SEO', 'First 30 sec critical', 'Thumbnails with faces + text', 'Chapters for retention']
@@ -145,7 +145,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a TikTok script (15-60 sec) that is trendy, energetic, with hook in first 2 seconds, 3-5 scene descriptions, on-screen text suggestions, and trending sound recommendation. Keep it authentic and educational.',
     icon: 'Music',
     color: '#000000',
-    bgGradient: 'bg-gray-900',
+    bgGradient: 'bg-alo-surface-muted',
     priority: 'high',
     aloUseCase: 'Viral short tips, campus trends, student life, quick guides',
     contentTips: ['Hook in 2 seconds', 'Use trending sounds', 'Post 1-3x daily', 'Duets for engagement']
@@ -169,7 +169,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a WeChat Official Account article outline (Chinese market focus) with respectful tone, formal structure, and culturally aware messaging for Chinese students interested in studying abroad.',
     icon: 'MessageSquare',
     color: '#07C160',
-    bgGradient: 'bg-green-500',
+    bgGradient: 'bg-alo-success',
     priority: 'medium',
     aloUseCase: 'Chinese student market, partnerships, WeChat Pay integration',
     contentTips: ['Official Account for articles', 'Mini Programs for applications', 'Moments for updates']
@@ -193,7 +193,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Telegram channel post that is direct, informative, with formatting (bold, italics), and a clear CTA. Keep it concise but valuable. Include bot command suggestions if relevant.',
     icon: 'Send',
     color: '#26A5E4',
-    bgGradient: 'bg-blue-500',
+    bgGradient: 'bg-alo-info',
     priority: 'high',
     aloUseCase: 'Broadcast updates, community groups, bot for FAQs, document sharing',
     contentTips: ['Channels for broadcast', 'Bots for automation', 'Groups for community', 'Instant View for articles']
@@ -217,7 +217,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Snapchat story idea that is playful, authentic, Gen Z focused, with AR filter suggestion and casual language. Keep it fun and behind-the-scenes.',
     icon: 'Ghost',
     color: '#FFFC00',
-    bgGradient: 'bg-yellow-400',
+    bgGradient: 'bg-alo-warning',
     priority: 'medium',
     aloUseCase: 'Gen Z engagement, behind-the-scenes, AR campus filters',
     contentTips: ['Behind-the-scenes content', 'AR filters for campuses', 'Spotlight for viral', 'Streaks for engagement']
@@ -241,7 +241,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Reddit post that is authentic, helpful, non-promotional, provides genuine value, and follows subreddit rules. Include TL;DR, avoid sales language, focus on community help.',
     icon: 'MessageSquare',
     color: '#FF4500',
-    bgGradient: 'bg-orange-600',
+    bgGradient: 'bg-alo-cta',
     priority: 'medium',
     aloUseCase: 'Community insights, AMA sessions, genuine help, trend monitoring',
     contentTips: ['Be authentic, not salesy', 'AMA for expertise', 'Help first, promote later', 'Subreddits: r/studyabroad, r/IELTS']
@@ -265,7 +265,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Douyin (Chinese TikTok) short video script optimized for Chinese market, with Mandarin cultural references, trendy format, and e-commerce integration if relevant.',
     icon: 'Music',
     color: '#000000',
-    bgGradient: 'bg-black',
+    bgGradient: 'bg-alo-surface-muted',
     priority: 'low',
     aloUseCase: 'Chinese market short video, live commerce',
     contentTips: ['Similar to TikTok but Chinese market', 'Live commerce integration', 'Trending effects']
@@ -289,7 +289,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Kuaishou video idea that is authentic, rural China friendly, with live commerce potential and genuine storytelling.',
     icon: 'Video',
     color: '#FE5000',
-    bgGradient: 'bg-orange-500',
+    bgGradient: 'bg-alo-cta-vivid',
     priority: 'low',
     aloUseCase: 'Rural China market, live commerce',
     contentTips: ['Authentic storytelling', 'Live commerce focus', 'Rural market reach']
@@ -313,7 +313,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Weibo post that is trend-driven, hashtag-heavy, optimized for Chinese market trends and hot topics, with Super Topic suggestion.',
     icon: 'Hash',
     color: '#E6162D',
-    bgGradient: 'bg-red-500',
+    bgGradient: 'bg-alo-error',
     priority: 'low',
     aloUseCase: 'China trend-driven content, hashtag campaigns',
     contentTips: ['Hashtags critical', 'Super Topics for community', 'Trending topics monitoring']
@@ -337,7 +337,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Pinterest Pin title (100 chars, keyword rich) + description (500 chars, SEO optimized with keywords) + board suggestion. Focus on inspiration, planning, and discovery.',
     icon: 'Pin',
     color: '#E60023',
-    bgGradient: 'bg-red-600',
+    bgGradient: 'bg-alo-error',
     priority: 'medium',
     aloUseCase: 'Study abroad planning, inspiration boards, university discovery',
     contentTips: ['SEO keywords critical', 'Vertical images 2:3', 'Idea Pins for engagement', 'Boards for organization']
@@ -361,7 +361,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create an X (Twitter) post that is concise (under 280 chars), timely, conversational, with 1-2 hashtags and a clear hook. Focus on real-time value and engagement.',
     icon: 'Twitter',
     color: '#000000',
-    bgGradient: 'bg-black',
+    bgGradient: 'bg-alo-surface-muted',
     priority: 'high',
     aloUseCase: 'Real-time updates, news, engagement, thought leadership',
     contentTips: ['280 chars max', 'Threads for long content', 'Spaces for audio', 'Real-time engagement']
@@ -385,7 +385,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a QQ message/Qzone post that is casual, youth-focused, gaming-friendly for Chinese student market.',
     icon: 'MessageCircle',
     color: '#12B7F5',
-    bgGradient: 'bg-blue-400',
+    bgGradient: 'bg-alo-info',
     priority: 'low',
     aloUseCase: 'Chinese youth market, file sharing',
     contentTips: ['Qzone for posts', 'Games integration', 'Youth market focus']
@@ -409,7 +409,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Threads post that is conversational, casual, authentic, with a question or opinion to drive replies. Keep it under 500 chars, friendly tone.',
     icon: 'AtSign',
     color: '#000000',
-    bgGradient: 'bg-black',
+    bgGradient: 'bg-alo-surface-muted',
     priority: 'high',
     aloUseCase: 'Conversational engagement, casual updates, community building',
     contentTips: ['Conversational tone', 'Questions drive replies', 'Cross-post from Instagram']
@@ -433,7 +433,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Quora answer that is educational, authoritative, detailed (300-500 words), with personal experience, data, and helpful links. Focus on genuinely answering the question with expertise.',
     icon: 'HelpCircle',
     color: '#B92B27',
-    bgGradient: 'bg-red-700',
+    bgGradient: 'bg-alo-error',
     priority: 'high',
     aloUseCase: 'Educational Q&A, SEO, authority building, lead generation',
     contentTips: ['Detailed answers rank higher', 'Personal experience valuable', 'Spaces for community', 'SEO benefits']
@@ -457,7 +457,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a LinkedIn post that is professional, insightful, with thought leadership, data or insight, and a question for engagement. Use professional tone, 150-300 words, with line breaks for readability.',
     icon: 'Linkedin',
     color: '#0A66C2',
-    bgGradient: 'bg-blue-700',
+    bgGradient: 'bg-alo-brand-hover',
     priority: 'critical',
     aloUseCase: 'B2B partnerships, thought leadership, professional branding, recruitment',
     contentTips: ['Professional tone', 'Carousels perform well', 'Articles for thought leadership', 'Newsletters for subscribers']
@@ -481,7 +481,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Xiaohongshu (RedNote) post that is lifestyle-focused, authentic review style, aesthetic, with detailed captions and shopping integration if relevant.',
     icon: 'BookOpen',
     color: '#FF2442',
-    bgGradient: 'bg-red-500',
+    bgGradient: 'bg-alo-error',
     priority: 'low',
     aloUseCase: 'Lifestyle content, reviews, Chinese market',
     contentTips: ['Aesthetic photos critical', 'Authentic reviews', 'Lifestyle angle', 'Shopping integration']
@@ -529,7 +529,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Twitch stream title + description + chat interaction ideas that are live, interactive, entertaining, with community engagement focus.',
     icon: 'Video',
     color: '#9146FF',
-    bgGradient: 'bg-purple-600',
+    bgGradient: 'bg-alo-brand',
     priority: 'low',
     aloUseCase: 'Live Q&A, educational streams, community events',
     contentTips: ['Live interaction critical', 'Chat engagement', 'Clips for highlights', 'Schedule consistency']
@@ -577,7 +577,7 @@ export const SOCIAL_PLATFORMS_REGISTRY: SocialPlatformDefinition[] = [
     aiPromptModifier: 'Create a Bluesky post that is authentic, open, decentralized-friendly, with early-adopter tone and community focus. Keep it concise and genuine.',
     icon: 'Cloud',
     color: '#0085FF',
-    bgGradient: 'bg-blue-500',
+    bgGradient: 'bg-alo-info',
     priority: 'medium',
     aloUseCase: 'Decentralized presence, early adopter community, open social',
     contentTips: ['Authentic tone', 'Decentralized ethos', 'Custom feeds', 'Early adopter community']
