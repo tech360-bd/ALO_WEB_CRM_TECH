@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { downloadWhatsAppInboundMedia } from "@/lib/whatsapp-inbound-media";
+import { scanWhatsAppMediaBeforeStorage } from "@/lib/whatsapp-media-ingestion";
 import { removePrivateFile, storePrivateFile } from "@/lib/storage/private-file-store";
 import crypto from "crypto";
 import { determineSenderNumber, MAIN_NUMBER } from "@/lib/whatsapp-number-pool";
@@ -828,6 +829,8 @@ export async function POST(req: NextRequest) {
         let storedPath = '';
         try {
           const media = await downloadWhatsAppInboundMedia(mediaId, inboundName, String(extra?.mime || ''));
+          // Never persist or externally forward WhatsApp bytes before scanning.
+          await scanWhatsAppMediaBeforeStorage(media.bytes);
           const stored = await storePrivateFile(media.bytes, media.fileName);
           storedPath = stored.storagePath;
           try {
