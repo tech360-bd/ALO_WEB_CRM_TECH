@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { db } from '@/lib/db';
+import { scanForMalware, type ScanResult } from '@/lib/documents/malware-scan';
 import { normalizePhone } from '@/lib/phone-normalization';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
 import { getWhatsAppAccessToken, getWhatsAppGraphVersion } from '@/lib/whatsapp-config';
@@ -123,6 +124,59 @@ export async function downloadWhatsAppMedia(mediaId: string, phoneNumberId?: str
   return { bytes, mimeType: declared || mimeType, hash };
 }
 
+const trustedMalwareScanResults = new WeakSet<object>();
+
+function isValidMalwareScanResult(value: unknown): value is ScanResult {
+  if (!value || typeof value !== 'object') return false;
+  const result = value as Partial<ScanResult>;
+  if (result.detail !== null && typeof result.detail !== 'string') return false;
+
+  if (result.verdict === 'clean') {
+    return result.engine === 'clamd' && result.scanned === true && result.threat === null;
+  }
+  if (result.verdict === 'infected') {
+    return (result.engine === 'builtin' || result.engine === 'clamd')
+      && result.scanned === true && typeof result.threat === 'string';
+  }
+  if (result.verdict === 'unavailable') {
+    return result.engine === 'none' && result.scanned === false && result.threat === null;
+  }
+  return false;
+}
+
+/**
+ * Scan WhatsApp bytes before either private-storage path persists them.
+ * Development may retain the scanner's existing fail-open behavior for local
+ * storage only. Scanner exceptions and malformed results always fail closed.
+ */
+export async function scanWhatsAppMediaBeforeStorage(bytes: Uint8Array): Promise<ScanResult> {
+  const scan: unknown = await scanForMalware(bytes);
+  if (!isValidMalwareScanResult(scan)) {
+    throw new Error('WhatsApp media rejected because malware scanner returned an invalid result');
+  }
+  Object.freeze(scan);
+  trustedMalwareScanResults.add(scan);
+  if (scan.verdict === 'infected') {
+    throw new Error('WhatsApp media rejected by malware scanning');
+  }
+  if (scan.verdict === 'unavailable' && process.env.NODE_ENV === 'production') {
+    throw new Error('WhatsApp media rejected because malware scanning is unavailable');
+  }
+  return scan;
+}
+
+/** Only an explicit, valid clean scan can pass this external-forwarding gate. */
+export function requireCleanWhatsAppScanForExternalForward(
+  scan: unknown,
+): ScanResult & { verdict: 'clean' } {
+  if (!isValidMalwareScanResult(scan)
+    || scan.verdict !== 'clean'
+    || !trustedMalwareScanResults.has(scan)) {
+    throw new Error('External forwarding requires an explicit clean malware scan result');
+  }
+  return scan as ScanResult & { verdict: 'clean' };
+}
+
 /** Called only after the webhook's app-secret signature has been verified. */
 export async function ingestWhatsAppMedia(input: {
   providerMessageId: string; mediaId: string; senderPhone: string; senderName?: string;
@@ -146,6 +200,8 @@ export async function ingestWhatsAppMedia(input: {
   let stored: Awaited<ReturnType<typeof storePrivateFile>> | undefined;
   try {
     const media = await downloadWhatsAppMedia(input.mediaId, input.phoneNumberId);
+    await scanWhatsAppMediaBeforeStorage(media.bytes);
+
     const extension = ({ 'application/pdf': 'pdf', 'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp', 'audio/ogg': 'ogg', 'audio/mpeg': 'mp3', 'audio/mp4': 'm4a', 'video/mp4': 'mp4' } as Record<string, string>)[media.mimeType];
     const fileName = (input.fileName || `whatsapp-${input.mediaId}.${extension}`).replace(/[\/\\\u0000-\u001f]/g, '_').slice(0, 191);
     stored = await storePrivateFile(media.bytes, fileName);
