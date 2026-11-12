@@ -94,7 +94,7 @@ npx tsx prisma/seed-super-admin-agent-network.ts
 
 # 3. Mint a NextAuth JWT for a fixture identity (dev-only; refuses anything
 #    that is not a file: URL).
-NEXTAUTH_SECRET=dev-secret-please-change \
+NEXTAUTH_SECRET=dummy-dev-secret-placeholder-32chars \
   node scripts/dev-sqlite/mint-dev-jwt.mjs super.admin@aloeducation.dev SUPER_ADMIN > /tmp/sa.jwt
 
 # 4. Probe. Turbopack dev is required on small machines: the webpack dev

@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2862,
+  "filesScanned": 2901,
   "summary": {
     "UNUSED": 92,
-    "REFERENCED_WITH_FALLBACK": 173,
+    "REFERENCED_WITH_FALLBACK": 175,
     "REFERENCED_FAIL_CLOSED": 22,
-    "REFERENCED": 130,
+    "REFERENCED": 132,
     "PUBLIC": 14
   },
   "productionRequired": [
@@ -347,6 +347,21 @@
       "sampleReferences": [
         "src/app/api/automation/schedule/route.ts",
         "src/app/api/research/provider-status/route.ts"
+      ]
+    },
+    {
+      "name": "ALO_BASE_URL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/super-admin/run-security-tests.ts"
       ]
     },
     {
@@ -771,6 +786,21 @@
       "declaredIn": [],
       "sampleReferences": [
         "scripts/lib/synthetic-output-guard.mjs"
+      ]
+    },
+    {
+      "name": "ALO_USER_COOKIE",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/super-admin/run-security-tests.ts"
       ]
     },
     {
@@ -1585,11 +1615,26 @@
       ]
     },
     {
+      "name": "DATABASE_SSL",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/seed-alo-whatsapp-numbers.mjs"
+      ]
+    },
+    {
       "name": "DATABASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 10,
+      "referenceCount": 13,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -1601,7 +1646,7 @@
       "sampleReferences": [
         "prisma/seed-university-data.ts",
         "scripts/db-diagnose.mjs",
-        "scripts/dev-sqlite/preload.cjs"
+        "scripts/dev-sqlite/mint-dev-jwt.mjs"
       ]
     },
     {
@@ -1683,6 +1728,21 @@
       "declaredIn": [],
       "sampleReferences": [
         "prisma/dev-sqlite.config.ts"
+      ]
+    },
+    {
+      "name": "DEV_SUPER_ADMIN_TOKEN",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/dev-sqlite/seed-super-admin-proof.ts"
       ]
     },
     {
@@ -4210,7 +4270,7 @@
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 6,
+      "referenceCount": 7,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": true,
@@ -4220,9 +4280,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "scripts/dev-sqlite/mint-dev-jwt.mjs",
         "src/app/api/portal-auth/login/route.ts",
-        "src/app/api/student/auth/login/route.ts",
-        "src/lib/auth/email-otp.ts"
+        "src/app/api/student/auth/login/route.ts"
       ]
     },
     {
@@ -4366,7 +4426,7 @@
       "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -4384,7 +4444,7 @@
       "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -4607,7 +4667,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 34,
+      "referenceCount": 35,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
