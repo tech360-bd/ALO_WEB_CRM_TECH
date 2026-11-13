@@ -32,16 +32,16 @@ interface Task {
 }
 
 const statusColors: Record<TaskStatus, string> = {
-  'Pending': 'bg-slate-100 text-slate-700',
-  'In Progress': 'bg-amber-100 text-amber-700',
-  'Completed': 'bg-emerald-100 text-emerald-700',
-  'Overdue': 'bg-red-100 text-red-700',
+  'Pending': 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]',
+  'In Progress': 'bg-crm-warning-bg text-crm-warning-text',
+  'Completed': 'bg-crm-success-bg text-crm-success-text',
+  'Overdue': 'bg-crm-danger-bg text-crm-danger-text',
 };
 
 const priorityColors: Record<TaskPriority, string> = {
-  'High': 'bg-red-100 text-red-700',
-  'Normal': 'bg-blue-100 text-blue-700',
-  'Low': 'bg-green-100 text-green-700',
+  'High': 'bg-crm-danger-bg text-crm-danger-text',
+  'Normal': 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  'Low': 'bg-crm-success-bg text-crm-success-text',
 };
 
 const typeIcons: Record<TaskType, typeof FileText> = {
@@ -98,17 +98,17 @@ export default function CrmTasksPage() {
   const completedCount = tasks.filter(t => t.status === 'Completed').length;
 
   const statsCards = [
-    { label: 'Pending', value: pendingCount, icon: Clock, color: 'text-slate-600', bg: 'bg-slate-50' },
-    { label: 'In Progress', value: inProgressCount, icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-50' },
-    { label: 'Overdue', value: overdueCount, icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-50' },
-    { label: 'Completed', value: completedCount, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Pending', value: pendingCount, icon: Clock, color: 'text-[var(--alo-body)]', bg: 'bg-[var(--alo-page)]' },
+    { label: 'In Progress', value: inProgressCount, icon: AlertTriangle, color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg' },
+    { label: 'Overdue', value: overdueCount, icon: AlertTriangle, color: 'text-crm-danger-text', bg: 'bg-crm-danger-bg' },
+    { label: 'Completed', value: completedCount, icon: CheckCircle, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
   ];
 
   const kanbanColumns: { status: TaskStatus; dotColor: string }[] = [
-    { status: 'Pending', dotColor: 'bg-slate-400' },
-    { status: 'In Progress', dotColor: 'bg-amber-400' },
-    { status: 'Completed', dotColor: 'bg-emerald-400' },
-    { status: 'Overdue', dotColor: 'bg-red-400' },
+    { status: 'Pending', dotColor: 'bg-[var(--alo-page)]' },
+    { status: 'In Progress', dotColor: 'bg-[var(--alo-warning)]' },
+    { status: 'Completed', dotColor: 'bg-[var(--alo-success)]' },
+    { status: 'Overdue', dotColor: 'bg-[var(--alo-error)]' },
   ];
 
   return (
@@ -197,8 +197,8 @@ export default function CrmTasksPage() {
                                 <p className="text-sm font-medium text-alo-text leading-tight">{task.title}</p>
                                 <p className="text-xs text-alo-text-muted mt-1">{task.relatedStudent}</p>
                                 <div className="flex items-center gap-2 mt-2">
-                                  <Badge className={`text-[10px] px-1.5 py-0 ${priorityColors[task.priority]}`}>{task.priority}</Badge>
-                                  <Badge variant="outline" className="text-[10px] px-1.5 py-0">{task.type}</Badge>
+                                  <Badge className={`text-[11px] px-1.5 py-0 ${priorityColors[task.priority]}`}>{task.priority}</Badge>
+                                  <Badge variant="outline" className="text-[11px] px-1.5 py-0">{task.type}</Badge>
                                 </div>
                                 <div className="flex items-center gap-1 mt-2 text-xs text-alo-text-muted">
                                   <Calendar className="h-3 w-3" /><span>{task.dueDate}</span>
@@ -233,7 +233,7 @@ export default function CrmTasksPage() {
                   {filtered.map(task => {
                     const TypeIcon = typeIcons[task.type];
                     return (
-                      <tr key={task.id} className="border-b border-alo-border/50 hover:bg-gray-50 transition-colors">
+                      <tr key={task.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)] transition-colors">
                         <td className="py-3"><Checkbox /></td>
                         <td className="py-3">
                           <div className="flex items-center gap-2">

@@ -1,11 +1,11 @@
-'use client';
+import StudentRegisterView from '@/components/auth/StudentRegisterView';
 
-import { useEffect } from 'react';
-import RegisterPage from '@/components/auth/RegisterPage';
-import { usePortalStore } from '@/lib/stores/portal-store';
+export const metadata = {
+  title: 'Create a Student Account | ALO Education',
+  description: 'Create your free ALO student account and start a university application with a real counselor.',
+  robots: { index: false, follow: false },
+};
 
 export default function StudentRegisterPage() {
-  const setSelectedPortal = usePortalStore((state) => state.setSelectedPortal);
-  useEffect(() => setSelectedPortal('student'), [setSelectedPortal]);
-  return <RegisterPage />;
+  return <StudentRegisterView />;
 }

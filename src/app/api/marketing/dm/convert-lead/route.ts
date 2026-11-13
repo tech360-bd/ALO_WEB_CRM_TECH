@@ -1,15 +1,12 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { createAuditLog } from '@/lib/marketing/audit';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
+import { AuthContext } from '@/lib/auth-middleware';
+import { withMarketingAccess } from '@/lib/marketing/access';
 
 // ─── POST: Convert a DM thread to a lead ─────────────────────────────────────
 
-export const POST = withAuth(async (request: Request, auth: AuthContext) => {
+export const POST = withMarketingAccess(async (request: Request, auth: AuthContext) => {
   try {
     const body = await request.json();
     const { threadId } = body;
@@ -48,31 +45,31 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       // Use empty responses if parsing fails
     }
 
-    // Create a MarketingLead from the DM thread data
-    const lead = await db.marketingLead.create({
-      data: {
-        name: thread.contactName,
-        phone: thread.contactPhone,
-        source: 'dm',
-        sourceDetail: `DM thread on ${thread.platform}`,
-        destination: responses.destination || responses.country || '',
-        level: responses.level || responses.studyLevel || '',
-        intake: responses.intake || '',
-        ieltsScore: responses.ieltsScore ? parseFloat(responses.ieltsScore) : 0,
-        pteScore: responses.pteScore ? parseFloat(responses.pteScore) : 0,
-        budget: responses.budget || '',
-        status: thread.qualified ? 'qualified' : 'new',
-        hotLead: thread.qualified,
-        createdById: userId,
-      },
-    });
-
-    // Update the thread to reference the new lead
-    const updatedThread = await db.marketingDMThread.update({
-      where: { id: threadId },
-      data: {
-        leadId: lead.id,
-      },
+    // Create/link atomically so retries do not duplicate a lead. Inbound interest is not marketing consent.
+    const { lead, updatedThread } = await db.$transaction(async (tx) => {
+      const current = await tx.marketingDMThread.findUnique({ where: { id: threadId } });
+      if (!current || current.leadId) throw new Error('DM_ALREADY_CONVERTED');
+      const createdLead = await tx.marketingLead.create({
+        data: {
+          name: current.contactName,
+          phone: current.contactPhone,
+          source: 'dm',
+          sourceDetail: `DM thread on ${current.platform}`,
+          destination: responses.destination || responses.country || '',
+          level: responses.level || responses.studyLevel || '',
+          intake: responses.intake || '',
+          ieltsScore: responses.ieltsScore ? parseFloat(responses.ieltsScore) : 0,
+          pteScore: responses.pteScore ? parseFloat(responses.pteScore) : 0,
+          budget: responses.budget || '',
+          status: current.qualified ? 'qualified' : 'new',
+          consent: false,
+          hotLead: current.qualified,
+          createdById: userId,
+        },
+      });
+      const changed = await tx.marketingDMThread.updateMany({ where: { id: threadId, leadId: null }, data: { leadId: createdLead.id } });
+      if (!changed.count) throw new Error('DM_ALREADY_CONVERTED');
+      return { lead: createdLead, updatedThread: await tx.marketingDMThread.findUnique({ where: { id: threadId } }) };
     });
 
     await createAuditLog({
@@ -91,7 +88,8 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
 
     return NextResponse.json({ lead, thread: updatedThread }, { status: 201 });
   } catch (error) {
-    console.error('DM convert-lead error:', error);
+    if (error instanceof Error && error.message === 'DM_ALREADY_CONVERTED') return NextResponse.json({ success: false, error: 'DM thread was already converted by another request.' }, { status: 409 });
+    console.error('DM convert-lead error:', error instanceof Error ? error.name : 'UnknownError');
     if (error instanceof SyntaxError) {
       return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
@@ -100,4 +98,4 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       { status: 500 }
     );
   }
-}, MARKETING_AUTH);
+}, 'manager');

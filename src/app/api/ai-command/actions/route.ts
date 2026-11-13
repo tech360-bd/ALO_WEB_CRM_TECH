@@ -36,6 +36,8 @@ export async function GET(req: NextRequest) {
       total: Object.values(statusCounts).reduce((a, b) => a + b, 0),
       pending: statusCounts.PENDING || 0,
       approved: statusCounts.APPROVED || 0,
+      executing: statusCounts.EXECUTING || 0,
+      rejected: statusCounts.REJECTED || 0,
       executed: statusCounts.EXECUTED || 0,
       failed: statusCounts.FAILED || 0,
       rolledBack: statusCounts.ROLLED_BACK || 0,

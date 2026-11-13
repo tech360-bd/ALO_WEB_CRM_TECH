@@ -237,7 +237,7 @@ export function CommandPaletteTrigger({
     >
       <Icon name="Search" className="size-4" />
       <span className="hidden sm:inline">Search or jump to...</span>
-      <kbd className="ml-auto hidden items-center gap-0.5 rounded border border-[var(--alo-border)] bg-[var(--alo-surface)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--alo-muted)] sm:flex">
+      <kbd className="ml-auto hidden items-center gap-0.5 rounded border border-[var(--alo-border)] bg-[var(--alo-surface)] px-1.5 py-0.5 text-[11px] font-semibold text-[var(--alo-muted)] sm:flex">
         <span className="text-xs">⌘</span>K
       </kbd>
     </button>

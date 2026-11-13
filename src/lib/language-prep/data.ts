@@ -1,6 +1,8 @@
+import { applyReviewedFacts, CAMBRIDGE_TEST, reviewLanguageFaq, reviewLanguageAcceptance } from './editorial';
+import { normalizeLanguagePrepSlug } from './slug-aliases';
 import { EnglishTest, TestModule, TestFaq, TestAcceptance, TestResource } from './types';
 
-export const ENGLISH_PREP_TESTS: EnglishTest[] = [
+const BASE_ENGLISH_PREP_TESTS: EnglishTest[] = [
   {
     id: 'test-ielts',
     name: 'IELTS',
@@ -163,7 +165,7 @@ export const ENGLISH_PREP_TESTS: EnglishTest[] = [
   },
   {
     id: 'test-oietc',
-    name: 'OIETC',
+    name: 'OIETC – ELLT',
     slug: 'oietc',
     shortName: 'OIETC',
     shortDescription: 'Oxford International English Test Centre — ELLT family',
@@ -481,7 +483,42 @@ export const ENGLISH_PREP_TESTS: EnglishTest[] = [
     seoTitle: 'MOI Guidance | Medium of Instruction for Study Abroad | ALO Education',
     seoDescription: 'MOI guidance resource — understand when universities accept Medium of Instruction and verification requirements.',
   },
+  {
+    id: 'test-password',
+    name: 'Password English Language Test',
+    slug: 'password',
+    shortName: 'Password',
+    shortDescription: 'An online, CEFR-aligned English test used by universities for admission. It is not a UKVI-approved SELT.',
+    longDescription: 'The Password English Language Test is an online, CEFR-aligned English proficiency assessment produced by Password English Language Testing Ltd and academically validated by CRELLA (Centre for Research in English Language Learning and Assessment) at the University of Bedfordshire. Password Skills Plus covers reading, writing, listening and speaking, is taken online under live proctoring by Meazure Learning, and result certificates are normally emailed within five working days. It is used by universities and pathway providers for admission and pre-sessional placement. It is not on the UK Home Office list of approved Secure English Language Tests, so it cannot be used where a visa route requires a SELT.',
+    testType: 'english_proficiency',
+    provider: 'Password English Language Testing Ltd',
+    officialUrl: 'https://passwordplus.englishlanguagetesting.co.uk/',
+    format: 'Online, live-proctored, taken at home or at an approved location',
+    durationMinutes: 185,
+    durationDisplay: 'About 3 hours 5 minutes',
+    scoringSystem: 'CEFR-aligned Password score across the four modules',
+    resultTimeline: 'Result certificates emailed within five working days',
+    costSummary: 'Check current provider information',
+    validitySummary: 'Recency rules are set by the receiving institution.',
+    bestFor: 'Applicants to universities and pathway providers that name the Password test.',
+    acceptanceSummary: 'Acceptance varies by university, course and visa route. Password is not a UKVI-approved SELT.',
+    difficultyLevel: 'Academic English across four skills',
+    status: 'active',
+    isPopular: false,
+    isFeatured: false,
+    sortOrder: 16,
+    sourceUrl: 'https://passwordplus.englishlanguagetesting.co.uk/',
+    sourceName: 'Password English Language Testing Ltd (official)',
+    verifiedBy: 'ALO Compliance Team',
+    verificationStatus: 'verified',
+    lastVerifiedAt: '2026-10-29',
+    seoTitle: 'Password English Language Test | Preparation & Acceptance | ALO Education',
+    seoDescription: 'Password English Language Test guidance — online format, modules, CEFR-aligned results, university acceptance and the UKVI SELT position.',
+  },
 ];
+
+export const ENGLISH_PREP_TESTS: EnglishTest[] = [...BASE_ENGLISH_PREP_TESTS, CAMBRIDGE_TEST].map(applyReviewedFacts);
+
 
 export const ENGLISH_PREP_MODULES: Record<string, TestModule[]> = {
   ielts: [
@@ -551,7 +588,7 @@ ENGLISH_PREP_MODULES['act'] = [
   { id: 'act-writing', testId: 'test-act', moduleName: 'Writing (Optional)', slug: 'writing', durationMinutes: 40, durationDisplay: '40 mins optional', description: 'Optional writing test: one essay evaluating and analysing complex issue with three perspectives.', skillsAssessed: 'Ideas and analysis, development and support, organisation, language use', questionFormat: '1 essay — evaluate 3 perspectives on issue', preparationTips: 'Analyse 3 perspectives, develop own position, use examples, clear organisation.', commonChallenges: 'Analysing 3 perspectives + own position under time', sortOrder: 5, status: 'active', sourceUrl: 'https://www.act.org' },
 ];
 
-export const ENGLISH_PREP_ACCEPTANCE: TestAcceptance[] = [
+const BASE_ENGLISH_PREP_ACCEPTANCE: TestAcceptance[] = [
   // IELTS
   { id: 'acc-ielts-uk', testId: 'test-ielts', countryId: 'uk', countryName: 'UK', countrySlug: 'uk', acceptanceType: 'university', summary: 'Accepted by all UK universities for degree-level study. For visa, check if university is Student Route sponsor. Foundation may require UKVI SELT.', minimumNote: 'Typically 6.0-7.5 depending on course', sourceUrl: 'https://ielts.org/take-a-test/why-ielts/ielts-for-study', sourceName: 'IELTS Official', verifiedBy: 'ALO Compliance', lastVerifiedAt: '2026-01-15', status: 'active' },
   { id: 'acc-ielts-aus', testId: 'test-ielts', countryId: 'australia', countryName: 'Australia', countrySlug: 'australia', acceptanceType: 'university', summary: 'Accepted by all Australian universities and DHA for Subclass 500 visa. Check G8 requirements.', minimumNote: 'Typically 6.5 (6.0 each) for G8', sourceUrl: 'https://ielts.org/take-a-test/why-ielts/ielts-for-study', sourceName: 'IELTS Official', verifiedBy: 'ALO Compliance', lastVerifiedAt: '2026-01-15', status: 'active' },
@@ -568,7 +605,9 @@ export const ENGLISH_PREP_ACCEPTANCE: TestAcceptance[] = [
   { id: 'acc-moi-general', testId: 'test-moi', countryId: 'general', countryName: 'General', countrySlug: 'general', acceptanceType: 'general', summary: 'MOI acceptance is strictly university and course specific. Only where university officially confirms MOI acceptance. Check university course page and obtain written confirmation. Visa requirements must be checked separately via official immigration guidance.', minimumNote: 'University-specific — written confirmation required', sourceUrl: 'https://aloeducation.com/language-prep/moi', sourceName: 'ALO Guidance', verifiedBy: 'ALO Compliance', lastVerifiedAt: '2026-01-10', status: 'active' },
 ];
 
-export const ENGLISH_PREP_FAQS: TestFaq[] = [
+export const ENGLISH_PREP_ACCEPTANCE = BASE_ENGLISH_PREP_ACCEPTANCE.map(reviewLanguageAcceptance);
+
+const BASE_ENGLISH_PREP_FAQS: TestFaq[] = [
   // IELTS FAQs — 20
   { id: 'faq-ielts-1', testId: 'test-ielts', question: 'What is IELTS?', answer: 'IELTS (International English Language Testing System) is a standardised English proficiency test assessing Listening, Reading, Writing and Speaking for academic purposes. It is jointly owned by IDP, British Council and Cambridge. Requirements vary by country, visa route, university and course.', category: 'overview', sortOrder: 1, status: 'active', sourceUrl: 'https://ielts.org' },
   { id: 'faq-ielts-2', testId: 'test-ielts', question: 'Which IELTS test do I need — Academic or General Training?', answer: 'For university admission, you need IELTS Academic. General Training is for migration and below-degree vocational purposes. Check your course page for exact requirement. Requirements vary by university and course.', category: 'test_type', sortOrder: 2, status: 'active', sourceUrl: 'https://ielts.org/take-a-test/test-types' },
@@ -585,7 +624,7 @@ export const ENGLISH_PREP_FAQS: TestFaq[] = [
   { id: 'faq-ielts-13', testId: 'test-ielts', question: 'Is IELTS accepted in Canada for SDS?', answer: 'Yes, IELTS Academic is accepted for Canada SDS (Student Direct Stream) where applicable and for regular study permits. Minimum typically 6.0 overall with no band below 6.0 for SDS — Check current IRCC guidance as SDS rules change. Acceptance varies.', category: 'canada', sortOrder: 13, status: 'active', sourceUrl: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada.html' },
   { id: 'faq-ielts-14', testId: 'test-ielts', question: 'Is IELTS accepted in Australia?', answer: 'Yes, IELTS Academic is accepted by all Australian universities and Department of Home Affairs for Subclass 500 student visa. G8 universities typically require 6.5 (no band below 6.0). Check university course page and DHA for current requirements.', category: 'australia', sortOrder: 14, status: 'active', sourceUrl: 'https://ielts.org/take-a-test/why-ielts/ielts-for-study' },
   { id: 'faq-ielts-15', testId: 'test-ielts', question: 'Can I use IELTS for USA universities?', answer: 'Yes, 3,400+ USA institutions accept IELTS Academic for admission and I-20 issuance. Requirements vary — Ivy League and competitive programmes may require 7.0-7.5. Check university-specific acceptance.', category: 'usa', sortOrder: 15, status: 'active', sourceUrl: 'https://ielts.org/take-a-test/why-ielts/ielts-for-study' },
-  { id: 'faq-ielts-16', testId: 'test-ielts', question: 'How does ALO Education help with IELTS preparation?', answer: 'ALO Education provides free initial assessment to evaluate current level, target score planning based on course requirement, structured study materials, timed mock tests under exam conditions, writing feedback on Task Achievement, Coherence, Lexical Resource and Grammar, speaking practice with certified coaches, score strategy focusing on weakest modules, and university-specific requirement guidance. Book free counselling to start.', category: 'alo_support', sortOrder: 16, status: 'active' },
+  { id: 'faq-ielts-16', testId: 'test-ielts', question: 'How does ALO Education help with IELTS preparation?', answer: 'ALO Education provides initial assessment to evaluate current level, target score planning based on course requirement, structured study materials, timed mock tests under exam conditions, writing feedback on Task Achievement, Coherence, Lexical Resource and Grammar, speaking practice with certified coaches, score strategy focusing on weakest modules, and university-specific requirement guidance. Book counselling to start.', category: 'alo_support', sortOrder: 16, status: 'active' },
   { id: 'faq-ielts-17', testId: 'test-ielts', question: 'What is IELTS One Skill Retake?', answer: 'One Skill Retake (OSR) allows retaking one of four modules (Listening, Reading, Writing, Speaking) if you missed target in single module. Available at eligible computer-delivered centres. Original test must be computer-based at OSR-enabled centre. Check current provider information for OSR availability and rules in Bangladesh.', category: 'retake', sortOrder: 17, status: 'active', sourceUrl: 'https://ielts.org/take-a-test/one-skill-retake' },
   { id: 'faq-ielts-18', testId: 'test-ielts', question: 'How long does IELTS preparation take?', answer: 'Preparation time depends on current level and target score. Typically: Band 5.0 to 6.0: 6-8 weeks (10-15 hrs/week), 6.0 to 6.5: 4-8 weeks, 6.5 to 7.0: 8-12 weeks, 7.0 to 7.5: 12+ weeks. Diagnostic assessment helps set realistic timeline. ALO provides personalised study plan after free assessment.', category: 'preparation', sortOrder: 18, status: 'active' },
   { id: 'faq-ielts-19', testId: 'test-ielts', question: 'Can I use MOI instead of IELTS?', answer: 'MOI (Medium of Instruction) acceptance is strictly university and course specific — not universal. Some universities may accept MOI for admission if you studied previous degree in English-medium institution, but you need written confirmation from admissions. For visa, check official immigration guidance — many visa routes require SELT like IELTS for UKVI, PTE Academic UKVI etc. MOI is guidance resource, not an English proficiency test.', category: 'moi', sortOrder: 19, status: 'active' },
@@ -768,7 +807,7 @@ export const ENGLISH_PREP_FAQS: TestFaq[] = [
   { id: 'faq-gre-10', testId: 'test-gre', question: 'Is GRE waiver possible?', answer: 'Some universities offer GRE waiver based on GPA, work experience or previous qualifications. Waiver availability is university-specific — Check course page.', category: 'waiver', sortOrder: 10, status: 'active', sourceUrl: 'https://www.ets.org/gre' },
   { id: 'faq-gre-11', testId: 'test-gre', question: 'How should I prepare for GRE?', answer: 'Diagnostic assessment, study plan, concept review, practice questions, timed mocks, error log, expert feedback. ALO provides guidance and counselling.', category: 'preparation', sortOrder: 11, status: 'active', sourceUrl: 'https://www.ets.org/gre' },
   { id: 'faq-gre-12', testId: 'test-gre', question: 'How long does GRE preparation take?', answer: 'Typically 8-16 weeks 10-15 hrs/week depending on baseline and target. Diagnostic sets realistic timeline.', category: 'preparation', sortOrder: 12, status: 'active', sourceUrl: 'https://www.ets.org/gre' },
-  { id: 'faq-gre-13', testId: 'test-gre', question: 'How does ALO help with GRE?', answer: 'ALO provides assessment, target planning, study materials, mock tests, strategy coaching and university requirement checks. Book free counselling.', category: 'alo_support', sortOrder: 13, status: 'active', sourceUrl: 'https://www.ets.org/gre' },
+  { id: 'faq-gre-13', testId: 'test-gre', question: 'How does ALO help with GRE?', answer: 'ALO provides assessment, target planning, study materials, mock tests, strategy coaching and university requirement checks. Book counselling.', category: 'alo_support', sortOrder: 13, status: 'active', sourceUrl: 'https://www.ets.org/gre' },
   { id: 'faq-gre-14', testId: 'test-gre', question: 'Should I take GRE before English test?', answer: 'Timeline depends on deadlines. Often English test and GRE preparation can be parallel. ALO helps plan sequence based on application deadlines.', category: 'application', sortOrder: 14, status: 'active', sourceUrl: 'https://www.ets.org/gre' },
   { id: 'faq-gre-15', testId: 'test-gre', question: 'Can I get admission without GRE?', answer: 'Some programmes do not require GRE or offer waiver. Check course-specific requirements. ALO helps find matching courses without GRE where available.', category: 'acceptance', sortOrder: 15, status: 'active', sourceUrl: 'https://www.ets.org/gre' },
 
@@ -785,7 +824,7 @@ export const ENGLISH_PREP_FAQS: TestFaq[] = [
   { id: 'faq-gmat-10', testId: 'test-gmat', question: 'Is GMAT waiver possible?', answer: 'Some universities offer GMAT waiver based on GPA, work experience or previous qualifications. Waiver availability is university-specific — Check course page.', category: 'waiver', sortOrder: 10, status: 'active', sourceUrl: 'https://www.mba.com/exams/gmat-exam' },
   { id: 'faq-gmat-11', testId: 'test-gmat', question: 'How should I prepare for GMAT?', answer: 'Diagnostic assessment, study plan, concept review, practice questions, timed mocks, error log, expert feedback. ALO provides guidance and counselling.', category: 'preparation', sortOrder: 11, status: 'active', sourceUrl: 'https://www.mba.com/exams/gmat-exam' },
   { id: 'faq-gmat-12', testId: 'test-gmat', question: 'How long does GMAT preparation take?', answer: 'Typically 8-16 weeks 10-15 hrs/week depending on baseline and target. Diagnostic sets realistic timeline.', category: 'preparation', sortOrder: 12, status: 'active', sourceUrl: 'https://www.mba.com/exams/gmat-exam' },
-  { id: 'faq-gmat-13', testId: 'test-gmat', question: 'How does ALO help with GMAT?', answer: 'ALO provides assessment, target planning, study materials, mock tests, strategy coaching and university requirement checks. Book free counselling.', category: 'alo_support', sortOrder: 13, status: 'active', sourceUrl: 'https://www.mba.com/exams/gmat-exam' },
+  { id: 'faq-gmat-13', testId: 'test-gmat', question: 'How does ALO help with GMAT?', answer: 'ALO provides assessment, target planning, study materials, mock tests, strategy coaching and university requirement checks. Book counselling.', category: 'alo_support', sortOrder: 13, status: 'active', sourceUrl: 'https://www.mba.com/exams/gmat-exam' },
   { id: 'faq-gmat-14', testId: 'test-gmat', question: 'Should I take GMAT before English test?', answer: 'Timeline depends on deadlines. Often English test and GMAT preparation can be parallel. ALO helps plan sequence based on application deadlines.', category: 'application', sortOrder: 14, status: 'active', sourceUrl: 'https://www.mba.com/exams/gmat-exam' },
   { id: 'faq-gmat-15', testId: 'test-gmat', question: 'Can I get admission without GMAT?', answer: 'Some programmes do not require GMAT or offer waiver. Check course-specific requirements. ALO helps find matching courses without GMAT where available.', category: 'acceptance', sortOrder: 15, status: 'active', sourceUrl: 'https://www.mba.com/exams/gmat-exam' },
 
@@ -802,7 +841,7 @@ export const ENGLISH_PREP_FAQS: TestFaq[] = [
   { id: 'faq-sat-10', testId: 'test-sat', question: 'Is SAT waiver possible?', answer: 'Some universities offer SAT waiver based on GPA, work experience or previous qualifications. Waiver availability is university-specific — Check course page.', category: 'waiver', sortOrder: 10, status: 'active', sourceUrl: 'https://satsuite.collegeboard.org/sat' },
   { id: 'faq-sat-11', testId: 'test-sat', question: 'How should I prepare for SAT?', answer: 'Diagnostic assessment, study plan, concept review, practice questions, timed mocks, error log, expert feedback. ALO provides guidance and counselling.', category: 'preparation', sortOrder: 11, status: 'active', sourceUrl: 'https://satsuite.collegeboard.org/sat' },
   { id: 'faq-sat-12', testId: 'test-sat', question: 'How long does SAT preparation take?', answer: 'Typically 8-16 weeks 10-15 hrs/week depending on baseline and target. Diagnostic sets realistic timeline.', category: 'preparation', sortOrder: 12, status: 'active', sourceUrl: 'https://satsuite.collegeboard.org/sat' },
-  { id: 'faq-sat-13', testId: 'test-sat', question: 'How does ALO help with SAT?', answer: 'ALO provides assessment, target planning, study materials, mock tests, strategy coaching and university requirement checks. Book free counselling.', category: 'alo_support', sortOrder: 13, status: 'active', sourceUrl: 'https://satsuite.collegeboard.org/sat' },
+  { id: 'faq-sat-13', testId: 'test-sat', question: 'How does ALO help with SAT?', answer: 'ALO provides assessment, target planning, study materials, mock tests, strategy coaching and university requirement checks. Book counselling.', category: 'alo_support', sortOrder: 13, status: 'active', sourceUrl: 'https://satsuite.collegeboard.org/sat' },
   { id: 'faq-sat-14', testId: 'test-sat', question: 'Should I take SAT before English test?', answer: 'Timeline depends on deadlines. Often English test and SAT preparation can be parallel. ALO helps plan sequence based on application deadlines.', category: 'application', sortOrder: 14, status: 'active', sourceUrl: 'https://satsuite.collegeboard.org/sat' },
   { id: 'faq-sat-15', testId: 'test-sat', question: 'Can I get admission without SAT?', answer: 'Some programmes do not require SAT or offer waiver. Check course-specific requirements. ALO helps find matching courses without SAT where available.', category: 'acceptance', sortOrder: 15, status: 'active', sourceUrl: 'https://satsuite.collegeboard.org/sat' },
 
@@ -819,7 +858,7 @@ export const ENGLISH_PREP_FAQS: TestFaq[] = [
   { id: 'faq-act-10', testId: 'test-act', question: 'Is ACT waiver possible?', answer: 'Some universities offer ACT waiver based on GPA, work experience or previous qualifications. Waiver availability is university-specific — Check course page.', category: 'waiver', sortOrder: 10, status: 'active', sourceUrl: 'https://www.act.org' },
   { id: 'faq-act-11', testId: 'test-act', question: 'How should I prepare for ACT?', answer: 'Diagnostic assessment, study plan, concept review, practice questions, timed mocks, error log, expert feedback. ALO provides guidance and counselling.', category: 'preparation', sortOrder: 11, status: 'active', sourceUrl: 'https://www.act.org' },
   { id: 'faq-act-12', testId: 'test-act', question: 'How long does ACT preparation take?', answer: 'Typically 8-16 weeks 10-15 hrs/week depending on baseline and target. Diagnostic sets realistic timeline.', category: 'preparation', sortOrder: 12, status: 'active', sourceUrl: 'https://www.act.org' },
-  { id: 'faq-act-13', testId: 'test-act', question: 'How does ALO help with ACT?', answer: 'ALO provides assessment, target planning, study materials, mock tests, strategy coaching and university requirement checks. Book free counselling.', category: 'alo_support', sortOrder: 13, status: 'active', sourceUrl: 'https://www.act.org' },
+  { id: 'faq-act-13', testId: 'test-act', question: 'How does ALO help with ACT?', answer: 'ALO provides assessment, target planning, study materials, mock tests, strategy coaching and university requirement checks. Book counselling.', category: 'alo_support', sortOrder: 13, status: 'active', sourceUrl: 'https://www.act.org' },
   { id: 'faq-act-14', testId: 'test-act', question: 'Should I take ACT before English test?', answer: 'Timeline depends on deadlines. Often English test and ACT preparation can be parallel. ALO helps plan sequence based on application deadlines.', category: 'application', sortOrder: 14, status: 'active', sourceUrl: 'https://www.act.org' },
   { id: 'faq-act-15', testId: 'test-act', question: 'Can I get admission without ACT?', answer: 'Some programmes do not require ACT or offer waiver. Check course-specific requirements. ALO helps find matching courses without ACT where available.', category: 'acceptance', sortOrder: 15, status: 'active', sourceUrl: 'https://www.act.org' },
 
@@ -836,6 +875,8 @@ export const ENGLISH_PREP_FAQS: TestFaq[] = [
 
 ];
 
+export const ENGLISH_PREP_FAQS = BASE_ENGLISH_PREP_FAQS.map(faq => reviewLanguageFaq(faq));
+
 export const ENGLISH_PREP_RESOURCES: TestResource[] = [
   { id: 'res-ielts-official', testId: 'test-ielts', title: 'IELTS Official Website', description: 'Official IELTS test information, scoring, and preparation guidance', resourceType: 'official_link', resourceUrl: 'https://ielts.org', isExternal: true, sortOrder: 1, status: 'active' },
   { id: 'res-pte-official', testId: 'test-pte', title: 'PTE Academic Official', description: 'Official PTE Academic format, scoring and acceptance', resourceType: 'official_link', resourceUrl: 'https://www.pearsonpte.com', isExternal: true, sortOrder: 1, status: 'active' },
@@ -849,37 +890,7 @@ export const ENGLISH_PREP_RESOURCES: TestResource[] = [
 export function getTestBySlug(slug: string): EnglishTest | undefined {
   if (!slug) return undefined;
   const clean = slug.toLowerCase().trim();
-  // Normalize aliases
-  const aliasMap: Record<string, string> = {
-    'ielts-academic': 'ielts',
-    'ielts-general': 'ielts',
-    'ukvi': 'ielts-ukvi',
-    'ielts-for-ukvi': 'ielts-ukvi',
-    'selt': 'ielts-ukvi',
-    'pte': 'pte-academic',
-    'pearson': 'pte-academic',
-    'toefl': 'toefl-ibt',
-    'toefl-ibt-home': 'toefl-ibt',
-    'det': 'duolingo',
-    'duolingo-english-test': 'duolingo',
-    'oietc-ellt': 'oietc',
-    'ellt': 'oietc',
-    'oxford-ellt': 'oxford-ellt',
-    'oietc': 'oietc',
-    'languagecert': 'languagecert',
-    'kaplan': 'kaplan',
-    'kaplan-english-test': 'kaplan',
-    'kite': 'kaplan',
-    'oet': 'oet',
-    'gre': 'gre',
-    'gmat': 'gmat',
-    'sat': 'sat',
-    'act': 'act',
-    'moi-guidance': 'moi',
-    'moi': 'moi',
-    'medium-of-instruction': 'moi',
-  };
-  const normalized = aliasMap[clean] || clean;
+  const normalized = normalizeLanguagePrepSlug(clean);
   return ENGLISH_PREP_TESTS.find(t => t.slug === normalized);
 }
 

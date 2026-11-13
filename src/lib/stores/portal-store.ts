@@ -66,7 +66,7 @@ export type PortalView =
   | 'crm-finance' | 'crm-commissions' | 'crm-marketing' | 'crm-hrm'
   | 'crm-accounting' | 'crm-procurement'
   | 'crm-ai-command' | 'crm-tasks' | 'crm-appointments'
-  | 'crm-course-finder' | 'crm-universities' | 'crm-visa'
+  | 'crm-data-catalogue' | 'crm-course-finder' | 'crm-universities' | 'crm-visa'
   | 'crm-visa-dashboard' | 'crm-visa-cases' | 'crm-visa-interviews' | 'crm-visa-readiness' | 'crm-visa-reports'
   | 'crm-import-center' | 'crm-university-updates' | 'crm-access-control-center'
   | 'crm-scholarships' | 'crm-support' | 'crm-inbox'
@@ -130,6 +130,13 @@ interface PortalState {
   loginError: string | null;
   authMessage: string | null;
   notifications: Array<{ id: string; title: string; message: string; type: string; isRead: boolean; createdAt: string }>;
+  /**
+   * Transport state of the realtime notification stream (spec s86). Published so
+   * a shell can report "realtime unavailable" rather than showing a bell that
+   * silently never updates (s94). 'idle' means no stream was opened, which is
+   * also the state for a signed-out visitor.
+   */
+  realtimeStatus: 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'not_configured' | 'error';
 
   // Slug for public sub-pages (destination country, language test, etc.)
   publicPageSlug: string | null;
@@ -140,12 +147,38 @@ interface PortalState {
   setPublicPage: (view: PortalView, slug?: string | null) => void;
   hydrate: () => void;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (data: { name: string; email: string; phone: string; password: string; portalType: string }) => Promise<boolean>;
+  register: (data: {
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+    portalType: string;
+    /**
+     * Acquisition attribution captured on the public site (Google Free Stack).
+     * Optional so every existing caller keeps compiling; forwarded to the
+     * register endpoints, which store it on the lead they create.
+     */
+    attribution?: {
+      landingPage?: string;
+      referrer?: string;
+      visitorId?: string;
+      utmSource?: string;
+      utmMedium?: string;
+      utmCampaign?: string;
+      utmContent?: string;
+      utmTerm?: string;
+      gclid?: string;
+      fbclid?: string;
+    } | null;
+  }) => Promise<boolean>;
   logout: () => void;
   setSidebarOpen: (open: boolean) => void;
   clearLoginError: () => void;
   clearAuthMessage: () => void;
   setNotifications: (notifications: Array<{ id: string; title: string; message: string; type: string; isRead: boolean; createdAt: string }>) => void;
+  setRealtimeStatus: (
+    status: 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'not_configured' | 'error',
+  ) => void;
   hasPermission: (module: string, action: string) => boolean;
   hasRole: (roleName: string) => boolean;
 }
@@ -162,6 +195,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   loginError: null,
   authMessage: null,
   notifications: [],
+  realtimeStatus: 'idle',
   publicPageSlug: null,
 
   setView: (view) => set({ currentView: view, loginError: null }),
@@ -271,7 +305,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
       const res = await fetch(canonicalStudent ? '/api/auth/register' : '/api/portal-auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(canonicalStudent ? { name: regData.name, email: regData.email, phone: regData.phone, password: regData.password, role: 'STUDENT', termsAccepted: (regData as { agreeTerms?: boolean }).agreeTerms === true } : regData),
+        body: JSON.stringify(canonicalStudent ? { name: regData.name, email: regData.email, phone: regData.phone, password: regData.password, role: 'STUDENT', termsAccepted: (regData as { agreeTerms?: boolean }).agreeTerms === true, ...(regData.attribution ? { attribution: regData.attribution } : {}) } : { ...regData, ...(regData.attribution ? { attribution: regData.attribution } : {}) }),
       });
       const data = await res.json();
       if (data.success) {
@@ -346,6 +380,9 @@ export const usePortalStore = create<PortalState>((set, get) => ({
       authMessage: null,
       loginLoading: false,
       notifications: [],
+      // Reset the stream state: a signed-out session has no live connection, and
+      // leaving 'connected' would misreport it (s94).
+      realtimeStatus: 'idle',
       sidebarOpen: false,
     });
   },
@@ -354,6 +391,7 @@ export const usePortalStore = create<PortalState>((set, get) => ({
   clearLoginError: () => set({ loginError: null }),
   clearAuthMessage: () => set({ authMessage: null }),
   setNotifications: (notifications) => set({ notifications }),
+  setRealtimeStatus: (realtimeStatus) => set({ realtimeStatus }),
   hasPermission: (module: string, action: string) => {
     const state = get();
     if (!state.user) return false;

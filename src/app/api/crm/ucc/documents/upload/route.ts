@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { authenticateRequest } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
+import { MalwareScanUnavailableError, scanForMalware } from '@/lib/documents/malware-scan';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
 import { canAccessUccDocumentConversation, canUseUccDocuments, canViewUccB2B } from '@/lib/ucc/document-access';
 import { canViewUccConversationB2B } from '@/lib/ucc/conversation-visibility';
@@ -122,6 +123,31 @@ export async function POST(request: NextRequest) {
   const extension = originalName.split('.').pop()?.toLowerCase() || '';
   if (!mimeType || MIME_BY_EXTENSION[extension] !== mimeType || (file.type && file.type !== mimeType)) {
     return NextResponse.json({ success: false, error: 'File content does not match an allowed PDF or image type.' }, { status: 400 });
+  }
+
+  // Malware screening happens after type validation and BEFORE storePrivateFile,
+  // so rejected bytes are never written to the private pool and never reach a
+  // counselor's download route. A signature hit is a client error (400) with the
+  // detection name; a scanner that cannot give an opinion is a server error
+  // (503) in production, because storing an unscanned student document is worse
+  // than refusing the upload.
+  const scan = await scanForMalware(bytes).catch((error) => {
+    if (error instanceof MalwareScanUnavailableError) {
+      return { verdict: 'unavailable', threat: null, engine: 'none', scanned: false, detail: error.message } as const;
+    }
+    throw error;
+  });
+  if (scan.verdict === 'infected') {
+    return NextResponse.json(
+      { success: false, error: 'The file was rejected by malware scanning.', threat: scan.threat },
+      { status: 400 },
+    );
+  }
+  if (!scan.scanned) {
+    return NextResponse.json(
+      { success: false, error: 'The file could not be scanned for malware and was not stored.' },
+      { status: 503 },
+    );
   }
 
   const fileHash = createHash('sha256').update(bytes).digest('hex');

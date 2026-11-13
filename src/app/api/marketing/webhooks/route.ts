@@ -1,14 +1,13 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { authenticateRequest } from '@/lib/auth-middleware';
-
-const MARKETING_ROLES = new Set(['SUPER_ADMIN', 'ADMIN', 'super_admin', 'admin', 'MARKETING_MANAGER', 'marketing_manager', 'MARKETING', 'marketing']);
+import { isMarketingManager } from '@/lib/marketing/access';
 
 // ─── GET: List webhook events ────────────────────────────────────────────────
 export async function GET(request: Request) {
   const auth = await authenticateRequest(request);
   if (auth instanceof NextResponse) return auth;
-  if (!MARKETING_ROLES.has(auth.userType) && !auth.roles.some((role) => MARKETING_ROLES.has(role))) {
+  if (!isMarketingManager(auth)) {
     return NextResponse.json({ error: 'Marketing access required' }, { status: 403 });
   }
 

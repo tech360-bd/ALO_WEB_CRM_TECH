@@ -32,20 +32,20 @@ export default function OTPVerificationModal({ open, onOpenChange, phone, onVeri
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm bg-white">
         <DialogHeader>
-          <DialogTitle className="text-sm flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#0057B8]" /> OTP Verification — Before Private Data</DialogTitle>
+          <DialogTitle className="text-sm flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[var(--alo-brand)]" /> OTP Verification — Before Private Data</DialogTitle>
           <DialogDescription className="text-xs">Send OTP to {phone}, verify, then allow safe info. Log attempt, block after 5 failures. Do not share private data without OTP. Do not give visa guarantee.</DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
-          {!sent ? <Button size="sm" className="w-full bg-[#0057B8]" onClick={send} disabled={loading}>{loading?'Sending...':'Send OTP'}</Button> : (
+          {!sent ? <Button size="sm" className="w-full bg-[var(--alo-brand)]" onClick={send} disabled={loading}>{loading?'Sending...':'Send OTP'}</Button> : (
             <>
               <Input placeholder="Enter 6-digit OTP" value={otp} onChange={e=>setOtp(e.target.value)} maxLength={6} className="font-mono tracking-widest text-center" />
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" className="flex-1" onClick={send} disabled={loading}>Resend</Button>
-                <Button size="sm" className="flex-1 bg-[#0057B8]" onClick={verify} disabled={loading || otp.length!==6}>{loading?'Verifying...':'Verify'}</Button>
+                <Button size="sm" className="flex-1 bg-[var(--alo-brand)]" onClick={verify} disabled={loading || otp.length!==6}>{loading?'Verifying...':'Verify'}</Button>
               </div>
             </>
           )}
-          <p className="text-[11px] text-gray-500">Rules: Verify phone/OTP before private data, log OTP attempt, block after too many failures, create follow-up task for next working hour after-hours.</p>
+          <p className="text-[11px] text-[var(--alo-text-muted)]">Rules: Verify phone/OTP before private data, log OTP attempt, block after too many failures, create follow-up task for next working hour after-hours.</p>
         </div>
       </DialogContent>
     </Dialog>

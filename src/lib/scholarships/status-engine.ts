@@ -15,6 +15,7 @@ export interface ScholarshipStatusInput {
   deadlineDate?: Date | string | null;
   verificationStatus?: string | null;
   lastVerifiedAt?: Date | string | null;
+  officialSourceUrl?: string | null;
   status?: string | null; // stored: active/draft/archived/CLOSED/PUBLISHED
   now?: Date;
 }
@@ -29,6 +30,24 @@ export function isVerificationStale(lastVerifiedAt: Date | string | null | undef
   const d = toDate(lastVerifiedAt);
   if (!d) return true; // never verified = cannot present as current
   return (now.getTime() - d.getTime()) > staleDays * 24 * 60 * 60 * 1000;
+}
+
+/** A public listing requires a recent VERIFIED marker and a usable HTTPS source. */
+export function hasCurrentScholarshipSourceVerification(
+  input: Pick<ScholarshipStatusInput, 'verificationStatus' | 'lastVerifiedAt' | 'officialSourceUrl'>,
+  now: Date = new Date(),
+): boolean {
+  const verification = String(input.verificationStatus || '').toLowerCase();
+  if (verification !== 'verified' && verification !== 'verified_recent') return false;
+  const verifiedAt = toDate(input.lastVerifiedAt);
+  if (!verifiedAt || verifiedAt.getTime() > now.getTime()) return false;
+  if (isVerificationStale(verifiedAt, VERIFICATION_STALE_DAYS, now)) return false;
+  try {
+    const source = new URL(String(input.officialSourceUrl || ''));
+    return source.protocol === 'https:' && !source.username && !source.password;
+  } catch {
+    return false;
+  }
 }
 
 export function computeScholarshipStatus(input: ScholarshipStatusInput): ScholarshipStatus {

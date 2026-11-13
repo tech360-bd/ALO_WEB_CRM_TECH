@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { getSiteSeoDefaults } from "@/lib/cms-managed-content";
+import { getGoogleStackConfig } from "@/lib/google/config";
+import { organizationSchema } from "@/lib/seo/schema-helpers";
 
 // Brand typography (Montserrat/Poppins headings, Open Sans/Roboto body) is
 // declared once in globals.css as self-hosted @font-face rules mapped onto the
@@ -25,6 +27,7 @@ export const viewport = {
 // unreachable (e.g. build-time prerender without a DB).
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSiteSeoDefaults();
+  const googleSiteVerification = getGoogleStackConfig().siteVerificationToken;
   const title = seo?.title ?? "ALO Education — Study Abroad Consultancy in Bangladesh";
   const description =
     seo?.description ??
@@ -55,7 +58,6 @@ export async function generateMetadata(): Promise<Metadata> {
         { url: "/icons/icon-96x96.png", sizes: "96x96", type: "image/png" },
         { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
         { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
-        { url: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg", type: "image/svg+xml" },
       ],
       apple: [
         { url: "/icons/icon-152x152.png", sizes: "152x152", type: "image/png" },
@@ -78,6 +80,13 @@ export async function generateMetadata(): Promise<Metadata> {
       description: "Study abroad consultancy — UK, USA, Canada, Australia, NZ, Dubai",
     },
     other: {
+      // Search Console ownership verification (HTML meta method). Only emitted
+      // when GOOGLE_SITE_VERIFICATION_TOKEN is set, so the tag is never
+      // rendered empty. The DNS TXT method is preferred for a domain property;
+      // this supports the URL-prefix property and sites that cannot edit DNS.
+      ...(googleSiteVerification
+        ? { "google-site-verification": googleSiteVerification }
+        : {}),
       "mobile-web-app-capable": "yes",
       "apple-mobile-web-app-capable": "yes",
       "apple-mobile-web-app-status-bar-style": "black-translucent",
@@ -87,10 +96,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+import AloSiteOnly from "@/components/website/AloSiteOnly";
 import FloatingActionWidget from "@/components/website/FloatingActionWidget";
-import PublicLayoutWrapper from "@/components/website/PublicLayoutWrapper";
 import { PwaRegister } from "@/components/pwa/PwaRegister";
+import ConsentBanner from "@/components/analytics/ConsentBanner";
+import PublicLayoutWrapper from "@/components/website/PublicLayoutWrapper";
 import { I18nProvider } from "@/i18n";
+import { RealtimeNotificationProvider } from "@/components/realtime/RealtimeNotificationProvider";
+import GoogleTags from "@/components/analytics/GoogleTags";
+import AnalyticsPageView from "@/components/analytics/AnalyticsPageView";
+import AnalyticsClickTracker from "@/components/analytics/AnalyticsClickTracker";
 
 export default function RootLayout({
   children,
@@ -102,15 +117,46 @@ export default function RootLayout({
       <body
         className="font-sans antialiased bg-background text-foreground"
       >
+        {/* Google Free Stack (docs/GOOGLE-FREE-STACK.md). Exactly one tag
+            loader — GTM if a container is configured, otherwise gtag.js — and
+            nothing at all outside production. These render null when
+            unconfigured, so the website never depends on a Google endpoint. */}
+        {/* Site-wide Organization / EducationalOrganization JSON-LD.
+            src/lib/seo/schema-helpers.ts has defined organizationSchema() since
+            it was written but nothing ever rendered it, so Google had no
+            sitewide entity to associate with the Business Profile listing.
+            Serialised with < escaped so a value can never break out of the
+            script element. */}
+        <AloSiteOnly>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(organizationSchema()).replace(/</g, "\\u003c"),
+            }}
+          />
+          <GoogleTags />
+          {/* Owns every page_view, including the SPA navigations the tag loader
+              cannot see. Skips the first view under GTM to avoid double counting. */}
+          <AnalyticsPageView />
+          {/* One delegated listener measures every WhatsApp / tel: / mailto: link
+              on the site, including ones on pages that predate this work. */}
+          <AnalyticsClickTracker />
+        </AloSiteOnly>
         {/* Centralized English + বাংলা i18n (no per-language route forks) */}
         <I18nProvider>
           <PublicLayoutWrapper>
             {children}
           </PublicLayoutWrapper>
-          {/* Single global floating contact widget — the only AI / WhatsApp / Facebook control. */}
-          <FloatingActionWidget />
-          <PwaRegister />
+          {/* ALO-specific floating widgets are suppressed on the standalone DreamFrame route. */}
+          <AloSiteOnly><FloatingActionWidget /></AloSiteOnly>
+          {/* Live notification stream (spec s86). Renderless: it feeds the portal
+              store that every shell's bell already reads, and opens no connection
+              for a signed-out visitor. */}
+          <AloSiteOnly><RealtimeNotificationProvider /></AloSiteOnly>
+          <AloSiteOnly><PwaRegister /></AloSiteOnly>
           <Toaster />
+          {/* Consent and ALO analytics are both excluded from the standalone demo. */}
+          <AloSiteOnly><ConsentBanner /></AloSiteOnly>
         </I18nProvider>
       </body>
     </html>

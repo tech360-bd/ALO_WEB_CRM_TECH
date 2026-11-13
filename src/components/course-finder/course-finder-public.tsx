@@ -135,9 +135,9 @@ function FilterSidebar({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-sm text-slate-900">Filters</h3>
+        <h3 className="font-semibold text-sm text-[var(--alo-text)]">Filters</h3>
         {activeCount > 0 && (
-          <Button variant="ghost" size="sm" onClick={onReset} className="text-xs text-slate-500 h-7">
+          <Button variant="ghost" size="sm" onClick={onReset} className=" text-[var(--alo-text-muted)] h-7">
             Clear all ({activeCount})
           </Button>
         )}
@@ -147,16 +147,16 @@ function FilterSidebar({
 
       {/* Country */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-slate-700">Country</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Country</h4>
         <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
           {COUNTRIES.map((country) => (
             <label key={country} className="flex items-center gap-2 cursor-pointer group">
               <Checkbox
                 checked={filters.countries.includes(country)}
                 onCheckedChange={() => toggleCountry(country)}
-                className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                className="data-[state=checked]:bg-[var(--alo-success-dark)] data-[state=checked]:border-crm-success-border"
               />
-              <span className="text-sm text-slate-600 group-hover:text-slate-900">
+              <span className="text-sm text-[var(--alo-body)] group-hover:text-[var(--alo-text)]">
                 {COUNTRY_FLAGS[country]} {country}
               </span>
             </label>
@@ -168,16 +168,16 @@ function FilterSidebar({
 
       {/* Study Level */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-slate-700">Study Level</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Study Level</h4>
         <div className="space-y-2">
           {STUDY_LEVELS.map((level) => (
             <label key={level} className="flex items-center gap-2 cursor-pointer group">
               <Checkbox
                 checked={filters.studyLevels.includes(level)}
                 onCheckedChange={() => toggleLevel(level)}
-                className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                className="data-[state=checked]:bg-[var(--alo-success-dark)] data-[state=checked]:border-crm-success-border"
               />
-              <span className="text-sm text-slate-600 group-hover:text-slate-900">{level}</span>
+              <span className="text-sm text-[var(--alo-body)] group-hover:text-[var(--alo-text)]">{level}</span>
             </label>
           ))}
         </div>
@@ -187,7 +187,7 @@ function FilterSidebar({
 
       {/* Subject Area */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-slate-700">Subject Area</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Subject Area</h4>
         <Select
           value={filters.subjectArea}
           onValueChange={(v) => onFiltersChange({ ...filters, subjectArea: v })}
@@ -209,7 +209,7 @@ function FilterSidebar({
 
       {/* Intake Year */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-slate-700">Intake Year</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Intake Year</h4>
         <Select
           value={filters.intakeYear}
           onValueChange={(v) => onFiltersChange({ ...filters, intakeYear: v })}
@@ -227,7 +227,7 @@ function FilterSidebar({
 
       {/* Intake Month */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-slate-700">Intake Month</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Intake Month</h4>
         <Select
           value={filters.intakeMonth}
           onValueChange={(v) => onFiltersChange({ ...filters, intakeMonth: v })}
@@ -247,7 +247,7 @@ function FilterSidebar({
 
       {/* Tuition Range */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-slate-700">
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">
           Tuition Range
         </h4>
         <div className="px-1">
@@ -257,9 +257,9 @@ function FilterSidebar({
             step={5000}
             value={filters.tuitionRange}
             onValueChange={(v) => onFiltersChange({ ...filters, tuitionRange: v as [number, number] })}
-            className="[&_[data-slot=slider-range]]:bg-emerald-600 [&_[data-slot=slider-thumb]]:border-emerald-600"
+            className="[&_[data-slot=slider-range]]:bg-[var(--alo-success-dark)] [&_[data-slot=slider-thumb]]:border-crm-success-border"
           />
-          <div className="flex justify-between mt-2 text-xs text-slate-500">
+          <div className="flex justify-between mt-2 text-xs text-[var(--alo-text-muted)]">
             <span>${(filters.tuitionRange[0] / 1000).toFixed(0)}k</span>
             <span>${(filters.tuitionRange[1] / 1000).toFixed(0)}k</span>
           </div>
@@ -271,11 +271,11 @@ function FilterSidebar({
       {/* Scholarship */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-medium text-slate-700">Scholarship Available</h4>
+          <h4 className="text-sm font-medium text-[var(--alo-body)]">Scholarship Available</h4>
           <Switch
             checked={filters.scholarshipOnly}
             onCheckedChange={(v) => onFiltersChange({ ...filters, scholarshipOnly: v })}
-            className="data-[state=checked]:bg-emerald-600"
+            className="data-[state=checked]:bg-[var(--alo-success-dark)]"
           />
         </div>
       </div>
@@ -284,16 +284,16 @@ function FilterSidebar({
 
       {/* English Requirements — Enhanced per spec: english_requirements filter */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-[#0F172A] flex items-center gap-1.5">
-          <span className="w-5 h-5 rounded bg-blue-50 text-[#0057B8] flex items-center justify-center text-[10px] font-bold">EN</span>
+        <h4 className="text-sm font-medium text-[var(--alo-text)] flex items-center gap-1.5">
+          <span className="w-5 h-5 rounded bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] flex items-center justify-center text-[11px] font-bold">EN</span>
           English Requirements
         </h4>
-        <p className="text-[11px] text-slate-500 leading-relaxed">Filter courses by accepted English test and minimum score. Acceptance varies by university, course and visa route.</p>
+        <p className="text-[11px] text-[var(--alo-text-muted)] leading-relaxed">Filter courses by accepted English test and minimum score. Acceptance varies by university, course and visa route.</p>
         <Select
           value={filters.englishTest}
           onValueChange={(v) => onFiltersChange({ ...filters, englishTest: v === 'all' ? '' : v })}
         >
-          <SelectTrigger className="w-full h-9 rounded-xl border-[#E2E8F0] text-xs">
+          <SelectTrigger className="w-full h-9 rounded-xl border-[var(--alo-border)] text-xs">
             <SelectValue placeholder="Select English Test" />
           </SelectTrigger>
           <SelectContent>
@@ -314,16 +314,16 @@ function FilterSidebar({
           placeholder="Target score e.g. 6.5, 58, 90"
           value={filters.englishScore}
           onChange={(e) => onFiltersChange({ ...filters, englishScore: e.target.value })}
-          className="h-9 rounded-xl border-[#E2E8F0] text-xs"
+          className="h-9 rounded-xl border-[var(--alo-border)] text-xs"
         />
-        <p className="text-[10px] text-slate-400">If requirement not in database: "Requirement not available in database. Check university course page."</p>
+        <p className="text-[11px] text-[var(--alo-text-muted)]">If requirement not in database: "Requirement not available in database. Check university course page."</p>
       </div>
 
       <Separator />
 
       {/* IELTS Min (legacy) */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-slate-700">
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">
           Min IELTS Score (legacy)
         </h4>
         <div className="px-1">
@@ -333,11 +333,11 @@ function FilterSidebar({
             step={0.5}
             value={[filters.ieltsMin]}
             onValueChange={(v) => onFiltersChange({ ...filters, ieltsMin: v[0] })}
-            className="[&_[data-slot=slider-range]]:bg-emerald-600 [&_[data-slot=slider-thumb]]:border-emerald-600"
+            className="[&_[data-slot=slider-range]]:bg-[var(--alo-success-dark)] [&_[data-slot=slider-thumb]]:border-crm-success-border"
           />
-          <div className="flex justify-between mt-2 text-xs text-slate-500">
+          <div className="flex justify-between mt-2 text-xs text-[var(--alo-text-muted)]">
             <span>0</span>
-            <span className="font-medium text-slate-700">{filters.ieltsMin.toFixed(1)}</span>
+            <span className="font-medium text-[var(--alo-body)]">{filters.ieltsMin.toFixed(1)}</span>
             <span>9.0</span>
           </div>
         </div>
@@ -364,52 +364,52 @@ function CourseCard({
   onEnquire: (c: Course) => void;
 }) {
   const levelColors: Record<string, string> = {
-    Undergraduate: 'bg-emerald-100 text-emerald-800',
-    Postgraduate: 'bg-amber-100 text-amber-800',
+    Undergraduate: 'bg-crm-success-bg text-crm-success-text',
+    Postgraduate: 'bg-crm-warning-bg text-crm-warning-text',
     Foundation: 'bg-sky-100 text-sky-800',
-    Diploma: 'bg-violet-100 text-violet-800',
-    PhD: 'bg-rose-100 text-rose-800',
+    Diploma: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+    PhD: 'bg-crm-warning-bg text-crm-warning-text',
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow border-slate-200">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow border-[var(--alo-border)]">
       <CardContent className="p-4 flex flex-col gap-3">
         {/* University & Country */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-emerald-600 truncate">
+            <p className="text-sm font-medium text-crm-success-text truncate">
               {COUNTRY_FLAGS[course.country]} {course.universityName}
             </p>
           </div>
           <Badge
             variant="secondary"
-            className={levelColors[course.studyLevel] || 'bg-slate-100 text-slate-700'}
+            className={levelColors[course.studyLevel] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}
           >
             {course.studyLevel}
           </Badge>
         </div>
 
         {/* Course Title */}
-        <h3 className="font-semibold text-slate-900 leading-snug line-clamp-2 text-sm min-h-[2.5rem]">
+        <h3 className="font-semibold text-[var(--alo-text)] leading-snug line-clamp-2 text-sm min-h-[2.5rem]">
           {course.courseTitle}
         </h3>
 
         {/* Details */}
-        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
+        <div className="grid grid-cols-2 gap-2 text-xs text-[var(--alo-body)]">
           <div className="flex items-center gap-1.5">
-            <Clock className="size-3.5 text-slate-400" />
+            <Clock className="size-3.5 text-[var(--alo-text-muted)]" />
             <span>{course.duration}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <DollarSign className="size-3.5 text-slate-400" />
+            <DollarSign className="size-3.5 text-[var(--alo-text-muted)]" />
             <span>{course.tuitionCurrency} {course.tuitionFee.toLocaleString()}/yr</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Globe className="size-3.5 text-slate-400" />
+            <Globe className="size-3.5 text-[var(--alo-text-muted)]" />
             <span>{course.country}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <GraduationCap className="size-3.5 text-slate-400" />
+            <GraduationCap className="size-3.5 text-[var(--alo-text-muted)]" />
             <span>Intake: {course.intake}</span>
           </div>
         </div>
@@ -417,7 +417,7 @@ function CourseCard({
         {/* Scholarship Badge */}
         {course.hasScholarship && (
           <div className="flex items-center gap-1.5">
-            <Badge className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs">
+            <Badge className="bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)] text-xs">
               <Award className="size-3" />
               Scholarship Available
             </Badge>
@@ -425,15 +425,15 @@ function CourseCard({
         )}
 
         {/* Requirements */}
-        <div className="flex gap-3 text-xs text-slate-500">
+        <div className="flex gap-3 text-xs text-[var(--alo-text-muted)]">
           {course.ieltsMin && (
             <span className="flex items-center gap-1">
-              <span className="font-medium text-slate-700">IELTS:</span> {course.ieltsMin}
+              <span className="font-medium text-[var(--alo-body)]">IELTS:</span> {course.ieltsMin}
             </span>
           )}
           {course.pteMin && (
             <span className="flex items-center gap-1">
-              <span className="font-medium text-slate-700">PTE:</span> {course.pteMin}
+              <span className="font-medium text-[var(--alo-body)]">PTE:</span> {course.pteMin}
             </span>
           )}
         </div>
@@ -441,28 +441,28 @@ function CourseCard({
         {/* Actions */}
         <div className="flex gap-2 pt-1">
           <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 h-8 text-xs"
-            onClick={() => onCompare(course)}
+ variant="outline"
+ size="sm"
+ className="flex-1 "
+ onClick={() => onCompare(course)}
           >
             <GitCompare className="size-3 mr-1" />
             Compare
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 h-8 text-xs"
-            onClick={() => onSave(course)}
+ variant="outline"
+ size="sm"
+ className="flex-1 "
+ onClick={() => onSave(course)}
           >
             <BookmarkPlus className="size-3 mr-1" />
             Save
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="flex-1 h-8 text-xs"
-            onClick={() => onEnquire(course)}
+ variant="outline"
+ size="sm"
+ className="flex-1 "
+ onClick={() => onEnquire(course)}
           >
             <Send className="size-3 mr-1" />
             Enquire
@@ -475,7 +475,7 @@ function CourseCard({
             href={course.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 hover:underline"
+            className="inline-flex items-center gap-1 text-xs text-crm-success-text hover:text-crm-success-text hover:underline"
           >
             <ExternalLink className="size-3" />
             View on university website
@@ -593,7 +593,7 @@ export function CourseFinderPublic() {
         </Button>
         {pages.map((page, idx) =>
           typeof page === 'string' ? (
-            <span key={`ellipsis-${idx}`} className="px-2 text-sm text-slate-400">
+            <span key={`ellipsis-${idx}`} className="px-2 text-sm text-[var(--alo-text-muted)]">
               ...
             </span>
           ) : (
@@ -604,7 +604,7 @@ export function CourseFinderPublic() {
               onClick={() => setCurrentPage(page)}
               className={
                 currentPage === page
-                  ? 'h-8 w-8 p-0 bg-emerald-600 hover:bg-emerald-700 text-white'
+                  ? 'h-8 w-8 p-0 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white'
                   : 'h-8 w-8 p-0'
               }
             >
@@ -628,26 +628,26 @@ export function CourseFinderPublic() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-emerald-600 text-white">
+      <div className="bg-[var(--alo-success-dark)] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           <h1 className="text-2xl sm:text-3xl font-bold">Course Finder</h1>
-          <p className="text-emerald-100 mt-2 text-sm sm:text-base">
+          <p className="text-crm-success-text mt-2 text-sm sm:text-base">
             Discover the perfect course from top universities worldwide
           </p>
 
           {/* Search Bar */}
           <div className="mt-6 relative max-w-2xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-[var(--alo-text-muted)]" />
             <Input
               placeholder="Search courses, universities, or subjects..."
               value={filters.search}
               onChange={(e) => handleSearch(e.target.value)}
-              className="pl-12 h-12 text-base bg-white text-slate-900 border-0 shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-300"
+              className="pl-12 h-12 text-base bg-white text-[var(--alo-text)] border-0 shadow-lg focus-visible:ring-2 focus-visible:ring-emerald-300"
             />
             {filters.search && (
               <button
                 onClick={() => handleSearch('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] hover:text-[var(--alo-body)]"
               >
                 <X className="size-4" />
               </button>
@@ -660,7 +660,7 @@ export function CourseFinderPublic() {
         <div className="flex gap-6">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-72 shrink-0">
-            <div className="sticky top-6 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div className="sticky top-6 bg-white border border-[var(--alo-border)] rounded-xl p-5 shadow-sm">
               {filterContent}
             </div>
           </aside>
@@ -670,7 +670,7 @@ export function CourseFinderPublic() {
             <SheetTrigger asChild>
               <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                 variant="outline"
-                className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white"
+                className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-[var(--alo-success-dark)] text-white border-crm-success-border hover:bg-[var(--alo-success-dark)] hover:text-white"
               >
                 <SlidersHorizontal className="size-5" />
               </Button>
@@ -687,17 +687,17 @@ export function CourseFinderPublic() {
           <main className="flex-1 min-w-0">
             {/* Results Header */}
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-[var(--alo-text-muted)]">
                 {loading ? (
                   <Skeleton className="h-4 w-32" />
                 ) : (
                   <>
-                    <span className="font-medium text-slate-700">{totalResults}</span>{' '}
+                    <span className="font-medium text-[var(--alo-body)]">{totalResults}</span>{' '}
                     {totalResults === 1 ? 'course' : 'courses'} found
                   </>
                 )}
               </p>
-              <div className="hidden sm:flex items-center gap-2 text-sm text-slate-500">
+              <div className="hidden sm:flex items-center gap-2 text-sm text-[var(--alo-text-muted)]">
                 <span>Page {currentPage} of {totalPages}</span>
               </div>
             </div>
@@ -714,17 +714,17 @@ export function CourseFinderPublic() {
             {/* Empty State */}
             {!loading && courses.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                  <SearchX className="size-10 text-slate-300" />
+                <div className="w-20 h-20 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mb-4">
+                  <SearchX className="size-10 text-[var(--alo-placeholder)]" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-700">No courses found</h3>
-                <p className="text-sm text-slate-500 mt-1 max-w-md">
+                <h3 className="text-lg font-semibold text-[var(--alo-body)]">No courses found</h3>
+                <p className="text-sm text-[var(--alo-text-muted)] mt-1 max-w-md">
                   Try adjusting your search criteria or filters to find more courses.
                 </p>
                 <Button
                   variant="outline"
                   onClick={handleResetFilters}
-                  className="mt-4 text-emerald-600 border-emerald-600 hover:bg-emerald-50"
+                  className="mt-4 text-crm-success-text border-crm-success-border hover:bg-crm-success-bg"
                 >
                   Clear all filters
                 </Button>

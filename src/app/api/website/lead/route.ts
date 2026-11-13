@@ -1,6 +1,11 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { withAuth, logAuditAction } from "@/lib/auth-middleware";
+import {
+  captureAttributionFromRequest,
+  describeAttribution,
+  toLeadFormColumns,
+} from "@/lib/attribution/lead-attribution";
 
 // ============================================================
 // POST /api/website/lead
@@ -33,6 +38,16 @@ export async function POST(request: Request) {
       // recorded with the lead so the counselor contacts the right channel.
       contactChannel, whatsappOptIn,
     } = body;
+
+    // Step 1b: Capture acquisition attribution before any write, so the
+    // consultation booking carries the campaign that produced it. This endpoint
+    // is fed by public forms on country, course and apply pages.
+    const attribution = captureAttributionFromRequest(request, {
+      body: body as Record<string, unknown>,
+      landingPage: typeof body?.landingPage === 'string' ? body.landingPage : null,
+      visitorId: typeof body?.visitorId === 'string' ? body.visitorId : null,
+      referer: typeof body?.referrer === 'string' ? body.referrer : null,
+    });
 
     // Step 2: Validate input
     if (!name || !phone || !email) {
@@ -124,6 +139,7 @@ export async function POST(request: Request) {
             source: source || "homepage",
             sourceSection: `${sourceSection || leadType || "consultation"}${wantsWhatsApp ? " · whatsapp" : ""}`,
             status: status || "new",
+            ...toLeadFormColumns(attribution),
           },
         }),
         // Also log as a search for analytics
@@ -289,6 +305,9 @@ export async function POST(request: Request) {
             source: source || "homepage",
             assignedCounselorId,
             isDuplicate,
+            // Attribution as its description, not the raw record, so the audit
+            // log never stores click identifiers.
+            attribution: describeAttribution(attribution),
           }),
           ipAddress: request.headers.get("x-forwarded-for") || "",
           userAgent: request.headers.get("user-agent") || "",

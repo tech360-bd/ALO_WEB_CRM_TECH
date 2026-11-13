@@ -1,7 +1,9 @@
+import { createHash } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withStudentAuth } from '@/lib/student-auth';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
+import { refreshApplicationDocumentStatus } from '@/lib/application-manager/document-readiness';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -9,6 +11,14 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024;
 const MIME_BY_EXTENSION: Record<string, string> = {
   pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp',
 };
+
+class VerifiedApplicationDocumentError extends Error {}
+
+function normalizeDocumentCategory(value: string): string {
+  const normalized = value.trim().toLowerCase();
+  const defaults = ['Passport', 'Academic', 'English', 'SOP', 'CV', 'References'];
+  return defaults.find((category) => category.toLowerCase() === normalized) || value.trim();
+}
 
 function detectMime(bytes: Buffer): string | null {
   if (bytes.length >= 5 && bytes.subarray(0, 5).toString('ascii') === '%PDF-') return 'application/pdf';
@@ -31,17 +41,30 @@ export const GET = withStudentAuth(async (_request, auth) => {
       where: { studentId: auth.studentId, isArchived: false },
       select: {
         id: true, category: true, fileName: true, fileSize: true, status: true, version: true,
-        previousVersionId: true, reviewedAt: true, reviewedBy: true, reviewerNote: true,
-        rejectionReason: true, createdAt: true, updatedAt: true,
+        previousVersionId: true, reviewedAt: true, createdAt: true, updatedAt: true,
       },
       orderBy: [{ createdAt: 'desc' }, { version: 'desc' }],
       take: 100,
     });
+    await db.portalAuditLog.create({
+      data: { actorUserId: auth.studentId, action: 'STUDENT_DOCUMENTS_VIEW', entityType: 'StudentDocument', entityId: auth.studentId, metadata: JSON.stringify({ studentId: auth.studentId, count: documents.length }), ipAddress: '', userAgent: '' },
+    });
+    // Identify the current version per document slot. History is retained (a
+    // rejected or superseded upload is never deleted), so without this flag the
+    // student cannot tell which accepted file is the live one.
+    const highestVersionByCategory = new Map<string, number>();
+    for (const document of documents) {
+      highestVersionByCategory.set(
+        document.category,
+        Math.max(highestVersionByCategory.get(document.category) || 0, document.version || 0),
+      );
+    }
     return NextResponse.json({
       success: true,
       data: documents.map((document) => ({
         ...document,
         uploadedAt: document.createdAt,
+        isCurrentVersion: (document.version || 0) === (highestVersionByCategory.get(document.category) || 0),
         downloadUrl: `/api/student/documents/${document.id}/download`,
       })),
     });
@@ -56,7 +79,8 @@ export const POST = withStudentAuth(async (request, auth) => {
     return NextResponse.json({ success: false, error: 'Upload actual file bytes using multipart/form-data.' }, { status: 415 });
   }
   const file = form.get('file');
-  const category = String(form.get('documentType') || form.get('category') || '').trim();
+  const categoryInput = String(form.get('documentType') || form.get('category') || '').trim();
+  const category = normalizeDocumentCategory(categoryInput);
   if (!(file instanceof File) || !file.size || file.size > MAX_FILE_BYTES || !category || category.length > 80 || /[\u0000-\u001f]/.test(category)) {
     return NextResponse.json({ success: false, error: 'A document type and non-empty file up to 20 MB are required.' }, { status: 400 });
   }
@@ -67,6 +91,35 @@ export const POST = withStudentAuth(async (request, auth) => {
   const extension = fileName.split('.').pop()?.toLowerCase() || '';
   if (!mimeType || MIME_BY_EXTENSION[extension] !== mimeType || (file.type && file.type !== mimeType)) {
     return NextResponse.json({ success: false, error: 'File content does not match an allowed PDF or image type.' }, { status: 400 });
+  }
+
+  // Idempotency: a double submit or a client retry of the SAME bytes into the
+  // same slot must not create a second row (and must not burn a version).
+  // A rejected upload is excluded so a genuine correction of an identical file
+  // after a rejection is still accepted.
+  const incomingHash = createHash('sha256').update(bytes).digest('hex');
+  const duplicate = await db.studentDocument.findFirst({
+    where: {
+      studentId: auth.studentId,
+      category,
+      fileHash: incomingHash,
+      isArchived: false,
+      status: { not: 'rejected' },
+    },
+    orderBy: { version: 'desc' },
+    select: { id: true, category: true, fileName: true, fileSize: true, status: true, version: true, createdAt: true },
+  });
+  if (duplicate) {
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...duplicate,
+        uploadedAt: duplicate.createdAt,
+        deduplicated: true,
+        downloadUrl: `/api/student/documents/${duplicate.id}/download`,
+      },
+      message: 'This exact file is already on record for that document type; the existing upload was kept.',
+    }, { status: 200 });
   }
 
   const stored = await storePrivateFile(bytes, fileName);
@@ -85,7 +138,7 @@ export const POST = withStudentAuth(async (request, auth) => {
           fileUrl: '',
           storagePath: stored.storagePath,
           mimeType,
-          fileHash: stored.fileHash,
+          fileHash: incomingHash,
           fileSize: stored.fileSize,
           status: 'pending_review',
           version: (prior?.version || 0) + 1,
@@ -112,6 +165,38 @@ export const POST = withStudentAuth(async (request, auth) => {
       await tx.timelineEvent.create({
         data: { studentId: auth.studentId, stage: 'document_uploaded', title: `${category} uploaded`, description: 'File bytes were stored privately and queued for review.', actor: auth.studentId },
       });
+
+      const applications = await tx.application.findMany({ where: { studentId: auth.studentId }, select: { id: true } });
+      for (const application of applications) {
+        const priorVersions = await tx.applicationDocument.findMany({
+          where: { applicationId: application.id, documentType: category },
+          select: { id: true, version: true, status: true },
+          orderBy: { version: 'desc' },
+        });
+        const currentVersion = priorVersions.find((row) => row.status !== 'SUPERSEDED');
+        if (currentVersion && ['VERIFIED', 'LOCKED'].includes(currentVersion.status.toUpperCase())) {
+          throw new VerifiedApplicationDocumentError('A verified application document cannot be replaced without staff approval.');
+        }
+        await tx.applicationDocument.updateMany({
+          where: { applicationId: application.id, documentType: category, status: { notIn: ['VERIFIED', 'LOCKED', 'SUPERSEDED'] } },
+          data: { status: 'SUPERSEDED' },
+        });
+        const version = Math.max(0, ...priorVersions.map((row) => row.version)) + 1;
+        await tx.applicationDocument.create({
+          data: {
+            applicationId: application.id,
+            studentId: auth.studentId,
+            documentId: created.id,
+            documentType: category,
+            fileName,
+            fileUrl: '',
+            status: 'UPLOADED',
+            visibility: 'student_visible',
+            version,
+          },
+        });
+        await refreshApplicationDocumentStatus(tx, application.id);
+      }
       return created;
     });
     return NextResponse.json({
@@ -119,8 +204,11 @@ export const POST = withStudentAuth(async (request, auth) => {
       data: { ...document, downloadUrl: `/api/student/documents/${document.id}/download` },
       message: 'Document bytes were stored privately and queued for review.',
     }, { status: 201 });
-  } catch {
+  } catch (error) {
     await removePrivateFile(stored.storagePath).catch(() => {});
+    if (error instanceof VerifiedApplicationDocumentError) {
+      return NextResponse.json({ success: false, error: error.message, code: 'VERIFIED_DOCUMENT_IMMUTABLE' }, { status: 409 });
+    }
     return NextResponse.json({ success: false, error: 'Document upload could not be completed.' }, { status: 503 });
   }
 });

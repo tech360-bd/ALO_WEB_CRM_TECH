@@ -12,6 +12,7 @@ const PUBLIC_ROUTES = [
   "/forgot-password",
   "/about",
   "/contact",
+  "/global-offices",
   "/privacy-policy",
   "/terms",
   "/cookies",
@@ -27,6 +28,7 @@ const PUBLIC_ROUTES = [
   "/aqf-compliance",
   "/destinations",
   "/universities",
+  "/all-university-information",
   "/courses",
   // Canonical public course-detail hub (/course/[slug]). It was missing from
   // this list while the plural /courses and /course-finder were present, so
@@ -139,6 +141,13 @@ const PUBLIC_ROUTES = [
   "/student/login",
   "/student/register",
   "/verify-email",
+  // Spec-named student journey entry points (spec §23): the /student-* aliases
+  // and the English-test candidate entry pages. They render the same shared
+  // LoginPage/RegisterPage components as /student/login and /student/register,
+  // so an anonymous visitor must reach them instead of bouncing to /login.
+  "/student-register",
+  "/english-test-login",
+  "/english-test-register",
 ];
 
 const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
@@ -157,6 +166,9 @@ function matchesPath(pathname: string, prefix: string): boolean {
 }
 
 export function isPublicPageRequest(pathname: string): boolean {
+  // Only the standalone DreamFrame landing page is public; do not implicitly
+  // expose any future nested studio or account routes.
+  if (pathname.replace(/\/+$/, '') === "/dreamframe") return true;
   return PUBLIC_ROUTES.some((route) => matchesPath(pathname, route));
 }
 
@@ -187,8 +199,7 @@ const PUBLIC_API_READ_ROUTES = [
   "/api/faqs",
   "/api/reviews/submit",
   "/api/whatsapp/status",
-  "/api/facebook/auth",
-  "/api/facebook/callback",
+  "/api/facebook/webhook",
   "/api/health",
   "/api/destinations",
   "/api/ai/eligibility",
@@ -216,8 +227,9 @@ const PUBLIC_API_READ_ROUTES = [
 ];
 
 const PUBLIC_API_WRITE_ROUTES = [
-  // Provider authentication (HS256 JWT), bounded body and dedupe enforced by route.
+  // Provider authentication (HS256 JWT / HMAC-SHA256), bounded body and dedupe enforced by route.
   "/api/integrations/httpsms/webhook",
+  "/api/integrations/opensms/webhook",
   // RFC 8058 one-click unsubscribe POST and confirm form. Token-verified in the route.
   "/api/email/unsubscribe",
   // Outbox worker trigger (Bearer CRON_SECRET, verified by requireCron).
@@ -339,7 +351,11 @@ const SENSITIVE_API_ROUTES: Record<string, string[]> = {
   "/api/live-edit": ["SUPER_ADMIN", "ADMIN"],
   "/api/source-intelligence": ["SUPER_ADMIN", "ADMIN"],
   "/api/content-engine": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
-  "/api/seo": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/seo": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER", "MARKETING"],
+  "/api/super-admin": ["SUPER_ADMIN"],
+  "/api/facebook/auth": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/facebook/callback": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
+  "/api/marketing/social/publish": ["SUPER_ADMIN", "ADMIN", "MARKETING_MANAGER"],
   "/api/employee-learning": ["SUPER_ADMIN", "ADMIN", "HR_MANAGER"],
   "/api/knowledge-base": ["SUPER_ADMIN", "ADMIN"],
   "/api/event-bus": ["SUPER_ADMIN", "ADMIN"],
@@ -415,8 +431,24 @@ export const ROLE_ROUTES: Record<string, string[]> = {
   EMPLOYEE: ["/employee"],
   VISA_OFFICER: ["/visa", "/employee"],
   VISA_INTERVIEW_OFFICER: ["/visa", "/employee"],
-  MARKETING_MANAGER: ["/marketing", "/employee"],
-  MARKETING: ["/marketing", "/employee"],
+  // Marketing roles keep their original allow-list and gain only the specific
+  // spec-named CRM pages/aliases they are entitled to open. Backend APIs still
+  // enforce the real permission check; a page allow-list is never an RBAC grant.
+  MARKETING_MANAGER: [
+    "/marketing", "/employee",
+    "/crm/marketing", "/crm/marketing-manager", "/crm/marketing-studio",
+    "/crm/content-calendar", "/crm/campaign-approval", "/crm/social-inbox",
+    "/crm/seo-manager", "/crm/contacts", "/crm/ucc",
+    "/crm/whatsapp/inbox", "/crm/whatsapp/conversations",
+    "/crm/whatsapp/templates", "/crm/whatsapp/sla",
+    "/crm/whatsapp/analytics", "/crm/whatsapp/settings",
+  ],
+  MARKETING: [
+    "/marketing", "/employee",
+    "/crm/marketing", "/crm/marketing-studio", "/crm/content-calendar",
+    "/crm/social-inbox", "/crm/contacts", "/crm/ucc",
+    "/crm/whatsapp/inbox", "/crm/whatsapp/conversations",
+  ],
   FINANCE: ["/finance", "/employee"],
   HR_MANAGER: ["/hrm", "/employee"],
   BRANCH_MANAGER: ["/crm", "/counselor", "/employee"],
@@ -633,7 +665,11 @@ export default async function proxy(request: NextRequest) {
 
   // Protect portal page routes
   if (!token) {
-    const loginUrl = new URL("/login", request.url);
+    // Student journey pages send anonymous visitors to the student login, not
+    // the staff login: the staff form cannot authenticate a student account, so
+    // the old target was a dead end for every student deep link.
+    const isStudentArea = matchesPath(pathname, "/student") || pathname === "/test-student";
+    const loginUrl = new URL(isStudentArea ? "/student-login" : "/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }

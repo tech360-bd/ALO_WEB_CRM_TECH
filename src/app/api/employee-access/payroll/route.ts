@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     const requestedEmployeeId = searchParams.get('employeeId');
     const period = searchParams.get('period');
     const status = searchParams.get('status');
-    const canViewAll = canApproveOrPay(auth);
+    const canViewAll = isSuperAdmin(auth) || auth.permissions?.includes('employee.fields.salary.view_all') === true;
 
     let employeeId = requestedEmployeeId || '';
     if (!canViewAll) {
@@ -43,11 +43,20 @@ export async function GET(req: NextRequest) {
       employeeId = ownEmployee.id;
     }
 
-    const where: Record<string, unknown> = { ...(employeeId ? { employeeId } : {}), ...(period ? { period } : {}), ...(status ? { status } : {}) };
+    const where: Record<string, unknown> = { ...(employeeId ? { employeeId } : {}), ...(period ? { period } : {}), ...(!canViewAll ? { status: { in: ['approved', 'paid'] } } : status ? { status } : {}) };
     const payrolls = await (db as any).employeePayroll.findMany({ where, orderBy: { period: 'desc' }, include: { items: true } });
+    await db.portalAuditLog.create({
+      data: {
+        actorUserId: auth.actorUserId,
+        action: 'EMPLOYEE_PAYROLL_VIEWED',
+        entityType: 'EmployeePayroll',
+        entityId: employeeId || 'company-scope',
+        metadata: JSON.stringify({ effectiveUserId: auth.userId, employeeId: employeeId || null, period: period || null, count: payrolls.length, ...(auth.actingAsSessionId ? { actingAsSessionId: auth.actingAsSessionId, actingAsRole: auth.actingAsRole } : {}) }),
+      },
+    });
     return NextResponse.json({
       success: true,
-      payrolls,
+      payrolls: canViewAll ? payrolls : payrolls.map((payroll: any) => ({ id: payroll.id, period: payroll.period, employeeId: payroll.employeeId, netSalary: payroll.netSalary, status: payroll.status, paidAt: payroll.paidAt })),
       note: 'AI may analyze attendance and prepare a draft. Only a human HR/Finance user can approve or pay payroll.',
     });
   } catch (error) {
@@ -133,7 +142,8 @@ export async function PATCH(req: NextRequest) {
     const existing = await (db as any).employeePayroll.findUnique({ where: { id } });
     if (!existing) return NextResponse.json({ success: false, error: 'Payroll not found' }, { status: 404 });
     try {
-      assertMakerChecker(auth.userId, existing.preparedBy);
+      // The maker-checker invariant is tied to the real authenticated human, not an Acting-As identity.
+      assertMakerChecker(auth.actorUserId, existing.preparedBy);
       assertPayrollTransition(existing.status, action as 'review' | 'approve' | 'pay');
     } catch (error) {
       return failure(error);

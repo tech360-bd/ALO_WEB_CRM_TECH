@@ -25,7 +25,7 @@ const SECTIONS = [
     title: "2. Our Services",
     body: [
       "ALO Education provides the following services to Bangladeshi students seeking to study abroad:",
-      "• Free counseling and profile assessment.",
+      "• Counseling and profile-assessment services; any applicable fees are confirmed before booking.",
       "• University shortlisting and application support.",
       "• SOP and CV writing support.",
       "• Scholarship guidance and application support.",
@@ -185,10 +185,10 @@ export function PublicTerms({ onNavigate }: PublicTermsProps) {
       <div className="space-y-8">
         {SECTIONS.map((section) => (
           <section key={section.title}>
-            <h2 className="text-xl font-bold text-[#0B2447]">{section.title}</h2>
+            <h2 className="text-xl font-bold text-[var(--alo-text)]">{section.title}</h2>
             <div className="mt-3 space-y-2">
               {section.body.map((p, i) => (
-                <p key={i} className="text-sm leading-relaxed text-[#5A7299]">{p}</p>
+                <p key={i} className="text-sm leading-relaxed text-[var(--alo-text-muted)]">{p}</p>
               ))}
             </div>
           </section>

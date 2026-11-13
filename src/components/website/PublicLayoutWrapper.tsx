@@ -1,11 +1,13 @@
 'use client';
 
 import React from 'react';
+import { MotionConfig } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { usePortalStore } from '@/lib/stores/portal-store';
 import PublicNavbar from './PublicNavbar';
 import PublicFooter from './PublicFooter';
+import PortalFooter from '@/components/portals/PortalFooter';
 import { isPublicChromeRoute } from './public-chrome-policy';
 
 // ─── CMS-managed announcements & banners (Virtual Editor) ─────
@@ -38,9 +40,9 @@ function CmsAnnouncements() {
   const top = visible[0];
   const level = top.data?.level === 'urgent' ? 'error' : top.data?.level === 'warning' ? 'warning' : 'info';
   const styles: Record<string, string> = {
-    info: 'bg-[#0057B8] text-white',
-    warning: 'bg-amber-500 text-white',
-    error: 'bg-red-600 text-white',
+    info: 'bg-[var(--alo-brand)] text-white',
+    warning: 'bg-[var(--alo-warning)] text-white',
+    error: 'bg-[var(--alo-error)] text-white',
   };
   const message = top.data?.message || top.label;
   return (
@@ -84,12 +86,54 @@ function CmsBanner() {
   if (!banner) return null;
   const message = banner.data?.message || banner.label;
   return (
-    <div className="bg-[#E8501A] text-white text-xs sm:text-sm font-semibold px-4 py-1.5 text-center">
+    <div className="bg-[var(--alo-cta)] text-white text-xs sm:text-sm font-semibold px-4 py-1.5 text-center">
       {banner.data?.href ? (
         <Link href={banner.data.href} className="hover:underline">{message}</Link>
       ) : (
         message
       )}
+    </div>
+  );
+}
+
+/**
+ * Footer for a signed-in user who is browsing a public-chrome route without
+ * an enclosing portal shell (for example a logged-in student opening
+ * /course-finder or /scholarships directly). The public footer is
+ * (correctly) suppressed for authenticated sessions and portal shells own
+ * the portal footer on their own routes, so without this fallback those
+ * pages would have no footer at all.
+ *
+ * Duplication guard: this renders nothing until it has checked the DOM, and
+ * withdraws the moment any other footer owner (`#alo-portal-footer` from a
+ * portal shell/layout, or `#alo-public-footer`) is present. Exactly one
+ * footer is ever visible.
+ */
+function AuthenticatedPortalFooterFallback() {
+  const [otherFooterPresent, setOtherFooterPresent] = React.useState<boolean | null>(null);
+  const ownRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const check = () => {
+      const footers = Array.from(
+        document.querySelectorAll('#alo-portal-footer, #alo-public-footer'),
+      );
+      // Exclude this fallback's own footer, otherwise it would withdraw
+      // itself in a render loop.
+      setOtherFooterPresent(
+        footers.some((footer) => !ownRef.current?.contains(footer)),
+      );
+    };
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
+  if (otherFooterPresent !== false) return null;
+  return (
+    <div ref={ownRef} className="contents">
+      <PortalFooter scope="student" />
     </div>
   );
 }
@@ -101,17 +145,22 @@ export default function PublicLayoutWrapper({
 }) {
   const isAuthenticated = usePortalStore((s) => s.isAuthenticated);
   const pathname = usePathname();
-  // One navbar and one footer for every public page. Login, registration,
-  // reset and every authenticated portal route render standalone: the public
-  // chrome is suppressed by route (see public-chrome-policy.ts) and by session.
+  // One navbar and footer for every pre-login page, including auth entry
+  // screens. Authenticated portal shells suppress public chrome by route
+  // (see public-chrome-policy.ts) and by session.
   const showPublicChrome = !isAuthenticated && isPublicChromeRoute(pathname);
+  // After login the generic (portal) footer applies everywhere; on
+  // public-chrome routes the guarded fallback supplies it only when no
+  // shell/layout already did.
+  const showAuthenticatedFooterFallback = isAuthenticated && isPublicChromeRoute(pathname);
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       {showPublicChrome && <CmsAnnouncements />}
       {showPublicChrome && <PublicNavbar />}
       {children}
       {showPublicChrome && <PublicFooter />}
+      {showAuthenticatedFooterFallback && <AuthenticatedPortalFooterFallback />}
       {showPublicChrome && <CmsBanner />}
-    </>
+    </MotionConfig>
   );
 }

@@ -27,14 +27,18 @@ describe("AI Security Remediation", () => {
 
   it("should enforce authorization before retry execution", async () => {
     const retryContent = readFileSync("src/app/api/ai-command/retry/route.ts", "utf8");
-    expect(retryContent).toContain("centralized ai-action-executor unavailable");
+    expect(retryContent).toContain("RETRY_REQUIRES_RECONCILIATION");
+    expect(retryContent).toContain("MANUAL_RECONCILIATION_REQUIRED");
+    expect(retryContent).not.toContain("aiCommandAction.update");
     expect(retryContent).not.toContain("CREATE_LEAD"); // inline fallback should not execute directly
   });
 
   it("should enforce mass assignment protection in execute route", async () => {
     const executeContent = readFileSync("src/app/api/ai-command/execute/route.ts", "utf8");
     expect(executeContent).toContain("ALLOWED_STUDENT_FIELDS");
-    expect(executeContent).toContain("ALLOWED_APPLICATION_FIELDS");
     expect(executeContent).toContain("ALLOWED_CRM_FIELDS");
+    expect(executeContent).not.toContain("ALLOWED_APPLICATION_FIELDS");
+    expect(executeContent).toContain("Internal application note appended; stage and decision fields were not changed");
+    expect(executeContent).not.toMatch(/db\.application\.(update|updateMany)\s*\(/);
   });
 });

@@ -157,10 +157,10 @@ export function PublicPrivacy({ onNavigate }: PublicPrivacyProps) {
       <div className="space-y-8">
         {SECTIONS.map((section) => (
           <section key={section.title}>
-            <h2 className="text-xl font-bold text-[#0B2447]">{section.title}</h2>
+            <h2 className="text-xl font-bold text-[var(--alo-text)]">{section.title}</h2>
             <div className="mt-3 space-y-2">
               {section.body.map((p, i) => (
-                <p key={i} className="text-sm leading-relaxed text-[#5A7299]">{p}</p>
+                <p key={i} className="text-sm leading-relaxed text-[var(--alo-text-muted)]">{p}</p>
               ))}
             </div>
           </section>
@@ -187,7 +187,7 @@ export function LegalLayout({
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-white">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-white">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -196,15 +196,15 @@ export function LegalLayout({
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#EAF3FF] text-[#0057B8] border border-[#0057B8]/20 hover:bg-[#EAF3FF]">
+            <Badge className="bg-[var(--alo-brand-light)] text-[var(--alo-brand)] border border-[var(--alo-brand)]/20 hover:bg-[var(--alo-brand-light)]">
               <Icon name={icon} className="mr-1 size-3" />
               Legal Document
             </Badge>
-            <h1 className="mt-3 text-3xl font-black tracking-tight text-[#0B2447] sm:text-4xl lg:text-5xl">
+            <h1 className="mt-3 text-3xl font-black tracking-tight text-[var(--alo-text)] sm:text-4xl lg:text-5xl">
               {title}
             </h1>
-            <p className="mt-3 text-base leading-relaxed text-[#5A7299] sm:text-lg">{subtitle}</p>
-            <p className="mt-3 text-xs text-[#5A7299]">Last updated: August 2025</p>
+            <p className="mt-3 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">{subtitle}</p>
+            <p className="mt-3 text-xs text-[var(--alo-text-muted)]">Last updated: August 2025</p>
           </div>
         </div>
       </section>
@@ -213,13 +213,13 @@ export function LegalLayout({
         {children}
 
         {/* Contact CTA */}
-        <div className="mt-12 rounded-2xl border-2 border-[#0057B8]/15 bg-gradient-to-br from-[#EAF3FF]/60 to-white p-6">
+        <div className="mt-12 rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-gradient-to-br from-[var(--alo-brand-light)]/60 to-white p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-base font-bold text-[#0B2447]">Questions about this policy?</p>
-              <p className="text-sm text-[#5A7299]">Our team is happy to clarify any section.</p>
+              <p className="text-base font-bold text-[var(--alo-text)]">Questions about this policy?</p>
+              <p className="text-sm text-[var(--alo-text-muted)]">Our team is happy to clarify any section.</p>
             </div>
-            <Button onClick={() => onNavigate("public-contact")} className="h-11 shrink-0 bg-[#E8501A] text-white hover:bg-[#c8451a]">
+            <Button onClick={() => onNavigate("public-contact")} className="h-11 shrink-0 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
               <Icon name="Phone" className="size-4" />
               Contact Us
             </Button>

@@ -447,7 +447,7 @@ export const MASTER_SCHOLARSHIPS_DATA: ScholarshipRecord[] = [
       "Free SOP & visa counseling."
     ],
     applicationSteps: [
-      "Step 1: Book free consultation with ALO counselor.",
+      "Step 1: Request consultation with ALO counselor.",
       "Step 2: Upload academic transcripts to ALO portal.",
       "Step 3: Receive offer letter with automatic scholarship discount."
     ],

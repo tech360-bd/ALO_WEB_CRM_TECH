@@ -1,23 +1,27 @@
 import React from 'react';
+import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { getEnglishPrepTestBySlugFromDB } from '@/lib/language-prep/service';
 import TestDetailView from '@/components/language-prep/TestDetailView';
-import { getTestBySlug } from '@/lib/language-prep/data';
 
 type Props = { params: Promise<{ slug: string }> };
 
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const test = getTestBySlug(slug);
-  
+  const test = await getEnglishPrepTestBySlugFromDB(slug);
   if (!test) {
     return {
-      title: 'English Test Preparation | ALO Education',
-      description: 'Explore English language tests and preparation guidance.',
+      title: 'Language Preparation | ALO Education',
+      description: 'Explore language-preparation information after current source review.',
+      robots: { index: false, follow: true },
     };
   }
 
   return {
-    title: test.seoTitle || `${test.name} Preparation | Requirements, Format & Study Abroad Guidance | ALO Education`,
+    title: test.seoTitle || `${test.name} Preparation | ALO Education`,
     description: test.seoDescription,
     alternates: { canonical: `https://aloeducation.com/language-prep/${test.slug}` },
     openGraph: {
@@ -36,15 +40,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LanguagePrepDetailPage({ params }: Props) {
   const { slug } = await params;
-  return <TestDetailView slug={slug} />;
+  const test = await getEnglishPrepTestBySlugFromDB(slug);
+  if (!test) notFound();
+  return <TestDetailView slug={test.slug} initialTest={test} />;
 }
 
-// Generate static params for 15 tests — dynamic routing by test slug
+/** DB-managed catalogue entries are rendered dynamically, never seeded from hard-coded fallback data. */
 export async function generateStaticParams() {
-  const slugs = [
-    'ielts', 'ielts-ukvi', 'pte-academic', 'toefl-ibt', 'duolingo',
-    'oietc', 'oxford-ellt', 'languagecert', 'kaplan', 'oet',
-    'gre', 'gmat', 'sat', 'act', 'moi'
-  ];
-  return slugs.map(slug => ({ slug }));
+  return [];
 }

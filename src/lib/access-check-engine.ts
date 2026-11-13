@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import { validateRequestAccess } from '@/lib/access-control/central-security-engine';
 import {
   PARTNER_PACKAGES,
   ALO_HARD_VIDEO_CEILING_SECONDS,
@@ -18,32 +19,21 @@ const STARTER = PARTNER_PACKAGES.starter;
 
 // 1. Check feature access for user or role
 export async function canAccessFeature(userId: string, featureKey: string, userRoles: string[] = []): Promise<boolean> {
-  // ALO Super Admin & Chairman always have full master access
-  if (
-    userRoles.includes('super_admin') ||
-    userRoles.includes('SUPER_ADMIN') ||
-    userRoles.includes('chairman') ||
-    userRoles.includes('CHAIRMAN')
-  ) {
-    return true;
-  }
-
-  const user = await db.user.findUnique({ where: { id: userId } }).catch(() => null);
-  if (user && (user.role === 'super_admin' || user.role === 'SUPER_ADMIN')) {
-    return true;
-  }
-
-  // Check custom feature access rule
-  const rule = await db.featureAccessRule.findFirst({
-    where: {
-      OR: [
-        { ownerId: userId, featureKey, isEnabled: true },
-        ...userRoles.map(r => ({ ownerId: r, featureKey, isEnabled: true })),
-      ],
-    },
-  });
-
-  return !!rule;
+  // Compatibility entry point: caller role arrays carry no authority.
+  // Employees use the central engine; partner access remains tenant-bound.
+  try {
+    const user = await db.user.findUnique({ where: { id: userId } });
+    const portal = user ? null : await db.portalUser.findUnique({ where: { id: userId }, include: { partnerProfile: true } });
+    const account = user || portal;
+    if (!account || account.status.toUpperCase() !== 'ACTIVE' || !account.emailVerified) return false;
+    const type = user ? user.role.toUpperCase() : portal!.userType.toUpperCase();
+    if (type === 'STUDENT') return false;
+    if (type !== 'PARTNER') return (await validateRequestAccess({ userId }, featureKey, 'view', { ownerId: userId })).allowed;
+    const partner = portal?.partnerProfile;
+    if (!partner?.partnerId || !['APPROVED', 'ACTIVE'].includes(partner.approvalStatus.toUpperCase())) return false;
+    const rules = await db.featureAccessRule.findMany({ where: { ownerType: { in: ['partner', 'PARTNER'] }, ownerId: partner.partnerId, featureKey } });
+    return rules.length > 0 && rules.every(rule => rule.isEnabled && !rule.requiresApproval);
+  } catch { return false; }
 }
 
 /**

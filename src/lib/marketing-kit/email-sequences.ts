@@ -35,7 +35,7 @@ export const EMAIL_SEQUENCES: EmailSequence[] = [
         preview: 'Your counselor match and what happens next.',
         body:
           'Thank you for reaching out to ALO Education. A counselor will review your profile and match you with the right destinations and programs. While you wait, here is the one thing that helps most: a realistic shortlist based on your academics and budget.',
-        cta: 'Book a free consultation',
+        cta: 'Request a consultation',
       },
       {
         timing: 'Day 1–2',
@@ -82,8 +82,8 @@ export const EMAIL_SEQUENCES: EmailSequence[] = [
         subject: 'Ready to plan your intake?',
         preview: 'One free session, a full roadmap.',
         body:
-          'Book a free consultation and leave with a written plan: target universities, scholarship options, English test timeline, and key deadlines. No fees, no obligation — just a roadmap you can act on.',
-        cta: 'Book a free consultation',
+          'Request a consultation and leave with a written plan: target universities, scholarship options, English test timeline, and key deadlines. No fees, no obligation — just a roadmap you can act on.',
+        cta: 'Request a consultation',
       },
     ],
   },
@@ -154,7 +154,7 @@ export const EMAIL_SEQUENCES: EmailSequence[] = [
         preview: 'Free, 30 minutes, written follow-up.',
         body:
           'One free session is enough to map your intake: shortlist, budget, English test dates, scholarship targets, and deadlines. Bring your documents; leave with a written plan.',
-        cta: 'Book a free consultation',
+        cta: 'Request a consultation',
       },
     ],
   },

@@ -201,7 +201,8 @@ export function scoreScholarship(
 
   const matchScore = possible > 0 ? Math.round((earned / possible) * 100) : 0;
 
-  if (scholarship.verificationStatus && scholarship.verificationStatus !== 'verified') {
+  const verificationStatus = String(scholarship.verificationStatus || '').trim().toLowerCase();
+  if (verificationStatus && verificationStatus !== 'verified' && verificationStatus !== 'verified_recent') {
     concerns.push(`Verification status is "${scholarship.verificationStatus}" — confirm details with the provider before applying.`);
   }
 

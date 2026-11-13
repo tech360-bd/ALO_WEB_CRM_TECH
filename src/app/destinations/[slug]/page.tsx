@@ -9,7 +9,7 @@ import {
   publicCoursesInCountryWhere,
   publicIntakeWhere,
   publicRequirementWhere,
-  publicScholarshipWhere,
+  publicCrmScholarshipWhere,
   publicScholarshipsInCountryWhere,
   publicUniversitiesInCountryWhere,
   stripInternalFields,
@@ -62,7 +62,7 @@ export default async function CountryDestinationPage({ params }: { params: Promi
         university: { select: { name: true, city: true, country: true, slug: true, universityId: true, ieltsMin: true, scholarships: true, lastVerifiedAt: true, sourceUrl: true } },
         intakeFees: { where: publicIntakeWhere(), take: 2, orderBy: { intakeYear: 'asc' } },
         requirements: { where: publicRequirementWhere(), take: 1 },
-        scholarshipRecords: { where: publicScholarshipWhere(), take: 2 },
+        scholarshipRecords: { where: publicCrmScholarshipWhere(), take: 2 },
       },
     }),
     db.crmUniversity.findMany({
@@ -70,7 +70,7 @@ export default async function CountryDestinationPage({ params }: { params: Promi
       where: publicUniversitiesInCountryWhere(countryData.name, countryData.code),
       orderBy: { name: 'asc' },
       include: {
-        _count: { select: { courses: { where: publicCourseWhere() }, scholarshipRecords: { where: publicScholarshipWhere() } } },
+        _count: { select: { courses: { where: publicCourseWhere() }, scholarshipRecords: { where: publicCrmScholarshipWhere() } } },
       },
     }),
     db.crmScholarship.findMany({

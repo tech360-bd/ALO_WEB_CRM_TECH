@@ -21,6 +21,8 @@ import {
   Settings,
   Check,
   CheckCheck,
+  AlertTriangle,
+  RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -57,131 +59,27 @@ const TYPE_CONFIG: Record<
   NotificationType,
   { icon: React.ElementType; color: string; bg: string }
 > = {
-  application: { icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
-  document: { icon: FileUp, color: 'text-amber-600', bg: 'bg-amber-50' },
-  visa: { icon: Shield, color: 'text-purple-600', bg: 'bg-purple-50' },
-  message: { icon: MessageSquare, color: 'text-green-600', bg: 'bg-green-50' },
-  deadline: { icon: Clock, color: 'text-red-600', bg: 'bg-red-50' },
-  scholarship: { icon: Award, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  payment: { icon: CreditCard, color: 'text-orange-600', bg: 'bg-orange-50' },
-  system: { icon: Settings, color: 'text-slate-500', bg: 'bg-slate-50' },
+  application: { icon: FileText, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
+  document: { icon: FileUp, color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg' },
+  visa: { icon: Shield, color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]' },
+  message: { icon: MessageSquare, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
+  deadline: { icon: Clock, color: 'text-crm-danger-text', bg: 'bg-crm-danger-bg' },
+  scholarship: { icon: Award, color: 'text-crm-success-text', bg: 'bg-crm-success-bg' },
+  payment: { icon: CreditCard, color: 'text-[var(--alo-cta-active)]', bg: 'bg-[var(--alo-cta-soft)]' },
+  system: { icon: Settings, color: 'text-[var(--alo-text-muted)]', bg: 'bg-[var(--alo-page)]' },
 };
 
 /* ================================================================== */
-/*  MOCK DATA                                                          */
+/*  NOTE ON THE REMOVED MOCK DATA                                     */
 /* ================================================================== */
-const INITIAL_NOTIFICATIONS: Notification[] = [
-  {
-    id: 'n1',
-    type: 'application',
-    title: 'Conditional offer received from University of Aberdeen',
-    description:
-      'Review your offer conditions and respond before the deadline.',
-    timeAgo: '2 hours ago',
-    isRead: false,
-    group: 'today',
-    navigateTo: 'student-applications',
-  },
-  {
-    id: 'n2',
-    type: 'document',
-    title: 'IELTS certificate expiring soon',
-    description:
-      'Your IELTS certificate expires in 30 days. Plan a retake.',
-    timeAgo: '5 hours ago',
-    isRead: false,
-    group: 'today',
-    navigateTo: 'student-documents',
-  },
-  {
-    id: 'n3',
-    type: 'document',
-    title: 'Document rejected: HSC Transcript',
-    description:
-      'Please upload a clear scan. Current image is blurry.',
-    timeAgo: '1 day ago',
-    isRead: false,
-    group: 'yesterday',
-    navigateTo: 'student-documents',
-  },
-  {
-    id: 'n4',
-    type: 'visa',
-    title: 'Visa checklist updated',
-    description:
-      'TB test certificate added to your checklist.',
-    timeAgo: '1 day ago',
-    isRead: true,
-    group: 'yesterday',
-    navigateTo: 'student-visa',
-  },
-  {
-    id: 'n5',
-    type: 'message',
-    title: 'New message from Sarah Khan',
-    description:
-      '"Hi Rahim, I\'ve reviewed your SOP draft..."',
-    timeAgo: '2 days ago',
-    isRead: true,
-    group: 'this-week',
-    navigateTo: 'student-messages',
-  },
-  {
-    id: 'n6',
-    type: 'scholarship',
-    title: 'Scholarship deadline approaching',
-    description:
-      'Chevening Scholarship deadline is Nov 5.',
-    timeAgo: '3 days ago',
-    isRead: true,
-    group: 'this-week',
-    navigateTo: 'student-scholarships',
-  },
-  {
-    id: 'n7',
-    type: 'visa',
-    title: 'Interview practice available',
-    description:
-      'Book your visa mock interview practice session.',
-    timeAgo: '3 days ago',
-    isRead: false,
-    group: 'this-week',
-    navigateTo: 'student-appointments',
-  },
-  {
-    id: 'n8',
-    type: 'application',
-    title: 'Application submitted to University of Leeds',
-    description:
-      'Your application has been submitted successfully.',
-    timeAgo: '5 days ago',
-    isRead: true,
-    group: 'this-week',
-    navigateTo: 'student-applications',
-  },
-  {
-    id: 'n9',
-    type: 'payment',
-    title: 'Payment receipt uploaded',
-    description:
-      'Your deposit payment receipt has been received.',
-    timeAgo: '1 week ago',
-    isRead: true,
-    group: 'earlier',
-    navigateTo: 'student-payments',
-  },
-  {
-    id: 'n10',
-    type: 'system',
-    title: 'Welcome to ALO Education',
-    description:
-      'Complete your profile to get personalized course recommendations.',
-    timeAgo: '2 weeks ago',
-    isRead: true,
-    group: 'earlier',
-    navigateTo: 'student-profile',
-  },
-];
+/* A hard-coded INITIAL_NOTIFICATIONS array of ten invented rows used to live  */
+/* here and was used as the component's INITIAL STATE. Because the fetch only   */
+/* replaced it when the API returned a non-empty list, every failure path - no   */
+/* token, network error, success:false, or a student who genuinely has no        */
+/* notifications - left fabricated items such as "Conditional offer received     */
+/* from University of Aberdeen" on a real student's screen. That is prohibited   */
+/* by spec s92 and is misinformation about the student's own file, so the list   */
+/* was deleted rather than left dormant where it could be reused.                */
 
 const GROUP_LABELS: Record<NotificationGroup, string> = {
   today: 'Today',
@@ -209,8 +107,8 @@ function NotificationCard({
   return (
     <Card
       className={cn(
-        'relative border transition-colors hover:border-blue-200 hover:shadow-sm cursor-pointer',
-        !notification.isRead && 'border-l-4 border-l-blue-500 bg-blue-50/30'
+        'relative border transition-colors hover:border-[var(--alo-border)] hover:shadow-sm cursor-pointer',
+        !notification.isRead && 'border-l-4 border-l-blue-500 bg-[var(--alo-brand-pale)]/30'
       )}
       onClick={() => onNavigate(notification.navigateTo)}
     >
@@ -218,7 +116,7 @@ function NotificationCard({
         {/* Unread dot */}
         {!notification.isRead && (
           <span className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden sm:block">
-            <span className="block size-2.5 rounded-full bg-blue-500" />
+            <span className="block size-2.5 rounded-full bg-[var(--alo-brand)]" />
           </span>
         )}
 
@@ -232,7 +130,7 @@ function NotificationCard({
           <div className="flex items-start justify-between gap-2">
             <h4
               className={cn(
-                'text-sm font-medium leading-snug text-slate-900',
+                'text-sm font-medium leading-snug text-[var(--alo-text)]',
                 !notification.isRead && 'font-semibold'
               )}
             >
@@ -240,10 +138,10 @@ function NotificationCard({
             </h4>
             {!notification.isRead && (
               <Button
-                variant="ghost"
-                size="sm"
-                className="shrink-0 h-7 px-2 text-xs text-slate-500 hover:text-blue-600"
-                onClick={(e) => {
+ variant="ghost"
+ size="sm"
+ className="shrink-0 h-7 px-2 text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)]"
+ onClick={(e) => {
                   e.stopPropagation();
                   onMarkRead(notification.id);
                 }}
@@ -253,10 +151,10 @@ function NotificationCard({
               </Button>
             )}
           </div>
-          <p className="mt-1 text-sm text-slate-600 line-clamp-2">
+          <p className="mt-1 text-sm text-[var(--alo-body)] line-clamp-2">
             {notification.description}
           </p>
-          <p className="mt-1.5 text-xs text-slate-400">{notification.timeAgo}</p>
+          <p className="mt-1.5 text-xs text-[var(--alo-text-muted)]">{notification.timeAgo}</p>
         </div>
       </CardContent>
     </Card>
@@ -268,44 +166,80 @@ function NotificationCard({
 /* ================================================================== */
 export function StudentNotifications() {
   const { setView, token } = usePortalStore();
-  const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
+  // Never seed with fabricated notifications (spec s92). This panel tells a
+  // student about their OWN offers, documents and deadlines, so invented rows
+  // are misinformation, not placeholder styling. Start empty and distinguish
+  // three real states: not yet loaded, loaded-and-empty, and failed.
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [activeTab, setActiveTab] = useState('all');
 
   // Load notifications from API
   useEffect(() => {
-    if (!token) { setLoading(false); return; }
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(null);
+
+    if (!token) {
+      // Without a session we cannot know whether the student has notifications,
+      // so say that rather than showing an empty list or invented content.
+      if (!cancelled) {
+        setNotifications([]);
+        setLoading(false);
+        setLoadError('You are not signed in, so notifications could not be loaded.');
+      }
+      return;
+    }
+
     fetch('/api/student-portal/notifications', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(r => r.json())
-      .then(j => {
-        if (j.success && j.data && j.data.length > 0) {
-          const now = new Date();
-          const mapped = j.data.map((n: Record<string, unknown>) => {
-            const created = new Date(n.createdAt as string);
-            const diffDays = Math.floor((now.getTime() - created.getTime()) / 86400000);
-            let group: NotificationGroup = 'earlier';
-            if (diffDays === 0) group = 'today';
-            else if (diffDays === 1) group = 'yesterday';
-            else if (diffDays <= 7) group = 'this-week';
-            return {
-              id: n.id as string,
-              type: (['application','document','visa','message','deadline','scholarship','payment','system'].includes(n.type as string) ? n.type : 'system') as NotificationType,
-              title: (n.title as string) || 'Notification',
-              description: (n.message as string) || '',
-              timeAgo: diffDays === 0 ? 'Today' : diffDays === 1 ? 'Yesterday' : `${diffDays} days ago`,
-              isRead: !!(n.isRead as boolean),
-              group,
-              navigateTo: 'student-dashboard',
-            };
-          });
-          setNotifications(mapped);
+      .then(async (r) => {
+        const j = await r.json().catch(() => null);
+        if (cancelled) return;
+        if (!r.ok || !j?.success) {
+          setNotifications([]);
+          setLoadError(j?.error || `Could not load notifications (status ${r.status}).`);
+          setLoading(false);
+          return;
         }
+        const rows = Array.isArray(j.data) ? j.data : [];
+        const now = new Date();
+        const mapped = rows.map((n: Record<string, unknown>) => {
+          const created = new Date(n.createdAt as string);
+          const diffDays = Number.isFinite(created.getTime())
+            ? Math.floor((now.getTime() - created.getTime()) / 86400000)
+            : 0;
+          let group: NotificationGroup = 'earlier';
+          if (diffDays === 0) group = 'today';
+          else if (diffDays === 1) group = 'yesterday';
+          else if (diffDays <= 7) group = 'this-week';
+          return {
+            id: n.id as string,
+            type: (['application','document','visa','message','deadline','scholarship','payment','system'].includes(n.type as string) ? n.type : 'system') as NotificationType,
+            title: (n.title as string) || 'Notification',
+            description: (n.message as string) || '',
+            timeAgo: diffDays === 0 ? 'Today' : diffDays === 1 ? 'Yesterday' : `${diffDays} days ago`,
+            isRead: !!(n.isRead as boolean),
+            group,
+            navigateTo: 'student-dashboard',
+          };
+        });
+        // An empty list is a truthful answer and is applied as-is.
+        setNotifications(mapped);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
-  }, [token]);
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setNotifications([]);
+        setLoadError(error instanceof Error ? error.message : 'Could not reach the notification service.');
+        setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [token, reloadKey]);
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.isRead).length,
@@ -370,9 +304,9 @@ export function StudentNotifications() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-slate-900">Notifications</h1>
+          <h1 className="text-2xl font-bold text-[var(--alo-text)]">Notifications</h1>
           {unreadCount > 0 && (
-            <Badge className="bg-blue-600 text-white hover:bg-blue-700 px-2.5 py-0.5 text-xs font-semibold">
+            <Badge className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] px-2.5 py-0.5 text-xs font-semibold">
               {unreadCount} unread
             </Badge>
           )}
@@ -381,7 +315,7 @@ export function StudentNotifications() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-slate-600 hover:text-blue-600"
+            className="text-[var(--alo-body)] hover:text-[var(--alo-brand)]"
             onClick={handleMarkAllRead}
           >
             <CheckCheck className="size-4 mr-1.5" />
@@ -407,11 +341,11 @@ export function StudentNotifications() {
               <TabsTrigger
                 key={tab.key}
                 value={tab.key}
-                className="text-xs px-2.5 py-1.5 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                className="text-xs px-2.5 py-1.5 data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white data-[state=active]:shadow-sm"
               >
                 {tab.label}
                 {tabCounts[tab.key] > 0 && (
-                  <span className="ml-1 text-[10px] opacity-70">({tabCounts[tab.key]})</span>
+                  <span className="ml-1 text-[11px] opacity-70">({tabCounts[tab.key]})</span>
                 )}
               </TabsTrigger>
             ))}
@@ -420,12 +354,39 @@ export function StudentNotifications() {
 
         {/* Single content slot renders all groups */}
         <TabsContent value={activeTab} className="mt-4">
-          {filtered.length === 0 ? (
+          {loadError ? (
+            /* A failed load must not read as an empty inbox (s91). Claiming
+               "You're all caught up" here would tell a student they have no
+               offers, deadlines or document alerts when we simply could not
+               check. */
+            <Card className="border-2 border-crm-warning-border">
+              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                <AlertTriangle className="size-12 text-crm-warning-text mb-3" />
+                <p className="text-sm font-medium text-[var(--alo-text)]">
+                  Notifications could not be loaded
+                </p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1 max-w-sm">{loadError}</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-2 max-w-sm">
+                  This does not mean you have no notifications. Retry, and contact
+                  your counselor if it keeps failing.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                  onClick={() => setReloadKey((key) => key + 1)}
+                >
+                  <RefreshCw className="size-3.5 mr-1.5" />
+                  Try again
+                </Button>
+              </CardContent>
+            </Card>
+          ) : filtered.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <CheckCheck className="size-12 text-slate-300 mb-3" />
-                <p className="text-sm font-medium text-slate-500">No notifications</p>
-                <p className="text-xs text-slate-400 mt-1">
+                <CheckCheck className="size-12 text-[var(--alo-placeholder)] mb-3" />
+                <p className="text-sm font-medium text-[var(--alo-text-muted)]">No notifications</p>
+                <p className="text-xs text-[var(--alo-text-muted)] mt-1">
                   You&apos;re all caught up!
                 </p>
               </CardContent>
@@ -438,7 +399,7 @@ export function StudentNotifications() {
                   if (!items || items.length === 0) return null;
                   return (
                     <div key={group}>
-                      <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 px-1">
+                      <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--alo-text-muted)] mb-3 px-1">
                         {GROUP_LABELS[group]}
                       </h3>
                       <div className="space-y-2">

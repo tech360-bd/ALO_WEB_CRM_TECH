@@ -1,0 +1,502 @@
+{
+  "scope": "Focused unit verification only. Mocked persistence and synthetic university fixtures are not live data research or end-to-end acceptance.",
+  "completeAcceptanceRounds": 0,
+  "productionReady": false,
+  "rounds": [
+    {
+      "round": 1,
+      "passed": 171,
+      "failed": 0,
+      "pending": 0,
+      "success": true,
+      "files": [
+        {
+          "path": "tests/unit/catalogue-monitoring-persistence.test.ts",
+          "status": "passed",
+          "tests": 5
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-proxy.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-real-auth.test.ts",
+          "status": "passed",
+          "tests": 9
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-publication.test.ts",
+          "status": "passed",
+          "tests": 18
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-writes.test.ts",
+          "status": "passed",
+          "tests": 29
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-security.test.ts",
+          "status": "passed",
+          "tests": 24
+        },
+        {
+          "path": "tests/unit/catalogue-traversal.test.ts",
+          "status": "passed",
+          "tests": 11
+        },
+        {
+          "path": "tests/unit/design-tokens.test.ts",
+          "status": "passed",
+          "tests": 17
+        },
+        {
+          "path": "tests/unit/university-monitoring-access.test.ts",
+          "status": "passed",
+          "tests": 10
+        },
+        {
+          "path": "tests/unit/university-monitoring-approval.test.ts",
+          "status": "passed",
+          "tests": 6
+        },
+        {
+          "path": "tests/unit/university-monitoring-dashboard.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-knowledge.test.ts",
+          "status": "passed",
+          "tests": 12
+        },
+        {
+          "path": "tests/unit/university-monitoring-recheck-race.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-runner.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-schedule.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-source-policy.test.ts",
+          "status": "passed",
+          "tests": 4
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "passed": 171,
+      "failed": 0,
+      "pending": 0,
+      "success": true,
+      "files": [
+        {
+          "path": "tests/unit/catalogue-monitoring-persistence.test.ts",
+          "status": "passed",
+          "tests": 5
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-proxy.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-real-auth.test.ts",
+          "status": "passed",
+          "tests": 9
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-publication.test.ts",
+          "status": "passed",
+          "tests": 18
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-writes.test.ts",
+          "status": "passed",
+          "tests": 29
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-security.test.ts",
+          "status": "passed",
+          "tests": 24
+        },
+        {
+          "path": "tests/unit/catalogue-traversal.test.ts",
+          "status": "passed",
+          "tests": 11
+        },
+        {
+          "path": "tests/unit/design-tokens.test.ts",
+          "status": "passed",
+          "tests": 17
+        },
+        {
+          "path": "tests/unit/university-monitoring-access.test.ts",
+          "status": "passed",
+          "tests": 10
+        },
+        {
+          "path": "tests/unit/university-monitoring-approval.test.ts",
+          "status": "passed",
+          "tests": 6
+        },
+        {
+          "path": "tests/unit/university-monitoring-dashboard.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-knowledge.test.ts",
+          "status": "passed",
+          "tests": 12
+        },
+        {
+          "path": "tests/unit/university-monitoring-recheck-race.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-runner.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-schedule.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-source-policy.test.ts",
+          "status": "passed",
+          "tests": 4
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "passed": 171,
+      "failed": 0,
+      "pending": 0,
+      "success": true,
+      "files": [
+        {
+          "path": "tests/unit/catalogue-monitoring-persistence.test.ts",
+          "status": "passed",
+          "tests": 5
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-proxy.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-real-auth.test.ts",
+          "status": "passed",
+          "tests": 9
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-publication.test.ts",
+          "status": "passed",
+          "tests": 18
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-writes.test.ts",
+          "status": "passed",
+          "tests": 29
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-security.test.ts",
+          "status": "passed",
+          "tests": 24
+        },
+        {
+          "path": "tests/unit/catalogue-traversal.test.ts",
+          "status": "passed",
+          "tests": 11
+        },
+        {
+          "path": "tests/unit/design-tokens.test.ts",
+          "status": "passed",
+          "tests": 17
+        },
+        {
+          "path": "tests/unit/university-monitoring-access.test.ts",
+          "status": "passed",
+          "tests": 10
+        },
+        {
+          "path": "tests/unit/university-monitoring-approval.test.ts",
+          "status": "passed",
+          "tests": 6
+        },
+        {
+          "path": "tests/unit/university-monitoring-dashboard.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-knowledge.test.ts",
+          "status": "passed",
+          "tests": 12
+        },
+        {
+          "path": "tests/unit/university-monitoring-recheck-race.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-runner.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-schedule.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-source-policy.test.ts",
+          "status": "passed",
+          "tests": 4
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "passed": 171,
+      "failed": 0,
+      "pending": 0,
+      "success": true,
+      "files": [
+        {
+          "path": "tests/unit/catalogue-monitoring-persistence.test.ts",
+          "status": "passed",
+          "tests": 5
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-proxy.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-real-auth.test.ts",
+          "status": "passed",
+          "tests": 9
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-publication.test.ts",
+          "status": "passed",
+          "tests": 18
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-writes.test.ts",
+          "status": "passed",
+          "tests": 29
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-security.test.ts",
+          "status": "passed",
+          "tests": 24
+        },
+        {
+          "path": "tests/unit/catalogue-traversal.test.ts",
+          "status": "passed",
+          "tests": 11
+        },
+        {
+          "path": "tests/unit/design-tokens.test.ts",
+          "status": "passed",
+          "tests": 17
+        },
+        {
+          "path": "tests/unit/university-monitoring-access.test.ts",
+          "status": "passed",
+          "tests": 10
+        },
+        {
+          "path": "tests/unit/university-monitoring-approval.test.ts",
+          "status": "passed",
+          "tests": 6
+        },
+        {
+          "path": "tests/unit/university-monitoring-dashboard.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-knowledge.test.ts",
+          "status": "passed",
+          "tests": 12
+        },
+        {
+          "path": "tests/unit/university-monitoring-recheck-race.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-runner.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-schedule.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-source-policy.test.ts",
+          "status": "passed",
+          "tests": 4
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "passed": 171,
+      "failed": 0,
+      "pending": 0,
+      "success": true,
+      "files": [
+        {
+          "path": "tests/unit/catalogue-monitoring-persistence.test.ts",
+          "status": "passed",
+          "tests": 5
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-proxy.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-real-auth.test.ts",
+          "status": "passed",
+          "tests": 9
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-publication.test.ts",
+          "status": "passed",
+          "tests": 18
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-review-writes.test.ts",
+          "status": "passed",
+          "tests": 29
+        },
+        {
+          "path": "tests/unit/catalogue-phase1-security.test.ts",
+          "status": "passed",
+          "tests": 24
+        },
+        {
+          "path": "tests/unit/catalogue-traversal.test.ts",
+          "status": "passed",
+          "tests": 11
+        },
+        {
+          "path": "tests/unit/design-tokens.test.ts",
+          "status": "passed",
+          "tests": 17
+        },
+        {
+          "path": "tests/unit/university-monitoring-access.test.ts",
+          "status": "passed",
+          "tests": 10
+        },
+        {
+          "path": "tests/unit/university-monitoring-approval.test.ts",
+          "status": "passed",
+          "tests": 6
+        },
+        {
+          "path": "tests/unit/university-monitoring-dashboard.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-knowledge.test.ts",
+          "status": "passed",
+          "tests": 12
+        },
+        {
+          "path": "tests/unit/university-monitoring-recheck-race.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-runner.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "path": "tests/unit/university-monitoring-schedule.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "path": "tests/unit/university-monitoring-source-policy.test.ts",
+          "status": "passed",
+          "tests": 4
+        }
+      ]
+    }
+  ],
+  "repositoryVerification": {
+    "fullTestCommand": "npm test",
+    "exitCode": 1,
+    "passedTests": 2698,
+    "failedTests": 3,
+    "skippedTests": 28,
+    "passedFiles": 227,
+    "failedFiles": 14,
+    "skippedFiles": 2,
+    "blockingError": "Cannot find module '.prisma/client/default'",
+    "lint": {
+      "command": "npm run lint",
+      "exitCode": 0
+    },
+    "pureTypecheck": {
+      "command": "npx tsc --project tsconfig.monitoring-pure.json --noEmit",
+      "exitCode": 0
+    },
+    "applicationTypecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 1,
+      "blockingError": "Generated Prisma client unavailable"
+    },
+    "scopedTypecheck": {
+      "command": "npx tsc --project tsconfig.monitoring-scope.json --noEmit",
+      "exitCode": 2,
+      "error": "src/lib/db.ts(1,10): TS2305: @prisma/client has no exported member PrismaClient"
+    },
+    "build": {
+      "command": "npm run build",
+      "exitCode": 1,
+      "blockingError": "Prisma engine download TLS/network failure at binaries.prisma.sh"
+    },
+    "schemaValidation": {
+      "command": "npx prisma validate",
+      "exitCode": 1,
+      "blockingError": "Prisma engine download TLS/network failure at binaries.prisma.sh"
+    },
+    "diffCheck": {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  },
+  "environment": {
+    "DATABASE_URL_present": false,
+    "TEST_DATABASE_URL_present": false,
+    "universityOfficialPagesFetched": 0,
+    "productionDeployments": 0,
+    "newlyVerifiedLiveRecords": 0
+  }
+}

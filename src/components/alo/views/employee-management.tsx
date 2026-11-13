@@ -144,21 +144,21 @@ type EmployeeListResponse = {
 // ---------------------------------------------------------------------------
 
 const PROFILE_STATUS_COLORS: Record<string, string> = {
-  INCOMPLETE: "bg-slate-100 text-slate-700",
-  SUBMITTED: "bg-amber-100 text-amber-700",
+  INCOMPLETE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  SUBMITTED: "bg-crm-warning-bg text-crm-warning-text",
   UNDER_REVIEW: "bg-sky-100 text-sky-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  CORRECTION_REQUIRED: "bg-rose-100 text-rose-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
-  INACTIVE: "bg-slate-100 text-slate-500",
-  TERMINATED: "bg-slate-200 text-slate-600",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  CORRECTION_REQUIRED: "bg-crm-warning-bg text-crm-warning-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
-  INACTIVE: "bg-slate-100 text-slate-500",
-  TERMINATED: "bg-slate-200 text-slate-600",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const PROFILE_STATUS_OPTIONS = [
@@ -202,19 +202,19 @@ const DOC_TYPE_LABELS: Record<string, string> = {
 };
 
 const DOC_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const SUPER_ADMIN_ID = "seed-super-admin";
 
 // Profile workflow stages for the visual note
 const PROFILE_WORKFLOW = [
-  { key: "INCOMPLETE", label: "Incomplete", icon: "CircleDashed", color: "text-slate-500" },
-  { key: "SUBMITTED", label: "Submitted", icon: "Send", color: "text-amber-600" },
+  { key: "INCOMPLETE", label: "Incomplete", icon: "CircleDashed", color: "text-[var(--alo-text-muted)]" },
+  { key: "SUBMITTED", label: "Submitted", icon: "Send", color: "text-crm-warning-text" },
   { key: "UNDER_REVIEW", label: "Under Review", icon: "Search", color: "text-sky-600" },
-  { key: "APPROVED", label: "Approved", icon: "CheckCircle", color: "text-emerald-600" },
+  { key: "APPROVED", label: "Approved", icon: "CheckCircle", color: "text-crm-success-text" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -534,7 +534,7 @@ export function EmployeeManagement() {
           title="No employees match your filters"
           description="Try adjusting the filters above, or create a new employee account."
           action={
-            <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
+            <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
               <Icon name="Plus" className="size-4" />
               Create Employee
             </Button>
@@ -546,7 +546,7 @@ export function EmployeeManagement() {
           description={`${filtered.length} of ${employees.length} employees`}
           icon="Users"
           action={
-            <Button className="bg-[#E8501A] hover:bg-[#E8501A]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
+            <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta)]/90 text-white h-12" onClick={() => { setCreateResult(null); setCreateOpen(true); }}>
               <Icon name="Plus" className="size-4" />
               Create Employee
             </Button>
@@ -570,15 +570,15 @@ export function EmployeeManagement() {
               <TableBody>
                 {filtered.map((emp) => (
                   <TableRow key={emp.id}>
-                    <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">
+                    <TableCell className="font-mono text-xs font-semibold text-[var(--alo-brand)]">
                       {emp.employeeCode}
                     </TableCell>
                     <TableCell>
                       <div className="font-medium">{emp.fullName}</div>
-                      <div className="text-[10px] text-muted-foreground">{emp.companyEmail}</div>
+                      <div className="text-[11px] text-muted-foreground">{emp.companyEmail}</div>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                      <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                         {emp.designation}
                       </Badge>
                     </TableCell>
@@ -605,9 +605,9 @@ export function EmployeeManagement() {
                         </Button>
                         {(emp.profileStatus === "SUBMITTED" || emp.profileStatus === "UNDER_REVIEW") && (
                           <Button
-                            size="sm"
-                            className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90"
-                            onClick={() => handleApproveProfile(emp)}
+ size="sm"
+ className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90"
+ onClick={() => handleApproveProfile(emp)}
                           >
                             <Icon name="Check" className="size-3.5" />
                             <span className="hidden md:inline">Approve</span>
@@ -637,14 +637,14 @@ export function EmployeeManagement() {
       {/* Profile workflow + privacy notes */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Workflow */}
-        <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+        <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
           <CardContent className="pt-5">
             <div className="mb-3 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                 <Icon name="GitBranch" className="size-4" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[#0057B8]">Profile Review Workflow</p>
+                <p className="text-sm font-semibold text-[var(--alo-brand)]">Profile Review Workflow</p>
                 <p className="text-xs text-muted-foreground">HR reviews and approves employee profiles after self-completion.</p>
               </div>
             </div>
@@ -661,22 +661,22 @@ export function EmployeeManagement() {
                 </React.Fragment>
               ))}
             </div>
-            <div className="mt-3 flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50/60 px-2.5 py-1.5">
-              <Icon name="AlertTriangle" className="size-3.5 text-rose-600" />
-              <span className="text-xs text-rose-700">If issues found → Correction Required (HR sends back)</span>
+            <div className="mt-3 flex items-center gap-1.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg/60 px-2.5 py-1.5">
+              <Icon name="AlertTriangle" className="size-3.5 text-crm-warning-text" />
+              <span className="text-xs text-crm-warning-text">If issues found → Correction Required (HR sends back)</span>
             </div>
           </CardContent>
         </Card>
 
         {/* Privacy note */}
-        <Card className="rounded-2xl border-2 border-[#E8501A]/20 bg-[#fdece4]/30">
+        <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/20 bg-[var(--alo-cta-soft)]/30">
           <CardContent className="pt-5">
             <div className="mb-3 flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-[#E8501A] text-white">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-cta)] text-white">
                 <Icon name="ShieldCheck" className="size-4" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[#E8501A]">Profile Privacy Policy</p>
+                <p className="text-sm font-semibold text-[var(--alo-cta)]">Profile Privacy Policy</p>
                 <p className="text-xs text-muted-foreground">Private data is hidden from normal users.</p>
               </div>
             </div>
@@ -685,14 +685,14 @@ export function EmployeeManagement() {
               documents, NID/passport, bank details, HR documents, leave records — is hidden from
               normal users.
             </p>
-            <p className="mt-2 text-xs font-semibold text-[#0057B8]">Who can view private data:</p>
+            <p className="mt-2 text-xs font-semibold text-[var(--alo-brand)]">Who can view private data:</p>
             <ul className="mt-1.5 space-y-1 text-xs text-foreground/80">
-              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> The employee themselves</li>
-              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> Super Admin</li>
-              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> Chairman</li>
-              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-emerald-600" /> HR Manager (with permission)</li>
+              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-crm-success-text" /> The employee themselves</li>
+              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-crm-success-text" /> Super Admin</li>
+              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-crm-success-text" /> Chairman</li>
+              <li className="flex items-center gap-1.5"><Icon name="Check" className="size-3 text-crm-success-text" /> HR Manager (with permission)</li>
             </ul>
-            <p className="mt-2 text-[10px] text-muted-foreground">
+            <p className="mt-2 text-[11px] text-muted-foreground">
               Privacy mode is currently <strong>{privacyOn ? "ON" : "OFF"}</strong>. Toggle in the header to blur fields by default.
             </p>
           </CardContent>
@@ -705,7 +705,7 @@ export function EmployeeManagement() {
           {profileEmp && (
             <>
               <DialogHeader className="border-b border-border/60 px-6 py-4">
-                <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+                <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
                   <Icon name="UserSquare" className="size-5" />
                   Employee Profile
                 </DialogTitle>
@@ -759,7 +759,7 @@ export function EmployeeManagement() {
       <Dialog open={createOpen} onOpenChange={(o) => { setCreateOpen(o); if (!o) setCreateResult(null); }}>
         <DialogContent className="max-h-[90vh] overflow-hidden p-0 sm:max-w-2xl">
           <DialogHeader className="border-b border-border/60 px-6 py-4">
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="UserPlus" className="size-5" />
               Create Employee Account
             </DialogTitle>
@@ -856,8 +856,8 @@ export function EmployeeManagement() {
                     />
                   </div>
                 </div>
-                <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5 text-xs text-foreground/80">
-                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+                <div className="mt-4 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg/60 px-3 py-2.5 text-xs text-foreground/80">
+                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
                   <p>
                     Employee cannot login until password is created via activation link. Link expires
                     in 7 days. After activation, profile status moves to <strong>INCOMPLETE</strong> and
@@ -866,8 +866,8 @@ export function EmployeeManagement() {
                 </div>
               </ScrollArea>
               <DialogFooter className="border-t border-border/60 px-6 py-4">
-                <Button type="button" variant="outline" className="h-11" onClick={() => setCreateOpen(false)}>Cancel</Button>
-                <Button type="submit" className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90" disabled={creating}>
+                <Button type="button" variant="outline" className="" onClick={() => setCreateOpen(false)}>Cancel</Button>
+                <Button type="submit" className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={creating}>
                   {creating ? (
                     <><Icon name="Loader2" className="size-4 animate-spin" /> Creating…</>
                   ) : (
@@ -908,23 +908,23 @@ function DropdownActions({
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-50 mt-1 w-44 rounded-lg border-2 border-[#0057B8]/20 bg-white p-1 shadow-lg">
+          <div className="absolute right-0 z-50 mt-1 w-44 rounded-lg border-2 border-[var(--alo-brand)]/20 bg-white p-1 shadow-lg">
             <button
-              className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-[#e8f0fb]/60"
+              className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-[var(--alo-brand-light)]/60"
               onClick={() => { onEdit(); setOpen(false); }}
             >
               <Icon name="Pencil" className="size-3.5" /> Edit details
             </button>
             <button
-              className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-[#e8f0fb]/60"
+              className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-[var(--alo-brand-light)]/60"
               onClick={() => { onResend(); setOpen(false); }}
             >
               <Icon name="RefreshCw" className="size-3.5" /> Resend activation
             </button>
             <button
               className={cn(
-                "flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium hover:bg-[#e8f0fb]/60",
-                emp.status === "ACTIVE" ? "text-rose-600" : "text-emerald-600"
+                "flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium hover:bg-[var(--alo-brand-light)]/60",
+                emp.status === "ACTIVE" ? "text-crm-warning-text" : "text-crm-success-text"
               )}
               onClick={() => { onToggleStatus(); setOpen(false); }}
               disabled={emp.role === "SUPER_ADMIN"}
@@ -967,18 +967,18 @@ function EmployeeProfileBody({
   return (
     <div className="flex flex-col">
       {/* Employee header */}
-      <div className="flex flex-col gap-4 border-b border-border/60 bg-gradient-to-br from-[#e8f0fb]/60 to-white px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 border-b border-border/60 bg-gradient-to-br from-[var(--alo-brand-light)]/60 to-white px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-alo-gradient text-white alo-shadow">
             <span className="text-xl font-black">{emp.fullName.charAt(0).toUpperCase()}</span>
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-lg font-bold text-[#0057B8]">{emp.fullName}</h3>
-              <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">{emp.designation}</Badge>
+              <h3 className="text-lg font-bold text-[var(--alo-brand)]">{emp.fullName}</h3>
+              <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">{emp.designation}</Badge>
             </div>
             <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-              <code className="font-mono font-semibold text-[#0057B8]">{emp.employeeCode}</code>
+              <code className="font-mono font-semibold text-[var(--alo-brand)]">{emp.employeeCode}</code>
               <span className="inline-flex items-center gap-1"><Icon name="Building2" className="size-3" />{joinName(emp.department)}</span>
               <span className="inline-flex items-center gap-1"><Icon name="MapPin" className="size-3" />{joinName(emp.office)}</span>
             </div>
@@ -991,20 +991,20 @@ function EmployeeProfileBody({
           </div>
           <div className="flex flex-wrap gap-1.5">
             {(emp.profileStatus === "SUBMITTED" || emp.profileStatus === "UNDER_REVIEW") && (
-              <Button size="sm" className="h-8 bg-emerald-600 text-white hover:bg-emerald-600/90" onClick={onApprove}>
+              <Button size="sm" className=" bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90" onClick={onApprove}>
                 <Icon name="Check" className="size-3.5" /> Approve Profile
               </Button>
             )}
-            <Button size="sm" variant="outline" className="h-8" onClick={onResend}>
+            <Button size="sm" variant="outline" className="" onClick={onResend}>
               <Icon name="RefreshCw" className="size-3.5" /> Resend
             </Button>
             <Button
-              size="sm"
-              variant={emp.status === "ACTIVE" ? "destructive" : "outline"}
-              className="h-8"
-              onClick={onToggleStatus}
-              disabled={emp.role === "SUPER_ADMIN"}
-            >
+ size="sm"
+ variant={emp.status === "ACTIVE" ? "destructive" : "outline"}
+ className=""
+ onClick={onToggleStatus}
+ disabled={emp.role === "SUPER_ADMIN"}
+ >
               <Icon name={emp.status === "ACTIVE" ? "Ban" : "CheckCircle"} className="size-3.5" />
               {emp.status === "ACTIVE" ? "Suspend" : "Activate"}
             </Button>
@@ -1014,13 +1014,13 @@ function EmployeeProfileBody({
 
       {/* Privacy banner */}
       {canViewPrivate ? (
-        <div className="flex items-start gap-2 border-b border-emerald-200 bg-emerald-50/60 px-6 py-2.5 text-xs text-emerald-800">
-          <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+        <div className="flex items-start gap-2 border-b border-crm-success-border bg-crm-success-bg/60 px-6 py-2.5 text-xs text-crm-success-text">
+          <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
           <p>{detail.privacyNote}</p>
         </div>
       ) : (
-        <div className="flex items-start gap-2 border-b border-amber-200 bg-amber-50/60 px-6 py-2.5 text-xs text-amber-800">
-          <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+        <div className="flex items-start gap-2 border-b border-crm-warning-border bg-crm-warning-bg/60 px-6 py-2.5 text-xs text-crm-warning-text">
+          <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
           <p>
             <strong>Access restricted.</strong> {detail.privacyNote}
           </p>
@@ -1031,22 +1031,22 @@ function EmployeeProfileBody({
       <Tabs value={tab} onValueChange={onTabChange} className="flex-1 overflow-hidden">
         <div className="border-b border-border/60 px-6">
           <TabsList className="h-auto flex-wrap rounded-none bg-transparent p-0">
-            <TabsTrigger value="personal" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
+            <TabsTrigger value="personal" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--alo-brand)]">
               <Icon name="User" className="size-3.5" /> Personal
             </TabsTrigger>
-            <TabsTrigger value="employment" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
+            <TabsTrigger value="employment" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--alo-brand)]">
               <Icon name="Briefcase" className="size-3.5" /> Employment
             </TabsTrigger>
-            <TabsTrigger value="education" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
+            <TabsTrigger value="education" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--alo-brand)]">
               <Icon name="GraduationCap" className="size-3.5" /> Education
             </TabsTrigger>
-            <TabsTrigger value="emergency" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
+            <TabsTrigger value="emergency" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--alo-brand)]">
               <Icon name="PhoneCall" className="size-3.5" /> Emergency
             </TabsTrigger>
-            <TabsTrigger value="salary" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
+            <TabsTrigger value="salary" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--alo-brand)]">
               <Icon name="Wallet" className="size-3.5" /> Salary
             </TabsTrigger>
-            <TabsTrigger value="documents" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[#0057B8]">
+            <TabsTrigger value="documents" className="gap-1.5 rounded-none border-b-2 border-transparent data-[state=active]:border-[var(--alo-brand)]">
               <Icon name="FolderLock" className="size-3.5" /> Documents
             </TabsTrigger>
           </TabsList>
@@ -1098,7 +1098,7 @@ function EmployeeProfileBody({
           {/* Education */}
           <TabsContent value="education" className="mt-0">
             {education.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-[#0057B8]/20 px-4 py-3 text-xs text-muted-foreground">
+              <p className="rounded-lg border border-dashed border-[var(--alo-brand)]/20 px-4 py-3 text-xs text-muted-foreground">
                 No education records added yet.
               </p>
             ) : (
@@ -1111,7 +1111,7 @@ function EmployeeProfileBody({
                         <p className="text-xs text-muted-foreground">{ed.institution} · {ed.passingYear}</p>
                       </div>
                       {ed.result && (
-                        <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                        <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                           Result: {ed.result}
                         </Badge>
                       )}
@@ -1133,7 +1133,7 @@ function EmployeeProfileBody({
           {/* Emergency contact */}
           <TabsContent value="emergency" className="mt-0">
             {emergencyContacts.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-[#0057B8]/20 px-4 py-3 text-xs text-muted-foreground">
+              <p className="rounded-lg border border-dashed border-[var(--alo-brand)]/20 px-4 py-3 text-xs text-muted-foreground">
                 No emergency contacts on file.
               </p>
             ) : (
@@ -1172,18 +1172,18 @@ function EmployeeProfileBody({
           {/* Salary */}
           <TabsContent value="salary" className="mt-0">
             {!canViewPrivate ? (
-              <div className="rounded-xl border-2 border-amber-200 bg-amber-50/60 p-4 text-center">
-                <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+              <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/60 p-4 text-center">
+                <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-crm-warning-bg text-crm-warning-text">
                   <Icon name="Lock" className="size-5" />
                 </div>
-                <p className="mt-2 text-sm font-semibold text-amber-800">Salary data is private</p>
-                <p className="mt-1 text-xs text-amber-700">
+                <p className="mt-2 text-sm font-semibold text-crm-warning-text">Salary data is private</p>
+                <p className="mt-1 text-xs text-crm-warning-text">
                   Only the employee themselves, Super Admin, Chairman, and HR Manager (with permission)
                   can view salary details.
                 </p>
               </div>
             ) : !salary ? (
-              <p className="rounded-lg border border-dashed border-[#0057B8]/20 px-4 py-3 text-xs text-muted-foreground">
+              <p className="rounded-lg border border-dashed border-[var(--alo-brand)]/20 px-4 py-3 text-xs text-muted-foreground">
                 No salary record assigned yet.
               </p>
             ) : (
@@ -1193,12 +1193,12 @@ function EmployeeProfileBody({
                 <SensitiveField id={`sal-bonus-${emp.id}`} label="Bonus" type="currency" value={fmtBDT(salary.bonus)} mono />
                 <InfoRow label="Payment Method" value={salary.paymentMethod.replace(/_/g, " ")} />
                 <InfoRow label="Effective Date" value={fmtDate(salary.effectiveDate)} />
-                <InfoRow label="Visibility" value={<Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-700">{salary.visibility}</Badge>} />
+                <InfoRow label="Visibility" value={<Badge variant="outline" className="border-crm-warning-border bg-crm-warning-bg text-crm-warning-text">{salary.visibility}</Badge>} />
                 <SensitiveField id={`sal-bank-${emp.id}`} label="Bank Name" value={salary.bankName || "—"} />
                 <SensitiveField id={`sal-acct-${emp.id}`} label="Bank Account" value={salary.bankAccount || "—"} mono />
                 <div className="sm:col-span-2">
-                  <div className="mt-2 flex items-start gap-2 rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-3 py-2 text-xs text-foreground/80">
-                    <Icon name="ShieldAlert" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                  <div className="mt-2 flex items-start gap-2 rounded-lg border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-3 py-2 text-xs text-foreground/80">
+                    <Icon name="ShieldAlert" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                     <p>This access is audit-logged. Salary visibility changes require Chairman approval.</p>
                   </div>
                 </div>
@@ -1209,7 +1209,7 @@ function EmployeeProfileBody({
           {/* Documents */}
           <TabsContent value="documents" className="mt-0">
             {documents.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-[#0057B8]/20 px-4 py-3 text-xs text-muted-foreground">
+              <p className="rounded-lg border border-dashed border-[var(--alo-brand)]/20 px-4 py-3 text-xs text-muted-foreground">
                 No documents uploaded yet.
               </p>
             ) : (
@@ -1220,7 +1220,7 @@ function EmployeeProfileBody({
                     <div key={doc.id} className="flex items-center justify-between gap-3 rounded-lg border border-border/60 p-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <Icon name="FileText" className="size-4 text-[#0057B8]" />
+                          <Icon name="FileText" className="size-4 text-[var(--alo-brand)]" />
                           <p className="text-sm font-medium text-foreground">
                             {DOC_TYPE_LABELS[doc.documentType] || doc.documentType}
                           </p>
@@ -1243,7 +1243,7 @@ function EmployeeProfileBody({
                       </div>
                       <div className="shrink-0">
                         {downloadable ? (
-                          <Button size="sm" variant="outline" className="h-8" onClick={() => onDownloadDoc(doc)}>
+                          <Button size="sm" variant="outline" className="" onClick={() => onDownloadDoc(doc)}>
                             <Icon name="Download" className="size-3.5" />
                             Download
                           </Button>
@@ -1252,7 +1252,7 @@ function EmployeeProfileBody({
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <span>
-                                  <Button size="sm" variant="outline" className="h-8" disabled>
+                                  <Button size="sm" variant="outline" className="" disabled>
                                     <Icon name="Lock" className="size-3.5" />
                                     Download
                                   </Button>
@@ -1294,13 +1294,13 @@ function CreateEmployeeSuccess({
   return (
     <div className="flex max-h-[70vh] flex-col overflow-hidden">
       <ScrollArea className="flex-1 px-6 py-4">
-        <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/60 p-4">
+        <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/60 p-4">
           <div className="flex items-center gap-2">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-600 text-white">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-success-dark)] text-white">
               <Icon name="CheckCircle" className="size-5" />
             </div>
             <div>
-              <p className="font-semibold text-emerald-700">Employee account created</p>
+              <p className="font-semibold text-crm-success-text">Employee account created</p>
               <p className="text-xs text-foreground/80">
                 {result.employeeCode} · {result.companyEmail}
               </p>
@@ -1308,24 +1308,24 @@ function CreateEmployeeSuccess({
           </div>
         </div>
 
-        <div className={`mt-4 rounded-lg border p-3 text-sm ${result.emailSent ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>
+        <div className={`mt-4 rounded-lg border p-3 text-sm ${result.emailSent ? 'border-crm-success-border bg-crm-success-bg text-crm-success-text' : 'border-crm-warning-border bg-crm-warning-bg text-crm-warning-text'}`}>
           {result.emailSent
             ? 'The activation email was accepted by SMTP. This does not confirm inbox delivery.'
             : 'SMTP did not accept the activation email. Correct the email configuration and use the authenticated resend action.'}
         </div>
 
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2.5 text-xs text-foreground/80">
-          <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg/60 px-3 py-2.5 text-xs text-foreground/80">
+          <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
           <p>{result.message}</p>
         </div>
       </ScrollArea>
 
       <DialogFooter className="border-t border-border/60 px-6 py-4">
-        <Button variant="outline" className="h-11" onClick={onResend}>
+        <Button variant="outline" className="" onClick={onResend}>
           <Icon name="RefreshCw" className="size-4" />
           Resend Email
         </Button>
-        <Button className="h-11 bg-[#E8501A] text-white hover:bg-[#E8501A]/90" onClick={onClose}>
+        <Button className=" bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" onClick={onClose}>
           Done
         </Button>
       </DialogFooter>

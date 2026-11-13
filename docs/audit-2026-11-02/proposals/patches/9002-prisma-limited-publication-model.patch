@@ -1,0 +1,53 @@
+diff --git a/prisma/schema.prisma b/prisma/schema.prisma
+index 1771cc83..2171c7ab 100644
+--- a/prisma/schema.prisma
++++ b/prisma/schema.prisma
+@@ -1782,6 +1782,7 @@ model CrmCourse {
+   scholarshipRecords  CrmScholarship[]
+   commissions         CrmCommission[]
+   tags                CourseTag[]
++  limitedPublication  CrmCourseLimitedPublication?
+ 
+   @@index([universityId])
+   @@index([campusId])
+@@ -13982,6 +13983,40 @@ model ModuleBuildRequest {
+ //    "not offered" without an official source; absence of publication is
+ //    recorded as NOT_PUBLISHED, never silently converted to NOT_OFFERED.
+ 
++/// Limited-information publication approval.
++///
++/// A separate row, not a status on CrmCourse, so that:
++///  - `verificationStatus` keeps exactly one meaning (VERIFIED = fully evidenced);
++///  - an approval is attributable to one Super Admin at one time;
++///  - revoking publication never touches the verification record;
++///  - rollback is a single DROP TABLE with no change to CrmCourse data.
++/// `state` is APPROVED only when approvedByUserId is a real, non-acting Super Admin.
++model CrmCourseLimitedPublication {
++  id                    String    @id @default(cuid())
++  courseId              String    @unique
++  /// NOT_REQUESTED | PENDING_APPROVAL | APPROVED | REJECTED | REVOKED
++  state                 String    @default("NOT_REQUESTED")
++  approvedByUserId      String    @default("")
++  /// JSON array of the approver's roles at approval time.
++  approvedByRoles       String    @default("[]")
++  approvedAt            DateTime?
++  revokedByUserId       String    @default("")
++  revokedAt             DateTime?
++  /// Operator's stated reason; shown in the audit trail, never public.
++  reason                String    @db.Text
++  /// JSON array of CrmOfficialEvidence.evidenceKey values at approval time.
++  /// A later re-link invalidates the approval rather than silently widening it.
++  evidenceSnapshotKeys  String    @db.Text
++  createdAt             DateTime  @default(now())
++  updatedAt             DateTime  @updatedAt
++
++  course                CrmCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
++
++  @@index([state])
++  @@index([approvedByUserId])
++  @@index([approvedAt])
++}
++
+ model CrmOfficialEvidence {
+   id                 String   @id @default(cuid())
+   /// Deterministic dedupe key: sha256(sourceUrl + entity target + field scope + content hash)

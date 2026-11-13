@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
-import { publicCourseWhere, publicScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicCrmScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
 
 // ============================================================
 // GET /api/student-portal/scholarships
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
       // Phase 1 review (P0-C): only source-verified active scholarships of a
       // public university are listed to students.
-      const where: Record<string, unknown> = { AND: [publicScholarshipWhere(), { university: { is: publicUniversityWhere() } }] };
+      const where: Record<string, unknown> = { AND: [publicCrmScholarshipWhere(), { university: { is: publicUniversityWhere() } }] };
 
       if (search) {
         where.scholarshipName = { contains: search };

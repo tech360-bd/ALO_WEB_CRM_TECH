@@ -135,122 +135,122 @@ interface StatusConfig {
 
 const STATUS_CONFIG: Record<ApplicationStatus, StatusConfig> = {
   Draft: {
-    color: 'bg-gray-100 text-gray-700 border-gray-300',
-    bgColor: 'bg-gray-100',
-    borderColor: 'border-gray-300',
-    textColor: 'text-gray-700',
+    color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border-strong)]',
+    bgColor: 'bg-[var(--alo-surface-muted)]',
+    borderColor: 'border-[var(--alo-border-strong)]',
+    textColor: 'text-[var(--alo-body)]',
     icon: Clapperboard,
     progressValue: 0,
   },
   'Submitted to ALO': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: Send,
     progressValue: 8,
   },
   'Document Review': {
-    color: 'bg-amber-50 text-amber-700 border-amber-200',
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-200',
-    textColor: 'text-amber-700',
+    color: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+    bgColor: 'bg-crm-warning-bg',
+    borderColor: 'border-crm-warning-border',
+    textColor: 'text-crm-warning-text',
     icon: FileText,
     progressValue: 15,
   },
   'Submitted to University': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: Send,
     progressValue: 23,
   },
   'Application Acknowledged': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: CheckCircle2,
     progressValue: 31,
   },
   'Conditional Offer': {
-    color: 'bg-amber-50 text-amber-700 border-amber-200',
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-200',
-    textColor: 'text-amber-700',
+    color: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+    bgColor: 'bg-crm-warning-bg',
+    borderColor: 'border-crm-warning-border',
+    textColor: 'text-crm-warning-text',
     icon: AlertTriangle,
     progressValue: 46,
   },
   'Unconditional Offer': {
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    bgColor: 'bg-emerald-50',
-    borderColor: 'border-emerald-200',
-    textColor: 'text-emerald-700',
+    color: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
+    bgColor: 'bg-crm-success-bg',
+    borderColor: 'border-crm-success-border',
+    textColor: 'text-crm-success-text',
     icon: CheckCircle2,
     progressValue: 54,
   },
   'Deposit Pending': {
-    color: 'bg-orange-50 text-orange-700 border-orange-200',
-    bgColor: 'bg-orange-50',
-    borderColor: 'border-orange-200',
-    textColor: 'text-orange-700',
+    color: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] border-[var(--alo-cta)]/25',
+    bgColor: 'bg-[var(--alo-cta-soft)]',
+    borderColor: 'border-[var(--alo-cta)]/25',
+    textColor: 'text-[var(--alo-cta-active)]',
     icon: CreditCard,
     progressValue: 62,
   },
   'CAS/I-20/COE Processing': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: Stamp,
     progressValue: 69,
   },
   'Visa File Preparing': {
-    color: 'bg-purple-50 text-purple-700 border-purple-200',
-    bgColor: 'bg-purple-50',
-    borderColor: 'border-purple-200',
-    textColor: 'text-purple-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: FileCheck,
     progressValue: 77,
   },
   'Visa Submitted': {
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    textColor: 'text-blue-700',
+    color: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+    bgColor: 'bg-[var(--alo-brand-pale)]',
+    borderColor: 'border-[var(--alo-border)]',
+    textColor: 'text-[var(--alo-brand)]',
     icon: Send,
     progressValue: 85,
   },
   'Visa Approved': {
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    bgColor: 'bg-emerald-50',
-    borderColor: 'border-emerald-200',
-    textColor: 'text-emerald-700',
+    color: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
+    bgColor: 'bg-crm-success-bg',
+    borderColor: 'border-crm-success-border',
+    textColor: 'text-crm-success-text',
     icon: ShieldCheck,
     progressValue: 92,
   },
   Enrolled: {
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    bgColor: 'bg-emerald-50',
-    borderColor: 'border-emerald-200',
-    textColor: 'text-emerald-700',
+    color: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
+    bgColor: 'bg-crm-success-bg',
+    borderColor: 'border-crm-success-border',
+    textColor: 'text-crm-success-text',
     icon: PartyPopper,
     progressValue: 100,
   },
   Rejected: {
-    color: 'bg-red-50 text-red-700 border-red-200',
-    bgColor: 'bg-red-50',
-    borderColor: 'border-red-200',
-    textColor: 'text-red-700',
+    color: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+    bgColor: 'bg-crm-danger-bg',
+    borderColor: 'border-crm-danger-border',
+    textColor: 'text-crm-danger-text',
     icon: XCircle,
     progressValue: 0,
   },
   Withdrawn: {
-    color: 'bg-gray-100 text-gray-500 border-gray-300',
-    bgColor: 'bg-gray-100',
-    borderColor: 'border-gray-300',
-    textColor: 'text-gray-500',
+    color: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] border-[var(--alo-border-strong)]',
+    bgColor: 'bg-[var(--alo-surface-muted)]',
+    borderColor: 'border-[var(--alo-border-strong)]',
+    textColor: 'text-[var(--alo-text-muted)]',
     icon: RotateCcw,
     progressValue: 0,
   },
@@ -297,118 +297,16 @@ interface Application {
   createdAt: string;
 }
 
-/* ================================================================== */
-/*  MOCK DATA                                                          */
-/* ================================================================== */
-
-const MOCK_APPLICATIONS: Application[] = [
-  {
-    id: 'app-001',
-    applicationId: 'ALO-2025-00847',
-    studentId: 'STU-2025-0321',
-    university: 'University of Aberdeen',
-    universityLogo: '',
-    course: 'MSc International Business',
-    country: 'United Kingdom',
-    intake: 'Sep 2026',
-    status: 'Conditional Offer',
-    nextAction: 'Upload final degree transcript to meet conditional offer requirements',
-    deadline: '2025-08-15',
-    counselorNote: 'Great news! Conditional offer received. You need to submit your final semester transcript with a minimum CGPA of 3.2. The deadline for meeting conditions is Aug 15.',
-    timeline: [
-      { date: 'Jul 1, 2025', description: 'Application draft created', actor: 'You', icon: Clapperboard },
-      { date: 'Jul 5, 2025', description: 'Documents submitted for review', actor: 'You', icon: Upload },
-      { date: 'Jul 8, 2025', description: 'Documents verified and approved by counselor', actor: 'Sarah Mitchell (Counselor)', icon: CheckCircle2 },
-      { date: 'Jul 10, 2025', description: 'Application submitted to University of Aberdeen', actor: 'Sarah Mitchell (Counselor)', icon: Send },
-      { date: 'Jul 15, 2025', description: 'Application acknowledged by university', actor: 'System', icon: Info },
-      { date: 'Jul 22, 2025', description: 'Conditional offer received — Meet CGPA 3.2 requirement', actor: 'University of Aberdeen', icon: AlertTriangle },
-    ],
-    documents: [
-      { name: 'Passport Copy', status: 'Approved', type: 'Identity' },
-      { name: 'IELTS Certificate', status: 'Approved', type: 'English Test' },
-      { name: 'Bachelor Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'Final Semester Transcript', status: 'Missing', type: 'Academic' },
-      { name: 'Statement of Purpose', status: 'Approved', type: 'Application' },
-      { name: 'CV / Resume', status: 'Approved', type: 'Application' },
-      { name: 'Recommendation Letter 1', status: 'Approved', type: 'Application' },
-      { name: 'Recommendation Letter 2', status: 'Approved', type: 'Application' },
-    ],
-    messages: [
-      { id: 'm1', sender: 'Sarah Mitchell', role: 'counselor', message: 'I\'ve submitted your application to Aberdeen. They typically respond with an acknowledgment within 5-7 business days.', date: 'Jul 10, 2025', unread: false },
-      { id: 'm2', sender: 'System', role: 'system', message: 'Your application has been acknowledged by University of Aberdeen. Reference: ABERD-2025-78432.', date: 'Jul 15, 2025', unread: false },
-      { id: 'm3', sender: 'Sarah Mitchell', role: 'counselor', message: 'Excellent news! You\'ve received a conditional offer. The condition is to achieve a minimum CGPA of 3.2 in your final semester. Please upload your final transcript as soon as it\'s available.', date: 'Jul 22, 2025', unread: true },
-    ],
-    createdAt: '2025-07-01',
-  },
-  {
-    id: 'app-002',
-    applicationId: 'ALO-2025-00852',
-    studentId: 'STU-2025-0321',
-    university: 'University of Leeds',
-    universityLogo: '',
-    course: 'MSc Data Science',
-    country: 'United Kingdom',
-    intake: 'Sep 2026',
-    status: 'Submitted to University',
-    nextAction: 'Awaiting university acknowledgment — typically 5-7 business days',
-    deadline: '2025-08-30',
-    counselorNote: 'Your application is strong. Leeds Data Science is competitive but your profile matches well. Expected response time is 4-6 weeks.',
-    timeline: [
-      { date: 'Jul 3, 2025', description: 'Application draft created', actor: 'You', icon: Clapperboard },
-      { date: 'Jul 7, 2025', description: 'Documents submitted for review', actor: 'You', icon: Upload },
-      { date: 'Jul 9, 2025', description: 'Documents verified and approved by counselor', actor: 'Sarah Mitchell (Counselor)', icon: CheckCircle2 },
-      { date: 'Jul 12, 2025', description: 'Application submitted to University of Leeds', actor: 'Sarah Mitchell (Counselor)', icon: Send },
-    ],
-    documents: [
-      { name: 'Passport Copy', status: 'Approved', type: 'Identity' },
-      { name: 'PTE Academic Certificate', status: 'Approved', type: 'English Test' },
-      { name: 'Bachelor Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'Bachelor Certificate', status: 'Approved', type: 'Academic' },
-      { name: 'Statement of Purpose', status: 'Approved', type: 'Application' },
-      { name: 'CV / Resume', status: 'Approved', type: 'Application' },
-      { name: 'Recommendation Letter 1', status: 'Approved', type: 'Application' },
-      { name: 'Recommendation Letter 2', status: 'Approved', type: 'Application' },
-    ],
-    messages: [
-      { id: 'm4', sender: 'Sarah Mitchell', role: 'counselor', message: 'Application submitted to Leeds! Their data science program is highly regarded. I\'ll let you know as soon as we hear back.', date: 'Jul 12, 2025', unread: false },
-    ],
-    createdAt: '2025-07-03',
-  },
-  {
-    id: 'app-003',
-    applicationId: 'ALO-2025-00861',
-    studentId: 'STU-2025-0321',
-    university: 'University of Glasgow',
-    universityLogo: '',
-    course: 'MSc Computer Science',
-    country: 'United Kingdom',
-    intake: 'Jan 2027',
-    status: 'Document Review',
-    nextAction: 'Upload missing documents: HSC Certificate and SOP',
-    deadline: null,
-    counselorNote: 'We\'re still reviewing your documents. The HSC certificate and SOP need to be uploaded before we can proceed. Let me know if you need help with the SOP.',
-    timeline: [
-      { date: 'Jul 18, 2025', description: 'Application draft created', actor: 'You', icon: Clapperboard },
-      { date: 'Jul 20, 2025', description: 'Initial documents submitted for review', actor: 'You', icon: Upload },
-      { date: 'Jul 22, 2025', description: 'Document review in progress — 2 documents missing', actor: 'Sarah Mitchell (Counselor)', icon: FileText },
-    ],
-    documents: [
-      { name: 'Passport Copy', status: 'Approved', type: 'Identity' },
-      { name: 'IELTS Certificate', status: 'Approved', type: 'English Test' },
-      { name: 'SSC Certificate', status: 'Approved', type: 'Academic' },
-      { name: 'SSC Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'HSC Certificate', status: 'Missing', type: 'Academic' },
-      { name: 'HSC Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'Bachelor Transcript', status: 'Approved', type: 'Academic' },
-      { name: 'Statement of Purpose', status: 'Missing', type: 'Application' },
-      { name: 'CV / Resume', status: 'Pending', type: 'Application' },
-    ],
-    messages: [
-      { id: 'm5', sender: 'Sarah Mitchell', role: 'counselor', message: 'Thanks for submitting the initial documents. I noticed we\'re still missing your HSC Certificate and the Statement of Purpose. The SOP is especially important for Glasgow CS program — they look for specific research interests.', date: 'Jul 22, 2025', unread: true },
-    ],
-    createdAt: '2025-07-18',
-  },
-];
+/* ------------------------------------------------------------------ */
+/*  NOTE ON THE REMOVED MOCK DATA                                     */
+/* ------------------------------------------------------------------ */
+/* A hard-coded MOCK_APPLICATIONS array used to live here and was used as a   */
+/* FALLBACK whenever the API returned an empty list or threw, because the     */
+/* catch block silently swallowed the error and fell through to the mock.     */
+/* A student with no applications, or one whose load failed, was therefore    */
+/* shown invented applications to real universities. That is prohibited by    */
+/* spec s92 and is misleading about the student own file, so the array was    */
+/* deleted and replaced with distinct empty and error states plus a retry.    */
 
 const FILTER_STATUSES: Array<ApplicationStatus | 'All'> = [
   'All',
@@ -488,11 +386,11 @@ function CountdownBadge({ deadline }: { deadline: string | null }) {
   if (days === null) return null;
 
   const text = formatCountdown(days);
-  let colorClass = 'bg-gray-100 text-gray-600 border-gray-200';
-  if (days < 0) colorClass = 'bg-red-50 text-red-600 border-red-200';
-  else if (days <= 7) colorClass = 'bg-red-50 text-red-600 border-red-200';
-  else if (days <= 14) colorClass = 'bg-amber-50 text-amber-600 border-amber-200';
-  else colorClass = 'bg-blue-50 text-blue-600 border-blue-200';
+  let colorClass = 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]';
+  if (days < 0) colorClass = 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border';
+  else if (days <= 7) colorClass = 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border';
+  else if (days <= 14) colorClass = 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border';
+  else colorClass = 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]';
 
   return (
     <span
@@ -541,7 +439,7 @@ function StageFlowStepper({ currentStatus }: { currentStatus: ApplicationStatus 
                   <div
                     className={cn(
                       'h-0.5 w-6',
-                      isCompleted ? 'bg-emerald-400' : 'bg-gray-200'
+                      isCompleted ? 'bg-[var(--alo-success)]' : 'bg-[var(--alo-page)]'
                     )}
                   />
                 </div>
@@ -550,25 +448,25 @@ function StageFlowStepper({ currentStatus }: { currentStatus: ApplicationStatus 
                 <div
                   className={cn(
                     'flex items-center justify-center rounded-full border-2 size-8 transition-all',
-                    isCompleted && 'bg-emerald-500 border-emerald-500',
+                    isCompleted && 'bg-[var(--alo-success)] border-crm-success-border',
                     isCurrent && !isCompleted && cn('border-2', config.borderColor, config.bgColor),
-                    !isCompleted && !isCurrent && 'border-gray-200 bg-gray-50'
+                    !isCompleted && !isCurrent && 'border-[var(--alo-border)] bg-[var(--alo-page)]'
                   )}
                 >
                   {isCompleted ? (
-                    <CheckCircle2 className="size-4 text-white" />
+                    <CheckCircle2 className="size-4 text-[var(--alo-text)]" />
                   ) : isCurrent ? (
                     <Icon className={cn('size-3.5', config.textColor)} />
                   ) : (
-                    <Circle className="size-3 text-gray-300" />
+                    <Circle className="size-3 text-[var(--alo-placeholder)]" />
                   )}
                 </div>
                 <span
                   className={cn(
-                    'text-[10px] mt-1.5 text-center leading-tight font-medium max-w-[72px] truncate',
-                    isCompleted && 'text-emerald-600',
+                    'text-[11px] mt-1.5 text-center leading-tight font-medium max-w-[72px] truncate',
+                    isCompleted && 'text-crm-success-text',
                     isCurrent && config.textColor,
-                    !isCompleted && !isCurrent && 'text-gray-400'
+                    !isCompleted && !isCurrent && 'text-[var(--alo-text-muted)]'
                   )}
                 >
                   {stage}
@@ -604,14 +502,14 @@ function ApplicationCard({
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div className="flex items-start gap-3">
             {/* Logo placeholder */}
-            <div className="flex items-center justify-center size-12 rounded-lg bg-[#0F172A]/5 border border-[#0F172A]/10 shrink-0">
-              <Building2 className="size-6 text-[#0F172A]/40" />
+            <div className="flex items-center justify-center size-12 rounded-lg bg-[var(--alo-page)]/5 border border-[var(--alo-text)]/10 shrink-0">
+              <Building2 className="size-6 text-[var(--alo-text)]/40" />
             </div>
             <div>
-              <h3 className="font-semibold text-[#0F172A] text-sm leading-tight">
+              <h3 className="font-semibold text-[var(--alo-text)] text-sm leading-tight">
                 {application.university}
               </h3>
-              <p className="text-sm text-[#0F172A]/60 mt-0.5">{application.course}</p>
+              <p className="text-sm text-[var(--alo-text)]/60 mt-0.5">{application.course}</p>
             </div>
           </div>
           <StatusBadge status={application.status} />
@@ -633,19 +531,19 @@ function ApplicationCard({
         {/* Progress Bar */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[#0F172A]/50 font-medium">Progress</span>
-            <span className="text-xs text-[#0F172A]/60 font-medium">{progress}%</span>
+            <span className="text-xs text-[var(--alo-text)]/50 font-medium">Progress</span>
+            <span className="text-xs text-[var(--alo-text)]/60 font-medium">{progress}%</span>
           </div>
           <Progress
             value={progress}
-            className={cn('h-2', progress === 100 && '[&>div]:bg-emerald-500')}
+            className={cn('h-2', progress === 100 && '[&>div]:bg-[var(--alo-success)]')}
           />
         </div>
 
         {/* Next Action */}
-        <div className="flex items-start gap-2 rounded-lg bg-amber-50/60 border border-amber-100 px-3 py-2">
-          <AlertTriangle className="size-4 text-amber-500 shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-800 leading-relaxed">
+        <div className="flex items-start gap-2 rounded-lg bg-crm-warning-bg/60 border border-crm-warning-border px-3 py-2">
+          <AlertTriangle className="size-4 text-crm-warning-text shrink-0 mt-0.5" />
+          <p className="text-xs text-crm-warning-text leading-relaxed">
             <span className="font-semibold">Next action: </span>
             {application.nextAction}
           </p>
@@ -653,9 +551,9 @@ function ApplicationCard({
 
         {/* Counselor Note */}
         {application.counselorNote && (
-          <div className="flex items-start gap-2 rounded-lg bg-blue-50/50 border border-blue-100 px-3 py-2">
-            <MessageSquare className="size-4 text-blue-500 shrink-0 mt-0.5" />
-            <p className="text-xs text-blue-800 leading-relaxed">
+          <div className="flex items-start gap-2 rounded-lg bg-[var(--alo-brand-pale)]/50 border border-[var(--alo-border)] px-3 py-2">
+            <MessageSquare className="size-4 text-[var(--alo-brand)] shrink-0 mt-0.5" />
+            <p className="text-xs text-[var(--alo-brand-deep)] leading-relaxed">
               <span className="font-semibold">Counselor note: </span>
               {application.counselorNote}
             </p>
@@ -664,7 +562,7 @@ function ApplicationCard({
 
         {/* Expandable Timeline */}
         <Collapsible open={timelineOpen} onOpenChange={setTimelineOpen}>
-          <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-[#0F172A]/50 hover:text-[#0F172A]/80 font-medium transition-colors w-full">
+          <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-[var(--alo-text)]/50 hover:text-[var(--alo-text)]/80 font-medium transition-colors w-full">
             {timelineOpen ? (
               <ChevronUp className="size-3.5" />
             ) : (
@@ -673,20 +571,20 @@ function ApplicationCard({
             {timelineOpen ? 'Hide' : 'Show'} timeline ({application.timeline.length} events)
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <div className="mt-2 ml-1.5 space-y-0 border-l-2 border-[#0F172A]/10 pl-4 pb-1">
+            <div className="mt-2 ml-1.5 space-y-0 border-l-2 border-[var(--alo-text)]/10 pl-4 pb-1">
               {application.timeline.map((event, idx) => {
                 const Icon = event.icon;
                 return (
                   <div key={idx} className="relative flex gap-3 py-2">
-                    <div className="absolute -left-[21px] top-2.5 size-3 rounded-full bg-white border-2 border-[#0F172A]/15" />
+                    <div className="absolute -left-[21px] top-2.5 size-3 rounded-full bg-white border-2 border-[var(--alo-text)]/15" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs text-[#0F172A]/80 leading-relaxed">
+                      <p className="text-xs text-[var(--alo-text)]/80 leading-relaxed">
                         {event.description}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[11px] text-[#0F172A]/40">{event.date}</span>
-                        <span className="text-[11px] text-[#0F172A]/30">•</span>
-                        <span className="text-[11px] text-[#0F172A]/40">{event.actor}</span>
+                        <span className="text-[11px] text-[var(--alo-text)]/40">{event.date}</span>
+                        <span className="text-[11px] text-[var(--alo-text)]/30">•</span>
+                        <span className="text-[11px] text-[var(--alo-text)]/40">{event.actor}</span>
                       </div>
                     </div>
                   </div>
@@ -731,12 +629,12 @@ function ApplicationTableRow({
     <TableRow className="cursor-pointer" onClick={() => onViewDetails(application)}>
       <TableCell>
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center size-8 rounded-md bg-[#0F172A]/5 border border-[#0F172A]/10 shrink-0">
-            <Building2 className="size-4 text-[#0F172A]/40" />
+          <div className="flex items-center justify-center size-8 rounded-md bg-[var(--alo-page)]/5 border border-[var(--alo-text)]/10 shrink-0">
+            <Building2 className="size-4 text-[var(--alo-text)]/40" />
           </div>
           <div>
-            <p className="font-medium text-sm text-[#0F172A]">{application.university}</p>
-            <p className="text-xs text-[#0F172A]/50">{application.course}</p>
+            <p className="font-medium text-sm text-[var(--alo-text)]">{application.university}</p>
+            <p className="text-xs text-[var(--alo-text)]/50">{application.course}</p>
           </div>
         </div>
       </TableCell>
@@ -756,14 +654,14 @@ function ApplicationTableRow({
       <TableCell className="hidden lg:table-cell">
         <div className="space-y-1">
           <Progress value={progress} className="h-1.5 w-20" />
-          <span className="text-xs text-[#0F172A]/50">{progress}%</span>
+          <span className="text-xs text-[var(--alo-text)]/50">{progress}%</span>
         </div>
       </TableCell>
       <TableCell className="hidden md:table-cell">
         <CountdownBadge deadline={application.deadline} />
       </TableCell>
       <TableCell>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1 text-[#C93D13] hover:text-[#C93D13] hover:bg-orange-50">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="gap-1 text-[var(--alo-cta-hover)] hover:text-[var(--alo-cta-hover)] hover:bg-[var(--alo-cta-soft)]">
           <Eye className="size-3.5" />
           <span className="sr-only sm:not-sr-only">View</span>
         </Button>
@@ -791,11 +689,11 @@ function ApplicationDetailDialog({
 
   const docStatusColor = (s: string) => {
     switch (s) {
-      case 'Approved': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
-      case 'Pending': return 'text-blue-600 bg-blue-50 border-blue-200';
-      case 'Rejected': return 'text-red-600 bg-red-50 border-red-200';
-      case 'Missing': return 'text-amber-600 bg-amber-50 border-amber-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'Approved': return 'text-crm-success-text bg-crm-success-bg border-crm-success-border';
+      case 'Pending': return 'text-[var(--alo-brand)] bg-[var(--alo-brand-pale)] border-[var(--alo-border)]';
+      case 'Rejected': return 'text-crm-danger-text bg-crm-danger-bg border-crm-danger-border';
+      case 'Missing': return 'text-crm-warning-text bg-crm-warning-bg border-crm-warning-border';
+      default: return 'text-[var(--alo-body)] bg-[var(--alo-page)] border-[var(--alo-border)]';
     }
   };
 
@@ -806,10 +704,10 @@ function ApplicationDetailDialog({
           <DialogHeader>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <DialogTitle className="text-lg font-semibold text-[#0F172A]">
+                <DialogTitle className="text-lg font-semibold text-[var(--alo-text)]">
                   {application.university}
                 </DialogTitle>
-                <DialogDescription className="text-sm text-[#0F172A]/60 mt-0.5">
+                <DialogDescription className="text-sm text-[var(--alo-text)]/60 mt-0.5">
                   {application.course} • {application.intake} • {application.country}
                 </DialogDescription>
               </div>
@@ -819,14 +717,14 @@ function ApplicationDetailDialog({
         </div>
 
         <Tabs defaultValue="overview" className="px-6 pb-6">
-          <TabsList className="w-full justify-start mb-4 bg-gray-100">
+          <TabsList className="w-full justify-start mb-4 bg-[var(--alo-surface-muted)]">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="messages">
               Messages
               {application.messages.some((m) => m.unread) && (
-                <span className="ml-1.5 size-2 rounded-full bg-[#C93D13]" />
+                <span className="ml-1.5 size-2 rounded-full bg-[var(--alo-cta-hover)]" />
               )}
             </TabsTrigger>
           </TabsList>
@@ -836,18 +734,18 @@ function ApplicationDetailDialog({
             {/* IDs */}
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-lg border border-border/60 px-4 py-3">
-                <p className="text-xs text-[#0F172A]/40 font-medium uppercase tracking-wider">Application ID</p>
-                <p className="text-sm font-mono font-semibold text-[#0F172A] mt-1">{application.applicationId}</p>
+                <p className="text-xs text-[var(--alo-text)]/40 font-medium uppercase tracking-wider">Application ID</p>
+                <p className="text-sm font-mono font-semibold text-[var(--alo-text)] mt-1">{application.applicationId}</p>
               </div>
               <div className="rounded-lg border border-border/60 px-4 py-3">
-                <p className="text-xs text-[#0F172A]/40 font-medium uppercase tracking-wider">Student ID</p>
-                <p className="text-sm font-mono font-semibold text-[#0F172A] mt-1">{application.studentId}</p>
+                <p className="text-xs text-[var(--alo-text)]/40 font-medium uppercase tracking-wider">Student ID</p>
+                <p className="text-sm font-mono font-semibold text-[var(--alo-text)] mt-1">{application.studentId}</p>
               </div>
             </div>
 
             {/* Stage Flow */}
             <div>
-              <h4 className="text-sm font-semibold text-[#0F172A] mb-3">Application Stage</h4>
+              <h4 className="text-sm font-semibold text-[var(--alo-text)] mb-3">Application Stage</h4>
               <StageFlowStepper currentStatus={application.status} />
             </div>
 
@@ -855,12 +753,12 @@ function ApplicationDetailDialog({
 
             {/* Next Actions */}
             <div>
-              <h4 className="text-sm font-semibold text-[#0F172A] mb-2">Next Actions</h4>
-              <div className="flex items-start gap-2.5 rounded-lg bg-amber-50/60 border border-amber-100 px-4 py-3">
-                <AlertTriangle className="size-4 text-amber-500 shrink-0 mt-0.5" />
+              <h4 className="text-sm font-semibold text-[var(--alo-text)] mb-2">Next Actions</h4>
+              <div className="flex items-start gap-2.5 rounded-lg bg-crm-warning-bg/60 border border-crm-warning-border px-4 py-3">
+                <AlertTriangle className="size-4 text-crm-warning-text shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-amber-800 font-medium">Action Required</p>
-                  <p className="text-sm text-amber-700/80 mt-0.5">{application.nextAction}</p>
+                  <p className="text-sm text-crm-warning-text font-medium">Action Required</p>
+                  <p className="text-sm text-crm-warning-text/80 mt-0.5">{application.nextAction}</p>
                 </div>
               </div>
             </div>
@@ -868,10 +766,10 @@ function ApplicationDetailDialog({
             {/* Counselor Note */}
             {application.counselorNote && (
               <div>
-                <h4 className="text-sm font-semibold text-[#0F172A] mb-2">Counselor Note</h4>
-                <div className="flex items-start gap-2.5 rounded-lg bg-blue-50/50 border border-blue-100 px-4 py-3">
-                  <MessageSquare className="size-4 text-blue-500 shrink-0 mt-0.5" />
-                  <p className="text-sm text-blue-800 leading-relaxed">{application.counselorNote}</p>
+                <h4 className="text-sm font-semibold text-[var(--alo-text)] mb-2">Counselor Note</h4>
+                <div className="flex items-start gap-2.5 rounded-lg bg-[var(--alo-brand-pale)]/50 border border-[var(--alo-border)] px-4 py-3">
+                  <MessageSquare className="size-4 text-[var(--alo-brand)] shrink-0 mt-0.5" />
+                  <p className="text-sm text-[var(--alo-brand-deep)] leading-relaxed">{application.counselorNote}</p>
                 </div>
               </div>
             )}
@@ -879,10 +777,10 @@ function ApplicationDetailDialog({
             {/* Deadline */}
             {application.deadline && (
               <div>
-                <h4 className="text-sm font-semibold text-[#0F172A] mb-2">Deadline</h4>
+                <h4 className="text-sm font-semibold text-[var(--alo-text)] mb-2">Deadline</h4>
                 <div className="flex items-center gap-2">
-                  <Calendar className="size-4 text-[#0F172A]/40" />
-                  <span className="text-sm text-[#0F172A]">{application.deadline}</span>
+                  <Calendar className="size-4 text-[var(--alo-text)]/40" />
+                  <span className="text-sm text-[var(--alo-text)]">{application.deadline}</span>
                   <CountdownBadge deadline={application.deadline} />
                 </div>
               </div>
@@ -891,7 +789,7 @@ function ApplicationDetailDialog({
 
           {/* TIMELINE TAB */}
           <TabsContent value="timeline" className="mt-0">
-            <div className="space-y-0 border-l-2 border-[#0F172A]/10 ml-1 pl-6">
+            <div className="space-y-0 border-l-2 border-[var(--alo-text)]/10 ml-1 pl-6">
               {application.timeline.map((event, idx) => {
                 const Icon = event.icon;
                 const isLast = idx === application.timeline.length - 1;
@@ -901,18 +799,18 @@ function ApplicationDetailDialog({
                       className={cn(
                         'absolute -left-[31px] top-1 flex items-center justify-center size-7 rounded-full border-2 bg-white',
                         isLast
-                          ? 'border-[#C93D13] text-[#C93D13]'
-                          : 'border-emerald-400 text-emerald-500'
+                          ? 'border-[var(--alo-cta-hover)] text-[var(--alo-cta-hover)]'
+                          : 'border-[var(--alo-success)] text-crm-success-text'
                       )}
                     >
                       <Icon className="size-3.5" />
                     </div>
                     <div className="flex-1 pb-2">
-                      <p className="text-sm text-[#0F172A] font-medium">{event.description}</p>
+                      <p className="text-sm text-[var(--alo-text)] font-medium">{event.description}</p>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-xs text-[#0F172A]/40 font-medium">{event.date}</span>
-                        <span className="text-xs text-[#0F172A]/20">•</span>
-                        <span className="text-xs text-[#0F172A]/40">{event.actor}</span>
+                        <span className="text-xs text-[var(--alo-text)]/40 font-medium">{event.date}</span>
+                        <span className="text-xs text-[var(--alo-text)]/20">•</span>
+                        <span className="text-xs text-[var(--alo-text)]/40">{event.actor}</span>
                       </div>
                     </div>
                   </div>
@@ -937,12 +835,12 @@ function ApplicationDetailDialog({
                     <TableRow key={idx}>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <FileText className="size-4 text-[#0F172A]/40" />
-                          <span className="text-sm font-medium text-[#0F172A]">{doc.name}</span>
+                          <FileText className="size-4 text-[var(--alo-text)]/40" />
+                          <span className="text-sm font-medium text-[var(--alo-text)]">{doc.name}</span>
                         </div>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell">
-                        <span className="text-xs text-[#0F172A]/50">{doc.type}</span>
+                        <span className="text-xs text-[var(--alo-text)]/50">{doc.type}</span>
                       </TableCell>
                       <TableCell>
                         <span
@@ -973,22 +871,22 @@ function ApplicationDetailDialog({
                   key={msg.id}
                   className={cn(
                     'rounded-lg border px-4 py-3',
-                    msg.role === 'student' && 'bg-blue-50/40 border-blue-100 ml-8',
+                    msg.role === 'student' && 'bg-[var(--alo-brand-pale)]/40 border-[var(--alo-border)] ml-8',
                     msg.role === 'counselor' && 'bg-white border-border/60 mr-8',
-                    msg.role === 'system' && 'bg-gray-50 border-gray-100 mx-4',
-                    msg.unread && 'ring-1 ring-[#C93D13]/20'
+                    msg.role === 'system' && 'bg-[var(--alo-page)] border-[var(--alo-border)] mx-4',
+                    msg.unread && 'ring-1 ring-[var(--alo-cta-hover)]/20'
                   )}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-[#0F172A]">{msg.sender}</span>
+                      <span className="text-sm font-semibold text-[var(--alo-text)]">{msg.sender}</span>
                       {msg.unread && (
-                        <span className="size-2 rounded-full bg-[#C93D13]" />
+                        <span className="size-2 rounded-full bg-[var(--alo-cta-hover)]" />
                       )}
                     </div>
-                    <span className="text-xs text-[#0F172A]/40">{msg.date}</span>
+                    <span className="text-xs text-[var(--alo-text)]/40">{msg.date}</span>
                   </div>
-                  <p className="text-sm text-[#0F172A]/70 leading-relaxed">{msg.message}</p>
+                  <p className="text-sm text-[var(--alo-text)]/70 leading-relaxed">{msg.message}</p>
                 </div>
               ))}
             </div>
@@ -1007,15 +905,15 @@ function EmptyState() {
   const setView = usePortalStore((s) => s.setView);
 
   return (
-    <Card className="border-dashed border-2 border-[#0F172A]/10 bg-[#0F172A]/[0.01]">
+    <Card className="border-dashed border-2 border-[var(--alo-text)]/10 bg-[var(--alo-page)]/[0.01]">
       <CardContent className="flex flex-col items-center justify-center py-16 px-6 text-center">
-        <div className="flex items-center justify-center size-20 rounded-full bg-orange-50 mb-6">
-          <GraduationCap className="size-10 text-[#C93D13]/70" />
+        <div className="flex items-center justify-center size-20 rounded-full bg-[var(--alo-cta-soft)] mb-6">
+          <GraduationCap className="size-10 text-[var(--alo-cta-hover)]/70" />
         </div>
-        <h3 className="text-xl font-semibold text-[#0F172A] mb-2">
+        <h3 className="text-xl font-semibold text-[var(--alo-text)] mb-2">
           Start your first application
         </h3>
-        <p className="text-sm text-[#0F172A]/50 max-w-sm mb-6 leading-relaxed">
+        <p className="text-sm text-[var(--alo-text)]/50 max-w-sm mb-6 leading-relaxed">
           Browse our course finder to find your perfect program and begin your study abroad journey.
         </p>
         <Button variant="cta" size="lg" onClick={() => setView('student-course-finder')} className="gap-2">
@@ -1042,43 +940,75 @@ export default function StudentApplications() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [apiApps, setApiApps] = useState<Application[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
     async function loadApplications() {
-      if (!token) { setLoading(false); return; }
+      setLoading(true);
+      setLoadError(null);
+      if (!token) {
+        // Without a session we cannot know what the student has applied to, so
+        // report that instead of showing invented applications (s92).
+        if (!cancelled) {
+          setApiApps([]);
+          setLoading(false);
+          setLoadError('You are not signed in, so applications could not be loaded.');
+        }
+        return;
+      }
       try {
         const res = await fetch('/api/student-portal/applications', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        const json = await res.json();
-        if (json.success && json.data && json.data.length > 0) {
-          const mapped = json.data.map((a: Record<string, unknown>) => ({
-            id: a.id as string,
-            applicationId: (a.applicationId as string) || (a.id as string).slice(0, 8).toUpperCase(),
-            studentId: (a.studentProfileId as string) || '',
-            university: (a.university as string) || 'Unknown University',
-            universityLogo: '',
-            course: (a.course as string) || 'Unknown Course',
-            country: (a.country as string) || 'United Kingdom',
-            intake: (a.intake as string) || 'Sep 2025',
-            status: (a.stage === 'conditional' ? 'Conditional Offer' as const : a.stage === 'submitted' ? 'Submitted to University' as const : a.stage === 'draft' ? 'Draft' as const : a.stage === 'offer' ? 'Unconditional Offer' as const : a.stage === 'rejected' ? 'Rejected' as const : 'Draft' as const),
-            nextAction: (a.nextAction as string) || '',
-            deadline: (a.deadline as string) || null,
-            counselorNote: (a.counselorNote as string) || null,
-            timeline: [],
-            documents: [],
-            messages: [],
-            createdAt: (a.createdAt as string) || new Date().toISOString(),
-          }));
-          setApiApps(mapped);
+        const json = await res.json().catch(() => null);
+        if (cancelled) return;
+        if (!res.ok || !json?.success) {
+          setApiApps([]);
+          setLoadError(json?.error || `Could not load applications (status ${res.status}).`);
+          setLoading(false);
+          return;
         }
-      } catch { /* fallback to mock */ }
-      setLoading(false);
+        const rows = Array.isArray(json.data) ? json.data : [];
+        const mapped = rows.map((a: Record<string, unknown>) => ({
+          id: a.id as string,
+          applicationId: (a.applicationId as string) || (a.id as string).slice(0, 8).toUpperCase(),
+          studentId: (a.studentProfileId as string) || '',
+          // No invented fallbacks. A missing university, country or intake is
+          // shown as unrecorded rather than defaulted to a plausible-looking
+          // value the student did not choose.
+          university: (a.university as string) || 'University not recorded',
+          universityLogo: '',
+          course: (a.course as string) || 'Course not recorded',
+          country: (a.country as string) || '',
+          intake: (a.intake as string) || '',
+          status: (a.stage === 'conditional' ? 'Conditional Offer' as const : a.stage === 'submitted' ? 'Submitted to University' as const : a.stage === 'draft' ? 'Draft' as const : a.stage === 'offer' ? 'Unconditional Offer' as const : a.stage === 'rejected' ? 'Rejected' as const : 'Draft' as const),
+          nextAction: (a.nextAction as string) || '',
+          deadline: (a.deadline as string) || null,
+          counselorNote: (a.counselorNote as string) || null,
+          timeline: [],
+          documents: [],
+          messages: [],
+          createdAt: (a.createdAt as string) || new Date().toISOString(),
+        }));
+        // An empty list is a truthful answer and is applied as-is.
+        setApiApps(mapped);
+      } catch (error: unknown) {
+        if (cancelled) return;
+        setApiApps([]);
+        setLoadError(error instanceof Error ? error.message : 'Could not reach the application service.');
+      }
+      if (!cancelled) setLoading(false);
     }
     loadApplications();
-  }, [token]);
+    return () => { cancelled = true; };
+  }, [token, reloadKey]);
 
-  const applications = (apiApps && apiApps.length > 0) ? apiApps : MOCK_APPLICATIONS;
+  // Real data only. There is deliberately no mock fallback: this screen tells a
+  // student the status of their own applications, so fabricated rows would be
+  // misinformation about their file rather than placeholder styling (s92).
+  const applications = apiApps ?? [];
 
   const handleViewDetails = (app: Application) => {
     setSelectedApp(app);
@@ -1176,8 +1106,8 @@ export default function StudentApplications() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-[#0F172A]">My Applications</h1>
-          <Badge className="bg-[#0F172A] text-white hover:bg-[#0F172A]/90 text-sm px-2.5">
+          <h1 className="text-2xl font-bold text-[var(--alo-text)]">My Applications</h1>
+          <Badge className="bg-[var(--alo-page)] text-[var(--alo-text)] hover:bg-[var(--alo-page)]/90 text-sm px-2.5">
             {applications.length}
           </Badge>
         </div>
@@ -1186,7 +1116,7 @@ export default function StudentApplications() {
             variant={viewMode === 'card' ? 'default' : 'ghost'}
             size="icon-sm"
             onClick={() => setViewMode('card')}
-            className={viewMode === 'card' ? 'bg-[#0F172A] hover:bg-[#0F172A]/90 text-white' : 'text-[#0F172A]/50'}
+            className={viewMode === 'card' ? 'bg-[var(--alo-page)] hover:bg-[var(--alo-page)]/90 text-[var(--alo-text)]' : 'text-[var(--alo-text)]/50'}
           >
             <LayoutGrid className="size-4" />
           </Button>
@@ -1194,7 +1124,7 @@ export default function StudentApplications() {
             variant={viewMode === 'table' ? 'default' : 'ghost'}
             size="icon-sm"
             onClick={() => setViewMode('table')}
-            className={viewMode === 'table' ? 'bg-[#0F172A] hover:bg-[#0F172A]/90 text-white' : 'text-[#0F172A]/50'}
+            className={viewMode === 'table' ? 'bg-[var(--alo-page)] hover:bg-[var(--alo-page)]/90 text-[var(--alo-text)]' : 'text-[var(--alo-text)]/50'}
           >
             <List className="size-4" />
           </Button>
@@ -1206,7 +1136,7 @@ export default function StudentApplications() {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex items-center gap-2">
-              <Filter className="size-4 text-[#0F172A]/40 shrink-0" />
+              <Filter className="size-4 text-[var(--alo-text)]/40 shrink-0" />
               <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as ApplicationStatus | 'All')}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Status" />
@@ -1241,7 +1171,7 @@ export default function StudentApplications() {
               </SelectContent>
             </Select>
             <div className="sm:ml-auto flex items-center gap-2">
-              <SortAsc className="size-4 text-[#0F172A]/40 shrink-0" />
+              <SortAsc className="size-4 text-[var(--alo-text)]/40 shrink-0" />
               <Select value={sortBy} onValueChange={(v) => setSortBy(v as 'newest' | 'deadline')}>
                 <SelectTrigger className="w-[160px]">
                   <SelectValue />
@@ -1257,14 +1187,37 @@ export default function StudentApplications() {
       </Card>
 
       {/* Application List */}
-      {applications.length === 0 ? (
+      {loadError ? (
+        /* A failed load must not render as "Start your first application" (s91).
+           Telling a student they have no applications when the request failed
+           could stop them chasing a real deadline. */
+        <Card className="border-2 border-crm-warning-border">
+          <CardContent className="flex flex-col items-center justify-center py-16 px-6 text-center">
+            <div className="flex items-center justify-center size-20 rounded-full bg-crm-warning-bg mb-6">
+              <AlertTriangle className="size-10 text-crm-warning-text" />
+            </div>
+            <h3 className="text-xl font-semibold text-[var(--alo-text)] mb-2">
+              Applications could not be loaded
+            </h3>
+            <p className="text-sm text-[var(--alo-text)]/60 max-w-md mb-2">{loadError}</p>
+            <p className="text-xs text-[var(--alo-text)]/45 max-w-md mb-6 leading-relaxed">
+              This does not mean you have no applications. Retry, and contact your
+              counselor if it keeps failing.
+            </p>
+            <Button variant="outline" size="sm" onClick={() => setReloadKey((key) => key + 1)}>
+              <RotateCcw className="size-3.5 mr-1.5" />
+              Try again
+            </Button>
+          </CardContent>
+        </Card>
+      ) : applications.length === 0 ? (
         <EmptyState />
       ) : sorted.length === 0 ? (
-        <Card className="border-dashed border-2 border-[#0F172A]/10">
+        <Card className="border-dashed border-2 border-[var(--alo-text)]/10">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <Filter className="size-8 text-[#0F172A]/20 mb-3" />
-            <h3 className="text-base font-semibold text-[#0F172A] mb-1">No applications match your filters</h3>
-            <p className="text-sm text-[#0F172A]/50">Try adjusting the filters above</p>
+            <Filter className="size-8 text-[var(--alo-text)]/20 mb-3" />
+            <h3 className="text-base font-semibold text-[var(--alo-text)] mb-1">No applications match your filters</h3>
+            <p className="text-sm text-[var(--alo-text)]/50">Try adjusting the filters above</p>
           </CardContent>
         </Card>
       ) : viewMode === 'card' ? (

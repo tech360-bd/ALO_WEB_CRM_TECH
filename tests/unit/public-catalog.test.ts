@@ -8,6 +8,10 @@ import {
   publicCourseWhere,
   publicIntakeWhere,
   publicVerifiedIntakeWhere,
+  publicRequirementWhere,
+  publicCrmScholarshipWhere,
+  publicScholarshipWhere,
+  publicScholarshipsInCountryWhere,
   publicUniversityIdentifierWhere,
   publicUniversityWhere,
   stripInternalFields,
@@ -64,6 +68,26 @@ describe('parseCourseFinderParams', () => {
     expect(parseCourseFinderParams(sp('intake=2027-09'))).toMatchObject({ intakeMonth: 9, intakeYear: 2027 });
   });
 
+  it('parses repeated/comma-separated month filters with and without a year', () => {
+    expect(parseCourseFinderParams(sp('intakeMonth=1,Sep&intakeMonths=12'))).toMatchObject({
+      intakeMonths: [1, 9, 12],
+      intakeMonth: undefined,
+      intakePeriods: undefined,
+    });
+    expect(parseCourseFinderParams(sp('intakeMonth=1,Sept&year=2027'))).toMatchObject({
+      intakePeriods: [{ year: 2027, month: 1 }, { year: 2027, month: 9 }],
+    });
+    expect(parseCourseFinderParams(sp('intakeMonths=2027-01,Jan 2028'))).toMatchObject({
+      intakePeriods: [{ year: 2027, month: 1 }, { year: 2028, month: 1 }],
+    });
+  });
+
+  it('rejects ambiguous mixed year-qualified and bare month filters', () => {
+    expect(() => parseCourseFinderParams(sp('intakeMonth=2027-01,September'))).toThrow(/Use year-qualified/);
+    expect(() => parseCourseFinderParams(sp('intakeMonth=13'))).toThrow(/month name, a number/);
+    expect(() => parseCourseFinderParams(sp('intakeMonth=2101-01'))).toThrow(/between 2000 and 2100/);
+  });
+
   it.each([
     ['page=abc', '"page" must be a whole number'],
     ['page=0', '"page" must be between 1'],
@@ -102,16 +126,49 @@ describe('public visibility predicates', () => {
     expect(publicIntakeWhere()).toEqual({
       status: 'active',
       verificationStatus: 'VERIFIED',
-      AND: [{ OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }] }],
+      AND: [{ OR: [{ intakeSourceUrl: { startsWith: 'https://' } }, { feeSourceUrl: { startsWith: 'https://' } }] }],
     });
   });
 
-  it('requires source evidence for explicitly verified intake queries too', () => {
+  it('requires HTTPS evidence for verified intakes and academic requirements', () => {
     expect(publicVerifiedIntakeWhere()).toEqual({
       status: 'active',
       verificationStatus: 'VERIFIED',
-      AND: [{ OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }] }],
+      AND: [{ OR: [{ intakeSourceUrl: { startsWith: 'https://' } }, { feeSourceUrl: { startsWith: 'https://' } }] }],
     });
+    expect(publicRequirementWhere()).toEqual({
+      verificationStatus: 'VERIFIED',
+      officialRequirementUrl: { startsWith: 'https://' },
+    });
+  });
+
+  it('requires recent source-backed scholarship verification in both catalogue models', () => {
+    const now = new Date('2026-10-29T00:00:00.000Z');
+    const scholarship = publicScholarshipWhere(now);
+    expect(scholarship).toMatchObject({
+      status: { in: ['active', 'PUBLISHED', 'OPEN', 'CLOSED', 'UPCOMING'] },
+      verificationStatus: { in: ['VERIFIED', 'verified', 'VERIFIED_RECENT', 'verified_recent'] },
+      lastVerifiedAt: { lte: now },
+      officialSourceUrl: { startsWith: 'https://' },
+    });
+    expect(scholarship.lastVerifiedAt.gte).toEqual(new Date('2026-07-31T00:00:00.000Z'));
+
+    const crm = publicCrmScholarshipWhere(now);
+    expect(crm).toMatchObject({
+      status: 'active',
+      lastCheckedAt: { gte: '2026-08-01', lte: now.toISOString() },
+      officialScholarshipUrl: { startsWith: 'https://' },
+    });
+  });
+
+  it('keeps country-scoped CRM scholarship predicates separate from the Scholarship model', () => {
+    const now = new Date('2026-10-29T00:00:00.000Z');
+    const where = publicScholarshipsInCountryWhere('United Kingdom', 'UK', now);
+    expect(where.AND[0]).toEqual(publicCrmScholarshipWhere(now));
+    expect(JSON.stringify(where.AND[0])).toContain('officialScholarshipUrl');
+    expect(JSON.stringify(where.AND[0])).toContain('lastCheckedAt');
+    expect(JSON.stringify(where.AND[0])).not.toContain('officialSourceUrl');
+    expect(JSON.stringify(where.AND[0])).not.toContain('lastVerifiedAt');
   });
 
   it('looks up a single course by exact identifier only (no fuzzy title match)', () => {
@@ -165,9 +222,24 @@ describe('buildCourseFinderWhere', () => {
     expect(json).toContain('"applicationDeadline":{"not":""}');
   });
 
-  it('matches intake months across every stored spelling, not just one format', () => {
+  it('matches intake months across legacy spellings, including year-qualified storage', () => {
     expect(intakeMonthVariants(1)).toEqual(expect.arrayContaining(['January', 'Jan', '1', '01']));
     expect(intakeMonthVariants(9)).toEqual(expect.arrayContaining(['September', 'Sep', 'Sept', '09']));
+    expect(intakeMonthVariants(1, 2028)).toEqual(expect.arrayContaining([
+      'January 2028', 'Jan 2028', '2028-1', '2028-01', '2028/1', '2028/01',
+    ]));
+  });
+
+  it('keeps an explicit January 2028 filter independent from a conflicting legacy year parameter', () => {
+    const filters = parseCourseFinderParams(sp('intakeMonth=2028-01&year=2027'));
+    const where = buildCourseFinderWhere(filters);
+    const json = JSON.stringify(where);
+    expect(json).toContain('"intakeYear":2028');
+    expect(json).not.toContain('"intakeYear":2027');
+    const periods = (where as { AND: Array<Record<string, any>> }).AND.find((clause) => Array.isArray(clause.OR));
+    expect(periods?.OR[0].intakeFees.some.intakeMonth.in).toEqual(expect.arrayContaining([
+      'January 2028', 'Jan 2028', '2028-01', '2028/01',
+    ]));
   });
 
   it('ANDs combined filters rather than letting one overwrite another', () => {

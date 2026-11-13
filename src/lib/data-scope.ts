@@ -15,8 +15,8 @@ export type DataScope = 'ALL' | 'BRANCH' | 'ASSIGNED' | 'NONE';
 // Roles not listed default to NONE.
 const ROLE_DEFAULT_SCOPE: Record<string, DataScope> = {
   super_admin: 'ALL',
-  admin: 'ALL',
-  ceo: 'ALL',
+  admin: 'ASSIGNED',
+  ceo: 'ASSIGNED',
   branch_manager: 'BRANCH',
   counselor: 'ASSIGNED',
   application_team: 'ASSIGNED',
@@ -24,17 +24,17 @@ const ROLE_DEFAULT_SCOPE: Record<string, DataScope> = {
   visa_officer: 'ASSIGNED',
   finance: 'BRANCH',
   finance_officer: 'BRANCH',
-  marketing_manager: 'ALL',
+  marketing_manager: 'ASSIGNED',
   marketing: 'BRANCH',
-  hr_manager: 'ALL',
+  hr_manager: 'BRANCH',
   hr: 'BRANCH',
   front_desk: 'BRANCH',
   support_staff: 'BRANCH',
   support_agent: 'BRANCH',
   partner_manager: 'BRANCH',
   document_officer: 'ASSIGNED',
-  data_manager: 'ALL',
-  ai_manager: 'ALL',
+  data_manager: 'ASSIGNED',
+  ai_manager: 'ASSIGNED',
   partner: 'ASSIGNED',
   student: 'ASSIGNED',
   employee: 'ASSIGNED',
@@ -42,15 +42,15 @@ const ROLE_DEFAULT_SCOPE: Record<string, DataScope> = {
 
 /**
  * Determine the data scope for a given auth context.
- * Super admins and admins always get ALL.
+ * Only Super Admin or an explicit data.view_all permission receives ALL.
  * Other roles get their default scope from ROLE_DEFAULT_SCOPE.
  */
-export function getScopeForAuth(auth: { roles: string[] }): DataScope {
-  if (auth.roles.includes('super_admin') || auth.roles.includes('admin')) {
+export function getScopeForAuth(auth: { roles: string[]; permissions?: string[] }): DataScope {
+  if (auth.roles.some(role => role.toLowerCase() === 'super_admin') || auth.permissions?.includes('data.view_all')) {
     return 'ALL';
   }
   // Take the most permissive scope across all roles the user has
-  const scopes = auth.roles.map(r => ROLE_DEFAULT_SCOPE[r] || 'NONE');
+  const scopes = auth.roles.map(r => ROLE_DEFAULT_SCOPE[r.toLowerCase()] || 'NONE');
   if (scopes.includes('ALL')) return 'ALL';
   if (scopes.includes('BRANCH')) return 'BRANCH';
   if (scopes.includes('ASSIGNED')) return 'ASSIGNED';
@@ -87,7 +87,7 @@ export function buildScopeFilter(
     case 'BRANCH':
       if (!auth.branch) {
         // No branch specified — fall back to assigned
-        return assignedField ? { [assignedField]: auth.userId } : {};
+        return assignedField ? { [assignedField]: auth.userId } : { id: '__NONE__' };
       }
       return { [branchField]: auth.branch };
     case 'ASSIGNED':
@@ -116,7 +116,7 @@ export function canAccessRecord(
   if (scope === 'ALL') return true;
   if (scope === 'NONE') return false;
   if (scope === 'BRANCH') {
-    return !auth.branch || !record.branch || record.branch === auth.branch;
+    return !!auth.branch && !!record.branch && record.branch === auth.branch;
   }
   // ASSIGNED
   const assignedTo = (record.assignedToId || record.assignedCounselorId || record.userId || record.ownerId) as string | undefined;

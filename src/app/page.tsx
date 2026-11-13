@@ -137,6 +137,7 @@ import SocialMediaManagementHub from '@/components/social/SocialMediaManagementH
 import CrmCommunicationsPage from '@/components/crm/pages/CrmCommunicationsPage';
 import CrmAgentOperationsPage from '@/components/crm/pages/CrmAgentOperationsPage';
 import CrmAnalyticsPage from '@/components/crm/pages/CrmAnalyticsPage';
+import InternationalDataCataloguePage from '@/components/crm/pages/InternationalDataCataloguePage';
 import CrmUniversitiesPage from '@/components/crm/pages/CrmUniversitiesPage';
 
 // ---- Marketing Hub ----
@@ -427,6 +428,7 @@ const crmPageMap: Record<string, React.ReactNode> = {
   'crm-scholarships': <CrmScholarshipsPage />,
   // Course & University
   'crm-course-finder': <CrmCourseFinderPage />,
+  'crm-data-catalogue': <InternationalDataCataloguePage />,
   'crm-universities': <CrmUniversitiesPage />,
   // Communication
   'crm-inbox': <CrmInboxPage />,
@@ -511,8 +513,11 @@ function CrmAdminView({ view }: { view: PortalView }) {
 // ============================================================
 
 export default function HomePageWrapper() {
+  // The searchParams-gated content needs a Suspense boundary, but the
+  // fallback MUST be the real public site (not a blank white screen) so
+  // the first paint shows the homepage and it is server-rendered for SEO.
   return (
-    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+    <Suspense fallback={<PublicView view="website" />}>
       <HomePageContent />
     </Suspense>
   );

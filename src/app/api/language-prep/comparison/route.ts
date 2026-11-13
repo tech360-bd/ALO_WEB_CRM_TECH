@@ -38,7 +38,7 @@ export async function GET(req: Request) {
       success: true,
       comparison,
       count: comparison.length,
-      columns: ['Test', 'Duration', 'Format', 'Scoring', 'Typical Result Timeline', 'Acceptance', 'Best For', 'Preparation Style'],
+      columns: ['Test', 'Duration', 'Cost', 'Format', 'Scoring', 'Typical Result Timeline', 'Acceptance', 'Best For', 'Preparation Style'],
       note: 'Desktop: Full comparison table. Mobile: Scrollable cards. No fake data — Check current provider information where not verified — Acceptance varies by university, course and visa route',
     });
   } catch (error: any) {

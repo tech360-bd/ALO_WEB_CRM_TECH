@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import PortalFooter from '@/components/portals/PortalFooter';
+import type { PartnerBrandingView } from '@/lib/partner/branding';
 import { usePathname, useRouter } from 'next/navigation';
 import { usePortalStore, type PortalView } from '@/lib/stores/portal-store';
 import { cn } from '@/lib/utils';
@@ -136,6 +138,9 @@ export default function PartnerPortalShell({ children }: { children: React.React
   const pathname = usePathname();
   const router = useRouter();
   const [showNotifications, setShowNotifications] = useState(false);
+  // The partner's own logo + colour scheme (maintained in
+  // /partner-admin/branding, resolved server-side from the session tenant).
+  const [partnerBranding, setPartnerBranding] = useState<PartnerBrandingView | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
   const isDirectPortalPath = pathname.startsWith('/partner/') || pathname.startsWith('/partner-admin/');
@@ -157,6 +162,17 @@ export default function PartnerPortalShell({ children }: { children: React.React
     logout();
     if (isDirectPortalPath) router.replace('/partner/login');
   };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/portal/footer-context', { credentials: 'include', cache: 'no-store', signal: controller.signal })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload) => {
+        if (payload?.success) setPartnerBranding((payload.partner as PartnerBrandingView | null) ?? null);
+      })
+      .catch(() => { /* branding is decorative here — shell must never break */ });
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     hydrate();
@@ -198,12 +214,29 @@ export default function PartnerPortalShell({ children }: { children: React.React
   const sidebarContent = (
     <div className="flex flex-col h-full">
       <div className="p-4 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-alo-brand text-white flex items-center justify-center">
-          <Handshake className="w-5 h-5" />
-        </div>
+        {partnerBranding?.logoUrl ? (
+          <img
+            src={partnerBranding.logoUrl}
+            alt={`${partnerBranding.displayName || 'Partner'} logo`}
+            className="w-9 h-9 rounded-xl object-contain bg-white"
+            width={36}
+            height={36}
+          />
+        ) : (
+          <div
+            className="w-9 h-9 rounded-xl bg-alo-brand text-white flex items-center justify-center"
+            style={partnerBranding?.primaryColor ? { backgroundColor: partnerBranding.primaryColor } : undefined}
+          >
+            <Handshake className="w-5 h-5" />
+          </div>
+        )}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-alo-text truncate">ALO Education</p>
-          <p className="text-xs text-alo-text-secondary">Partner Portal</p>
+          <p className="text-sm font-semibold text-alo-text truncate">
+            {partnerBranding?.displayName || 'ALO Education'}
+          </p>
+          <p className="text-xs text-alo-text-secondary">
+            {partnerBranding?.displayName ? 'Partner Portal · ALO Education' : 'Partner Portal'}
+          </p>
         </div>
       </div>
       <Separator />
@@ -234,7 +267,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
                 />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.badge && !isActive && (
-                  <span className="text-[11px] leading-none font-medium px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">
+                  <span className="text-[11px] leading-none font-medium px-1.5 py-0.5 rounded-full bg-crm-danger-bg text-crm-danger-text">
                     {item.badge}
                   </span>
                 )}
@@ -261,10 +294,10 @@ export default function PartnerPortalShell({ children }: { children: React.React
       <Separator />
       <div className="p-3">
         <Button
-          variant="ghost"
-          className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 h-10"
-          onClick={handleLogout}
-        >
+ variant="ghost"
+ className="w-full justify-start text-alo-text-secondary hover:text-crm-danger-text hover:bg-crm-danger-bg "
+ onClick={handleLogout}
+ >
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
         </Button>
@@ -293,7 +326,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
             <span className="text-sm font-semibold text-alo-text">ALO Education</span>
           </div>
           <div className="hidden sm:flex items-center gap-2 ml-4">
-            <Badge variant="secondary" className="font-mono text-xs bg-slate-100 text-slate-600">
+            <Badge variant="secondary" className="font-mono text-xs bg-[var(--alo-surface-muted)] text-[var(--alo-body)]">
               {user?.id}
             </Badge>
             <Badge variant="brand" className="text-xs">
@@ -311,7 +344,7 @@ export default function PartnerPortalShell({ children }: { children: React.React
             >
               <Bell className="w-5 h-5 text-alo-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-[var(--alo-error)] text-white text-[11px] flex items-center justify-center font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -375,9 +408,13 @@ export default function PartnerPortalShell({ children }: { children: React.React
         <aside className="hidden lg:block w-64 bg-white border-r border-alo-border shrink-0 overflow-y-auto">
           {sidebarContent}
         </aside>
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-4 lg:p-6 max-w-7xl mx-auto">{children}</div>
-        </main>
+        <div className="flex-1 overflow-y-auto flex flex-col">
+          <main className="flex-1 p-4 lg:p-6">
+            <div className="mx-auto w-full max-w-7xl">{children}</div>
+          </main>
+          {/* Site footer — a sibling of <main>, so it is the page's only footer landmark. */}
+          <PortalFooter scope="partner" />
+        </div>
       </div>
     </div>
   );

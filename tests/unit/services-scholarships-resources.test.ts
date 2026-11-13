@@ -30,7 +30,7 @@ describe('Services system — spec §3-§12', () => {
     const page = read('src/app/services/page.tsx');
     expect(page).toContain('Complete Support for Your Study Abroad Journey');
     expect(page).toContain('Provide professional guidance from course selection and university applications to visa preparation, pre-departure planning and post-arrival support');
-    expect(page).toContain('Book Free Consultation');
+    expect(page).toContain('Request Consultation');
     expect(page).toContain('Explore Course Finder');
     expect(page).toContain('services.length');
     expect(page).not.toContain('Verified content');
@@ -59,12 +59,12 @@ describe('Services system — spec §3-§12', () => {
     expect(hub).toContain('<RelatedQuestions');
     expect(hub).toContain('Related Services');
     expect(hub).toContain('Ready to Take the Next Step?');
-    expect(hub).toContain('Book Free Consultation');
+    expect(hub).toContain('Request Consultation');
     expect(hub).toContain('Start Course Finder');
     expect(hub).toContain('Check Eligibility');
     expect(hub).toContain('Chat with Counselor');
-    expect(hub).toContain('+880 180 502 0101');
-    expect(hub).toContain('wa.me/8801805020101');
+    expect(hub).toContain('ALO_PUBLIC_CONTACT_CTA.href');
+    expect(hub).toContain('ALO_CONTACT.hasWhatsApp');
   });
 
   it('service-specific content (§8): visa disclaimer, language-prep link, scholarships link', () => {
@@ -158,12 +158,13 @@ describe('Scholarships system — spec §13-§24', () => {
     expect(l).toContain('href={`/scholarships/${s.slug}`}');
   });
 
-  it('API accepts the §15 filter params and only publishes active records', () => {
+  it('API accepts the §15 filters and uses separate fresh-source predicates per scholarship model', () => {
     const api = read('src/app/api/scholarships/route.ts');
     for (const p of ['studyLevel', 'subject', 'scholarshipType', 'intake', 'applicationOpen']) {
       expect(api).toContain(`searchParams.get('${p}')`);
     }
-    expect(api).toContain("status: 'active'");
+    expect(api).toContain('publicScholarshipWhere()');
+    expect(api).toContain('publicCrmScholarshipWhere()');
   });
 
   it('detail hub: status engine, NEEDS_VERIFICATION banner, coverage split, separate-vs-automatic, strategy, final CTA', () => {

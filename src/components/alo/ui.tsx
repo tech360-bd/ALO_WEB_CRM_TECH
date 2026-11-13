@@ -28,13 +28,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import * as LucideIcons from "lucide-react";
+import { NamedIcon } from "@/components/ui/named-icon";
 import { format, type Locale } from "date-fns";
 
+/** Re-exported from the single canonical resolver (Master §10). */
 export function Icon({ name, className }: { name: string; className?: string }) {
-  const Cmp = (LucideIcons as any)[name] as React.ComponentType<{ className?: string }>;
-  if (!Cmp) return <LucideIcons.Circle className={className} />;
-  return <Cmp className={className} />;
+  return <NamedIcon name={name} className={className} />;
 }
 
 /* ─── Accent color tokens (shared) ─── */
@@ -53,7 +52,7 @@ export const ACCENT_CLASSES: Record<AccentColor, { bg: string; text: string; bor
   orange:  { bg: "bg-[var(--alo-orange-soft)]",  text: "text-[var(--alo-orange-strong)]", border: "border-[var(--alo-orange)]",  dot: "bg-[var(--alo-orange)]" },
   emerald: { bg: "bg-[var(--alo-success-soft)]", text: "text-[var(--alo-success-strong)]",border: "border-[var(--alo-success)]", dot: "bg-[var(--alo-success)]" },
   amber:   { bg: "bg-[var(--alo-warning-soft)]", text: "text-[var(--alo-warning-strong)]",border: "border-[var(--alo-warning)]", dot: "bg-[var(--alo-warning)]" },
-  violet:  { bg: "bg-violet-50",                 text: "text-violet-700",                  border: "border-violet-200",            dot: "bg-violet-500" },
+  violet:  { bg: "bg-[var(--alo-brand-pale)]",                 text: "text-[var(--alo-brand)]",                  border: "border-[var(--alo-border)]",            dot: "bg-[var(--alo-brand-pale)]0" },
   rose:    { bg: "bg-[var(--alo-danger-soft)]",  text: "text-[var(--alo-danger-strong)]", border: "border-[var(--alo-danger)]",  dot: "bg-[var(--alo-danger)]" },
   sky:     { bg: "bg-[var(--alo-info-soft)]",    text: "text-[var(--alo-info-strong)]",   border: "border-[var(--alo-info)]",    dot: "bg-[var(--alo-info)]" },
   slate:   { bg: "bg-[var(--alo-surface-muted)]",text: "text-[var(--alo-text-secondary)]",border: "border-[var(--alo-border)]",  dot: "bg-[var(--alo-muted)]" },
@@ -863,7 +862,7 @@ export function Timeline({ items, className }: { items: TimelineItem[]; classNam
                     <div className="mt-1.5 flex items-center gap-1.5">
                       <Avatar className="size-5">
                         <AvatarImage src={item.actor.avatar} />
-                        <AvatarFallback className="text-[10px]">{item.actor.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="text-[11px]">{item.actor.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <span className="text-xs text-[var(--alo-muted)]">{item.actor.name}</span>
                     </div>
@@ -965,7 +964,7 @@ export function Notification({
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss"
-          className={cn("shrink-0 rounded-md p-1 hover:bg-black/5", a.text)}
+          className={cn("shrink-0 rounded-md p-1 hover:bg-[var(--alo-navy)]/5", a.text)}
         >
           <Icon name="X" className="size-4" />
         </button>

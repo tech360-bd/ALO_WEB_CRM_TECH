@@ -1,16 +1,12 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { createAuditLog } from '@/lib/marketing/audit';
 import { generateText } from '@/lib/ai';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
+import { AuthContext } from '@/lib/auth-middleware';
+import { withMarketingAccess } from '@/lib/marketing/access';
 
 // ─── GET: Social inbox with filters and pagination ────────────────────────────
 
-export const GET = withAuth(async (request: Request, _auth: AuthContext) => {
+export const GET = withMarketingAccess(async (request: Request, _auth: AuthContext) => {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
@@ -30,7 +26,7 @@ export const GET = withAuth(async (request: Request, _auth: AuthContext) => {
       { status: 500 }
     );
   }
-}, MARKETING_AUTH);
+}, 'manager');
 
 async function handleInbox(searchParams: URLSearchParams) {
   const platform = searchParams.get('platform') || undefined;
@@ -72,7 +68,7 @@ async function handleInbox(searchParams: URLSearchParams) {
 
 // ─── POST: Reply suggest, reply send ──────────────────────────────────────────
 
-export const POST = withAuth(async (request: Request, auth: AuthContext) => {
+export const POST = withMarketingAccess(async (request: Request, auth: AuthContext) => {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || '';
@@ -99,7 +95,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       { status: 500 }
     );
   }
-}, MARKETING_AUTH);
+}, 'manager');
 
 // ─── AI Suggested Reply ──────────────────────────────────────────────────────
 
@@ -165,44 +161,10 @@ interface ReplySendInput {
   replyText: string;
 }
 
-async function handleReplySend(body: ReplySendInput, auth: AuthContext) {
-  const { messageId, replyText } = body;
-
-  if (!messageId || !replyText) {
-    return NextResponse.json(
-      { error: 'messageId and replyText are required' },
-      { status: 400 }
-    );
-  }
-
-  const message = await db.marketingSocialMessage.findUnique({
-    where: { id: messageId },
-  });
-
-  if (!message) {
-    return NextResponse.json(
-      { error: 'Message not found' },
-      { status: 404 }
-    );
-  }
-
-  const updated = await db.marketingSocialMessage.update({
-    where: { id: messageId },
-    data: {
-      replySent: replyText,
-      repliedAt: new Date(),
-      isResolved: true,
-    },
-  });
-
-  await createAuditLog({
-    userId: auth.userId,
-    role: auth.roles[0] || 'marketing',
-    action: 'social.reply_send',
-    resource: 'MarketingSocialMessage',
-    resourceId: messageId,
-    details: { platform: message.platform, channel: message.channel },
-  });
-
-  return NextResponse.json({ message: updated });
+async function handleReplySend(_body: ReplySendInput, _auth: AuthContext) {
+  return NextResponse.json({
+    success: false,
+    deliveryStatus: 'NOT_CONFIGURED',
+    error: 'No verified official provider-send integration is connected. The message was not sent, stored as delivered, or marked resolved.',
+  }, { status: 503 });
 }

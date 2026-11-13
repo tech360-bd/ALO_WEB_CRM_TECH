@@ -1,15 +1,12 @@
 import { leadAccess } from '@/lib/crm/lead-access';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
+import { AuthContext } from '@/lib/auth-middleware';
+import { withMarketingAccess } from '@/lib/marketing/access';
 
 const todayStart = () => new Date(new Date().setHours(0, 0, 0, 0));
 
-export const GET = withAuth(async (_request: Request, _auth: AuthContext) => {
+export const GET = withMarketingAccess(async (_request: Request, _auth: AuthContext) => {
   const leadScope = leadAccess(_auth);
   if (!leadScope) return NextResponse.json({ error: 'Verified User lead access required' }, { status: 403 });
   try {
@@ -136,4 +133,4 @@ export const GET = withAuth(async (_request: Request, _auth: AuthContext) => {
       { status: 500 }
     );
   }
-}, MARKETING_AUTH);
+}, 'manager');

@@ -37,7 +37,12 @@ export const GET = withAuth(async (req, auth) => {
 
     return NextResponse.json({
       success: true,
-      documents,
+      // Staff can now open either table through the same authorized route; before
+      // this the merged list had no staff-usable download URL for portal rows.
+      documents: documents.map((document) => ({
+        ...document,
+        downloadUrl: `/api/counselor/documents/${document.id}/download`,
+      })),
       count: documents.length,
       accessVia: guard.decision.via,
       canReview: guard.decision.canReview,

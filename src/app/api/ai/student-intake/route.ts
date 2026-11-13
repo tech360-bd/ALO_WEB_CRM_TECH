@@ -1,74 +1,91 @@
+import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
-import { handleIntakeMessage, type Channel, isOfficeHours } from '@/lib/ai-agents/student-intake-agent';
+import { handleIntakeMessage, type Channel } from '@/lib/ai-agents/student-intake-agent';
+import { createIntakeSession, intakeSessionCookieOptions, intakeSessionSecret, INTAKE_SESSION_COOKIE, verifyIntakeSession } from '@/lib/ai-agents/intake-session';
+import { getOfficeHoursStatus } from '@/lib/communication/after-hours';
+import { rateLimitMiddleware } from '@/lib/rate-limiter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-/**
- * Unified Student Intake AI — website / webchat / Facebook / any channel
- * POST { channel, senderId, text, mediaType?, mediaInfo? }
- * Optional bearer: verifies student ownership; else public intake (ID-first).
- * Sequential per senderId: callers must await; server also serialises via DB memory.
- */
+const bodySchema = z.object({
+  // Accepted for backward compatibility only; never used as an identity or memory key.
+  senderId: z.string().max(191).optional(),
+  channel: z.enum(['website', 'whatsapp', 'webchat', 'facebook']).optional(),
+  text: z.string().max(5000).optional(),
+  message: z.string().max(5000).optional(),
+  mediaType: z.enum(['document', 'image', 'audio', 'voice', 'video']).nullable().optional(),
+  media_type: z.enum(['document', 'image', 'audio', 'voice', 'video']).nullable().optional(),
+  mediaInfo: z.object({ fileName: z.string().max(191).optional(), mime: z.string().max(120).optional(), mediaId: z.string().max(191).optional() }).strict().optional(),
+  media_info: z.object({ fileName: z.string().max(191).optional(), mime: z.string().max(120).optional(), mediaId: z.string().max(191).optional() }).strict().optional(),
+}).strict();
 
-function mapChannel(c: string | null): Channel {
-  if (c === 'whatsapp' || c === 'facebook' || c === 'website' || c === 'webchat') return c;
+function mapChannel(value: string | undefined, queryValue: string | null): Channel {
+  const channel = value || queryValue || 'website';
+  if (channel === 'whatsapp' || channel === 'facebook' || channel === 'website' || channel === 'webchat') return channel;
   return 'website';
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json().catch(()=> ({}));
-  const channel = mapChannel(body.channel || req.nextUrl.searchParams.get('channel') || 'website');
-  const senderId: string = (body.senderId || body.sessionId || body.phone || '').toString().trim();
-  const text: string = (body.text || body.message || '').toString();
+  const limited = rateLimitMiddleware(req, 'ai');
+  if (limited) return limited;
+
+  const parsed = bodySchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid intake request', details: parsed.error.flatten() }, { status: 400 });
+  const body = parsed.data;
+  const channel = mapChannel(body.channel, req.nextUrl.searchParams.get('channel'));
+  const text = body.text ?? body.message ?? '';
   const mediaType = body.mediaType ?? body.media_type ?? null;
-  const mediaInfo = body.mediaInfo ?? body.media_info ?? null;
+  const mediaInfo = body.mediaInfo ?? body.media_info ?? undefined;
+  if (!text && !mediaType) return NextResponse.json({ success: false, error: 'text or mediaType required' }, { status: 400 });
 
-  if (!senderId) return NextResponse.json({ error: 'senderId required' }, { status: 400 });
-  if (!text && !mediaType) return NextResponse.json({ error: 'text or mediaType required' }, { status: 400 });
-
-  // Public intake allowed; optional auth not blocking
+  const secret = intakeSessionSecret();
+  if (!secret) {
+    return NextResponse.json({ success: false, code: 'INTAKE_SESSION_SECRET_REQUIRED', error: 'Secure intake sessions are not configured.' }, { status: 503 });
+  }
+  const existingId = verifyIntakeSession(req.cookies.get(INTAKE_SESSION_COOKIE)?.value, secret);
+  const newSession = existingId ? null : createIntakeSession(secret);
+  const senderId = existingId || newSession!.id;
 
   try {
-    const result = await handleIntakeMessage({
-      channel,
-      senderId,
-      text,
-      mediaType,
-      mediaInfo,
-    });
-
-    // Office hours flag for frontend human-like typing indicator
-    const office = isOfficeHours();
-
-    return NextResponse.json({
+    const result = await handleIntakeMessage({ channel, senderId, text, mediaType, mediaInfo });
+    const response = NextResponse.json({
       success: true,
       reply: result.reply,
-      studentDbId: result.studentDbId ?? result.context.studentDbId ?? null,
-      studentCode: result.studentCode ?? result.context.studentCode ?? null,
+      // Public intake never exposes a student record or treats a supplied ID as authentication.
+      studentDbId: null,
+      studentCode: null,
       state: result.context.state,
       lang: result.context.lang,
-      officeHours: office,
+      officeHours: result.context.officeHours,
       channel,
-    });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || 'intake_failed' }, { status: 500 });
+    }, { headers: { 'Cache-Control': 'private, no-store', 'Vary': 'Cookie' } });
+    if (newSession) response.cookies.set(INTAKE_SESSION_COOKIE, newSession.cookie, intakeSessionCookieOptions(req.nextUrl.protocol === 'https:'));
+    return response;
+  } catch (error) {
+    console.error('[student-intake] failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Student intake is temporarily unavailable.' }, { status: 503 });
   }
 }
 
-export async function GET(req: NextRequest) {
-  // Health + contract for Super-Admin dashboard
-  return NextResponse.json({
-    success: true,
-    agent: 'STUDENT_INTAKE_BN',
-    description: 'First asks Student ID (AE-YYYYXXXXXX), verifies → informs independent submission, then multilingual (BN/EN) + doc/voice counseling with memory & sequential queue.',
-    officeHours: isOfficeHours(),
-    officeWindow: '10:00-19:00 Asia/Dhaka, Sat-Thu (human-like sequential)',
-    channels: ['website','whatsapp','webchat','facebook'],
-    memory: 'per senderId+channel via AgentMemory + TimelineEvent fallback',
-    contract: {
-      POST: { channel: 'website|whatsapp|webchat|facebook', senderId: 'phone|sessionId', text: 'string', mediaType: 'document|image|audio|voice|null', mediaInfo: '{fileName,mime,mediaId,transcription}' },
-      reply: 'string (Bangla/English, office-hours aware)'
-    }
-  });
+export async function GET() {
+  try {
+    const status = await getOfficeHoursStatus();
+    return NextResponse.json({
+      success: true,
+      agent: 'STUDENT_INTAKE_BN',
+      description: 'Public intake for general guidance; student ID alone never authenticates a student or exposes account information.',
+      officeHours: !status.isAfterHours,
+      officeWindow: 'Configured UCC office-hours schedule in Asia/Dhaka',
+      nextOpen: status.nextOpen,
+      channels: ['website', 'whatsapp', 'webchat', 'facebook'],
+      memory: 'server-signed, httpOnly session with 30-day expiration; no client-selected sender identity',
+      contract: {
+        POST: { channel: 'website|whatsapp|webchat|facebook', text: 'string', mediaType: 'document|image|audio|voice|null', mediaInfo: '{fileName,mime,mediaId}' },
+        reply: 'string (Bangla/English; public responses contain no private student records)',
+      },
+    }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Student intake status is temporarily unavailable.' }, { status: 503 });
+  }
 }

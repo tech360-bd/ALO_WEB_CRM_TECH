@@ -1,173 +1,199 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { checkRateLimit } from "@/lib/rate-limiter";
-import { sendWhatsAppMessage } from "@/lib/whatsapp-cloud-api";
+import { NextRequest, NextResponse } from 'next/server';
+import { createHash } from 'node:crypto';
+import { db } from '@/lib/db';
+import { authenticateRequest } from '@/lib/auth-middleware';
+import { mutationOriginAllowed } from '@/lib/request-origin';
+import { checkRateLimit } from '@/lib/rate-limiter';
+import { normalizePhone } from '@/lib/phone-normalization';
+import { sendWhatsAppMessage, type WhatsAppMessagePurpose } from '@/lib/whatsapp-cloud-api';
+import { determineSenderNumber, MAIN_NUMBER } from '@/lib/whatsapp-number-pool';
+import { canAccessUccConversation } from '@/lib/ucc/document-access';
+import { canViewUccConversationB2B } from '@/lib/ucc/conversation-visibility';
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-/**
- * POST /api/whatsapp/send — send one WhatsApp message from an official ALO number.
- *
- * Hardened 2026-10-13. What was wrong before:
- *   • the only authorization test was `role !== "STUDENT"`, so ANY other
- *     authenticated account (partner, marketing, finance, an external-facing
- *     role) could send WhatsApp traffic from ALO's official number;
- *   • there was no rate limit, so one client loop could burn the number's
- *     messaging quality rating;
- *   • the route hand-rolled its own Graph API call instead of using
- *     `sendWhatsAppMessage`, so it skipped text-length validation, phone
- *     normalization and provider status persistence, and it pinned v18.0;
- *   • a failed send was dropped. `WhatsAppRetryQueue` existed, the retry job
- *     existed, but nothing ever enqueued a row, so the retry engine could never
- *     run against real data.
- *
- * Body: { to, templateName?, templateLanguage?, text? }
- */
+const PRIVILEGED_ROLES = new Set(['SUPER_ADMIN', 'ADMIN', 'CEO']);
+const PURPOSES = new Set<WhatsAppMessagePurpose>(['SERVICE', 'TRANSACTIONAL', 'PROMOTIONAL_MARKETING']);
 
-/** Roles permitted to send WhatsApp from an official ALO number. */
-const ALLOWED_SENDER_ROLES = new Set([
-  'super_admin', 'admin', 'ceo', 'coo',
-  'branch_manager', 'department_manager', 'counselor', 'senior_counselor',
-  'application_manager', 'application_team', 'application_officer', 'document_officer',
-  'visa_officer', 'visa_interview_officer', 'front_desk', 'support', 'support_staff',
-  'marketing_manager', 'finance',
-]);
+function normalizedRoles(auth: { userType: string; roles: string[] }) {
+  return new Set([auth.userType, ...auth.roles].map((role) => String(role).toUpperCase()));
+}
 
-function callerRoles(sessionUser: Record<string, unknown>): string[] {
-  const raw = [
-    ...(Array.isArray(sessionUser?.roles) ? (sessionUser.roles as unknown[]) : []),
-    sessionUser?.role,
-    sessionUser?.userType,
-  ];
-  return raw
-    .filter((value): value is string => typeof value === 'string' && value.length > 0)
-    .map((value) => value.toLowerCase());
+function rateLimitedUserKey(userId: string) {
+  return `whatsapp-send:${userId}`;
 }
 
 export async function POST(req: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const auth = await authenticateRequest(req);
+  if (auth instanceof NextResponse) return auth;
+  if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
 
-    // Deny by default: an unrecognised role is not a sender.
-    const roles = callerRoles(session.user as Record<string, unknown>);
-    const authorized = roles.some((role) => ALLOWED_SENDER_ROLES.has(role));
-    if (!authorized) {
-      return NextResponse.json(
-        { error: "Forbidden", detail: "This role is not authorized to send WhatsApp messages." },
-        { status: 403 }
-      );
-    }
+  const roles = normalizedRoles(auth);
+  const isPrivileged = [...PRIVILEGED_ROLES].some((role) => roles.has(role));
+  const authorized = auth.permissions.includes('c2') || isPrivileged;
+  if (!authorized) return NextResponse.json({ success: false, error: 'WhatsApp send permission is required.' }, { status: 403 });
 
-    const userId = String((session.user as Record<string, unknown>).id ?? (session.user as Record<string, unknown>).email ?? 'unknown');
-    const limit = checkRateLimit(`whatsapp-send:${userId}`, 'whatsapp_send');
-    if (!limit.allowed) {
-      return NextResponse.json(
-        { error: "Too many messages", detail: "WhatsApp send rate limit reached. Try again shortly." },
-        { status: 429, headers: { "Retry-After": String(Math.max(1, Math.ceil((limit.resetAt - Date.now()) / 1000))) } }
-      );
-    }
+  const limit = checkRateLimit(rateLimitedUserKey(auth.userId), 'whatsapp_send');
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { success: false, error: 'WhatsApp send rate limit reached. Try again shortly.' },
+      { status: 429, headers: { 'Retry-After': String(Math.max(1, Math.ceil((limit.resetAt - Date.now()) / 1000))) } },
+    );
+  }
 
-    let body: { to?: string; templateName?: string; templateLanguage?: string; text?: string };
-    try {
-      body = await req.json();
-    } catch {
-      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-    }
+  const body = await req.json().catch(() => null) as {
+    to?: string;
+    text?: string;
+    templateName?: string;
+    templateLanguage?: string;
+    purpose?: string;
+    conversationId?: string;
+    studentId?: string;
+    leadId?: string;
+    contactId?: string;
+    campaignId?: string;
+    approvalId?: string;
+  } | null;
+  if (!body || typeof body !== 'object') return NextResponse.json({ success: false, error: 'A valid JSON body is required.' }, { status: 400 });
+  const to = typeof body.to === 'string' ? body.to.trim() : '';
+  const normalizedRecipient = normalizePhone(to);
+  const purpose = String(body.purpose || '').toUpperCase() as WhatsAppMessagePurpose;
+  const text = typeof body.text === 'string' ? body.text.trim() : '';
+  const templateName = typeof body.templateName === 'string' ? body.templateName.trim() : '';
+  if (!normalizedRecipient) return NextResponse.json({ success: false, error: 'A valid recipient phone number is required.' }, { status: 400 });
+  if (!PURPOSES.has(purpose)) return NextResponse.json({ success: false, error: 'Explicit SERVICE, TRANSACTIONAL, or PROMOTIONAL_MARKETING purpose is required.' }, { status: 400 });
+  if (!templateName && !text) return NextResponse.json({ success: false, error: 'Either an approved template or text is required.' }, { status: 400 });
+  if (text.length > 4096) return NextResponse.json({ success: false, error: 'Text exceeds the WhatsApp message limit of 4,096 characters.' }, { status: 400 });
+  if (purpose === 'PROMOTIONAL_MARKETING' && !isPrivileged && !roles.has('MARKETING_MANAGER')) return NextResponse.json({ success: false, error: 'Promotional sends are restricted to Marketing Manager and administrator roles.' }, { status: 403 });
 
-    const { to, templateName, templateLanguage, text } = body;
-    if (!to || typeof to !== 'string') {
-      return NextResponse.json({ error: "to (recipient phone) is required" }, { status: 400 });
-    }
-    if (!templateName && !text) {
-      return NextResponse.json({ error: "Either templateName or text is required" }, { status: 400 });
-    }
+  let conversationId = '';
+  let selectedSender = MAIN_NUMBER;
+  let studentId = '';
+  let leadId = '';
+  let contactId = '';
 
-    // Single canonical sender: validates length, normalizes the number, calls the
-    // provider and records the accepted message plus its delivery status.
-    const sendResult = await sendWhatsAppMessage({
-      to,
-      text,
-      templateName,
-      templateLanguage,
+  if (purpose === 'SERVICE') {
+    conversationId = typeof body.conversationId === 'string' ? body.conversationId.trim() : '';
+    if (!conversationId) return NextResponse.json({ success: false, error: 'SERVICE sends require an existing conversation.' }, { status: 400 });
+    const conversation = await db.uccConversation.findUnique({ where: { id: conversationId } });
+    if (!conversation || conversation.channel.toLowerCase() !== 'whatsapp') return NextResponse.json({ success: false, error: 'WhatsApp conversation not found.' }, { status: 404 });
+    if (!canAccessUccConversation(auth, conversation) || !(await canViewUccConversationB2B(auth, conversation))) {
+      return NextResponse.json({ success: false, error: 'You may send only in conversations within your authorized assignment and branch scope.' }, { status: 403 });
+    }
+    if (normalizePhone(conversation.participantPhone || '') !== normalizedRecipient) return NextResponse.json({ success: false, error: 'Recipient does not match the selected conversation.' }, { status: 403 });
+    const recentInbound = await db.uccMessage.findFirst({
+      where: { conversationId, direction: 'inbound', createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
+      select: { id: true },
+      orderBy: { createdAt: 'desc' },
     });
+    if (!recentInbound && !templateName) return NextResponse.json({ success: false, code: 'WHATSAPP_SERVICE_WINDOW_CLOSED', error: 'A free-form WhatsApp service message requires an inbound message within the last 24 hours.' }, { status: 422 });
+    studentId = conversation.studentId || '';
+    leadId = conversation.leadId || '';
+    const routing = await determineSenderNumber({ counselorId: auth.userId, studentId: studentId || undefined, leadId: leadId || undefined });
+    selectedSender = routing.number;
+  }
 
-    if (!sendResult.success || !sendResult.messageId) {
-      const sendError = sendResult.error || "WhatsApp provider did not confirm the message.";
+  if (purpose === 'TRANSACTIONAL') {
+    studentId = typeof body.studentId === 'string' ? body.studentId.trim() : '';
+    if (!studentId) return NextResponse.json({ success: false, error: 'TRANSACTIONAL sends require an existing student identity.' }, { status: 400 });
+    const student = await db.student.findFirst({ where: { OR: [{ id: studentId }, { studentId }] }, select: { id: true, studentId: true, phone: true, counselorId: true } });
+    if (!student || normalizePhone(student.phone || '') !== normalizedRecipient) return NextResponse.json({ success: false, error: 'The recipient must match the identified student record.' }, { status: 403 });
+    if (!PRIVILEGED_ROLES.has([...roles].find((role) => PRIVILEGED_ROLES.has(role)) || '') && student.counselorId !== auth.userId) {
+      return NextResponse.json({ success: false, error: 'Student is not assigned to this sender.' }, { status: 403 });
+    }
+    studentId = student.id;
+  }
 
-      // Queue a text send for controlled retry (max 3 attempts). Template sends
-      // are not retried here: the queue stores only text, so retrying one would
-      // silently downgrade an approved template to plain text.
-      let retryQueued = false;
-      const retryPhone = (to || '').replace(/\D/g, '');
-      if (!templateName && text && retryPhone && !/not configured/i.test(sendError)) {
-        try {
-          await db.whatsAppRetryQueue.create({
-            data: {
-              messageId: '',
-              recipientPhone: retryPhone,
-              messageBody: text,
-              attemptCount: 0,
-              maxAttempts: 3,
-              lastError: sendError.slice(0, 400),
-              nextRetryAt: new Date(Date.now() + 15 * 60 * 1000),
-              status: 'pending',
-            },
-          });
-          retryQueued = true;
-        } catch {
-          /* queueing is best-effort; the failure is still reported below */
-        }
-      }
+  if (purpose === 'PROMOTIONAL_MARKETING') {
+    if (!body.campaignId || !body.approvalId) return NextResponse.json({ success: false, error: 'An approved campaign and approval record are required.' }, { status: 400 });
+    contactId = typeof body.contactId === 'string' ? body.contactId.trim() : '';
+    studentId = typeof body.studentId === 'string' ? body.studentId.trim() : '';
+    leadId = typeof body.leadId === 'string' ? body.leadId.trim() : '';
+    if (!contactId && !studentId && !leadId) return NextResponse.json({ success: false, error: 'Promotional sends require a contact, student, or lead CRM identity.' }, { status: 400 });
 
-      await db.auditLog.create({
+    let identityMatches = false;
+    if (contactId) {
+      const contact = await db.whatsAppContact.findUnique({ where: { id: contactId }, select: { id: true, normalizedPhone: true } });
+      identityMatches = Boolean(contact && contact.normalizedPhone === normalizedRecipient);
+    }
+    if (!identityMatches && studentId) {
+      const student = await db.student.findFirst({ where: { OR: [{ id: studentId }, { studentId }] }, select: { id: true, phone: true } });
+      identityMatches = Boolean(student && normalizePhone(student.phone || '') === normalizedRecipient);
+      if (student) studentId = student.id;
+    }
+    if (!identityMatches && leadId) {
+      const lead = await db.lead.findUnique({ where: { id: leadId }, select: { id: true, phone: true } });
+      identityMatches = Boolean(lead && normalizePhone(lead.phone || '') === normalizedRecipient);
+    }
+    if (!identityMatches) return NextResponse.json({ success: false, error: 'The recipient does not match an existing CRM identity.' }, { status: 403 });
+  }
+
+  const sendResult = await sendWhatsAppMessage({
+    to: normalizedRecipient,
+    text: text || undefined,
+    templateName: templateName || undefined,
+    templateLanguage: typeof body.templateLanguage === 'string' ? body.templateLanguage : undefined,
+    purpose,
+    conversationId: conversationId || undefined,
+    contactId: contactId || undefined,
+    studentId: studentId || undefined,
+    leadId: leadId || undefined,
+    campaignId: typeof body.campaignId === 'string' ? body.campaignId : undefined,
+    approvalId: typeof body.approvalId === 'string' ? body.approvalId : undefined,
+    actorId: auth.userId,
+    employeeSenderId: auth.userId,
+    senderNumber: selectedSender,
+  });
+
+  if (!sendResult.success || !sendResult.messageId) {
+    const sendError = sendResult.error || 'WHATSAPP_PROVIDER_DID_NOT_CONFIRM';
+    let retryQueued = false;
+    // Retry only messages with durable purpose, actor, and authorization context.
+    // Template sends are not downgraded to text in the retry worker.
+    const definitiveRateLimit = sendError.includes('HTTP_429');
+    if (!templateName && text && purpose === 'SERVICE' && conversationId && definitiveRateLimit) {
+      await db.whatsAppRetryQueue.create({
         data: {
-          userId,
-          action: "WHATSAPP_SEND_FAILED",
-          resource: "WhatsApp",
-          resourceId: retryPhone || to,
-          details: JSON.stringify({
-            templateName: templateName ?? null,
-            retryQueued,
-            notConfigured: /not configured/i.test(sendError),
-          }),
+          messageId: '',
+          recipientPhone: normalizedRecipient,
+          messageBody: text,
+          purpose: purpose.toLowerCase(),
+          campaignId: body.campaignId || '',
+          approvalId: body.approvalId || '',
+          conversationId,
+          actorId: auth.userId,
+          senderNumber: selectedSender,
+          attemptCount: 0,
+          maxAttempts: 3,
+          lastError: sendError.slice(0, 400),
+          nextRetryAt: new Date(Date.now() + 15 * 60 * 1000),
+          status: 'pending',
         },
-      }).catch(() => {});
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: "WhatsApp send failed",
-          detail: sendError,
-          retryQueued,
-        },
-        { status: /not configured/i.test(sendError) ? 503 : 502 }
-      );
+      }).then(() => { retryQueued = true; }).catch(() => {});
     }
 
+    const recipientHash = createHash('sha256').update(normalizedRecipient).digest('hex').slice(0, 16);
     await db.auditLog.create({
       data: {
-        userId,
-        action: "WHATSAPP_SEND",
-        resource: "SocialInboxMessage",
-        resourceId: sendResult.socialMessageId ?? sendResult.messageId,
-        details: JSON.stringify({ templateName: templateName ?? null, messageId: sendResult.messageId }),
+        userId: auth.userId,
+        action: 'WHATSAPP_SEND_FAILED',
+        resource: 'WhatsApp',
+        resourceId: recipientHash,
+        actorRole: auth.roles[0] || auth.userType,
+        details: JSON.stringify({ purpose, campaignId: purpose === 'PROMOTIONAL_MARKETING' ? body.campaignId : undefined, retryQueued, errorCode: sendError.slice(0, 120) }),
       },
     }).catch(() => {});
-
-    return NextResponse.json({
-      success: true,
-      messageId: sendResult.messageId,
-      socialMessageId: sendResult.socialMessageId ?? null,
-      statusRecorded: sendResult.statusRecorded ?? false,
-    });
-  } catch (err: unknown) {
-    console.error("[whatsapp.send] error:", err);
-    return NextResponse.json({ error: "WhatsApp send failed" }, { status: 500 });
+    const notConfigured = /NOT_CONFIGURED|NO_RECENTLY_VERIFIED|REGISTRY_UNAVAILABLE/i.test(sendError);
+    return NextResponse.json({ success: false, error: 'WhatsApp send failed.', detail: sendError, retryQueued }, { status: notConfigured ? 503 : 502 });
   }
+
+  return NextResponse.json({
+    success: true,
+    messageId: sendResult.messageId,
+    socialMessageId: sendResult.socialMessageId ?? null,
+    statusRecorded: sendResult.statusRecorded ?? false,
+    senderNumber: sendResult.senderNumber,
+    fallbackUsed: sendResult.fallbackUsed ?? false,
+  });
 }

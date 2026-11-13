@@ -40,18 +40,18 @@ interface LoadState {
 }
 
 const TYPE_CONFIG: Record<string, { color: string; bg: string; border: string; dot: string }> = {
-  counseling: { color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200', dot: 'bg-blue-500' },
-  follow_up: { color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200', dot: 'bg-amber-500' },
-  interview: { color: 'text-purple-700', bg: 'bg-purple-50', border: 'border-purple-200', dot: 'bg-purple-500' },
-  meeting: { color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200', dot: 'bg-emerald-500' },
-  visa_interview: { color: 'text-purple-700', bg: 'bg-purple-50', border: 'border-purple-200', dot: 'bg-purple-500' },
+  counseling: { color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', border: 'border-[var(--alo-border)]', dot: 'bg-[var(--alo-brand)]' },
+  follow_up: { color: 'text-crm-warning-text', bg: 'bg-crm-warning-bg', border: 'border-crm-warning-border', dot: 'bg-[var(--alo-warning)]' },
+  interview: { color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', border: 'border-[var(--alo-border)]', dot: 'bg-[var(--alo-brand)]' },
+  meeting: { color: 'text-crm-success-text', bg: 'bg-crm-success-bg', border: 'border-crm-success-border', dot: 'bg-[var(--alo-success)]' },
+  visa_interview: { color: 'text-[var(--alo-brand)]', bg: 'bg-[var(--alo-brand-pale)]', border: 'border-[var(--alo-border)]', dot: 'bg-[var(--alo-brand)]' },
 };
 
 const DEFAULT_STYLE = {
-  color: 'text-slate-700',
-  bg: 'bg-slate-50',
-  border: 'border-slate-200',
-  dot: 'bg-slate-500',
+  color: 'text-[var(--alo-body)]',
+  bg: 'bg-[var(--alo-page)]',
+  border: 'border-[var(--alo-border)]',
+  dot: 'bg-[var(--alo-page)]',
 };
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -188,6 +188,10 @@ export default function EmployeeCalendarPage() {
       setSaveError('Give the appointment a title.');
       return;
     }
+    if (!form.studentId.trim()) {
+      setSaveError('Enter an assigned student ID.');
+      return;
+    }
     if (!form.scheduledAt) {
       setSaveError('Choose the date and time for the appointment.');
       return;
@@ -200,10 +204,10 @@ export default function EmployeeCalendarPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: form.title.trim(),
-          studentId: form.studentId.trim() || undefined,
+          studentId: form.studentId.trim(),
           purpose: form.type,
           venue: form.notes.trim() || undefined,
-          scheduledAt: form.scheduledAt,
+          scheduledAt: new Date(form.scheduledAt).toISOString(),
         }),
       });
       const payload = await response.json().catch(() => ({}));
@@ -278,8 +282,8 @@ export default function EmployeeCalendarPage() {
       </div>
 
       {state.error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
               <p className="font-medium">{state.error}</p>
@@ -339,7 +343,7 @@ export default function EmployeeCalendarPage() {
                           onClick={() => setSelectedDate(cell.dateStr)}
                           className={cn(
                             'min-h-[76px] rounded-lg border p-1.5 text-left transition-colors',
-                            cell.inMonth ? 'bg-white' : 'bg-slate-50/60',
+                            cell.inMonth ? 'bg-white' : 'bg-[var(--alo-page)]/60',
                             selectedDate === cell.dateStr ? 'border-alo-brand' : 'border-alo-border',
                             isToday && 'ring-1 ring-alo-brand',
                           )}
@@ -354,7 +358,7 @@ export default function EmployeeCalendarPage() {
                               {cell.day}
                             </span>
                             {isToday ? (
-                              <span className="text-[9px] font-medium text-alo-brand">Today</span>
+                              <span className="text-[11px] font-medium text-alo-brand">Today</span>
                             ) : null}
                           </div>
                           <div className="mt-1 space-y-1">
@@ -363,14 +367,14 @@ export default function EmployeeCalendarPage() {
                               return (
                                 <div
                                   key={appointment.id}
-                                  className={cn('truncate rounded px-1 py-0.5 text-[9px]', style.bg, style.color)}
+                                  className={cn('truncate rounded px-1 py-0.5 text-[11px]', style.bg, style.color)}
                                 >
                                   {formatTime(appointment.scheduledAt)} {appointment.title}
                                 </div>
                               );
                             })}
                             {dayAppointments.length > 2 ? (
-                              <div className="text-alo-text-muted text-[9px]">
+                              <div className="text-alo-text-muted text-[11px]">
                                 +{dayAppointments.length - 2} more
                               </div>
                             ) : null}
@@ -398,7 +402,7 @@ export default function EmployeeCalendarPage() {
                             <p className={cn('text-sm font-medium', style.color)}>
                               {appointment.title}
                             </p>
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-[11px]">
                               {(appointment.status || 'unknown').toUpperCase()}
                             </Badge>
                           </div>
@@ -539,7 +543,7 @@ export default function EmployeeCalendarPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="appt-student">Student ID (optional)</Label>
+              <Label htmlFor="appt-student">Assigned student ID</Label>
               <Input
                 id="appt-student"
                 value={form.studentId}

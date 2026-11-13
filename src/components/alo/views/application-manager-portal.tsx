@@ -242,43 +242,43 @@ const PROVIDER_TYPE_LABELS: Record<string, string> = {
 };
 
 const PROVIDER_TYPE_COLORS: Record<string, string> = {
-  GLOBAL_B2B: "bg-rose-100 text-rose-700",
-  COUNTRY_SPECIFIC: "bg-violet-100 text-violet-700",
+  GLOBAL_B2B: "bg-crm-warning-bg text-crm-warning-text",
+  COUNTRY_SPECIFIC: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   UNIVERSITY_REPRESENTATIVE: "bg-sky-100 text-sky-700",
-  PATHWAY_PROVIDER: "bg-amber-100 text-amber-700",
-  AGGREGATOR: "bg-orange-100 text-orange-700",
-  SUB_AGENT: "bg-emerald-100 text-emerald-700",
+  PATHWAY_PROVIDER: "bg-crm-warning-bg text-crm-warning-text",
+  AGGREGATOR: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+  SUB_AGENT: "bg-crm-success-bg text-crm-success-text",
   DIRECT_UNIVERSITY: "bg-teal-100 text-teal-700",
 };
 
 const B2B_STATUS_META: Record<string, { label: string; cls: string }> = {
   SUBMITTED: { label: "Submitted", cls: "bg-sky-100 text-sky-700" },
-  ACKNOWLEDGED: { label: "Acknowledged", cls: "bg-indigo-100 text-indigo-700" },
-  IN_REVIEW: { label: "In Review", cls: "bg-violet-100 text-violet-700" },
-  DECISION_PENDING: { label: "Decision Pending", cls: "bg-amber-100 text-amber-700" },
-  OFFERED: { label: "Offered", cls: "bg-emerald-100 text-emerald-700" },
-  REJECTED: { label: "Rejected", cls: "bg-rose-100 text-rose-700" },
-  COMMISSION_DUE: { label: "Commission Due", cls: "bg-orange-100 text-orange-700" },
+  ACKNOWLEDGED: { label: "Acknowledged", cls: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  IN_REVIEW: { label: "In Review", cls: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  DECISION_PENDING: { label: "Decision Pending", cls: "bg-crm-warning-bg text-crm-warning-text" },
+  OFFERED: { label: "Offered", cls: "bg-crm-success-bg text-crm-success-text" },
+  REJECTED: { label: "Rejected", cls: "bg-crm-warning-bg text-crm-warning-text" },
+  COMMISSION_DUE: { label: "Commission Due", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   COMMISSION_PAID: { label: "Commission Paid", cls: "bg-teal-100 text-teal-700" },
 };
 
 const B2B_TYPE_META: Record<string, { label: string; cls: string; icon: string }> = {
-  INBOUND: { label: "INBOUND", cls: "bg-emerald-100 text-emerald-700", icon: "ArrowDownToLine" },
-  OUTBOUND: { label: "OUTBOUND", cls: "bg-orange-100 text-orange-700", icon: "ArrowUpFromLine" },
+  INBOUND: { label: "INBOUND", cls: "bg-crm-success-bg text-crm-success-text", icon: "ArrowDownToLine" },
+  OUTBOUND: { label: "OUTBOUND", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]", icon: "ArrowUpFromLine" },
 };
 
 const SOURCE_META: Record<string, { label: string; cls: string; icon: string }> = {
-  DIRECT: { label: "Direct", cls: "bg-[#e8f0fb] text-[#0057B8]", icon: "FileText" },
-  PARTNER: { label: "Partner", cls: "bg-violet-100 text-violet-700", icon: "Handshake" },
-  B2B_INBOUND: { label: "B2B Inbound", cls: "bg-emerald-100 text-emerald-700", icon: "ArrowDownToLine" },
-  B2B_OUTBOUND: { label: "B2B Outbound", cls: "bg-orange-100 text-orange-700", icon: "ArrowUpFromLine" },
+  DIRECT: { label: "Direct", cls: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]", icon: "FileText" },
+  PARTNER: { label: "Partner", cls: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]", icon: "Handshake" },
+  B2B_INBOUND: { label: "B2B Inbound", cls: "bg-crm-success-bg text-crm-success-text", icon: "ArrowDownToLine" },
+  B2B_OUTBOUND: { label: "B2B Outbound", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]", icon: "ArrowUpFromLine" },
 };
 
 const PRIORITY_META: Record<string, { label: string; cls: string }> = {
-  URGENT: { label: "Urgent", cls: "bg-rose-100 text-rose-700" },
-  HIGH: { label: "High", cls: "bg-orange-100 text-orange-700" },
+  URGENT: { label: "Urgent", cls: "bg-crm-warning-bg text-crm-warning-text" },
+  HIGH: { label: "High", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
   NORMAL: { label: "Normal", cls: "bg-sky-100 text-sky-700" },
-  LOW: { label: "Low", cls: "bg-slate-100 text-slate-600" },
+  LOW: { label: "Low", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
 };
 
 const COMMENT_CHANNELS = [
@@ -293,32 +293,32 @@ const COMMENT_CHANNELS = [
 ];
 
 const COMMENT_CHANNEL_CLS: Record<string, string> = {
-  STUDENT_VISIBLE: "bg-emerald-100 text-emerald-700",
-  PARTNER_VISIBLE: "bg-violet-100 text-violet-700",
+  STUDENT_VISIBLE: "bg-crm-success-bg text-crm-success-text",
+  PARTNER_VISIBLE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   COUNSELOR_VISIBLE: "bg-sky-100 text-sky-700",
-  INTERNAL: "bg-slate-200 text-slate-700",
-  B2B_CONFIDENTIAL: "bg-rose-100 text-rose-700",
+  INTERNAL: "bg-[var(--alo-page)] text-[var(--alo-body)]",
+  B2B_CONFIDENTIAL: "bg-crm-warning-bg text-crm-warning-text",
   UNIVERSITY: "bg-teal-100 text-teal-700",
-  FINANCE: "bg-amber-100 text-amber-700",
-  VISA_HANDOVER: "bg-orange-100 text-orange-700",
+  FINANCE: "bg-crm-warning-bg text-crm-warning-text",
+  VISA_HANDOVER: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
 };
 
 const DEADLINE_TYPE_META: Record<string, { label: string; cls: string }> = {
-  APPLICATION: { label: "Application", cls: "bg-[#e8f0fb] text-[#0057B8]" },
-  DOCUMENT: { label: "Document", cls: "bg-amber-100 text-amber-700" },
-  OFFER_CONDITION: { label: "Offer Condition", cls: "bg-violet-100 text-violet-700" },
-  DEPOSIT: { label: "Deposit", cls: "bg-orange-100 text-orange-700" },
-  CAS_I20_COE: { label: "CAS / I-20 / COE", cls: "bg-orange-100 text-orange-700" },
-  B2B_FOLLOWUP: { label: "B2B Follow-up", cls: "bg-rose-100 text-rose-700" },
+  APPLICATION: { label: "Application", cls: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]" },
+  DOCUMENT: { label: "Document", cls: "bg-crm-warning-bg text-crm-warning-text" },
+  OFFER_CONDITION: { label: "Offer Condition", cls: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]" },
+  DEPOSIT: { label: "Deposit", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
+  CAS_I20_COE: { label: "CAS / I-20 / COE", cls: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]" },
+  B2B_FOLLOWUP: { label: "B2B Follow-up", cls: "bg-crm-warning-bg text-crm-warning-text" },
   UNIVERSITY_FOLLOWUP: { label: "University Follow-up", cls: "bg-sky-100 text-sky-700" },
 };
 
 const TASK_STATUS_META: Record<string, { label: string; cls: string }> = {
-  PENDING: { label: "Pending", cls: "bg-amber-100 text-amber-700" },
+  PENDING: { label: "Pending", cls: "bg-crm-warning-bg text-crm-warning-text" },
   IN_PROGRESS: { label: "In Progress", cls: "bg-sky-100 text-sky-700" },
-  BLOCKED: { label: "Blocked", cls: "bg-rose-100 text-rose-700" },
-  DONE: { label: "Done", cls: "bg-emerald-100 text-emerald-700" },
-  CANCELLED: { label: "Cancelled", cls: "bg-slate-100 text-slate-600" },
+  BLOCKED: { label: "Blocked", cls: "bg-crm-warning-bg text-crm-warning-text" },
+  DONE: { label: "Done", cls: "bg-crm-success-bg text-crm-success-text" },
+  CANCELLED: { label: "Cancelled", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" },
 };
 
 const PIPELINE_STAGES = [
@@ -356,11 +356,11 @@ function daysUntil(dateStr?: string | null): number | null {
 function daysRemainingBadge(dateStr?: string | null): React.ReactNode {
   const d = daysUntil(dateStr);
   if (d === null) return <span className="text-xs text-muted-foreground">—</span>;
-  if (d < 0) return <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">{Math.abs(d)}d overdue</Badge>;
-  if (d === 0) return <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">Today</Badge>;
-  if (d < 3) return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{d}d left</Badge>;
+  if (d < 0) return <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">{Math.abs(d)}d overdue</Badge>;
+  if (d === 0) return <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">Today</Badge>;
+  if (d < 3) return <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">{d}d left</Badge>;
   if (d < 7) return <Badge className="bg-sky-100 text-sky-700 hover:bg-sky-100">{d}d left</Badge>;
-  return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">{d}d left</Badge>;
+  return <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">{d}d left</Badge>;
 }
 
 function formatCurrency(amount?: number | null, currency = "USD"): string {
@@ -389,12 +389,12 @@ function detectSource(
 }
 
 function docStatusSummary(docs: ApplicationDocument[]): { label: string; cls: string; missing: number; total: number } {
-  if (docs.length === 0) return { label: "No docs", cls: "bg-slate-100 text-slate-600", missing: 0, total: 0 };
+  if (docs.length === 0) return { label: "No docs", cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", missing: 0, total: 0 };
   const missing = docs.filter((d) => d.status === "MISSING" || d.status === "REQUEST_AGAIN").length;
   const pending = docs.filter((d) => d.status === "UNDER_REVIEW").length;
-  if (missing > 0) return { label: `${missing} missing`, cls: "bg-rose-100 text-rose-700", missing, total: docs.length };
-  if (pending > 0) return { label: `${pending} in review`, cls: "bg-amber-100 text-amber-700", missing, total: docs.length };
-  return { label: `${docs.length} ok`, cls: "bg-emerald-100 text-emerald-700", missing, total: docs.length };
+  if (missing > 0) return { label: `${missing} missing`, cls: "bg-crm-warning-bg text-crm-warning-text", missing, total: docs.length };
+  if (pending > 0) return { label: `${pending} in review`, cls: "bg-crm-warning-bg text-crm-warning-text", missing, total: docs.length };
+  return { label: `${docs.length} ok`, cls: "bg-crm-success-bg text-crm-success-text", missing, total: docs.length };
 }
 
 // ============================================================
@@ -510,11 +510,11 @@ export function ApplicationManagerPortal() {
               </Select>
             </div>
             <Button
-              variant="outline"
-              className="h-9 rounded-xl"
-              onClick={fetchDashboard}
-              disabled={loading}
-            >
+ variant="outline"
+ className=" rounded-xl"
+ onClick={fetchDashboard}
+ disabled={loading}
+ >
               <Icon name="RefreshCw" className={`mr-1.5 size-4 ${loading ? "animate-spin" : ""}`} />
               Refresh
             </Button>
@@ -523,14 +523,14 @@ export function ApplicationManagerPortal() {
       />
 
       {/* Access banner */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40">
         <CardContent className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${canViewB2B ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"}`}>
+            <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${canViewB2B ? "bg-crm-success-bg text-crm-success-text" : "bg-crm-warning-bg text-crm-warning-text"}`}>
               <Icon name={canViewB2B ? "ShieldCheck" : "ShieldAlert"} className="size-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-[#0057B8]">
+              <p className="text-sm font-semibold text-[var(--alo-brand)]">
                 {canViewB2B ? "Full B2B access granted" : "Limited view — B2B data hidden"}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -540,10 +540,10 @@ export function ApplicationManagerPortal() {
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-wide">
-            <span className="rounded-md bg-white px-2 py-1 text-[#0057B8] shadow-sm">{viewerRole.replace(/_/g, " ")}</span>
+          <div className="flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-wide">
+            <span className="rounded-md bg-white px-2 py-1 text-[var(--alo-brand)] shadow-sm">{viewerRole.replace(/_/g, " ")}</span>
             {canViewB2B && (
-              <span className="rounded-md bg-rose-100 px-2 py-1 text-rose-700 shadow-sm">B2B Confidential</span>
+              <span className="rounded-md bg-crm-warning-bg px-2 py-1 text-crm-warning-text shadow-sm">B2B Confidential</span>
             )}
           </div>
         </CardContent>
@@ -557,7 +557,7 @@ export function ApplicationManagerPortal() {
           title="Dashboard unavailable"
           description="Could not load dashboard data. Please retry."
           action={
-            <Button className="h-10 bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={fetchDashboard}>
+            <Button className=" bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={fetchDashboard}>
               <Icon name="RefreshCw" className="mr-1.5 size-4" /> Retry
             </Button>
           }
@@ -575,7 +575,7 @@ export function ApplicationManagerPortal() {
                   accent={k.accent}
                 />
                 {k.badge && (
-                  <span className="absolute right-2 top-2 rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white shadow-sm">
+                  <span className="absolute right-2 top-2 rounded-full bg-crm-warning-bg0 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white shadow-sm">
                     {k.badge}
                   </span>
                 )}
@@ -586,26 +586,26 @@ export function ApplicationManagerPortal() {
           {/* Tabs */}
           <Tabs value={tab} onValueChange={setTab} className="space-y-4">
             <div className="overflow-x-auto pb-1">
-              <TabsList className="flex h-auto w-max gap-1 rounded-2xl bg-[#e8f0fb]/60 p-1">
-                <TabsTrigger value="dashboard" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+              <TabsList className="flex h-auto w-max gap-1 rounded-2xl bg-[var(--alo-brand-light)]/60 p-1">
+                <TabsTrigger value="dashboard" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm">
                   <Icon name="LayoutDashboard" className="mr-1.5 size-4" /> Dashboard
                 </TabsTrigger>
-                <TabsTrigger value="applications" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="applications" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm">
                   <Icon name="FolderKanban" className="mr-1.5 size-4" /> All Applications
                 </TabsTrigger>
-                <TabsTrigger value="b2b-apps" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="b2b-apps" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm">
                   <Icon name="Lock" className="mr-1.5 size-4" /> B2B Applications
                 </TabsTrigger>
-                <TabsTrigger value="b2b-providers" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="b2b-providers" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm">
                   <Icon name="Building2" className="mr-1.5 size-4" /> B2B Providers
                 </TabsTrigger>
-                <TabsTrigger value="comments" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="comments" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm">
                   <Icon name="MessagesSquare" className="mr-1.5 size-4" /> Comments
                 </TabsTrigger>
-                <TabsTrigger value="deadlines" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="deadlines" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm">
                   <Icon name="CalendarClock" className="mr-1.5 size-4" /> Deadlines
                 </TabsTrigger>
-                <TabsTrigger value="tasks" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[#0057B8] data-[state=active]:shadow-sm">
+                <TabsTrigger value="tasks" className="h-10 rounded-xl px-4 text-xs font-semibold data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)] data-[state=active]:shadow-sm">
                   <Icon name="ListTodo" className="mr-1.5 size-4" /> Tasks
                 </TabsTrigger>
               </TabsList>
@@ -684,29 +684,29 @@ export function ApplicationManagerPortal() {
 
           {/* Security & safe status notes */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+            <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
               <CardContent className="pt-5">
                 <div className="flex items-start gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-crm-warning-bg text-crm-warning-text">
                     <Icon name="ShieldAlert" className="size-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-rose-700">B2B Security</p>
-                    <p className="mt-1 text-xs leading-relaxed text-rose-900/80">
+                    <p className="text-sm font-bold text-crm-warning-text">B2B Security</p>
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--alo-error)]/80">
                       B2B provider name, contact, commission, portal credentials, and internal notes are hidden from students, partners, counselors, and general staff. Only Application Team, Application Manager, and Super Admin can view B2B details. All B2B views and edits are audit-logged.
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
-            <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40">
+            <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40">
               <CardContent className="pt-5">
                 <div className="flex items-start gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                     <Icon name="EyeOff" className="size-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-[#0057B8]">Safe Status Mapping</p>
+                    <p className="text-sm font-bold text-[var(--alo-brand)]">Safe Status Mapping</p>
                     <p className="mt-1 text-xs leading-relaxed text-foreground/80">
                       Students and partners see safe status only (Draft, Under Review, Submitted, Decision Pending, Offer Received, Rejected, Visa Preparation). Application Team sees exact internal status including B2B route.
                     </p>
@@ -774,14 +774,14 @@ function DashboardTab({
             return (
               <Tooltip key={stage}>
                 <TooltipTrigger asChild>
-                  <div className="group flex items-center gap-2 rounded-xl border-2 border-[#0057B8]/15 bg-white px-3 py-2 transition-all hover:border-[#0057B8]/40 hover:shadow-sm">
-                    <span className={`flex size-7 items-center justify-center rounded-lg text-xs font-bold ${STAGE_COLORS[stage] || "bg-slate-100 text-slate-600"}`}>
+                  <div className="group flex items-center gap-2 rounded-xl border-2 border-[var(--alo-brand)]/15 bg-white px-3 py-2 transition-all hover:border-[var(--alo-brand)]/40 hover:shadow-sm">
+                    <span className={`flex size-7 items-center justify-center rounded-lg text-xs font-bold ${STAGE_COLORS[stage] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}`}>
                       {count}
                     </span>
                     <div className="flex flex-col">
                       <span className="text-[11px] font-semibold text-foreground">{STAGE_LABELS[stage] || stage}</span>
                       <div className="mt-0.5 h-1 w-24 overflow-hidden rounded-full bg-muted">
-                        <div className="h-full rounded-full bg-[#0057B8]" style={{ width: `${(count / maxStageCount) * 100}%` }} />
+                        <div className="h-full rounded-full bg-[var(--alo-brand)]" style={{ width: `${(count / maxStageCount) * 100}%` }} />
                       </div>
                     </div>
                   </div>
@@ -837,19 +837,19 @@ function DashboardTab({
             ) : (
               recentLogs.map((log) => (
                 <div key={log.id} className="flex items-start gap-2.5 rounded-xl border border-border/60 bg-white p-2.5">
-                  <div className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg ${log.visibility === "B2B_CONFIDENTIAL" ? "bg-rose-100 text-rose-600" : "bg-[#e8f0fb] text-[#0057B8]"}`}>
+                  <div className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg ${log.visibility === "B2B_CONFIDENTIAL" ? "bg-crm-warning-bg text-crm-warning-text" : "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"}`}>
                     <Icon name={log.visibility === "B2B_CONFIDENTIAL" ? "Lock" : "GitCommit"} className="size-3.5" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-xs font-semibold text-foreground">{log.safeStatus || log.newStatus}</span>
                       {log.visibility === "B2B_CONFIDENTIAL" && (
-                        <Badge variant="outline" className="h-4 border-rose-300 px-1 text-[9px] font-bold text-rose-700">B2B</Badge>
+                        <Badge variant="outline" className="h-4 border-crm-warning-border px-1 text-[11px] font-bold text-crm-warning-text">B2B</Badge>
                       )}
                     </div>
-                    <p className="text-[10px] text-muted-foreground">{log.applicationId}</p>
-                    {log.note && <p className="mt-0.5 truncate text-[10px] text-muted-foreground">{log.note}</p>}
-                    <p className="mt-0.5 text-[10px] text-muted-foreground">{timeAgo(log.createdAt)}</p>
+                    <p className="text-[11px] text-muted-foreground">{log.applicationId}</p>
+                    {log.note && <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{log.note}</p>}
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">{timeAgo(log.createdAt)}</p>
                   </div>
                 </div>
               ))
@@ -864,7 +864,7 @@ function DashboardTab({
           title="B2B Confidential Alerts"
           description="Confidential — visible only to Application Team, Application Manager & Super Admin"
           icon="ShieldAlert"
-          action={<Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">CONFIDENTIAL</Badge>}
+          action={<Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">CONFIDENTIAL</Badge>}
         >
           {b2bApplications.length === 0 ? (
             <EmptyState
@@ -875,28 +875,28 @@ function DashboardTab({
           ) : (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               {b2bApplications.slice(0, 6).map((b) => {
-                const meta = B2B_STATUS_META[b.b2bStatus] || { label: b.b2bStatus, cls: "bg-slate-100 text-slate-700" };
+                const meta = B2B_STATUS_META[b.b2bStatus] || { label: b.b2bStatus, cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" };
                 const next = daysUntil(b.nextFollowupAt as unknown as string);
                 const overdue = next !== null && next < 0;
                 return (
-                  <div key={b.id} className="rounded-2xl border-2 border-rose-200 bg-rose-50/40 p-4">
+                  <div key={b.id} className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40 p-4">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-rose-900">{b.b2bProvider?.name || "Unknown provider"}</p>
+                        <p className="truncate text-sm font-bold text-crm-warning-text">{b.b2bProvider?.name || "Unknown provider"}</p>
                         <p className="text-[11px] text-muted-foreground">{b.applicationId}</p>
                       </div>
                       <Badge className={meta.cls}>{meta.label}</Badge>
                     </div>
-                    <div className="mt-3 flex flex-wrap items-center gap-2 text-[10px]">
-                      <Badge variant="outline" className="border-rose-300 text-rose-700">{b.b2bType}</Badge>
+                    <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
+                      <Badge variant="outline" className="border-crm-warning-border text-crm-warning-text">{b.b2bType}</Badge>
                       <span className="text-muted-foreground">Ref: {b.b2bReference || "—"}</span>
                     </div>
-                    <div className="mt-3 flex items-center justify-between border-t border-rose-200 pt-2 text-[11px]">
+                    <div className="mt-3 flex items-center justify-between border-t border-crm-warning-border pt-2 text-[11px]">
                       <span className="text-muted-foreground">
-                        Commission: <span className="font-mono font-semibold text-rose-700">{formatCurrency(b.b2bCommissionAmount)}</span>
+                        Commission: <span className="font-mono font-semibold text-crm-warning-text">{formatCurrency(b.b2bCommissionAmount)}</span>
                       </span>
                       {next !== null && (
-                        <Badge className={overdue ? "bg-rose-100 text-rose-700" : next < 3 ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}>
+                        <Badge className={overdue ? "bg-crm-warning-bg text-crm-warning-text" : next < 3 ? "bg-crm-warning-bg text-crm-warning-text" : "bg-crm-success-bg text-crm-success-text"}>
                           {overdue ? `${Math.abs(next)}d overdue` : next === 0 ? "Today" : `${next}d left`}
                         </Badge>
                       )}
@@ -921,17 +921,17 @@ function DashboardTab({
               <p className="py-6 text-center text-xs text-muted-foreground">No upcoming deadlines</p>
             ) : (
               upcomingDeadlines.map((d) => {
-                const meta = DEADLINE_TYPE_META[d.deadlineType] || { label: d.deadlineType, cls: "bg-slate-100 text-slate-700" };
+                const meta = DEADLINE_TYPE_META[d.deadlineType] || { label: d.deadlineType, cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" };
                 return (
                   <div key={d.id} className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-white p-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex size-10 shrink-0 flex-col items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
-                        <span className="text-[10px] font-bold uppercase">{new Date(d.deadlineDate).toLocaleString("en-GB", { month: "short" })}</span>
+                      <div className="flex size-10 shrink-0 flex-col items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
+                        <span className="text-[11px] font-bold uppercase">{new Date(d.deadlineDate).toLocaleString("en-GB", { month: "short" })}</span>
                         <span className="text-sm font-bold leading-none">{new Date(d.deadlineDate).getDate()}</span>
                       </div>
                       <div className="min-w-0">
                         <p className="truncate text-xs font-semibold text-foreground">{d.applicationId}</p>
-                        <p className="text-[10px] text-muted-foreground">Assigned to {d.assignedTo || "Unassigned"}</p>
+                        <p className="text-[11px] text-muted-foreground">Assigned to {d.assignedTo || "Unassigned"}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -951,9 +951,9 @@ function DashboardTab({
           icon="ListTodo"
           action={
             <Button
-              size="sm"
-              className="h-9 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
-              onClick={() => toast({ title: "Create Task", description: "Open the Tasks tab to create a new task with assignment & priority." })}
+ size="sm"
+ className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ onClick={() => toast({ title: "Create Task", description: "Open the Tasks tab to create a new task with assignment & priority." })}
             >
               <Icon name="Plus" className="mr-1 size-4" /> New Task
             </Button>
@@ -971,12 +971,12 @@ function DashboardTab({
                       <Checkbox className="mt-1" />
                       <div className="min-w-0">
                         <p className="text-xs font-semibold text-foreground">{t.taskTitle}</p>
-                        <p className="text-[10px] text-muted-foreground">{t.applicationId} • {t.assignedTo || "Unassigned"}</p>
+                        <p className="text-[11px] text-muted-foreground">{t.applicationId} • {t.assignedTo || "Unassigned"}</p>
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       <Badge className={pmeta.cls}>{pmeta.label}</Badge>
-                      {t.dueDate && <span className="text-[10px] text-muted-foreground">{fmtDate(t.dueDate)}</span>}
+                      {t.dueDate && <span className="text-[11px] text-muted-foreground">{fmtDate(t.dueDate)}</span>}
                     </div>
                   </div>
                 );
@@ -1143,18 +1143,18 @@ function AllApplicationsTab({
                   const dl = deadlineByApp[a.id];
                   return (
                     <TableRow key={a.id} className="hover:bg-muted/30">
-                      <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">{a.applicationId}</TableCell>
+                      <TableCell className="font-mono text-xs font-semibold text-[var(--alo-brand)]">{a.applicationId}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="text-xs font-semibold text-foreground">{a.student?.fullName || "—"}</span>
-                          <span className="text-[10px] text-muted-foreground">{a.student?.email || ""}</span>
+                          <span className="text-[11px] text-muted-foreground">{a.student?.email || ""}</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-xs">{a.country}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="text-xs font-medium text-foreground">{a.university}</span>
-                          <span className="text-[10px] text-muted-foreground">{a.course}</span>
+                          <span className="text-[11px] text-muted-foreground">{a.course}</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-xs">{a.intake || "—"}</TableCell>
@@ -1169,23 +1169,23 @@ function AllApplicationsTab({
                           {b2b ? (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">
+                                <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                                   <Icon name="Lock" className="mr-1 size-3" />
                                   {b2b.b2bType}
                                 </Badge>
                               </TooltipTrigger>
                               <TooltipContent side="top">
                                 <p className="text-xs">{b2b.b2bProvider?.name}</p>
-                                <p className="text-[10px] text-muted-foreground">Ref: {b2b.b2bReference || "—"}</p>
+                                <p className="text-[11px] text-muted-foreground">Ref: {b2b.b2bReference || "—"}</p>
                               </TooltipContent>
                             </Tooltip>
                           ) : (
-                            <span className="text-[10px] text-muted-foreground">—</span>
+                            <span className="text-[11px] text-muted-foreground">—</span>
                           )}
                         </TableCell>
                       )}
                       <TableCell>
-                        <Badge className={STAGE_COLORS[a.stage] || "bg-slate-100 text-slate-700"}>
+                        <Badge className={STAGE_COLORS[a.stage] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                           {STAGE_LABELS[a.stage] || a.stage}
                         </Badge>
                       </TableCell>
@@ -1193,14 +1193,14 @@ function AllApplicationsTab({
                         <Badge className={docSum.cls}>{docSum.label}</Badge>
                       </TableCell>
                       <TableCell>
-                        {dl ? daysRemainingBadge(dl.deadlineDate) : a.deadline ? daysRemainingBadge(a.deadline) : <span className="text-[10px] text-muted-foreground">—</span>}
+                        {dl ? daysRemainingBadge(dl.deadlineDate) : a.deadline ? daysRemainingBadge(a.deadline) : <span className="text-[11px] text-muted-foreground">—</span>}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button size="icon" variant="ghost" className="size-8" onClick={() => toast({ title: "View Details", description: `Opening details for ${a.applicationId} — ${a.student?.fullName || "Student"}.` })}>
-                                <Icon name="Eye" className="size-4 text-[#0057B8]" />
+                                <Icon name="Eye" className="size-4 text-[var(--alo-brand)]" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>View Details</TooltipContent>
@@ -1208,7 +1208,7 @@ function AllApplicationsTab({
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button size="icon" variant="ghost" className="size-8" onClick={() => toast({ title: "Update Status", description: `Opening status workflow for ${a.applicationId}. A safe-status update will be visible to student; exact internal status visible to Application Team.` })}>
-                                <Icon name="GitCommit" className="size-4 text-emerald-600" />
+                                <Icon name="GitCommit" className="size-4 text-crm-success-text" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>Update Status</TooltipContent>
@@ -1216,7 +1216,7 @@ function AllApplicationsTab({
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button size="icon" variant="ghost" className="size-8" onClick={() => toast({ title: "Request Documents", description: `Document request will be sent to student ${a.student?.fullName || ""} via WhatsApp + portal.` })}>
-                                <Icon name="FileUp" className="size-4 text-amber-600" />
+                                <Icon name="FileUp" className="size-4 text-crm-warning-text" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>Request Documents</TooltipContent>
@@ -1330,7 +1330,7 @@ function B2BApplicationsTab({
 
   if (!canViewB2B) {
     return (
-      <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+      <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
         <CardContent className="py-12">
           <EmptyState
             icon="Lock"
@@ -1344,14 +1344,14 @@ function B2BApplicationsTab({
 
   return (
     <div className="space-y-4">
-      <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+      <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
         <CardContent className="flex items-start gap-3 py-4">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-crm-warning-bg text-crm-warning-text">
             <Icon name="ShieldAlert" className="size-5" />
           </div>
           <div>
-            <p className="text-sm font-bold text-rose-700">Confidentiality Warning</p>
-            <p className="mt-1 text-xs text-rose-900/80">
+            <p className="text-sm font-bold text-crm-warning-text">Confidentiality Warning</p>
+            <p className="mt-1 text-xs text-[var(--alo-error)]/80">
               This tab contains B2B confidential information. Only Application Team, Application Manager, and Super Admin can access this data.
               All views and edits are audit-logged. Do not share commission amounts, internal notes, or B2B references with students, partners, counselors, or general staff.
             </p>
@@ -1363,7 +1363,7 @@ function B2BApplicationsTab({
         title="B2B Applications"
         icon="Lock"
         action={
-          <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={() => setCreateOpen(true)}>
+          <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => setCreateOpen(true)}>
             <Icon name="Plus" className="mr-1.5 size-4" /> Create B2B Application
           </Button>
         }
@@ -1388,14 +1388,14 @@ function B2BApplicationsTab({
               </TableHeader>
               <TableBody>
                 {b2bApplications.map((b) => {
-                  const meta = B2B_STATUS_META[b.b2bStatus] || { label: b.b2bStatus, cls: "bg-slate-100 text-slate-700" };
-                  const tmeta = B2B_TYPE_META[b.b2bType] || { label: b.b2bType, cls: "bg-slate-100 text-slate-700", icon: "ArrowRightLeft" };
+                  const meta = B2B_STATUS_META[b.b2bStatus] || { label: b.b2bStatus, cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" };
+                  const tmeta = B2B_TYPE_META[b.b2bType] || { label: b.b2bType, cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]", icon: "ArrowRightLeft" };
                   return (
                     <TableRow key={b.id} className="hover:bg-muted/30">
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="text-xs font-semibold text-foreground">{b.b2bProvider?.name || "—"}</span>
-                          <span className="text-[10px] text-muted-foreground">{PROVIDER_TYPE_LABELS[b.b2bProvider?.providerType || ""] || b.b2bProvider?.providerType}</span>
+                          <span className="text-[11px] text-muted-foreground">{PROVIDER_TYPE_LABELS[b.b2bProvider?.providerType || ""] || b.b2bProvider?.providerType}</span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -1407,7 +1407,7 @@ function B2BApplicationsTab({
                       <TableCell className="font-mono text-xs">{b.b2bReference || "—"}</TableCell>
                       <TableCell><Badge className={meta.cls}>{meta.label}</Badge></TableCell>
                       <TableCell>
-                        <span className="font-mono text-xs font-semibold text-rose-700">{formatCurrency(b.b2bCommissionAmount)}</span>
+                        <span className="font-mono text-xs font-semibold text-crm-warning-text">{formatCurrency(b.b2bCommissionAmount)}</span>
                       </TableCell>
                       <TableCell className="text-xs">{b.b2bClaimStage?.replace(/_/g, " ") || "—"}</TableCell>
                       <TableCell className="text-xs">{b.lastFollowupAt ? fmtDate(b.lastFollowupAt) : "—"}</TableCell>
@@ -1418,15 +1418,15 @@ function B2BApplicationsTab({
                             {daysRemainingBadge(b.nextFollowupAt as unknown as string)}
                           </div>
                         ) : (
-                          <span className="text-[10px] text-muted-foreground">—</span>
+                          <span className="text-[11px] text-muted-foreground">—</span>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-8 rounded-lg"
-                          onClick={() => {
+ size="sm"
+ variant="outline"
+ className=" rounded-lg"
+ onClick={() => {
                             setUpdateTarget(b);
                             setUpdateStatus(b.b2bStatus);
                           }}
@@ -1447,9 +1447,9 @@ function B2BApplicationsTab({
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
-              <Icon name="Lock" className="size-5 text-rose-600" /> Create B2B Application
-              <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">CONFIDENTIAL</Badge>
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
+              <Icon name="Lock" className="size-5 text-crm-warning-text" /> Create B2B Application
+              <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">CONFIDENTIAL</Badge>
             </DialogTitle>
             <DialogDescription>
               Link an existing application to a B2B provider. This entry will be hidden from students, partners, and counselors.
@@ -1522,8 +1522,8 @@ function B2BApplicationsTab({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" disabled={saving} onClick={handleCreate}>
+            <Button variant="outline" className=" rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
+            <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={handleCreate}>
               {saving ? <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" /> : <Icon name="Lock" className="mr-1.5 size-4" />}
               Create Confidential Entry
             </Button>
@@ -1535,7 +1535,7 @@ function B2BApplicationsTab({
       <Dialog open={!!updateTarget} onOpenChange={(o) => !o && setUpdateTarget(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="GitCommit" className="size-5" /> Update B2B Status
             </DialogTitle>
             <DialogDescription>
@@ -1554,8 +1554,8 @@ function B2BApplicationsTab({
             </Select>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => setUpdateTarget(null)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" disabled={saving} onClick={handleUpdateStatus}>
+            <Button variant="outline" className=" rounded-xl" onClick={() => setUpdateTarget(null)}>Cancel</Button>
+            <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={handleUpdateStatus}>
               {saving && <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" />} Update Status
             </Button>
           </DialogFooter>
@@ -1604,7 +1604,7 @@ function B2BProvidersTab({
       const res = await fetch("/api/app-manager/b2b-providers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, createdBy: "app-manager-portal" }),
+        body: JSON.stringify(form),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || "Create failed");
@@ -1621,7 +1621,7 @@ function B2BProvidersTab({
 
   if (!canViewB2B) {
     return (
-      <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+      <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
         <CardContent className="py-12">
           <EmptyState
             icon="Lock"
@@ -1640,7 +1640,7 @@ function B2BProvidersTab({
         description="Confidential provider directory — credentials & commission rules encrypted"
         icon="Building2"
         action={
-          <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={() => setCreateOpen(true)}>
+          <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => setCreateOpen(true)}>
             <Icon name="Plus" className="mr-1.5 size-4" /> Add Provider
           </Button>
         }
@@ -1651,15 +1651,15 @@ function B2BProvidersTab({
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {b2bProviders.map((p) => {
               const appCount = p._count?.b2bApplications ?? b2bApplications.filter((b) => b.b2bProviderId === p.id).length;
-              const tmeta = PROVIDER_TYPE_COLORS[p.providerType] || "bg-slate-100 text-slate-700";
+              const tmeta = PROVIDER_TYPE_COLORS[p.providerType] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
               const tlabel = PROVIDER_TYPE_LABELS[p.providerType] || p.providerType;
               return (
-                <Card key={p.id} className="rounded-2xl border-2 border-[#0057B8]/15 transition-all hover:border-[#0057B8]/40 hover:shadow-md">
+                <Card key={p.id} className="rounded-2xl border-2 border-[var(--alo-brand)]/15 transition-all hover:border-[var(--alo-brand)]/40 hover:shadow-md">
                   <CardContent className="pt-5">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-[#0057B8]">{p.name}</p>
-                        <p className="font-mono text-[10px] text-muted-foreground">{p.providerCode}</p>
+                        <p className="truncate text-sm font-bold text-[var(--alo-brand)]">{p.name}</p>
+                        <p className="font-mono text-[11px] text-muted-foreground">{p.providerCode}</p>
                       </div>
                       <Badge className={tmeta}>{tlabel}</Badge>
                     </div>
@@ -1684,7 +1684,7 @@ function B2BProvidersTab({
                             href={p.portalUrl.startsWith("http") ? p.portalUrl : `https://${p.portalUrl}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="truncate text-[#0057B8] underline hover:text-[#0057B8]/70"
+                            className="truncate text-[var(--alo-brand)] underline hover:text-[var(--alo-brand)]/70"
                           >
                             {p.portalUrl}
                           </a>
@@ -1705,20 +1705,20 @@ function B2BProvidersTab({
                       />
                       <div className="mt-2 flex items-center gap-1.5 rounded-lg bg-muted/50 px-2 py-1.5">
                         <Icon name="Lock" className="size-3 text-muted-foreground" />
-                        <span className="text-[10px] text-muted-foreground">Encrypted at rest. Reveal requires PIN.</span>
+                        <span className="text-[11px] text-muted-foreground">Encrypted at rest. Reveal requires PIN.</span>
                       </div>
                     </div>
 
                     <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3">
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className={p.status === "ACTIVE" ? "border-emerald-300 text-emerald-700" : "border-rose-300 text-rose-700"}>
+                        <Badge variant="outline" className={p.status === "ACTIVE" ? "border-crm-success-border text-crm-success-text" : "border-crm-warning-border text-crm-warning-text"}>
                           {p.status}
                         </Badge>
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-[11px] text-muted-foreground">
                           {appCount} {appCount === 1 ? "app" : "apps"}
                         </span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground">Reviewed {p.lastReviewedAt ? timeAgo(p.lastReviewedAt) : "never"}</span>
+                      <span className="text-[11px] text-muted-foreground">Reviewed {p.lastReviewedAt ? timeAgo(p.lastReviewedAt) : "never"}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -1732,9 +1732,9 @@ function B2BProvidersTab({
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="Building2" className="size-5" /> Add B2B Provider
-              <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-100">CONFIDENTIAL</Badge>
+              <Badge className="bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">CONFIDENTIAL</Badge>
             </DialogTitle>
             <DialogDescription>
               Add a new B2B provider to the confidential directory. Portal login credentials will be encrypted — only Application Team & Super Admin can reveal them.
@@ -1783,8 +1783,8 @@ function B2BProvidersTab({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" disabled={saving} onClick={handleCreate}>
+            <Button variant="outline" className=" rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
+            <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" disabled={saving} onClick={handleCreate}>
               {saving ? <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" /> : <Icon name="Lock" className="mr-1.5 size-4" />}
               Add Confidential Provider
             </Button>
@@ -1913,17 +1913,17 @@ function CommentsTab({
         }
       >
         {/* Visibility note */}
-        <div className="mb-3 flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50/50 p-3">
-          <Icon name="Info" className="size-4 shrink-0 text-amber-600" />
-          <p className="text-xs text-amber-900/80">
+        <div className="mb-3 flex items-start gap-2.5 rounded-xl border border-crm-warning-border bg-crm-warning-bg/50 p-3">
+          <Icon name="Info" className="size-4 shrink-0 text-crm-warning-text" />
+          <p className="text-xs text-crm-warning-text/80">
             Student-visible comments appear in Student Portal. B2B confidential comments are never visible to students, partners, or counselors.
           </p>
         </div>
 
         {commentMeta && commentMeta.hidden > 0 && (
-          <div className="mb-3 flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50/40 px-3 py-2">
-            <Icon name="Lock" className="size-4 text-rose-600" />
-            <span className="text-xs text-rose-900/80">
+          <div className="mb-3 flex items-center gap-2 rounded-xl border border-crm-warning-border bg-crm-warning-bg/40 px-3 py-2">
+            <Icon name="Lock" className="size-4 text-crm-warning-text" />
+            <span className="text-xs text-[var(--alo-error)]/80">
               {commentMeta.hidden} comment(s) hidden from your role ({viewerRole.replace(/_/g, " ")}). Total: {commentMeta.total}.
             </span>
           </div>
@@ -1945,16 +1945,16 @@ function CommentsTab({
                     disabled={blocked}
                     className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-left transition-all ${
                       active
-                        ? "border-[#0057B8] bg-[#e8f0fb] text-[#0057B8]"
-                        : "border-border bg-white text-foreground hover:border-[#0057B8]/40"
+                        ? "border-[var(--alo-brand)] bg-[var(--alo-brand-light)] text-[var(--alo-brand)]"
+                        : "border-border bg-white text-foreground hover:border-[var(--alo-brand)]/40"
                     } ${blocked ? "cursor-not-allowed opacity-50" : ""}`}
                   >
                     <Icon name={ch.icon} className="size-4 shrink-0" />
                     <div className="min-w-0">
                       <p className="text-xs font-semibold">{ch.label}</p>
-                      <p className="hidden text-[10px] text-muted-foreground lg:block">{ch.desc}</p>
+                      <p className="hidden text-[11px] text-muted-foreground lg:block">{ch.desc}</p>
                     </div>
-                    {isRestricted && <Icon name="Lock" className="ml-auto size-3 text-rose-600" />}
+                    {isRestricted && <Icon name="Lock" className="ml-auto size-3 text-crm-warning-text" />}
                   </button>
                 );
               })}
@@ -1976,23 +1976,23 @@ function CommentsTab({
                 <EmptyState icon="MessageSquare" title="No comments in this channel" description="Be the first to add a comment." />
               ) : (
                 channelComments.map((c) => {
-                  const cls = COMMENT_CHANNEL_CLS[c.commentType] || "bg-slate-100 text-slate-700";
+                  const cls = COMMENT_CHANNEL_CLS[c.commentType] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]";
                   return (
-                    <div key={c.id} className={`rounded-xl border p-3 ${c.isB2bConfidential ? "border-rose-200 bg-rose-50/40" : "border-border bg-white"}`}>
+                    <div key={c.id} className={`rounded-xl border p-3 ${c.isB2bConfidential ? "border-crm-warning-border bg-crm-warning-bg/40" : "border-border bg-white"}`}>
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                          <div className="flex size-7 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                             <Icon name="User" className="size-3.5" />
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-foreground">{c.role?.replace(/_/g, " ") || "System"}</p>
-                            <p className="text-[10px] text-muted-foreground">{timeAgo(c.createdAt)}</p>
+                            <p className="text-[11px] text-muted-foreground">{timeAgo(c.createdAt)}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <Badge className={cls}>{COMMENT_CHANNELS.find((ch) => ch.value === c.commentType)?.label || c.commentType}</Badge>
                           {c.isB2bConfidential && (
-                            <Badge className="bg-rose-500 text-white hover:bg-rose-500">
+                            <Badge className="bg-crm-warning-bg0 text-white hover:bg-crm-warning-bg0">
                               <Icon name="Lock" className="mr-1 size-3" /> CONFIDENTIAL
                             </Badge>
                           )}
@@ -2006,8 +2006,8 @@ function CommentsTab({
             </div>
 
             {/* Add comment form */}
-            <div className="rounded-2xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/20 p-4">
-              <p className="mb-2 text-xs font-semibold text-[#0057B8]">Add Comment</p>
+            <div className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/20 p-4">
+              <p className="mb-2 text-xs font-semibold text-[var(--alo-brand)]">Add Comment</p>
               <Textarea
                 className="min-h-[80px] rounded-xl bg-white text-xs"
                 placeholder={`Write a ${COMMENT_CHANNELS.find((c) => c.value === visibility)?.label || "comment"}...`}
@@ -2030,16 +2030,16 @@ function CommentsTab({
                   </SelectContent>
                 </Select>
                 {canViewB2B && (
-                  <label className="flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50/40 px-2 py-1.5 cursor-pointer">
+                  <label className="flex items-center gap-1.5 rounded-lg border border-crm-warning-border bg-crm-warning-bg/40 px-2 py-1.5 cursor-pointer">
                     <Checkbox checked={isB2bConfidential} onCheckedChange={(v) => setIsB2bConfidential(!!v)} />
-                    <span className="text-[11px] font-semibold text-rose-700">Mark B2B Confidential</span>
+                    <span className="text-[11px] font-semibold text-crm-warning-text">Mark B2B Confidential</span>
                   </label>
                 )}
                 <Button
-                  className="ml-auto h-9 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
-                  disabled={saving || !newComment.trim()}
-                  onClick={handleAdd}
-                >
+ className="ml-auto rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={saving || !newComment.trim()}
+ onClick={handleAdd}
+ >
                   {saving ? <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" /> : <Icon name="Send" className="mr-1.5 size-4" />}
                   Post Comment
                 </Button>
@@ -2079,28 +2079,28 @@ function DeadlinesTab({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Card className="rounded-2xl border-2 border-rose-200 bg-rose-50/40">
+        <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
           <CardContent className="pt-4">
-            <p className="text-xs font-semibold uppercase text-rose-700">Overdue</p>
-            <p className="text-2xl font-bold text-rose-700">{overdue}</p>
+            <p className="text-xs font-semibold uppercase text-crm-warning-text">Overdue</p>
+            <p className="text-2xl font-bold text-crm-warning-text">{overdue}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl border-2 border-amber-200 bg-amber-50/40">
+        <Card className="rounded-2xl border-2 border-crm-warning-border bg-crm-warning-bg/40">
           <CardContent className="pt-4">
-            <p className="text-xs font-semibold uppercase text-amber-700">≤ 3 days</p>
-            <p className="text-2xl font-bold text-amber-700">{upcoming}</p>
+            <p className="text-xs font-semibold uppercase text-crm-warning-text">≤ 3 days</p>
+            <p className="text-2xl font-bold text-crm-warning-text">{upcoming}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40">
+        <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40">
           <CardContent className="pt-4">
-            <p className="text-xs font-semibold uppercase text-[#0057B8]">Total Pending</p>
-            <p className="text-2xl font-bold text-[#0057B8]">{filtered.length}</p>
+            <p className="text-xs font-semibold uppercase text-[var(--alo-brand)]">Total Pending</p>
+            <p className="text-2xl font-bold text-[var(--alo-brand)]">{filtered.length}</p>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl border-2 border-emerald-200 bg-emerald-50/40">
+        <Card className="rounded-2xl border-2 border-crm-success-border bg-crm-success-bg/40">
           <CardContent className="pt-4">
-            <p className="text-xs font-semibold uppercase text-emerald-700">Types</p>
-            <p className="text-2xl font-bold text-emerald-700">{types.length}</p>
+            <p className="text-xs font-semibold uppercase text-crm-success-text">Types</p>
+            <p className="text-2xl font-bold text-crm-success-text">{types.length}</p>
           </CardContent>
         </Card>
       </div>
@@ -2138,21 +2138,21 @@ function DeadlinesTab({
               </TableHeader>
               <TableBody>
                 {filtered.map((d) => {
-                  const meta = DEADLINE_TYPE_META[d.deadlineType] || { label: d.deadlineType, cls: "bg-slate-100 text-slate-700" };
+                  const meta = DEADLINE_TYPE_META[d.deadlineType] || { label: d.deadlineType, cls: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]" };
                   const app = applications.find((a) => a.id === d.applicationId);
                   return (
                     <TableRow key={d.id} className="hover:bg-muted/30">
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-mono text-xs font-semibold text-[#0057B8]">{app?.applicationId || d.applicationId.slice(0, 8)}</span>
-                          <span className="text-[10px] text-muted-foreground">{app?.student?.fullName || ""}</span>
+                          <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">{app?.applicationId || d.applicationId.slice(0, 8)}</span>
+                          <span className="text-[11px] text-muted-foreground">{app?.student?.fullName || ""}</span>
                         </div>
                       </TableCell>
                       <TableCell><Badge className={meta.cls}>{meta.label}</Badge></TableCell>
                       <TableCell className="text-xs">{fmtDate(d.deadlineDate)}</TableCell>
                       <TableCell>{daysRemainingBadge(d.deadlineDate)}</TableCell>
                       <TableCell>
-                        <Badge variant="outline" className={d.status === "PENDING" ? "border-amber-300 text-amber-700" : "border-emerald-300 text-emerald-700"}>
+                        <Badge variant="outline" className={d.status === "PENDING" ? "border-crm-warning-border text-crm-warning-text" : "border-crm-success-border text-crm-success-text"}>
                           {d.status}
                         </Badge>
                       </TableCell>
@@ -2213,7 +2213,7 @@ function TasksTab({
         description="Track tasks across applications with assignment & priority"
         icon="ListTodo"
         action={
-          <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={() => setCreateOpen(true)}>
+          <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => setCreateOpen(true)}>
             <Icon name="Plus" className="mr-1.5 size-4" /> Create Task
           </Button>
         }
@@ -2241,12 +2241,12 @@ function TasksTab({
                   return (
                     <TableRow key={t.id} className="hover:bg-muted/30">
                       <TableCell>
-                        <span className="font-mono text-xs font-semibold text-[#0057B8]">{app?.applicationId || t.applicationId.slice(0, 8)}</span>
+                        <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">{app?.applicationId || t.applicationId.slice(0, 8)}</span>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="text-xs font-semibold text-foreground">{t.taskTitle}</span>
-                          {t.taskDescription && <span className="text-[10px] text-muted-foreground line-clamp-1">{t.taskDescription}</span>}
+                          {t.taskDescription && <span className="text-[11px] text-muted-foreground line-clamp-1">{t.taskDescription}</span>}
                         </div>
                       </TableCell>
                       <TableCell><Badge className={pmeta.cls}>{pmeta.label}</Badge></TableCell>
@@ -2271,7 +2271,7 @@ function TasksTab({
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+            <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
               <Icon name="ListTodo" className="size-5" /> Create Task
             </DialogTitle>
             <DialogDescription>
@@ -2321,8 +2321,8 @@ function TasksTab({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="h-10 rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button className="h-10 rounded-xl bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={handleCreate}>
+            <Button variant="outline" className=" rounded-xl" onClick={() => setCreateOpen(false)}>Cancel</Button>
+            <Button className=" rounded-xl bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={handleCreate}>
               <Icon name="Plus" className="mr-1.5 size-4" /> Create Task
             </Button>
           </DialogFooter>

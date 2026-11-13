@@ -5,6 +5,7 @@ import { mutationOriginAllowed } from '@/lib/request-origin';
 import { visibleUccAttachmentsByMessage } from '@/lib/ucc/visible-attachments';
 import { withAuth } from '@/lib/auth-middleware';
 import { sendWhatsAppMessage } from '@/lib/whatsapp-cloud-api';
+import { determineSenderNumber } from '@/lib/whatsapp-number-pool';
 import { canUseUccCommunication, isUccDocumentSupervisor } from '@/lib/ucc/document-access';
 import { canViewUccConversationB2B, filterUccConversationsByB2B } from '@/lib/ucc/conversation-visibility';
 
@@ -162,6 +163,7 @@ export const POST = withAuth(async (req, auth) => {
     const content = typeof body.content === 'string' ? body.content.trim() : typeof body.body === 'string' ? body.body.trim() : '';
     const channel = normalizedChannel(body.channel);
     if (!threadId || !content) return NextResponse.json({ success: false, error: 'threadId and message content are required.' }, { status: 400 });
+    if (body.aiAssisted === true && body.aiApproved !== true) return NextResponse.json({ success: false, error: 'AI-generated content requires explicit human approval.' }, { status: 403 });
     if (content.length > 4096) return NextResponse.json({ success: false, error: 'WhatsApp message text must be 4,096 characters or fewer.' }, { status: 400 });
     if (body.attachments || body.files || body.fileUrl) return NextResponse.json({ success: false, error: 'Attachments must be privately uploaded and sent through the UCC document workflow.' }, { status: 400 });
 
@@ -175,6 +177,8 @@ export const POST = withAuth(async (req, auth) => {
     if (channel !== 'whatsapp' || normalizedChannel(thread.channel) !== 'whatsapp') {
       return NextResponse.json({ success: false, error: 'No authorized outbound provider is configured for this conversation channel.' }, { status: 503 });
     }
+    const policyBlock = outboundReplyPolicyBlock();
+    if (policyBlock) return NextResponse.json(policyBlock, { status: 503 });
 
     let recipient = '';
     if (thread.studentId) {
@@ -186,11 +190,25 @@ export const POST = withAuth(async (req, auth) => {
       recipient = lead?.phone || '';
     }
     if (!recipient) return NextResponse.json({ success: false, error: 'The conversation has no recipient phone number.' }, { status: 422 });
+    const recentInbound = await db.communicationMessage.findFirst({
+      where: { threadId: thread.id, direction: 'inbound', createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
+      select: { id: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (!recentInbound) return NextResponse.json({ success: false, code: 'WHATSAPP_SERVICE_WINDOW_CLOSED', error: 'A WhatsApp service reply requires an inbound message in the last 24 hours. Use the approved-template workflow instead.' }, { status: 422 });
 
-    const policyBlock = outboundReplyPolicyBlock();
-    if (policyBlock) return NextResponse.json(policyBlock, {status:503});
-
-    const providerSend = await sendWhatsAppMessage({ to: recipient, text: content });
+    const senderRoute = await determineSenderNumber({ counselorId: auth.userId, studentId: thread.studentId || undefined, leadId: thread.leadId || undefined });
+    const providerSend = await sendWhatsAppMessage({
+      to: recipient,
+      text: content,
+      purpose: 'SERVICE',
+      conversationId: thread.id,
+      actorId: auth.userId,
+      employeeSenderId: auth.userId,
+      senderNumber: senderRoute.number,
+      studentId: thread.studentId || undefined,
+      leadId: thread.leadId || undefined,
+    });
     if (!providerSend.success || !providerSend.messageId) {
       const status = /not configured/i.test(providerSend.error || '') ? 503 : 502;
       return NextResponse.json({ success: false, error: providerSend.error || 'WhatsApp provider did not confirm the reply.' }, { status });

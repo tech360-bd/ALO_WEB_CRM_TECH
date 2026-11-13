@@ -1,0 +1,20 @@
+diff --git a/tests/unit/public-brand-guideline.test.ts b/tests/unit/public-brand-guideline.test.ts
+index ecab91c5..9b09766e 100644
+--- a/tests/unit/public-brand-guideline.test.ts
++++ b/tests/unit/public-brand-guideline.test.ts
+@@ -1,5 +1,14 @@
+ import { readFileSync, existsSync } from 'node:fs';
+-import { describe, expect, it } from 'vitest';
++import { describe, expect, it, vi } from 'vitest';
++
++// Public contact values are deployment configuration (src/lib/alo-site-info.ts
++// ships them blank on purpose). Declare the deployment this test assumes before
++// the module reads process.env, instead of pinning literals inside the module.
++vi.hoisted(() => {
++  process.env.NEXT_PUBLIC_ALO_CONTACT_PHONE = '+8801805020101-10';
++  process.env.NEXT_PUBLIC_ALO_WHATSAPP_NUMBER = '+8801805020101';
++});
++
+ import { ALO_CONTACT, ALO_POLICY_LINKS, ALO_SOCIALS, ALO_TAGLINE } from '@/lib/alo-site-info';
+ 
+ const read = (path: string) => readFileSync(path, 'utf8');

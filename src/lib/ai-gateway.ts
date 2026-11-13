@@ -6,9 +6,11 @@ import { db } from '@/lib/db';
 import { generateText as coreGenerateText, extractJson, type GenerateTextOptions, type GenerateTextResult } from '@/lib/ai';
 import { routeModel, requiresLocalAI, type ModelRoute } from '@/lib/model-router';
 import { getDepartmentModelConfig, validateModelAssignment } from '@/lib/department-model-config';
+import { UnoRouterError } from '@/lib/ai-providers/unorouter';
 import { groqGuard } from '@/lib/groq-protection';
 
 export type GatewayRequest = Omit<GenerateTextOptions, 'provider' | 'endpoint'> & {
+  providerHint?: 'local' | 'unorouter';
   agentId?: string;
   taskId?: string;
   department?: string;
@@ -44,10 +46,11 @@ export async function aiGateway(req: GatewayRequest): Promise<GatewayResult> {
   if (config) {
     const assignment = validateModelAssignment(config, undefined, req.model);
     if (!assignment.ok) throw new Error(assignment.reason);
+    if (req.providerHint && req.providerHint !== config.primary.provider) throw new Error('Explicit provider conflicts with department configuration');
     if (privateData && config.primary.provider !== 'local') throw new Error('Private AI request blocks external department provider');
     route = { provider: config.primary.provider, model: config.primary.model, reason: `department:${config.departmentSlug}` };
   } else {
-    route = await routeModel({ taskType: req.taskType, modelHint: req.model, privateData });
+    route = await routeModel({ taskType: req.taskType, modelHint: req.model, privateData, providerHint: req.providerHint });
   }
 
   // Only a specifically approved provider/model pair may be used as fallback.
@@ -90,6 +93,7 @@ export async function aiGateway(req: GatewayRequest): Promise<GatewayResult> {
       groqGuard.recordFailure(candidate.provider, error);
       await audit('AI_GATEWAY_FAILED', { reason: 'PROVIDER_REQUEST_FAILED' });
       if (index < routes.length - 1) continue;
+      if (error instanceof UnoRouterError) throw error;
       throw new Error('AI provider request failed; no permitted fallback');
     } finally {
       groqGuard.release(candidate.provider);

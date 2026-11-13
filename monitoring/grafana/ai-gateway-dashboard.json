@@ -1,0 +1,146 @@
+{
+  "title": "ALO Shared AI Gateway",
+  "uid": "alo-ai-gateway",
+  "tags": [
+    "ai-gateway",
+    "alo"
+  ],
+  "timezone": "browser",
+  "editable": true,
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "description": "Token volumes are estimates derived from provider usage fields and character counts. They are not billed cost.",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Gateway availability (live/ready scrapes)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "up{job=\"ai-gateway\"}",
+          "legendFormat": "scrape {{instance}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Request rate by outcome",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum by (outcome) (rate(ai_gateway_requests_total[5m]))",
+          "legendFormat": "{{outcome}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Latency p50 / p95 / p99",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(ai_gateway_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p50"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(ai_gateway_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p95"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(ai_gateway_request_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p99"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Provider routing, retries, fallbacks, circuit state",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(ai_gateway_retries_total[5m]))",
+          "legendFormat": "retries/s"
+        },
+        {
+          "expr": "sum(rate(ai_gateway_fallbacks_total[5m]))",
+          "legendFormat": "fallbacks/s"
+        },
+        {
+          "expr": "max(ai_gateway_circuit_open)",
+          "legendFormat": "circuit open"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Usage and policy denials by application",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "targets": [
+        {
+          "expr": "sum by (app) (rate(ai_gateway_requests_total[5m]))",
+          "legendFormat": "{{app}}"
+        },
+        {
+          "expr": "sum by (reason) (rate(ai_gateway_policy_denials_total[5m]))",
+          "legendFormat": "denied: {{reason}}"
+        },
+        {
+          "expr": "sum by (app) (rate(ai_gateway_rate_limited_total[5m]))",
+          "legendFormat": "rate-limited: {{app}}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Estimated token volume (not billed cost)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "targets": [
+        {
+          "expr": "sum by (app, kind) (rate(ai_gateway_tokens_total[5m]))",
+          "legendFormat": "{{app}} {{kind}}"
+        }
+      ]
+    }
+  ]
+}

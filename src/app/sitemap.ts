@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
-import { publicCourseWhere, publicUniversityWhere } from '@/lib/public-catalog';
+import { publicCourseWhere, publicScholarshipWhere, publicUniversityWhere } from '@/lib/public-catalog';
 import { parseBuilderDocument } from '@/lib/alo-short-form-builder';
+import { hasCurrentScholarshipSourceVerification } from '@/lib/scholarships/status-engine';
 
 // Sitemap data is requested at runtime so published CMS records appear without
 // a rebuild. If MySQL is temporarily unavailable, public static routes are
@@ -28,11 +29,11 @@ async function getDatabaseSitemapEntries(): Promise<DatabaseEntries | null> {
     // (published + VERIFIED + https source + no open data conflict).
     const { loadOpenConflicts, passesPublicPagePolicy, publicCoursePageWhere, publicUniversityPageWhere } = await import('@/lib/course-finder/public-content-page-policy');
     const conflicts = await loadOpenConflicts();
-    const [blogs, coursesRaw, crmCourseRows, scholarships, universitiesRaw, crmUniversityRows, guideRows, services, resourceRows] = await Promise.all([
+    const [blogs, coursesRaw, crmCourseRows, scholarshipsRaw, universitiesRaw, crmUniversityRows, guideRows, services, resourceRows] = await Promise.all([
       db.blogPost.findMany({ select: { slug: true, updatedAt: true }, where: { status: 'PUBLISHED' as any }, take: 5000 }),
       db.coursePage.findMany({ select: { slug: true, updatedAt: true, sourceUrl: true }, where: publicCoursePageWhere(conflicts), take: 5000 }),
       db.crmCourse.findMany({ select: { slug: true, courseId: true, updatedAt: true }, where: publicCourseWhere(), take: 5000 }),
-      db.scholarship.findMany({ select: { slug: true, updatedAt: true }, where: { status: { in: ['active', 'PUBLISHED', 'OPEN', 'CLOSED', 'UPCOMING'] } }, take: 2000 }),
+      db.scholarship.findMany({ select: { slug: true, updatedAt: true, officialSourceUrl: true, verificationStatus: true, lastVerifiedAt: true }, where: publicScholarshipWhere(), take: 2000 }),
       db.universityPage.findMany({ select: { slug: true, updatedAt: true, sourceUrl: true }, where: publicUniversityPageWhere(conflicts), take: 5000 }),
       db.crmUniversity.findMany({ select: { slug: true, universityId: true, updatedAt: true }, where: publicUniversityWhere(), take: 5000 }),
       db.contentAsset.findMany({ select: { slug: true, updatedAt: true, body: true, tags: true }, where: { contentType: 'ALO_PAGE', status: 'PUBLISHED', tags: { contains: 'alo-short-form-builder' } }, take: 5000 }),
@@ -40,6 +41,13 @@ async function getDatabaseSitemapEntries(): Promise<DatabaseEntries | null> {
       db.resource.findMany({ select: { slug: true, updatedAt: true, category: { select: { slug: true } } }, where: { status: { in: ['active', 'PUBLISHED'] }, category: { is: { status: 'active' } } }, take: 5000 }),
     ]);
     const courses = coursesRaw.filter((row) => passesPublicPagePolicy(row, conflicts.courseSlugs));
+    const scholarships = scholarshipsRaw
+      .filter((row) => hasCurrentScholarshipSourceVerification({
+        verificationStatus: row.verificationStatus,
+        lastVerifiedAt: row.lastVerifiedAt,
+        officialSourceUrl: row.officialSourceUrl,
+      }))
+      .map(({ slug, updatedAt }) => ({ slug, updatedAt }));
     const universities = universitiesRaw.filter((row) => passesPublicPagePolicy(row, conflicts.universitySlugs));
     const guides = guideRows.flatMap((row) => {
       let tags: unknown[] = [];
@@ -68,6 +76,7 @@ async function getDatabaseSitemapEntries(): Promise<DatabaseEntries | null> {
 const STATIC_PATHS: Array<[string, MetadataRoute.Sitemap[number]['changeFrequency'], number]> = [
   ['', 'daily', 1.0],
   ['/about', 'monthly', 0.6], ['/contact', 'monthly', 0.6],
+  ['/all-university-information', 'daily', 0.8],
   ['/universities', 'daily', 0.9], ['/course-finder', 'daily', 0.9],
   ['/destinations', 'weekly', 0.8], ['/scholarships', 'weekly', 0.8], ['/services', 'weekly', 0.8],
   ['/resources', 'weekly', 0.8], ['/blog', 'daily', 0.9], ['/guides', 'weekly', 0.8], ['/language-prep', 'weekly', 0.8],

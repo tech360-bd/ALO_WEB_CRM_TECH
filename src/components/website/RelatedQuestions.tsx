@@ -30,24 +30,24 @@ export default function RelatedQuestions({ type, context, title = 'You May Also 
 
   return (
     <section aria-label={title}>
-      <h2 className="text-xl font-bold text-[#0F172A] mb-4">{title}</h2>
+      <h2 className="text-xl font-bold text-[var(--alo-text)] mb-4">{title}</h2>
       <div className="space-y-2">
         {questions.map((q, i) => (
-          <Card key={q.id} className="bg-white border-[#E2E8F0] rounded-xl overflow-hidden">
+          <Card key={q.id} className="bg-white border-[var(--alo-border)] rounded-xl overflow-hidden">
             <button
               type="button"
               onClick={() => setOpen(open === i ? -1 : i)}
               aria-expanded={open === i}
-              className="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left min-h-[48px] hover:bg-[#F8FAFC] transition-colors focus-visible:outline-2 focus-visible:outline-[#0057B8]"
+              className="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left min-h-[48px] hover:bg-[var(--alo-page)] transition-colors focus-visible:outline-2 focus-visible:outline-[var(--alo-brand)]"
             >
-              <span className="text-sm font-semibold text-[#0F172A]">{q.question}</span>
-              <ChevronDown className={`w-4 h-4 shrink-0 text-[#0057B8] transition-transform ${open === i ? 'rotate-180' : ''}`} />
+              <span className="text-sm font-semibold text-[var(--alo-text)]">{q.question}</span>
+              <ChevronDown className={`w-4 h-4 shrink-0 text-[var(--alo-brand)] transition-transform ${open === i ? 'rotate-180' : ''}`} />
             </button>
             {open === i && (
-              <div className="px-4 pb-4 text-sm text-gray-700 leading-relaxed border-t border-[#E2E8F0] pt-3">
+              <div className="px-4 pb-4 text-sm text-[var(--alo-body)] leading-relaxed border-t border-[var(--alo-border)] pt-3">
                 {q.answer}
                 {q.href && (
-                  <Link href={q.href} className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#0057B8] hover:underline">
+                  <Link href={q.href} className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[var(--alo-brand)] hover:underline">
                     Read the full guide <ArrowRight className="w-3 h-3" />
                   </Link>
                 )}

@@ -1,0 +1,18 @@
+{
+  "base": "5f031d8fc62d35f2c51bb13ebb9b12760fab13b3",
+  "existing": [
+    "Language Prep landing, detail and comparison routes",
+    "EnglishPrepTest DB model and APIs",
+    "Counselling lead submission and requirement explorer",
+    "Consent-filtered success stories"
+  ],
+  "gaps": [
+    "Landing slices catalogue to 12 tests",
+    "Cambridge CAE/CPE missing",
+    "Comparison only four tests and no cost column",
+    "Old TOEFL scoring and Kaplan/ELLT facts",
+    "Unverified live-progress hero illustration",
+    "No section photographs or dedicated preparation explanation for all tests"
+  ],
+  "policy": "Reuse existing routes, data models, API and workflows; preserve extras; no fabricated stories or provider video embeds"
+}

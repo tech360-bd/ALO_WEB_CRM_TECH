@@ -76,7 +76,7 @@ export default function BranchManagerDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <kpi.icon className="w-5 h-5 text-alo-brand" />
-                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
+                <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
                   {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}{kpi.change}
                 </span>
               </div>
@@ -144,7 +144,7 @@ export default function BranchManagerDashboard() {
                       <p className="text-sm font-medium text-alo-text">{s.stage}</p>
                     </div>
                     <div className="flex-1">
-                      <div className="relative h-8 rounded-lg bg-gray-100 overflow-hidden">
+                      <div className="relative h-8 rounded-lg bg-[var(--alo-surface-muted)] overflow-hidden">
                         <div className={`h-full ${s.color} rounded-lg flex items-center justify-end pr-3 transition-all duration-500`} style={{ width: `${s.pct}%` }}>
                           <span className="text-xs font-bold text-white">{s.count}</span>
                         </div>
@@ -164,7 +164,7 @@ export default function BranchManagerDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <UserPlus className="w-4 h-4 text-amber-500" /> Unassigned Leads
+                  <UserPlus className="w-4 h-4 text-crm-warning-text" /> Unassigned Leads
                 </CardTitle>
                 <Badge variant="warning" className="text-[11px]">{unassignedLeads.length}</Badge>
               </div>
@@ -177,11 +177,11 @@ export default function BranchManagerDashboard() {
                       <p className="text-sm font-medium text-alo-text truncate">{l.name}</p>
                       <p className="text-[11px] text-alo-text-muted">{l.interest} · {l.time}</p>
                     </div>
-                    <Badge variant="muted" className="text-[10px] shrink-0 ml-2">{l.source}</Badge>
+                    <Badge variant="muted" className="text-[11px] shrink-0 ml-2">{l.source}</Badge>
                   </div>
                 ))}
               </div>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="w-full mt-3 text-xs">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="brand" size="sm" className="w-full mt-3 ">
                 Assign All Leads
               </Button>
             </CardContent>
@@ -192,7 +192,7 @@ export default function BranchManagerDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-500" /> Overdue Follow-ups
+                  <AlertTriangle className="w-4 h-4 text-crm-danger-text" /> Overdue Follow-ups
                 </CardTitle>
                 <Badge variant="danger" className="text-[11px]">{overdueFollowups.length}+</Badge>
               </div>
@@ -200,10 +200,10 @@ export default function BranchManagerDashboard() {
             <CardContent>
               <div className="space-y-2 max-h-56 overflow-y-auto">
                 {overdueFollowups.map((f) => (
-                  <div key={f.student} className="p-2.5 rounded-lg border border-red-200 bg-red-50">
+                  <div key={f.student} className="p-2.5 rounded-lg border border-crm-danger-border bg-crm-danger-bg">
                     <div className="flex items-center justify-between mb-0.5">
                       <p className="text-sm font-medium text-alo-text">{f.student}</p>
-                      <Badge variant="danger" className="text-[10px]">{f.type}</Badge>
+                      <Badge variant="danger" className="text-[11px]">{f.type}</Badge>
                     </div>
                     <p className="text-[11px] text-alo-text-muted">Counselor: {f.counselor} · Due: {f.due}</p>
                   </div>

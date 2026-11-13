@@ -1,110 +1,149 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { canManageVisaPermission } from '@/lib/visa/access';
 
-const VALID_TASK_TYPES = ['DOCUMENT_REQUEST','INTERVIEW','BANK_REVIEW','SPONSOR_REVIEW','REFUSAL_REVIEW','STUDY_GAP_REVIEW','COUNSELOR_ACTION','APPLICATION_ACTION','STUDENT_ACTION','SENIOR_REVIEW','document_request','interview','bank_review','sponsor_review','refusal_review','study_gap_review','counselor_action','application_action','student_action','senior_review'];
+const TASK_TYPES = [
+  'DOCUMENT_REQUEST',
+  'INTERVIEW',
+  'BANK_REVIEW',
+  'SPONSOR_REVIEW',
+  'REFUSAL_REVIEW',
+  'STUDY_GAP_REVIEW',
+  'COUNSELOR_ACTION',
+  'APPLICATION_ACTION',
+  'STUDENT_ACTION',
+  'SENIOR_REVIEW',
+] as const;
+const ASSIGNEES = ['student', 'visa_officer', 'counselor', 'application_officer'] as const;
+const PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const;
+
+const createSchema = z.object({
+  caseId: z.string().trim().min(1).max(191),
+  taskType: z.enum(TASK_TYPES).default('DOCUMENT_REQUEST'),
+  title: z.string().trim().min(1).max(191),
+  description: z.string().trim().max(2000).default(''),
+  assignee: z.enum(ASSIGNEES).default('student'),
+  dueDate: z.string().trim().max(40).optional(),
+  priority: z.enum(PRIORITIES).default('medium'),
+}).strict();
+
+function resolveAssignee(visaCase: any, studentId: string, assignee: (typeof ASSIGNEES)[number]) {
+  const id = assignee === 'student'
+    ? studentId
+    : assignee === 'visa_officer'
+      ? visaCase.visaOfficerId
+      : assignee === 'counselor'
+        ? visaCase.counselorId
+        : visaCase.applicationOfficerId;
+  return typeof id === 'string' && id.trim() ? id : null;
+}
+
+function auditData(auth: AuthContext, action: string, entityId: string, caseId: string, studentId: string, metadata: Record<string, unknown>) {
+  return {
+    actorUserId: auth.actorUserId,
+    action,
+    entityType: 'VisaTask',
+    entityId,
+    metadata: JSON.stringify({ caseId, studentId, ...metadata }),
+    ipAddress: '',
+    userAgent: '',
+  };
+}
 
 export const GET = withAuth(async (req: Request, auth: AuthContext) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('counselor') || auth.roles.includes('application_team') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER') || auth.roles.includes('COUNSELOR') || auth.roles.includes('APPLICATION_TEAM');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Task view permission required — tasks.view' }, { status: 403 });
-
     const { searchParams } = new URL(req.url);
     const caseId = searchParams.get('caseId');
-    const studentId = searchParams.get('studentId');
-    const status = searchParams.get('status');
-    const assignedTo = searchParams.get('assignedTo');
-    const priority = searchParams.get('priority');
-
-    const where: any = {};
-    if (caseId) where.caseId = caseId;
-    if (studentId) where.studentId = studentId;
-    if (status) where.status = status;
-    if (assignedTo) where.assignedTo = assignedTo;
-    if (priority) where.priority = priority;
-
-    // RBAC ownership for visa officers
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    const isVisa = auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isSuper && isVisa && caseId) {
-      const visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } }) as any;
-      if (visaCase && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot view tasks for unassigned case — IDOR blocked' }, { status: 403 });
-      }
+    if (!caseId) return NextResponse.json({ success: false, error: 'An assigned case ID is required.' }, { status: 400 });
+    if (searchParams.has('studentId') || searchParams.has('assignedTo')) {
+      return NextResponse.json({ success: false, error: 'Task scope is derived from the assigned case; student and owner filters are not accepted.' }, { status: 400 });
+    }
+    const visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
+    if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
+    if (!canManageVisaPermission(auth, 'visa.tasks.view', visaCase)) {
+      return NextResponse.json({ success: false, error: 'Assigned case and visa.tasks.view permission required.' }, { status: 403 });
     }
 
-    const tasks = await (db as any).visaTask.findMany({ where, orderBy: [{ dueDate: 'asc' }, { createdAt: 'desc' }] });
-
-    // Overdue detection
-    const now = new Date();
-    const overdue = tasks.filter((t: any) => t.dueDate && new Date(t.dueDate) < now && t.status !== 'completed');
-
-    await logAuditAction(auth, 'VISA_TASKS_VIEW', 'VisaTask', caseId || studentId || 'list', { count: tasks.length, overdue: overdue.length });
-
+    const tasks = await db.$transaction(async (tx) => {
+      const items = await tx.visaTask.findMany({
+        where: { caseId: visaCase.id, studentId: visaCase.studentId, archivedAt: null },
+        orderBy: [{ dueDate: 'asc' }, { createdAt: 'desc' }],
+        take: 200,
+      });
+      await tx.portalAuditLog.create({
+        data: auditData(auth, 'VISA_TASKS_VIEW', 'case-list', visaCase.id, visaCase.studentId, { count: items.length }),
+      });
+      return items;
+    });
+    const now = Date.now();
+    const overdue = tasks.filter((task) => task.dueDate && task.dueDate.getTime() < now && !['completed', 'cancelled'].includes(task.status.toLowerCase()));
     return NextResponse.json({
       success: true,
       data: tasks,
       tasks,
       overdue,
-      emptyState: tasks.length === 0 ? 'No tasks — proper empty state — types Document Request/Interview/Bank Review/Sponsor Review/Refusal Review/Study Gap Review/Counselor Action/Application Action/Student Action/Senior Review — each task owner/priority/deadline/status/createdBy/caseId/studentId — overdue appears in dashboard' : null,
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+      emptyState: tasks.length ? null : 'No active tasks are recorded for this case.',
+    }, { headers: { 'Cache-Control': 'private, no-store', 'Vary': 'Cookie, Authorization' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Visa tasks could not be audited or loaded.' }, { status: 503 });
   }
 });
 
 export const POST = withAuth(async (req: Request, auth: AuthContext) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Task create requires visa officer — tasks.create' }, { status: 403 });
-
-    const body = await req.json();
-    const { caseId, studentId, taskType, title, description, assignedTo, dueDate, priority, owner } = body;
-
-    if (!title) return NextResponse.json({ success: false, error: 'Task title required' }, { status: 400 });
-    if (taskType && !VALID_TASK_TYPES.includes(taskType)) {
-      return NextResponse.json({ success: false, error: `Invalid task type — allowed Document Request/Interview/Bank Review/Sponsor Review/Refusal Review/Study Gap Review/Counselor Action/Application Action/Student Action/Senior Review` }, { status: 400 });
+    const parsed = createSchema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'A case, task type, title, assignee, and priority are required.', details: parsed.error.flatten() }, { status: 400 });
+    const visaCase = await db.visaCase.findUnique({ where: { id: parsed.data.caseId } });
+    if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
+    if (!canManageVisaPermission(auth, 'visa.tasks.create', visaCase)) {
+      return NextResponse.json({ success: false, error: 'Assigned case and visa.tasks.create permission required.' }, { status: 403 });
     }
+    const assignedTo = resolveAssignee(visaCase, visaCase.studentId, parsed.data.assignee);
+    if (!assignedTo) return NextResponse.json({ success: false, error: 'The selected owner is not assigned to this case.' }, { status: 400 });
+    const dueDate = parsed.data.dueDate ? new Date(parsed.data.dueDate) : null;
+    if (dueDate && Number.isNaN(dueDate.getTime())) return NextResponse.json({ success: false, error: 'A valid task due date is required.' }, { status: 400 });
 
-    let visaCase: any = null;
-    if (caseId) visaCase = await (db as any).visaCase.findUnique({ where: { id: caseId } });
-    if (!visaCase && studentId) visaCase = await (db as any).visaCase.findFirst({ where: { studentId } });
-
-    if (visaCase) {
-      const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-      if (!isSuper && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot create task for unassigned case — IDOR blocked' }, { status: 403 });
-      }
-    }
-
-    const task = await (db as any).visaTask.create({
-      data: {
-        caseId: caseId || visaCase?.id || '',
-        studentId: studentId || visaCase?.studentId || '',
-        taskType: taskType || 'document_request',
-        title: title || '',
-        description: description || '',
-        assignedTo: assignedTo || owner || 'student',
-        dueDate: dueDate ? new Date(dueDate) : null,
-        status: 'pending',
-        priority: priority || 'medium',
-        createdBy: auth.userId,
-      } as any,
+    const task = await db.$transaction(async (tx) => {
+      const created = await tx.visaTask.create({
+        data: {
+          caseId: visaCase.id,
+          studentId: visaCase.studentId,
+          taskType: parsed.data.taskType,
+          title: parsed.data.title,
+          description: parsed.data.description,
+          assignedTo,
+          priority: parsed.data.priority,
+          createdBy: auth.actorUserId,
+          dueDate,
+          status: 'pending',
+        },
+      });
+      await tx.portalAuditLog.create({
+        data: auditData(auth, 'VISA_TASK_CREATE', created.id, visaCase.id, visaCase.studentId, {
+          taskType: created.taskType,
+          title: created.title,
+          assignee: parsed.data.assignee,
+          priority: created.priority,
+          dueDate,
+          descriptionLength: parsed.data.description.length,
+        }),
+      });
+      await tx.timelineEvent.create({
+        data: {
+          studentId: visaCase.studentId,
+          stage: 'VISA_TASK_CREATED',
+          title: 'A visa case task was created.',
+          description: 'A task was added to the authorized visa case workspace. Details remain in the case task list.',
+          actor: auth.actorUserId,
+        },
+      });
+      return created;
     });
 
-    await logAuditAction(auth, 'VISA_TASK_CREATE', 'VisaTask', (task as any).id, { caseId: caseId || visaCase?.id, studentId: studentId || visaCase?.studentId, taskType, title, assignedTo, dueDate, priority });
-    await (db as any).timelineEvent.create({
-      data: {
-        studentId: studentId || visaCase?.studentId || '',
-        stage: 'VISA_TASK_CREATED',
-        title: `Task created: ${title} — type ${taskType || 'document_request'} — owner ${assignedTo || owner || 'student'} — priority ${priority || 'medium'} — due ${dueDate || 'none'}`,
-        description: `Created by ${auth.name} — Task system 10 types Document Request/Interview/Bank Review/Sponsor Review/Refusal Review/Study Gap Review/Counselor Action/Application Action/Student Action/Senior Review — each task owner/priority/deadline/status/createdBy/caseId/studentId — overdue appears in dashboard`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ success: true, data: task, note: 'Task system 10 types — owner/priority/deadline/status/createdBy/caseId/studentId — overdue appears in dashboard' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    return NextResponse.json({ success: true, data: task, externalDelivery: false }, { status: 201, headers: { 'Cache-Control': 'private, no-store' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Visa task could not be saved; any audit failure rolled back.' }, { status: 503 });
   }
 });

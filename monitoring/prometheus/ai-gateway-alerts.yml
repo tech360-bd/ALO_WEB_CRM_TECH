@@ -1,0 +1,110 @@
+# Alert rules for the shared AI gateway.
+#
+# They are staged: evaluate for 10 minutes and remain dashboard-only until a
+# test notification has been delivered and recipients have approved it.
+# `ALERTS_ENABLED=false` in the gateway configuration means these rules are
+# written but not routed to a notification channel.
+groups:
+  - name: ai-gateway-availability
+    rules:
+      - alert: AiGatewayDown
+        expr: up{job="ai-gateway"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          stage: dashboard-only
+        annotations:
+          summary: AI gateway is not scrapeable
+          description: The private metrics endpoint has been unreachable for 2 minutes. Applications should already be using their previous provider path.
+
+      - alert: AiGatewayNotReady
+        expr: ai_gateway_requests_total{outcome="error"} > 0 and on() (up{job="ai-gateway"} == 1)
+        for: 15m
+        labels:
+          severity: warning
+          stage: dashboard-only
+        annotations:
+          summary: AI gateway is returning errors
+          description: One or more inference requests failed. Check provider health and circuit-breaker state before changing configuration.
+
+  - name: ai-gateway-performance
+    rules:
+      - alert: AiGatewayHighErrorRate
+        expr: |
+          sum(rate(ai_gateway_requests_total{outcome="error"}[5m]))
+            /
+          clamp_min(sum(rate(ai_gateway_requests_total[5m])), 0.001) > 0.10
+        for: 10m
+        labels:
+          severity: warning
+          stage: dashboard-only
+        annotations:
+          summary: More than 10% of gateway requests are failing
+          description: Sustained failure rate above the agreed threshold. Verify provider status and recent configuration changes.
+
+      - alert: AiGatewaySlowRequests
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(ai_gateway_request_duration_seconds_bucket[5m])) by (le)
+          ) > 20
+        for: 10m
+        labels:
+          severity: warning
+          stage: dashboard-only
+        annotations:
+          summary: Gateway p95 latency above 20 seconds
+          description: Check provider latency and concurrency saturation. Do not raise timeouts to hide the symptom.
+
+  - name: ai-gateway-reliability
+    rules:
+      - alert: AiGatewayCircuitOpen
+        expr: ai_gateway_circuit_open == 1
+        for: 5m
+        labels:
+          severity: warning
+          stage: dashboard-only
+        annotations:
+          summary: Provider circuit breaker is open
+          description: Requests to this provider are being refused to protect the service. Confirm the provider is healthy before resetting.
+
+      - alert: AiGatewayFallbackSpike
+        expr: increase(ai_gateway_fallbacks_total[15m]) > 10
+        for: 5m
+        labels:
+          severity: info
+          stage: dashboard-only
+        annotations:
+          summary: Fallback provider used repeatedly
+          description: Fallback only occurs within policy. Repeated fallback indicates the primary provider is degraded.
+
+      - alert: AiGatewayAuthFailures
+        expr: increase(ai_gateway_requests_total{outcome="rejected"}[15m]) > 20
+        for: 5m
+        labels:
+          severity: warning
+          stage: dashboard-only
+        annotations:
+          summary: Repeated rejected or unauthenticated requests
+          description: Check application credentials and policy denials. Never log the token to investigate.
+
+  - name: ai-gateway-host
+    rules:
+      - alert: HostDiskPressure
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.15
+        for: 15m
+        labels:
+          severity: warning
+          stage: dashboard-only
+        annotations:
+          summary: Less than 15% disk space remaining
+          description: Uploads and exports will fail. Free space through the approved retention process, not by deleting records.
+
+      - alert: HostMemoryPressure
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.90
+        for: 15m
+        labels:
+          severity: warning
+          stage: dashboard-only
+        annotations:
+          summary: Host memory above 90%
+          description: Local model inference competes with the applications for memory. Reduce concurrency before adding capacity.

@@ -1,87 +1,234 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateStudentRequest } from '@/lib/student-auth';
+import {
+  buildPreliminaryAssessment,
+  preliminaryStudentLabel,
+} from '@/lib/interview/preliminary-assessment';
 
-export async function POST(req: Request, context?: any) {
+/**
+ * Complete a practice session and produce the preliminary assessment (spec §41).
+ *
+ * The assessment is a deterministic rubric over the recorded answers — no model
+ * is called, so nothing about the student can be invented. It is persisted as
+ * PENDING and the student is told, in as many words, that a named reviewer makes
+ * the final decision and may override it in full.
+ *
+ * A student cannot submit scores or a verdict: the body must be empty, and the
+ * values written below are produced server-side from the transcript only.
+ */
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+export async function POST(req: Request, context?: { params: Promise<{ sessionId: string }> | { sessionId: string } }) {
   try {
     const auth = await authenticateStudentRequest(req);
     if (auth instanceof NextResponse) return auth;
 
-    const sessionId = context?.params?.sessionId;
-    const session = await db.aiInterviewSession.findUnique({ where: { id: sessionId } });
-    if (!session) return NextResponse.json({ success: false, error: 'Session not found' }, { status: 404 });
-    if (session.studentId !== auth.studentId) return NextResponse.json({ success: false, error: 'Cross-student blocked — IDOR blocked' }, { status: 403 });
+    const params = context?.params ? await context.params : undefined;
+    const sessionId = params?.sessionId;
+    if (typeof sessionId !== 'string' || !sessionId) {
+      return NextResponse.json({ success: false, error: 'Session ID required.' }, { status: 400 });
+    }
 
-    const body = await req.json();
-    const {
-      communicationClarity, confidence, courseKnowledge, universityKnowledge,
-      countryKnowledge, financialExplanation, sponsorExplanation, studyGapExplanation,
-      futurePlanClarity, visaRisk, overallReadiness, verdict, finalFeedback,
-      clarity, courseModules, university, sponsor, studyGap, futurePlan, refusalExplanation, documentReadiness
-    } = body;
+    const session = await db.aiInterviewSession.findFirst({
+      where: { id: sessionId, studentId: auth.studentId },
+      select: { id: true, status: true, interviewType: true, transcript: true },
+    });
+    if (!session) return NextResponse.json({ success: false, error: 'Interview practice session not found.' }, { status: 404 });
+    if (session.status !== 'in_progress') {
+      return NextResponse.json({ success: false, error: 'Interview practice session has already been completed.' }, { status: 409 });
+    }
 
-    // AI safety: never guarantee approval/success/pretend embassy/confidential/invent requirements/refusal/university/policy/speculation as fact/automatically final decision must show uncertainty/cite source/flag manual verification/recommend human review
-    const safeFeedback = finalFeedback || 'AI preliminary analysis only — human officer remains responsible for final internal assessment — must show uncertainty/cite source/flag manual verification/recommend human review — Interview prep doc branded question/answer framework/student answer/AI suggestion no memorized false truthful consistent';
+    let body: unknown = {};
+    try {
+      body = await req.json();
+    } catch {
+      body = {};
+    }
+    if (body !== null && typeof body === 'object' && Object.keys(body as Record<string, unknown>).length > 0) {
+      return NextResponse.json(
+        { success: false, error: 'Scores and readiness labels cannot be submitted by a student.' },
+        { status: 400 },
+      );
+    }
 
-    const result = await db.aiInterviewResult.upsert({
+    const answers = await db.aiInterviewAnswer.findMany({
       where: { sessionId },
-      create: {
+      orderBy: { createdAt: 'asc' },
+      select: { question: true, answer: true, transcript: true },
+    });
+    if (answers.length === 0) {
+      return NextResponse.json({ success: false, error: 'Record at least one practice response before finishing.' }, { status: 400 });
+    }
+
+    // Attempted-target terms give the rubric something concrete to look for.
+    const applications = await db.application.findMany({
+      where: { studentId: auth.studentId },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+      select: { universityName: true, courseName: true },
+    });
+    const expectedTerms = applications
+      .flatMap((application) => [application.universityName, application.courseName])
+      .filter((term): term is string => typeof term === 'string' && term.trim().length > 2)
+      .slice(0, 8);
+
+    // Question categories live in the session transcript, written when each
+    // answer was recorded. They are read positionally so an older transcript
+    // without categories simply scores as GENERAL instead of failing.
+    const transcriptCategories: string[] = (() => {
+      try {
+        const parsed = JSON.parse(session.transcript || '{}') as { answers?: Array<{ category?: string }> };
+        return Array.isArray(parsed?.answers)
+          ? parsed.answers.map((entry) => (typeof entry?.category === 'string' ? entry.category : ''))
+          : [];
+      } catch {
+        return [];
+      }
+    })();
+
+    const answersForRubric = answers.map((answer, index) => ({
+      question: answer.question,
+      answer: answer.answer,
+      category: transcriptCategories[index] ?? '',
+    }));
+
+    const assessment = buildPreliminaryAssessment(answersForRubric, { expectedTerms });
+    const studentLabel = preliminaryStudentLabel(assessment.verdict);
+    const studentFeedback = [
+      studentLabel + '.',
+      assessment.strengths[0] ?? 'Your transcript has been recorded.',
+      assessment.improvements[0] ? `Next: ${assessment.improvements[0]}` : '',
+      'A counselor reviews this before it is treated as a result, and may change it.',
+    ].filter(Boolean).join(' ');
+
+    let assessmentId = '';
+    await db.$transaction(async (tx) => {
+      const savedAssessment = await tx.interviewAssessment.upsert({
+        where: { sessionId },
+        create: {
+          sessionId,
+          studentId: auth.studentId,
+          engine: assessment.engine,
+          engineVersion: assessment.engineVersion,
+          verdict: assessment.verdict,
+          confidence: assessment.confidence,
+          overallScore: assessment.overallScore,
+          dimensions: JSON.stringify(assessment.dimensions),
+          strengths: JSON.stringify(assessment.strengths),
+          improvements: JSON.stringify(assessment.improvements),
+          evidence: JSON.stringify(assessment.evidence),
+          limitations: JSON.stringify(assessment.limitations),
+          answerCount: assessment.answerCount,
+          averageWords: assessment.averageWords,
+          reviewStatus: 'PENDING',
+          generatedAt: new Date(assessment.generatedAt),
+        },
+        update: {
+          verdict: assessment.verdict,
+          confidence: assessment.confidence,
+          overallScore: assessment.overallScore,
+          dimensions: JSON.stringify(assessment.dimensions),
+          strengths: JSON.stringify(assessment.strengths),
+          improvements: JSON.stringify(assessment.improvements),
+          evidence: JSON.stringify(assessment.evidence),
+          limitations: JSON.stringify(assessment.limitations),
+          answerCount: assessment.answerCount,
+          averageWords: assessment.averageWords,
+          reviewStatus: 'PENDING',
+          generatedAt: new Date(assessment.generatedAt),
+        },
+        select: { id: true },
+      });
+      assessmentId = savedAssessment.id;
+
+      // The legacy result row keeps the officer-facing numeric shape, but its
+      // verdict can never be mistaken for a human decision.
+      await tx.aiInterviewResult.upsert({
+        where: { sessionId },
+        create: {
+          sessionId,
+          overallReadiness: assessment.overallScore,
+          communicationClarity: assessment.dimensions.find((dimension) => dimension.key === 'structure')?.score ?? 0,
+          courseKnowledge: assessment.dimensions.find((dimension) => dimension.key === 'COURSE')?.score ?? 0,
+          universityKnowledge: assessment.dimensions.find((dimension) => dimension.key === 'UNIVERSITY')?.score ?? 0,
+          financialExplanation: assessment.dimensions.find((dimension) => dimension.key === 'FINANCIAL')?.score ?? 0,
+          futurePlanClarity: assessment.dimensions.find((dimension) => dimension.key === 'FUTURE_PLAN')?.score ?? 0,
+          verdict: 'pending_human_review',
+          finalFeedback: studentFeedback,
+        },
+        update: {
+          overallReadiness: assessment.overallScore,
+          communicationClarity: assessment.dimensions.find((dimension) => dimension.key === 'structure')?.score ?? 0,
+          courseKnowledge: assessment.dimensions.find((dimension) => dimension.key === 'COURSE')?.score ?? 0,
+          universityKnowledge: assessment.dimensions.find((dimension) => dimension.key === 'UNIVERSITY')?.score ?? 0,
+          financialExplanation: assessment.dimensions.find((dimension) => dimension.key === 'FINANCIAL')?.score ?? 0,
+          futurePlanClarity: assessment.dimensions.find((dimension) => dimension.key === 'FUTURE_PLAN')?.score ?? 0,
+          verdict: 'pending_human_review',
+          finalFeedback: studentFeedback,
+        },
+      });
+
+      await tx.aiInterviewSession.update({
+        where: { id: sessionId },
+        data: {
+          status: 'completed',
+          readinessScore: assessment.overallScore,
+          riskLevel: 'human_review_required',
+          completedAt: new Date(),
+        },
+      });
+
+      await tx.studentEvent.create({
+        data: {
+          studentId: auth.studentId,
+          eventType: 'VISA_AI_INTERVIEW_COMPLETED',
+          payload: JSON.stringify({
+            sessionId,
+            answerCount: answers.length,
+            assessmentId,
+            engine: assessment.engine,
+            verdict: assessment.verdict,
+            humanReviewRequired: true,
+          }),
+        },
+      });
+      await tx.timelineEvent.create({
+        data: {
+          studentId: auth.studentId,
+          stage: 'VISA_AI_INTERVIEW_COMPLETED',
+          title: 'Interview practice session completed.',
+          description: 'A preliminary practice assessment was produced and sent for counselor review. It is not a visa decision.',
+          actor: auth.studentId,
+        },
+      });
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
         sessionId,
-        communicationClarity: communicationClarity || clarity || 75,
-        confidence: confidence || 75,
-        courseKnowledge: courseKnowledge || courseModules || 80,
-        universityKnowledge: universityKnowledge || university || 80,
-        countryKnowledge: countryKnowledge || 80,
-        financialExplanation: financialExplanation || 70,
-        sponsorExplanation: sponsorExplanation || sponsor || 70,
-        studyGapExplanation: studyGapExplanation || studyGap || 75,
-        futurePlanClarity: futurePlanClarity || futurePlan || 80,
-        refusalExplanation: refusalExplanation || 75,
-        documentReadiness: documentReadiness || 75,
-        visaRisk: visaRisk || 20,
-        overallReadiness: overallReadiness || 78,
-        verdict: verdict || 'HUMAN_REVIEW_REQUIRED',
-        finalFeedback: safeFeedback,
-      } as any,
-      update: {
-        overallReadiness: overallReadiness || 78,
-        verdict: verdict || 'HUMAN_REVIEW_REQUIRED',
-        finalFeedback: safeFeedback,
-        communicationClarity: communicationClarity || clarity,
-        confidence,
-        courseKnowledge: courseKnowledge || courseModules,
-        universityKnowledge: universityKnowledge || university,
-        financialExplanation,
-        sponsorExplanation: sponsorExplanation || sponsor,
-        studyGapExplanation: studyGapExplanation || studyGap,
-        futurePlanClarity: futurePlanClarity || futurePlan,
-      } as any,
-    });
-
-    await db.aiInterviewSession.update({
-      where: { id: sessionId },
-      data: {
         status: 'completed',
-        readinessScore: overallReadiness || 78,
-        completedAt: new Date(),
-      } as any,
-    });
-
-    await db.timelineEvent.create({
-      data: {
-        studentId: auth.studentId,
-        stage: 'VISA_AI_INTERVIEW_COMPLETED',
-        title: `AI interview completed — score ${overallReadiness || 78}% — readiness ${verdict || 'HUMAN_REVIEW_REQUIRED'} — AI preliminary only human final`,
-        description: `AI interview 9 types — Scorecard 12 scores AI preliminary only human final — Final result internal workflow NOT visa decision — AI cannot automatically make final visa/admission decision — must show uncertainty/cite source/flag manual verification/recommend human review — Financial/future plan framework real info no fabrication`,
+        assessmentId,
+        assessmentStatus: 'pending_human_review',
+        preliminary: {
+          verdict: assessment.verdict,
+          label: studentLabel,
+          confidence: assessment.confidence,
+          overallScore: assessment.overallScore,
+          strengths: assessment.strengths,
+          improvements: assessment.improvements,
+          dimensions: assessment.dimensions,
+          humanReviewRequired: true,
+          limitations: assessment.limitations,
+        },
+        feedback: studentFeedback,
+        note: 'This is a preliminary practice assessment produced by a fixed rubric. A counselor reviews it and may override it in full. It is not an embassy interview, a visa decision, or a guarantee.',
       },
-    }).catch(() => {});
-
-    return NextResponse.json({
-      success: true,
-      result,
-      note: 'AI preliminary only — human officer remains responsible for final internal assessment — AI cannot automatically make final visa/admission decision — must show uncertainty/cite source/flag manual verification/recommend human review — Scorecard 12 scores AI preliminary only human final — Final result internal workflow status NOT visa decision — Interview prep doc branded question/answer framework/student answer/AI suggestion no memorized false truthful consistent — Financial/future plan framework real info no fabrication salary/balance/income/employment/job/assets/travel/academic — Video/voice reuse existing store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording — Practice 3 days after package store attempts improvement',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+      { headers: { 'Cache-Control': 'private, no-store' } },
+    );
+  } catch {
+    return NextResponse.json({ success: false, error: 'Interview practice could not be completed.' }, { status: 503 });
   }
 }

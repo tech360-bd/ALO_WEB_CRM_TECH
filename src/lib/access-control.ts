@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { validateRequestAccess } from "@/lib/access-control/central-security-engine";
 
 // ─── ALO Employee Access Control Engine ─────────────────────
 // Backend helpers for permission checking — MUST be used by every controller.
@@ -6,23 +7,12 @@ import { db } from "@/lib/db";
 
 /**
  * Check if a user/employee can access a specific feature.
- * Super Admin and Chairman always have access.
+ * Authority is resolved from the current account and central permissions.
  */
 export async function canAccessFeature(ownerId: string, featureKey: string): Promise<boolean> {
-  // Get the employee
-  const employee = await db.employee.findFirst({ where: { id: ownerId } });
+  const employee = await db.employee.findFirst({ where: { OR: [{ id: ownerId }, { userId: ownerId }] } });
   if (!employee) return false;
-
-  // Super Admin and Chairman always have access
-  if (employee.designation === "Chairman" || employee.designation === "CEO" || employee.role === "SUPER_ADMIN") {
-    return true;
-  }
-
-  // Check feature access rule
-  const rule = await db.featureAccessRule.findFirst({ where: { ownerType: "EMPLOYEE", ownerId, featureKey } });
-
-  if (!rule) return false;
-  return rule.isEnabled;
+  return (await validateRequestAccess({ userId: employee.userId }, featureKey, 'view', { ownerId: employee.userId })).allowed;
 }
 
 /**
@@ -77,26 +67,12 @@ export async function recordUsage(ownerType: string, ownerId: string, featureKey
 
 /**
  * Check if a viewer can see an employee's private profile.
- * Only: Employee themself, Super Admin, Chairman, HR Manager with permission.
+ * Own profile or an explicit centrally authorized private-profile grant.
  */
 export async function canViewEmployeePrivateProfile(viewerId: string, employeeId: string): Promise<boolean> {
-  // Self
-  if (viewerId === employeeId) return true;
-
-  const viewer = await db.employee.findFirst({ where: { id: viewerId } });
-  if (!viewer) return false;
-
-  // Super Admin and Chairman always can
-  if (viewer.designation === "Chairman" || viewer.designation === "CEO" || viewer.role === "SUPER_ADMIN") {
-    return true;
-  }
-
-  // HR Manager with permission
-  if (viewer.designation === "HR Manager") {
-    return canAccessFeature(viewerId, "employee.profile.view_private");
-  }
-
-  return false;
+  const employee = await db.employee.findUnique({ where: { id: employeeId } });
+  if (!employee) return false;
+  return (await validateRequestAccess({ userId: viewerId }, 'employee.profile.private', 'view', { ownerId: employee.userId, branchId: employee.branch, departmentId: employee.department })).allowed;
 }
 
 /**

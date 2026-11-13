@@ -21,7 +21,7 @@ export interface StudyStep {
 export const ALO_STUDY_STEPS: StudyStep[] = [
   {
     step: 1,
-    title: 'Free Counseling & Profile Assessment',
+    title: 'Counseling & Profile Assessment',
     description:
       'Meet an ALO counsellor (free) to review your academic results, budget, English level and career goals, and confirm the destination fits you.',
   },
@@ -106,7 +106,7 @@ export function buildStudyGuideText(countryLabel: string, slug: string): string 
     '------------',
     `Destination guide (visa, costs, intakes): ${site}${destinationGuidePath(slug)}`,
     `Search live courses in ${countryLabel}: ${site}/course-finder?country=${encodeURIComponent(countryLabel)}`,
-    `Book free counselling: ${site}/book-consultation`,
+    `Book counselling: ${site}/book-consultation`,
     '',
     'Contact ALO Education',
     '---------------------',

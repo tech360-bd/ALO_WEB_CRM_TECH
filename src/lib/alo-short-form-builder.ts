@@ -243,7 +243,7 @@ export const DEFAULT_BUILDER_INPUT: AloBuilderInput = {
   language: 'English',
   tone: 'Professional and encouraging',
   seoTarget: 'UK study guide for Bangladeshi students',
-  cta: 'Book a free counselling session',
+  cta: 'Book a counselling session',
   publishingStatus: 'DRAFT',
 };
 

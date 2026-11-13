@@ -67,7 +67,7 @@ export const diagramType = {
  */
 export const diagramTypeClasses = {
   nodeName: 'font-sans text-[12px] font-semibold fill-current',
-  sublabel: 'font-mono text-[9px] fill-current',
-  eyebrow: 'font-mono text-[8px] font-medium uppercase tracking-[0.18em] fill-current',
-  arrowLabel: 'font-mono text-[8px] uppercase tracking-[0.06em] fill-current',
+  sublabel: 'font-mono text-[11px] fill-current',
+  eyebrow: 'font-mono text-[11px] font-medium uppercase tracking-[0.18em] fill-current',
+  arrowLabel: 'font-mono text-[11px] uppercase tracking-[0.06em] fill-current',
 } as const;

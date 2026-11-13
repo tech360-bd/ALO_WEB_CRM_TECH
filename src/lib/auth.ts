@@ -108,7 +108,7 @@ export const authOptions: NextAuthOptions = {
           });
           if (student) {
             token.studentId = student.id;          // Student.db id (for relations)
-            token.studentCode = student.studentId; // AE-YYYYXXXXXX canonical code
+            token.studentCode = student.studentId; // New IDs use AE-YYYYNNNN; existing IDs remain unchanged
           }
         } catch {
           // Non-fatal — session simply won't include studentId

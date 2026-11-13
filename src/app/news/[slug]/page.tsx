@@ -1,10 +1,18 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import * as LucideIcons from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { NEWS_ARTICLES } from '@/lib/news-data';
+
+/** Resolves the per-category Lucide glyph with a single consistent fallback. */
+function NewsIcon({ name, className }: { name: string; className?: string }) {
+  const Cmp = (LucideIcons as unknown as Record<string, LucideIcon>)[name] ?? LucideIcons.Newspaper;
+  return <Cmp className={className} />;
+}
 
 export function generateStaticParams() {
   return NEWS_ARTICLES.map((article) => ({
@@ -38,19 +46,19 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
         
         <Link 
           href="/news" 
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-[#0057B8] mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-[var(--alo-text-muted)] hover:text-[var(--alo-brand)] mb-8 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Back to all news
         </Link>
 
         <div className="mb-8">
-          <Badge variant="outline" className="text-[#E8501A] border-[#E8501A]/30 bg-orange-50 mb-4 px-3 py-1">
+          <Badge variant="outline" className="text-[var(--alo-cta)] border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)] mb-4 px-3 py-1">
             {article.category}
           </Badge>
-          <h1 className="text-3xl md:text-5xl font-bold text-[#0F172A] mb-4 leading-tight">
+          <h1 className="font-heading text-[30px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[36px] lg:text-[42px] text-[var(--alo-text)] mb-4 leading-tight">
             {article.title}
           </h1>
-          <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--alo-text-muted)]">
             <span className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" /> Published on {article.date}
             </span>
@@ -59,16 +67,24 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
           </div>
         </div>
 
-        {/* Hero Banner */}
-        <div className={`w-full h-64 md:h-96 rounded-2xl bg-gradient-to-br ${article.thumbnailColor} flex items-center justify-center p-8 mb-10 shadow-inner`}>
-          <h2 className="text-white text-2xl md:text-4xl font-bold text-center max-w-2xl leading-snug">
-            {article.title}
-          </h2>
+        {/* Editorial band (Master §08-E / §02) — a controlled brand-tinted
+            surface with one category icon. The article title is the H1 above;
+            repeating it over a dark gradient block is not allowed. */}
+        <div className={`mb-10 flex items-center gap-5 rounded-2xl border border-[var(--alo-border)] px-6 py-8 sm:px-8 ${article.surface}`}>
+          <span className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm">
+            <NewsIcon name={article.icon} className="size-8" />
+          </span>
+          <div className="min-w-0">
+            <p className="caption-text">{article.category}</p>
+            <p className="mt-1 text-lg font-semibold leading-snug text-[var(--alo-text)] sm:text-xl">
+              {article.excerpt}
+            </p>
+          </div>
         </div>
 
         {/* Article Body */}
-        <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed space-y-6 text-lg mb-12">
-          <p className="text-xl font-medium text-slate-900 leading-relaxed">
+        <div className="prose prose-slate max-w-none text-[var(--alo-body)] leading-relaxed space-y-6 text-lg mb-12">
+          <p className="text-xl font-medium text-[var(--alo-text)] leading-relaxed">
             {article.excerpt}
           </p>
           
@@ -76,8 +92,8 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
             International education continues to evolve rapidly, presenting both fresh challenges and exciting opportunities for students planning to study abroad. At ALO Education, our primary commitment is to keep Bangladeshi students and their families updated with accurate, timely, and actionable insights.
           </p>
 
-          <h3 className="text-2xl font-bold text-[#0F172A] mt-8 mb-4">Key Takeaways for Applicants</h3>
-          <ul className="list-disc pl-6 space-y-2 text-slate-700">
+          <h3 className="text-2xl font-bold text-[var(--alo-text)] mt-8 mb-4">Key Takeaways for Applicants</h3>
+          <ul className="list-disc pl-6 space-y-2 text-[var(--alo-body)]">
             <li>Review all official destination and university eligibility criteria early.</li>
             <li>Ensure financial proof and bank documentation are fully compliant with visa guidelines.</li>
             <li>Prepare your English proficiency credentials (IELTS, PTE, TOEFL, or Duolingo) well before application deadlines.</li>
@@ -85,41 +101,41 @@ export default async function NewsArticlePage({ params }: { params: Promise<{ sl
           </ul>
 
           <p>
-            For more details on how this update affects your individual study timeline, book a free consultation with our senior education advisors today.
+            For more details on how this update affects your individual study timeline, request a consultation with our senior education advisors today.
           </p>
         </div>
 
         {/* Call to action */}
-        <div className="my-12 p-8 bg-slate-50 rounded-2xl border border-slate-200 text-center">
-          <h3 className="text-2xl font-bold text-[#0F172A] mb-2">Planning your study abroad journey?</h3>
-          <p className="text-slate-600 mb-6 max-w-xl mx-auto">
+        <div className="my-12 p-8 bg-[var(--alo-page)] rounded-2xl border border-[var(--alo-border)] text-center">
+          <h3 className="text-2xl font-bold text-[var(--alo-text)] mb-2">Planning your study abroad journey?</h3>
+          <p className="text-[var(--alo-body)] mb-6 max-w-xl mx-auto">
             Speak with an expert ALO counselor to select the right university, prepare your application, and navigate visa requirements smoothly.
           </p>
           <Link href="/book-consultation">
-            <Button className="h-12 px-8 bg-[#E8501A] hover:bg-[#C93D13] text-white rounded-xl font-bold">
-              Book Free Consultation
+            <Button className="h-12 px-8 bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)] text-white rounded-xl font-bold">
+              Request Consultation
             </Button>
           </Link>
         </div>
 
         {/* Related News */}
         {relatedNews.length > 0 && (
-          <div className="pt-8 border-t border-slate-200">
-            <h3 className="text-2xl font-bold text-[#0F172A] mb-6">Related News & Articles</h3>
+          <div className="pt-8 border-t border-[var(--alo-border)]">
+            <h3 className="text-2xl font-bold text-[var(--alo-text)] mb-6">Related News & Articles</h3>
             <div className="grid md:grid-cols-3 gap-6">
               {relatedNews.map((rel) => (
-                <Card key={rel.slug} className="p-5 flex flex-col justify-between border border-slate-200 hover:border-[#0057B8] transition-colors">
+                <Card key={rel.slug} className="p-5 flex flex-col justify-between border border-[var(--alo-border)] hover:border-[var(--alo-brand)] transition-colors">
                   <div>
                     <Badge variant="secondary" className="mb-2 text-xs">
                       {rel.category}
                     </Badge>
-                    <h4 className="font-bold text-slate-900 text-sm mb-2 line-clamp-2 hover:text-[#0057B8]">
+                    <h4 className="font-bold text-[var(--alo-text)] text-sm mb-2 line-clamp-2 hover:text-[var(--alo-brand)]">
                       <Link href={`/news/${rel.slug}`}>
                         {rel.title}
                       </Link>
                     </h4>
                   </div>
-                  <Link href={`/news/${rel.slug}`} className="text-xs text-[#0057B8] font-semibold mt-4">
+                  <Link href={`/news/${rel.slug}`} className="text-xs text-[var(--alo-brand)] font-semibold mt-4">
                     Read article →
                   </Link>
                 </Card>

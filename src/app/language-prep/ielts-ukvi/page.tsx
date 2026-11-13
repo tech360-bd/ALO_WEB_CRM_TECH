@@ -1,15 +1,12 @@
-import { Metadata } from 'next';
-import TestDetailView from '@/components/language-prep/TestDetailView';
-import { getTestBySlug } from '@/lib/language-prep/data';
+import LanguageTestPage from '@/components/language-prep/LanguageTestPage';
+import { getLanguagePrepMetadata } from '@/lib/language-prep/metadata';
 
-const test = getTestBySlug('ielts-ukvi');
+export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: test?.seoTitle || 'ielts-ukvi Preparation | Requirements, Format & Study Abroad Guidance | ALO Education',
-  description: test?.seoDescription || 'Prepare for ielts-ukvi with expert guidance from ALO Education.',
-  alternates: { canonical: 'https://aloeducation.com/language-prep/ielts-ukvi' },
-};
+export async function generateMetadata() {
+  return getLanguagePrepMetadata('ielts-ukvi');
+}
 
 export default function Page() {
-  return <TestDetailView slug="ielts-ukvi" />;
+  return <LanguageTestPage slug="ielts-ukvi" />;
 }

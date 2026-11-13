@@ -6,15 +6,14 @@
  * Brand specification implemented here:
  *   • Logo (ALO Education) + tagline "Your Dream – Our Commitment" (italic, orange)
  *   • Menu order: Destinations ▾ · Course Finder · Services · Language Prep ·
- *     Resources ▾ · Portal ▾ · AI SUPPORT TOOLS ▾
- *   • CTA: "Book Free Counseling" (ALO Orange #E8501A button)
- *   • Education Blue #0057B8 for navigation/links, #FFB347 accent, #000/#555
+ *     Resources ▾ · Portal ▾ · AI SUPPORT ▾
+ *   • CTA: "Book Free Counseling" (ALO Orange button)
+ *   • Education Blue #0057B8 for navigation/links, #C93D13 accent, #000/#555
  *     neutral text — all values come from the design tokens in globals.css.
  *
  * The footer and this header are mounted once for the whole public site by
  * src/components/website/PublicLayoutWrapper.tsx (root layout), so a single
- * component covers every pre-login route. Authenticated portals and the auth
- * entry screens render standalone — see public-chrome-policy.ts.
+ * component covers every pre-login route. Authenticated portals render standalone — see public-chrome-policy.ts.
  *
  * Nothing here is invented: destinations, when unpublished in the CMS, come
  * from the countries table (`/api/website/homepage`) and fall back to the
@@ -51,7 +50,9 @@ import {
 import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 import LanguageToggle from '@/components/website/LanguageToggle';
 import { useI18n } from '@/i18n';
+import { mergePublicDestinations } from '@/lib/public-navigation-policy';
 import { ALO_CONTACT, ALO_TAGLINE } from '@/lib/alo-site-info';
+import { ALO_BRAND_ALT, ALO_BRAND_ASSETS } from '@/lib/brand/brand-assets';
 
 /* ------------------------------------------------------------------ */
 /*  CONTENT (defaults — Destinations is overridden by live data)       */
@@ -70,9 +71,47 @@ const DEFAULT_DESTINATIONS = [
   { label: 'More Countries', href: '/destinations' },
 ];
 
+/**
+ * Language Prep menu (Phase 1 §2).
+ *
+ * Every item points at a real, dedicated route. The English-language tests and
+ * the academic tests are separate database-driven pages under /language-prep;
+ * none of them redirects to a shared generic page. Routes that did not exist
+ * were added rather than linked to a placeholder.
+ */
+const LANGUAGE_PREP_ENGLISH_ITEMS = [
+  { label: 'IELTS', href: '/language-prep/ielts' },
+  { label: 'IELTS UKVI', href: '/language-prep/ielts-ukvi' },
+  { label: 'PTE Academic', href: '/language-prep/pte-academic' },
+  { label: 'TOEFL iBT', href: '/language-prep/toefl-ibt' },
+  { label: 'Duolingo English Test', href: '/language-prep/duolingo' },
+  { label: 'OIETC / ELLT', href: '/language-prep/oietc' },
+  { label: 'Oxford ELLT', href: '/language-prep/oxford-ellt' },
+  { label: 'LanguageCert', href: '/language-prep/languagecert' },
+  { label: 'Password English Language Test', href: '/language-prep/password' },
+  { label: 'Kaplan English Test', href: '/language-prep/kaplan' },
+  { label: 'OET', href: '/language-prep/oet' },
+  { label: 'CAE / CPE — Cambridge English', href: '/language-prep/cambridge-english' },
+];
+
+const LANGUAGE_PREP_ACADEMIC_ITEMS = [
+  { label: 'GRE', href: '/language-prep/gre' },
+  { label: 'GMAT', href: '/language-prep/gmat' },
+  { label: 'SAT', href: '/language-prep/sat' },
+  { label: 'ACT', href: '/language-prep/act' },
+];
+
+const LANGUAGE_PREP_GUIDANCE_ITEMS = [
+  { label: 'MOI Guidance', href: '/language-prep/moi' },
+  { label: 'English Test Comparison', href: '/language-prep/comparison' },
+];
+
 const RESOURCE_ITEMS = [
   { label: 'Blogs', href: '/blog' },
-  { label: 'Articles', href: '/resources/articles' },
+  // "Articles" previously pointed at /resources/articles, which is not a
+  // canonical resource category (the slug list has `blogs`) and had no route,
+  // so the header produced a 404. /resources/blogs is the DB-driven listing.
+  { label: 'Articles', href: '/resources/blogs' },
   { label: 'Scholarships by Country', href: '/scholarships' },
   { label: 'Visa Guides', href: '/visa' },
   { label: 'Success Stories', href: '/success-stories' },
@@ -182,7 +221,7 @@ function DropdownTrigger({
               aria-label={label}
               className="overflow-hidden rounded-xl border border-alo-border bg-white p-2 shadow-xl"
             >
-              {/* Accent hairline — brand accent #FFB347 */}
+              {/* Accent hairline — brand accent #C93D13 */}
               <span className="mb-2 block h-[3px] w-10 rounded-full bg-alo-cta-accent" aria-hidden="true" />
               {children}
             </div>
@@ -292,8 +331,8 @@ function BrandLockUp({ compact = false, onClick }: { compact?: boolean; onClick?
       className="group flex shrink-0 items-center gap-2.5"
     >
       <img
-        src="/images/landing/Copy of logo.webp"
-        alt=""
+        src={ALO_BRAND_ASSETS.logo}
+        alt={ALO_BRAND_ALT.logo}
         className={compact ? 'h-8 w-auto' : 'h-10 w-auto'}
         width={compact ? 32 : 40}
         height={compact ? 32 : 40}
@@ -307,7 +346,7 @@ function BrandLockUp({ compact = false, onClick }: { compact?: boolean; onClick?
           ALO Education
         </span>
         <span
-          className={`mt-0.5 font-semibold italic text-alo-cta ${compact ? 'text-[10px]' : 'text-[11px]'}`}
+          className={`mt-0.5 font-semibold italic text-alo-cta ${compact ? 'text-[11px]' : 'text-[11px]'}`}
         >
           {TAGLINE}
         </span>
@@ -349,7 +388,7 @@ export default function PublicNavbar() {
           }));
         if (cmsDests.length > 0) {
           curated = true;
-          setDestinations(cmsDests);
+          setDestinations(mergePublicDestinations(DEFAULT_DESTINATIONS, cmsDests));
         }
       })
       .catch(() => {
@@ -368,7 +407,7 @@ export default function PublicNavbar() {
               .slice(0, 7)
               .map((c: { name: string; slug: string }) => ({ label: c.name, href: `/destinations/${c.slug}` }));
             setDestinations(
-              active.length > 7 ? [...first7, { label: 'More Countries', href: '/destinations' }] : first7
+              mergePublicDestinations(DEFAULT_DESTINATIONS, first7)
             );
           }
         }
@@ -404,15 +443,20 @@ export default function PublicNavbar() {
   }, [clearHoverTimer]);
 
   const toggleDropdown = useCallback((key: string) => {
+    clearHoverTimer();
     setOpenDropdown((prev) => (prev === key ? null : key));
-  }, []);
+  }, [clearHoverTimer]);
 
   useEffect(() => {
     const onPointerDown = (event: MouseEvent) => {
-      if (headerRef.current && !headerRef.current.contains(event.target as Node)) setOpenDropdown(null);
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
+        clearHoverTimer();
+        setOpenDropdown(null);
+      }
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        clearHoverTimer();
         setOpenDropdown(null);
         setMobileOpen(false);
       }
@@ -426,11 +470,12 @@ export default function PublicNavbar() {
     };
   }, [clearHoverTimer]);
 
-  // Close every menu on navigation.
+  // Close every menu and pending hover on navigation.
   useEffect(() => {
+    clearHoverTimer();
     setOpenDropdown(null);
     setMobileOpen(false);
-  }, [pathname]);
+  }, [pathname, clearHoverTimer]);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
@@ -464,14 +509,15 @@ export default function PublicNavbar() {
             >
               Maps
             </a>
-            <span className="opacity-40" aria-hidden="true">|</span>
-            <a
-              href={ALO_CONTACT.mobileHref}
-              className="flex items-center gap-1.5 font-semibold hover:text-alo-cta-accent"
-            >
-              <Phone className="h-3.5 w-3.5" aria-hidden="true" />
-              Senior Counselor Al Aminn: {ALO_CONTACT.whatsappDisplay}
-            </a>
+            {ALO_CONTACT.hasContactPhone && (
+              <>
+                <span className="opacity-40" aria-hidden="true">|</span>
+                <a href={ALO_CONTACT.mobileHref} className="flex items-center gap-1.5 font-semibold hover:text-alo-cta-accent">
+                  <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+                  Call: {ALO_CONTACT.mobileDisplay}
+                </a>
+              </>
+            )}
           </div>
           <LanguageToggle compact onDark />
         </div>
@@ -496,18 +542,36 @@ export default function PublicNavbar() {
 
           <DesktopLink href="/course-finder" label={t('nav.courseFinder')} />
           <DesktopLink href="/services" label={t('nav.services')} />
-          <DesktopLink href="/language-prep" label={t('nav.languagePrep')} />
-          <EnglishExamButton
-            location="navbar"
-            label={t('nav.englishTest')}
-            className={`${MENU_ITEM_BASE} text-alo-body hover:bg-alo-brand-light hover:text-alo-brand`}
-          />
-
+          <DropdownTrigger label={t('nav.languagePrep')} id="header-language-prep" {...triggerProps('language-prep')}>
+            <div className="max-h-[70vh] w-[300px] overflow-y-auto">
+              <p className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-wider text-alo-text-muted">English language tests</p>
+              {LANGUAGE_PREP_ENGLISH_ITEMS.map((item) => (
+                <DropdownLink key={item.href} href={item.href} label={item.label} />
+              ))}
+              <p className="border-t border-alo-border px-3 pb-1 pt-3 text-[11px] font-bold uppercase tracking-wider text-alo-text-muted">Academic / aptitude tests</p>
+              {LANGUAGE_PREP_ACADEMIC_ITEMS.map((item) => (
+                <DropdownLink key={item.href} href={item.href} label={item.label} />
+              ))}
+              <p className="border-t border-alo-border px-3 pb-1 pt-3 text-[11px] font-bold uppercase tracking-wider text-alo-text-muted">Guidance</p>
+              {LANGUAGE_PREP_GUIDANCE_ITEMS.map((item) => (
+                <DropdownLink key={item.href} href={item.href} label={item.label} />
+              ))}
+              <div className="mt-1 border-t border-alo-border pt-1">
+                <DropdownLink href="/language-prep" label="All Language Prep" />
+              </div>
+            </div>
+          </DropdownTrigger>
           <DropdownTrigger label={t('nav.resources')} id="header-resources" {...triggerProps('resources')}>
             <div className="grid w-[440px] grid-cols-2 gap-x-4 gap-y-0.5">
               {RESOURCE_ITEMS.map((item) => (
                 <DropdownLink key={item.href} href={item.href} label={item.label} />
               ))}
+              <EnglishExamButton
+                location="navbar"
+                label={t('nav.englishTest')}
+                role="menuitem"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-alo-text transition-colors hover:bg-alo-brand-light hover:text-alo-brand focus-visible:bg-alo-brand-light focus-visible:text-alo-brand focus-visible:outline-none"
+              />
             </div>
           </DropdownTrigger>
 
@@ -582,18 +646,28 @@ export default function PublicNavbar() {
 
                       <MobileLink href="/course-finder" label={t('nav.courseFinder')} onClick={closeMobile} />
                       <MobileLink href="/services" label={t('nav.services')} onClick={closeMobile} />
-                      <MobileLink href="/language-prep" label={t('nav.languagePrep')} onClick={closeMobile} />
-                      <EnglishExamButton
-                        location="mobile_navbar"
-                        label={t('nav.englishTest')}
-                        onNavigate={closeMobile}
-                        className="flex min-h-[44px] items-center rounded-lg px-3 py-2 font-heading text-[13px] font-bold text-alo-text transition-colors hover:bg-alo-brand-light hover:text-alo-brand"
-                      />
-
+                      <MobileAccordionSection value="language-prep" label={t('nav.languagePrep')}>
+                        <MobileLink href="/language-prep" label="All Language Prep" onClick={closeMobile} />
+                        {LANGUAGE_PREP_ENGLISH_ITEMS.map((item) => (
+                          <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                        ))}
+                        {LANGUAGE_PREP_ACADEMIC_ITEMS.map((item) => (
+                          <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                        ))}
+                        {LANGUAGE_PREP_GUIDANCE_ITEMS.map((item) => (
+                          <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
+                        ))}
+                      </MobileAccordionSection>
                       <MobileAccordionSection value="resources" label={t('nav.resources')}>
                         {RESOURCE_ITEMS.map((item) => (
                           <MobileLink key={item.href} href={item.href} label={item.label} onClick={closeMobile} />
                         ))}
+                        <EnglishExamButton
+                          location="mobile_navbar"
+                          label={t('nav.englishTest')}
+                          onNavigate={closeMobile}
+                          className="flex min-h-[44px] items-center rounded-lg px-3 py-2 font-heading text-[13px] font-bold text-alo-text transition-colors hover:bg-alo-brand-light hover:text-alo-brand"
+                        />
                       </MobileAccordionSection>
 
                       <MobileAccordionSection value="portal" label={t('nav.portal')}>
@@ -637,10 +711,14 @@ export default function PublicNavbar() {
                         >
                           Maps
                         </a>{' '}
-                        •{' '}
-                        <a href={ALO_CONTACT.mobileHref} className="text-alo-brand underline">
-                          Al Aminn {ALO_CONTACT.whatsappDisplay}
-                        </a>
+                        {ALO_CONTACT.hasWhatsApp && (
+                          <>
+                            •{' '}
+                            <a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="text-alo-brand underline">
+                              WhatsApp: {ALO_CONTACT.whatsappDisplay}
+                            </a>
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>

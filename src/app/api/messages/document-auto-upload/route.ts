@@ -1,12 +1,61 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { authorizeStaffDocumentRead } from '@/lib/documents/document-access-resolver';
+import { canReadDocumentsByRole } from '@/lib/documents/document-access';
+
+/**
+ * SECURITY HARDENING
+ *
+ * This route accepted an arbitrary `studentId` and an arbitrary `fileUrl` from
+ * ANY authenticated account (partner or student included), then wrote both a
+ * StudentDocument and a PortalStudentDocument for that student. Nothing tied the
+ * caller to the student, and nothing constrained the URL — so it was an
+ * unauthenticated-by-ownership write path into another tenant's records, and a
+ * way to attach a `javascript:`/`data:` link that the document views would render.
+ *
+ * It now requires a document-read role, authorises the caller against the student
+ * with the same policy as every other document route, and only accepts a relative
+ * storage path or an https URL.
+ */
+function isSafeFileUrl(value: string): boolean {
+  if (!value || value.length > 500) return false;
+  if (value.startsWith('/')) return !value.startsWith('//');
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
 
 export const POST = withAuth(async (req, auth) => {
   try {
-    const body = await req.json();
-    const { studentId, messageId, fileName, fileUrl, mimeType, source } = body;
+    if (!canReadDocumentsByRole(auth.roles)) {
+      return NextResponse.json({ success: false, error: 'Your role cannot attach documents to a student.' }, { status: 403 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const { studentId, messageId, fileName, fileUrl, mimeType, source } = body || {};
     if (!studentId || !fileUrl) return NextResponse.json({ success: false, error: 'studentId and fileUrl required' }, { status: 400 });
+
+    if (typeof studentId !== 'string' || studentId.length > 191) {
+      return NextResponse.json({ success: false, error: 'Invalid student reference.' }, { status: 400 });
+    }
+    if (typeof fileUrl !== 'string' || !isSafeFileUrl(fileUrl)) {
+      return NextResponse.json({ success: false, error: 'fileUrl must be a relative storage path or an https URL.' }, { status: 400 });
+    }
+    if (fileName !== undefined && (typeof fileName !== 'string' || fileName.length > 191)) {
+      return NextResponse.json({ success: false, error: 'Invalid file name.' }, { status: 400 });
+    }
+
+    // Same policy as every other document route: admin oversight, reviewer
+    // pipeline access, assigned counselor only, and no access to a partner student
+    // who has not submitted an application through ALO.
+    const guard = await authorizeStaffDocumentRead({ userId: auth.userId, roles: auth.roles }, studentId);
+    if (!guard.ok) {
+      return NextResponse.json({ success: false, error: guard.error }, { status: guard.status });
+    }
 
     // Classify document type by mime and filename
     let category = 'other';

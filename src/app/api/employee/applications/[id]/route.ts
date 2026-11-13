@@ -1,83 +1,91 @@
+import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { authenticateRequest } from '@/lib/auth-middleware';
+import { INTERNAL_STAGES, canViewB2B, stripB2BFields } from '@/lib/application-manager/service';
+import { ApplicationStageTransitionError, transitionApplicationStage } from '@/lib/application-manager/stage-transition';
+
+const updateSchema = z.object({
+  stage: z.enum(INTERNAL_STAGES).optional(),
+  reason: z.string().trim().min(3).max(180).optional(),
+  notes: z.string().max(10000).optional(),
+  deadline: z.string().max(191).optional(),
+  counselorId: z.string().max(191).optional(),
+  applicationOfficer: z.string().max(191).optional(),
+}).strict();
+
+function roleSet(roles: string[]) { return new Set(roles.map((role) => role.toLowerCase())); }
+function isBlockedIdentity(userType: string, roles: string[]) {
+  return ['student', 'partner'].includes(userType.toLowerCase()) || roles.some((role) => role.toLowerCase().startsWith('partner'));
+}
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
-    // RBAC: block student/partner from employee APIs
-    const _blockedTypes = ['STUDENT','student','PARTNER','partner'];
-    if (_blockedTypes.includes(auth.userType) || (auth.roles && auth.roles.some((r:string)=> _blockedTypes.includes(r)))) {
-      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
-    }
-    const { id } = params;
+    const auth = authResult;
+    const roles = roleSet(auth.roles);
+    if (isBlockedIdentity(auth.userType, auth.roles)) return NextResponse.json({ success: false, error: 'Forbidden: employee access only' }, { status: 403 });
 
-    const existing = await db.application.findUnique({ where: { id } });
+    const isSuper = ['super_admin', 'admin'].some((role) => roles.has(role));
+    const isApplicationTeam = roles.has('application_team') || roles.has('application_manager');
+    const isCounselor = roles.has('counselor') || roles.has('senior_counselor');
+    const canManageAll = isSuper || isApplicationTeam || auth.permissions.includes('application.update');
+    if (!canManageAll && !isCounselor && !auth.permissions.includes('application.update_assigned')) {
+      return NextResponse.json({ success: false, error: 'Insufficient application update permissions' }, { status: 403 });
+    }
+
+    const parsed = updateSchema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid application update', details: parsed.error.flatten() }, { status: 400 });
+    const body = parsed.data;
+    if (body.stage && !body.reason) return NextResponse.json({ success: false, error: 'A reason (3–180 characters) is required for every stage change.' }, { status: 400 });
+    if ((body.counselorId !== undefined || body.applicationOfficer !== undefined) && !canManageAll) {
+      return NextResponse.json({ success: false, error: 'Only application managers may reassign an application.' }, { status: 403 });
+    }
+
+    const existing = await db.application.findUnique({ where: { id: params.id } });
     if (!existing) return NextResponse.json({ success: false, error: 'Application not found' }, { status: 404 });
+    if (!canManageAll && existing.counselorId !== auth.userId) return NextResponse.json({ success: false, error: 'Not assigned to this application' }, { status: 403 });
 
-    // RBAC: counselor can update own assigned, application_team can update any, branch_manager own branch
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin');
-    const isAppTeam = auth.roles.includes('application_team') || auth.roles.includes('application_manager');
-    const isCounselor = auth.roles.includes('counselor') || auth.roles.includes('senior_counselor');
-    
-    if (!isSuper && !isAppTeam) {
-      if (isCounselor && existing.counselorId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Not assigned to this application' }, { status: 403 });
+    const { stage, reason, ...fields } = body;
+    const updated = await db.$transaction(async (tx) => {
+      const transition = stage
+        ? await transitionApplicationStage(tx, { applicationId: params.id, toStage: stage, actorId: auth.userId, reason: reason! })
+        : null;
+      const application = await tx.application.update({ where: { id: params.id }, data: { ...fields, updatedBy: auth.userId } });
+      if (transition || Object.keys(fields).length > 0) {
+        await tx.timelineEvent.create({
+          data: {
+            studentId: existing.studentId,
+            stage: 'APPLICATION_UPDATED',
+            title: transition ? `Application stage changed to ${transition.stage}` : 'Application updated',
+            description: transition ? `Reason: ${reason}` : `Updated by ${auth.name}`,
+          },
+        });
       }
-      if (!isCounselor) {
-        return NextResponse.json({ success: false, error: 'Insufficient permissions' }, { status: 403 });
-      }
-    }
-
-    const body = await req.json();
-    const { stage, status, notes, deadline, counselorId, applicationOfficer } = body;
-
-    // Sensitive changes require audit
-    const beforeStage = existing.stage;
-
-    const updated = await db.application.update({
-      where: { id },
-      data: {
-        ...(stage && { stage }),
-        ...(status && { status }),
-        ...(notes && { notes }),
-        ...(deadline && { deadline }),
-        ...(counselorId && { counselorId }),
-        ...(applicationOfficer && { applicationOfficer }),
-      },
+      await tx.auditLog.create({
+        data: {
+          userId: auth.userId,
+          action: transition ? 'APPLICATION_STAGE_UPDATED' : 'APPLICATION_UPDATED',
+          resource: 'Application',
+          resourceId: params.id,
+          details: JSON.stringify({ changedFields: Object.keys(fields), ...(transition ? { beforeStage: transition.previousStage, afterStage: transition.stage, reason } : {}) }),
+          actorRole: auth.roles[0] || '',
+          studentId: existing.studentId,
+          beforeValue: JSON.stringify({ stage: existing.stage }),
+          afterValue: JSON.stringify({ stage: application.stage }),
+        },
+      });
+      return application;
     });
-
-    // Timeline
-    await db.applicationStageHistory.create({
-      data: {
-        applicationId: id,
-        stage: stage || existing.stage,
-        status: 'completed',
-        note: `Stage changed from ${beforeStage} to ${stage || beforeStage} by ${auth.name}`,
-        actor: auth.name,
-      },
-    }).catch(() => {});
-
-    await db.timelineEvent.create({
-      data: {
-        studentId: existing.studentId,
-        stage: 'APPLICATION_UPDATED',
-        title: `Application ${stage ? 'stage changed to ' + stage : 'updated'}`,
-        description: `By ${auth.name} (${auth.roles[0]})`,
-      },
-    }).catch(() => {});
-
-    await logAuditAction(auth, 'APPLICATION_STAGE_UPDATED', 'Application', id, {
-      before: { stage: beforeStage },
-      after: { stage: stage || beforeStage },
-      studentId: existing.studentId,
-    });
-
     return NextResponse.json({ success: true, data: updated });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (error) {
+    if (error instanceof ApplicationStageTransitionError) {
+      const status = error.code === 'NOT_FOUND' ? 404 : error.code === 'INVALID_REASON' ? 400 : ['CONCURRENT_UPDATE', 'DOCUMENTS_NOT_READY'].includes(error.code) ? 409 : 422;
+      return NextResponse.json({ success: false, error: error.message, code: error.code }, { status });
+    }
+    console.error('[employee-application-update] failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to update application.' }, { status: 500 });
   }
 }
 
@@ -85,21 +93,17 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   try {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
-    const { id } = params;
-
-    const app = await db.application.findUnique({ where: { id } });
+    const auth = authResult;
+    const roles = roleSet(auth.roles);
+    if (isBlockedIdentity(auth.userType, auth.roles)) return NextResponse.json({ success: false, error: 'Forbidden: employee access only' }, { status: 403 });
+    const canManageAll = ['super_admin', 'admin', 'application_team', 'application_manager'].some((role) => roles.has(role)) || auth.permissions.includes('application.view_all');
+    const app = await db.application.findUnique({ where: { id: params.id } });
     if (!app) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
-
-    // RBAC + B2B confidentiality
-    const canSeeB2b = auth.roles.includes('super_admin') || auth.roles.includes('application_team') || auth.roles.includes('application_manager');
-    if (!canSeeB2b) {
-      const { isB2b, b2bType, b2bProviderId, ...rest } = app as any;
-      return NextResponse.json({ success: true, data: rest });
-    }
-
-    return NextResponse.json({ success: true, data: app });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    if (!canManageAll && app.counselorId !== auth.userId) return NextResponse.json({ success: false, error: 'Not assigned to this application' }, { status: 403 });
+    const canSeeB2b = canViewB2B(auth.roles, auth.permissions);
+    return NextResponse.json({ success: true, data: canSeeB2b ? app : stripB2BFields(app, false, false) });
+  } catch (error) {
+    console.error('[employee-application-get] failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to load application.' }, { status: 500 });
   }
 }

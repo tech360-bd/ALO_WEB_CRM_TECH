@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
-  fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
+  BRAND, fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
   staggerContainer, staggerItem, staggerItemScale,
   sectionTitle, sectionSubtitle, viewportOnce, gradients,
 } from './animations';
@@ -34,16 +34,7 @@ import {
 /* ═══════════════════════════════════════════════════════════════
    BRAND COLORS
    ═══════════════════════════════════════════════════════════════ */
-const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
-  text: '#0F172A',
-  textSoft: '#64748B',
-  bg: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-  whatsapp: '#25D366',
-};
+const C = BRAND;
 
 /* ═══════════════════════════════════════════════════════════════
    TYPES
@@ -124,7 +115,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     specialty: 'Operations & Process Optimization',
     bio: 'Oversees day-to-day operations across counselling, applications and visa casework.',
     initials: 'AA',
-    gradient: 'linear-gradient(135deg, #E8501A 0%, #FFB347 100%)',
+    gradient: 'linear-gradient(135deg, #E8501A 0%, #C93D13 100%)',
   },
   {
     name: 'Nusrat Jahan',
@@ -219,7 +210,7 @@ const DEFAULT_FAQS: FaqItem[] = [
   },
   {
     question: 'How do I book a consultation with ALO Education?',
-    answer: 'You can book a free consultation through our website, call our hotline, send a WhatsApp message, or visit our office. Our consultations are obligation-free and designed to understand your goals.',
+    answer: 'You can request a consultation through our website, call our hotline, send a WhatsApp message, or visit our office. Our consultations are obligation-free and designed to understand your goals.',
   },
   {
     question: 'What makes ALO Education different from other agencies?',
@@ -431,7 +422,7 @@ function SuccessStoriesSection() {
                     {Array.from({ length: 5 }).map((_, si) => (
                       <Star
                         key={si}
-                        className={`h-4.5 w-4.5 ${si < (story.stars ?? 0) ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}`}
+                        className={`h-4.5 w-4.5 ${si < (story.stars ?? 0) ? 'fill-amber-400 text-crm-warning-text' : 'text-[var(--alo-placeholder)]'}`}
                       />
                     ))}
                   </div>
@@ -721,13 +712,13 @@ function FinalCtaSection() {
   }, [formData]);
 
   return (
-    <section className="py-16 md:py-20 relative overflow-hidden bg-[#FFF1EA]">
+    <section className="py-16 md:py-20 relative overflow-hidden bg-[var(--alo-cta-soft)]">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left Column — Content */}
           <motion.div
-            className="text-[#0F172A]"
+            className="text-[var(--alo-text)]"
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
@@ -736,25 +727,24 @@ function FinalCtaSection() {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
               Ready to Start Your Study Abroad Journey?
             </h2>
-            <p className="text-base md:text-lg mb-8 text-[#334155] leading-relaxed">
+            <p className="text-base md:text-lg mb-8 text-[var(--alo-body)] leading-relaxed">
               Take the first step today. Fill out the form and one of our expert counselors will get back to you within 24 hours with a personalized plan.
             </p>
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-3 mb-10">
               <Button
-                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold text-white shadow-lg"
-                style={{ backgroundColor: C.orange }}
+                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold text-black hover:text-white shadow-lg"
                 asChild
               >
                 <Link href="/book-consultation">
                   <CalendarCheck className="mr-2 h-4 w-4" />
-                  Book a Free Consultation
+                  Request a Consultation
                 </Link>
               </Button>
               <Button
-                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold bg-white shadow-card border border-[#BFDBFE]"
-                style={{ color: "#0057B8" }}
+                className="h-12 min-h-[48px] px-6 md:px-8 rounded-full text-sm font-semibold bg-white shadow-card border border-[var(--alo-brand-border)]"
+                style={{ color: 'var(--alo-brand)' }}
                 asChild
               >
                 <Link href="/course-finder">
@@ -767,34 +757,38 @@ function FinalCtaSection() {
 
             {/* Contact Info */}
             <div className="space-y-3">
+              {(ALO_CONTACT.hasContactPhone || ALO_CONTACT.hasWhatsApp) && (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[var(--alo-brand-light)] flex items-center justify-center">
+                    <Phone className="h-4.5 w-4.5 text-[var(--alo-brand)]" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-[var(--alo-text-muted)]">{ALO_CONTACT.hasWhatsApp ? 'Call / WhatsApp' : 'Call'}</p>
+                    {ALO_CONTACT.hasWhatsApp ? (
+                      <a href={ALO_CONTACT.whatsappHref} className="text-sm font-semibold hover:underline">{ALO_CONTACT.whatsappDisplay}</a>
+                    ) : (
+                      <a href={ALO_CONTACT.mobileHref} className="text-sm font-semibold hover:underline">{ALO_CONTACT.mobileDisplay}</a>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
-                  <Phone className="h-4.5 w-4.5 text-[#0057B8]" />
+                <div className="w-10 h-10 rounded-full bg-[var(--alo-brand-light)] flex items-center justify-center">
+                  <Mail className="h-4.5 w-4.5 text-[var(--alo-brand)]" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#64748B]">Call / WhatsApp</p>
-                  <a href={ALO_CONTACT.mobileHref} className="text-sm font-semibold hover:underline">
-                    {ALO_CONTACT.mobileDisplay}
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
-                  <Mail className="h-4.5 w-4.5 text-[#0057B8]" />
-                </div>
-                <div>
-                  <p className="text-xs text-[#64748B]">Email Us</p>
+                  <p className="text-xs text-[var(--alo-text-muted)]">Email Us</p>
                   <a href={ALO_CONTACT.emailHref} className="text-sm font-semibold hover:underline">
                     {ALO_CONTACT.email}
                   </a>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#EAF3FF] flex items-center justify-center">
-                  <MapPin className="h-4.5 w-4.5 text-[#0057B8]" />
+                <div className="w-10 h-10 rounded-full bg-[var(--alo-brand-light)] flex items-center justify-center">
+                  <MapPin className="h-4.5 w-4.5 text-[var(--alo-brand)]" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#64748B]">Visit Us</p>
+                  <p className="text-xs text-[var(--alo-text-muted)]">Visit Us</p>
                   <a
                     href={ALO_CONTACT.mapsUrl}
                     target="_blank"
@@ -817,19 +811,19 @@ function FinalCtaSection() {
           >
             <Card className="rounded-2xl shadow-xl border-none">
               <CardContent className="p-6 md:p-8">
-                <h3 className="text-xl font-bold mb-1" style={{ color: C.text }}>Get Your Free Consultation</h3>
+                <h3 className="text-xl font-bold mb-1" style={{ color: C.text }}>Request a Consultation</h3>
                 <p className="text-sm mb-6" style={{ color: C.textSoft }}>Fill in the form below and we&apos;ll reach out within 24 hours.</p>
 
                 {submitResult && (
                   <div
                     className={`rounded-xl p-4 mb-6 flex items-start gap-3 ${
                       submitResult.success
-                        ? 'bg-green-50 border border-green-200'
-                        : 'bg-red-50 border border-red-200'
+                        ? 'border border-crm-success-border bg-crm-success-bg'
+                        : 'border border-crm-danger-border bg-crm-danger-bg'
                     }`}
                   >
-                    <CheckCircle2 className={`h-5 w-5 shrink-0 mt-0.5 ${submitResult.success ? 'text-green-600' : 'text-red-600'}`} />
-                    <p className={`text-sm ${submitResult.success ? 'text-green-700' : 'text-red-700'}`}>
+                    <CheckCircle2 className={`h-5 w-5 shrink-0 mt-0.5 ${submitResult.success ? 'text-crm-success-text' : 'text-crm-danger-text'}`} />
+                    <p className={`text-sm ${submitResult.success ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
                       {submitResult.message}
                     </p>
                   </div>
@@ -1010,8 +1004,8 @@ function FinalCtaSection() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full h-12 rounded-xl text-sm font-semibold text-white shadow-lg mt-2"
-                    style={{ backgroundColor: C.orange }}
+                    className="w-full h-12 rounded-xl text-sm font-semibold text-black hover:text-white shadow-lg mt-2"
+
                   >
                     {isSubmitting ? (
                       <span className="flex items-center gap-2">

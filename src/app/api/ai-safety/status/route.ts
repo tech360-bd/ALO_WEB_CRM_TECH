@@ -22,37 +22,23 @@ export async function GET(req: NextRequest) {
     const scope = req.nextUrl.searchParams.get("scope");
     const targetId = req.nextUrl.searchParams.get("targetId");
 
-    // Try ai-safety lib
-    try {
-      const aiSafety = await import("@/lib/ai-safety");
-      if (typeof (aiSafety as any).isAiPaused === "function") {
-        const paused = await (aiSafety as any).isAiPaused({ scope: scope || undefined, targetId: targetId || undefined });
-        const activePauses = await db.globalAiPause.findMany({ where: { active: true } });
-        return NextResponse.json({
-          globalAiPaused: paused,
-          activePauses,
-          totalActive: activePauses.length,
-          delegated: "ai-safety",
-        });
-      }
-    } catch {
-      // fall through
-    }
-
-    // Inline fallback
-    const where: Record<string, unknown> = { active: true };
-    if (scope) where.scope = scope;
-    if (targetId) where.targetId = targetId;
-
-    const activePauses = await db.globalAiPause.findMany({ where });
-    const globalAiPaused =
-      activePauses.some((p) => p.scope === "GLOBAL") || activePauses.length > 0;
+    const aiSafety = await import("@/lib/ai-safety");
+    const [globalAiPaused, activePauses] = await Promise.all([
+      aiSafety.isGlobalAiPaused(),
+      db.globalAiPause.findMany({ where: { active: true } }),
+    ]);
+    const scopedPaused = scope
+      ? await aiSafety.isScopedAiPaused(scope, targetId || undefined)
+      : undefined;
 
     return NextResponse.json({
       globalAiPaused,
+      canManageGlobalPause: role === "SUPER_ADMIN",
+      scopedPaused,
       activePauses,
       totalActive: activePauses.length,
       filter: { scope, targetId },
+      delegated: "ai-safety",
     });
   } catch (err: any) {
     console.error("[ai-safety.status] error:", err);

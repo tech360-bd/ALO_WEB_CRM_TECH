@@ -1,63 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { authenticateRequest } from '@/lib/auth-middleware';
+import { appointmentStudentScope } from '@/lib/employees/appointment-access';
+import { mutationOriginAllowed } from '@/lib/request-origin';
+import { writePortalAudit } from '@/lib/transactional-audit';
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+type Context = { params: { id: string } | Promise<{ id: string }> };
+async function access(req: NextRequest, context: Context, action: string) {
+  const auth = await authenticateRequest(req); if (auth instanceof NextResponse) return auth;
+  const { id } = await context.params;
+  const appointment = await db.appointment.findUnique({ where: { id } });
+  if (!appointment) return NextResponse.json({ success: false, error: 'Appointment not found.' }, { status: 404 });
+  if (!(await appointmentStudentScope(auth, action)).includes(appointment.studentId)) return NextResponse.json({ success: false, error: 'Appointment access denied.' }, { status: 403 });
+  return { auth, appointment };
+}
+export async function GET(req: NextRequest, context: Context) {
+  try { const result = await access(req, context, 'view'); if (result instanceof NextResponse) return result;
+    return NextResponse.json({ success: true, data: result.appointment }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch { return NextResponse.json({ success: false, error: 'Appointment unavailable.' }, { status: 503 }); }
+}
+const Update = z.object({ status: z.enum(['REQUESTED', 'scheduled', 'confirmed', 'completed', 'cancelled']).optional(), notes: z.string().max(2000).optional(), scheduledAt: z.string().datetime({ offset: true }).optional() }).strict();
+async function mutate(req: NextRequest, context: Context, archive: boolean) {
   try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
-    // RBAC: block student/partner from employee APIs
-    const _blockedTypes = ['STUDENT','student','PARTNER','partner'];
-    if (_blockedTypes.includes(auth.userType) || (auth.roles && auth.roles.some((r:string)=> _blockedTypes.includes(r)))) {
-      return NextResponse.json({ success:false, error:'Forbidden: employee access only' }, { status:403 });
-    }
-    const { id } = params;
-    const body = await req.json();
-    const { status, notes, scheduledAt } = body;
-
-    const existing = await db.appointment.findUnique({ where: { id } }).catch(() => null);
-    if (!existing) return NextResponse.json({ success: false, error: 'Appointment not found' }, { status: 404 });
-
-    const updated = await db.appointment.update({
-      where: { id },
-      data: {
-        ...(status && { status }),
-        ...(notes && { notes }),
-        ...(scheduledAt && { scheduledAt: new Date(scheduledAt) }),
-      },
+    const result = await access(req, context, archive ? 'archive' : 'edit'); if (result instanceof NextResponse) return result;
+    const { auth, appointment } = result;
+    if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
+    const parsed = Update.safeParse(archive ? { status: 'cancelled' } : await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid appointment update.' }, { status: 400 });
+    const updated = await db.$transaction(async tx => {
+      const data = await tx.appointment.update({ where: { id: appointment.id }, data: { ...parsed.data, ...(parsed.data.scheduledAt ? { scheduledAt: new Date(parsed.data.scheduledAt) } : {}) } });
+      await writePortalAudit(tx, auth, archive ? 'APPOINTMENT_ARCHIVED' : 'APPOINTMENT_UPDATED', 'Appointment', data.id, { before: appointment, after: data }, req); return data;
     });
-
-    await logAuditAction(auth, 'APPOINTMENT_UPDATED', 'Appointment', id, { status });
     return NextResponse.json({ success: true, data: updated });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
+  } catch { return NextResponse.json({ success: false, error: 'Appointment could not be saved and audited.' }, { status: 503 }); }
 }
-
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const { id } = params;
-    const appt = await db.appointment.findUnique({ where: { id } }).catch(() => null);
-    if (!appt) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
-    return NextResponse.json({ success: true, data: appt });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
-}
-
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
-    const auth = authResult as AuthContext;
-    const { id } = params;
-    await db.appointment.delete({ where: { id } }).catch(() => null);
-    await logAuditAction(auth, 'APPOINTMENT_DELETED', 'Appointment', id, {});
-    return NextResponse.json({ success: true, message: 'Deleted' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
-}
+export const PATCH = (req: NextRequest, context: Context) => mutate(req, context, false);
+export const DELETE = (req: NextRequest, context: Context) => mutate(req, context, true);

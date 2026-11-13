@@ -157,10 +157,15 @@ describe('notification engine — 21 events, guard against sensitive leak', () =
     expect(isNotificationLeakSafe('Your salary is now 55000 BDT')).toBe(false);
     expect(isNotificationLeakSafe('Your employee profile requires correction.')).toBe(true);
   });
-  it('notifications route serves the catalog', () => {
+  it('notifications route serves only the authenticated inbox and disables direct creation', () => {
     const route = read('src/app/api/employee-access/notifications/route.ts');
-    expect(route).toContain('notificationEvents');
-    expect(route).toContain('buildSafeEmployeeNotification');
+    expect(route).toContain('where = { userId: auth.userId');
+    expect(route).toContain("action: 'EMPLOYEE_NOTIFICATIONS_VIEWED'");
+    expect(route).toContain('take: Number(limitValue)');
+    expect(route).toContain('export async function POST()');
+    expect(route).toContain('Direct notification creation is disabled');
+    expect(route).not.toContain('db.portalNotification.create');
+    expect(route).not.toContain('notificationEvents');
   });
 });
 

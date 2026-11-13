@@ -48,15 +48,15 @@ export default function TimelineDiagram({
 }) {
   const idPrefix = `${requestedPrefix}-${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   return (
-    <figure className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+    <figure className="rounded-2xl border border-[var(--alo-border)] bg-white p-4 sm:p-6">
       <figcaption className="mb-4 flex items-start justify-between gap-4">
         <div>
           {eyebrow ? (
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0057B8]">{eyebrow}</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--alo-brand)]">{eyebrow}</p>
           ) : null}
-          <h2 className="mt-1 text-base font-bold text-slate-900">{title}</h2>
+          <h2 className="mt-1 text-base font-bold text-[var(--alo-text)]">{title}</h2>
         </div>
-        <span className="rounded-full border border-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-500">
+        <span className="rounded-full border border-[var(--alo-border)] px-2 py-1 text-[11px] font-semibold text-[var(--alo-text-muted)]">
           to scale
         </span>
       </figcaption>
@@ -69,12 +69,12 @@ export default function TimelineDiagram({
             solid
           />
           {startLabel ? (
-            <text x={PLOT_X0} y={BASELINE_Y + 22} className="font-mono text-[8px] uppercase tracking-[0.1em]" fill={T.soft}>
+            <text x={PLOT_X0} y={BASELINE_Y + 22} className="font-mono text-[11px] uppercase tracking-[0.1em]" fill={T.soft}>
               {startLabel}
             </text>
           ) : null}
           {endLabel ? (
-            <text x={PLOT_X1} y={BASELINE_Y + 22} textAnchor="end" className="font-mono text-[8px] uppercase tracking-[0.1em]" fill={T.soft}>
+            <text x={PLOT_X1} y={BASELINE_Y + 22} textAnchor="end" className="font-mono text-[11px] uppercase tracking-[0.1em]" fill={T.soft}>
               {endLabel}
             </text>
           ) : null}
@@ -122,7 +122,7 @@ export default function TimelineDiagram({
                   x={x}
                   y={BASELINE_Y + 18}
                   textAnchor="middle"
-                  className="font-mono text-[8px] uppercase tracking-[0.08em]"
+                  className="font-mono text-[11px] uppercase tracking-[0.08em]"
                   fill={T.muted}
                 >
                   {event.date}
@@ -135,11 +135,11 @@ export default function TimelineDiagram({
           <DiagramRule from={{ x: 8, y: HEIGHT - 30 }} to={{ x: WIDTH - 12, y: HEIGHT - 30 }} />
           <DiagramEyebrow at={{ x: 8, y: HEIGHT - 7 }}>Legend</DiagramEyebrow>
           <circle cx={70} cy={HEIGHT - 11} r={4} fill={T.paper} stroke={T.muted} strokeWidth={1.25} />
-          <text x={80} y={HEIGHT - 7} className="font-mono text-[8px]" fill={T.muted}>
+          <text x={80} y={HEIGHT - 7} className="font-mono text-[11px]" fill={T.muted}>
             stage
           </text>
           <circle cx={130} cy={HEIGHT - 11} r={6} fill={T.accent} stroke={T.accent} strokeWidth={1.25} />
-          <text x={142} y={HEIGHT - 7} className="font-mono text-[8px]" fill={T.muted}>
+          <text x={142} y={HEIGHT - 7} className="font-mono text-[11px]" fill={T.muted}>
             milestone
           </text>
         </DiagramRoot>

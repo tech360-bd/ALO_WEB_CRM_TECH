@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, logAuditAction } from '@/lib/auth-middleware';
+import { reportServerEvent } from '@/lib/analytics/server-conversions';
 
 // ============================================================
 // CRM APPLICATIONS API — PortalStudentApplication with stage filtering
@@ -186,6 +187,24 @@ export async function PUT(request: NextRequest) {
         newStage: stage,
         studentId: application.studentProfile?.studentId,
       });
+
+      // `enrollment_completed` — the last conversion in the funnel
+      // (traffic -> lead -> qualified -> application -> ENROLMENT). Emitted
+      // only on the transition INTO 'enrolled', never on a re-save of an
+      // already-enrolled application, so the count cannot be inflated by an
+      // edit. The student id used for the audit log is deliberately NOT sent to
+      // analytics; the client id is derived from the application record id.
+      if (stage === 'enrolled' && existing.stage !== 'enrolled') {
+        reportServerEvent({
+          event: 'enrollment_completed',
+          reference: id,
+          params: {
+            application_reference: (application as { applicationCode?: string }).applicationCode ?? '',
+            enrollment_status: 'enrolled',
+            destination: (application as { country?: string }).country ?? undefined,
+          },
+        });
+      }
 
       return NextResponse.json({
         success: true,

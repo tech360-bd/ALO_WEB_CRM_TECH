@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { db } from '@/lib/db';
+import { writePortalAudit } from '@/lib/transactional-audit';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
@@ -34,7 +36,7 @@ export async function GET(req: NextRequest) {
     const auth = authResult as AuthContext;
 
     const roles = auth.roles || [];
-    const isSuperAdmin = roles.includes('SUPER_ADMIN') || roles.includes('super_admin') || auth.userType === 'admin';
+    const isSuperAdmin = !auth.actingAsSessionId && auth.actorUserId === auth.userId && !['STUDENT', 'PARTNER'].includes(auth.userType.toUpperCase()) && [auth.userType, ...roles].some(role => role.toUpperCase() === 'SUPER_ADMIN');
 
     if (!isSuperAdmin) {
       return NextResponse.json({ error: 'Forbidden. Super Admin access required.' }, { status: 403 });
@@ -125,12 +127,14 @@ export async function POST(req: NextRequest) {
     const auth = authResult as AuthContext;
 
     const roles = auth.roles || [];
-    const isSuperAdmin = roles.includes('SUPER_ADMIN') || roles.includes('super_admin') || auth.userType === 'admin';
+    const isSuperAdmin = !auth.actingAsSessionId && auth.actorUserId === auth.userId && !['STUDENT', 'PARTNER'].includes(auth.userType.toUpperCase()) && [auth.userType, ...roles].some(role => role.toUpperCase() === 'SUPER_ADMIN');
 
     if (!isSuperAdmin) {
       return NextResponse.json({ error: 'Forbidden. Super Admin access required.' }, { status: 403 });
     }
 
+    const origin = req.headers.get('origin');
+    if (origin && origin !== new URL(process.env.NEXTAUTH_URL || req.url).origin) return NextResponse.json({ error: 'Cross-origin command denied.' }, { status: 403 });
     const body = await req.json().catch(() => ({}));
     const { action, command } = body ?? {};
 
@@ -149,14 +153,17 @@ export async function POST(req: NextRequest) {
       else if (command === 'run-typecheck') shellCmd = 'npx tsc --noEmit --skipLibCheck';
       else return NextResponse.json({ error: 'Unsupported command execution' }, { status: 400 });
 
+      await db.$transaction(async tx => { await writePortalAudit(tx, auth, 'AI_MAINTENANCE_REQUESTED', 'CommandCenter', command, { command }, req); });
       try {
-        const { stdout, stderr } = await execAsync(shellCmd, { cwd: BASE_DIR });
+        const { stdout, stderr } = await execAsync(shellCmd, { cwd: BASE_DIR, timeout: 120000, maxBuffer: 1024 * 1024 });
+        await db.$transaction(async tx => { await writePortalAudit(tx, auth, 'AI_MAINTENANCE_COMPLETED', 'CommandCenter', command, { command }, req); });
         return NextResponse.json({
           success: true,
           output: stdout || stderr,
           logs: `Execution of "${shellCmd}" succeeded.`,
         });
       } catch (err: any) {
+        await db.$transaction(async tx => { await writePortalAudit(tx, auth, 'AI_MAINTENANCE_FAILED', 'CommandCenter', command, { command }, req); });
         return NextResponse.json({
           success: false,
           output: err.stdout || err.stderr || err.message,

@@ -131,11 +131,11 @@ function getTypeIcon(type: string) {
 function getTypeColor(type: string) {
   switch (type) {
     case 'Free Consultation': return 'bg-alo-brand/10 text-alo-brand border-alo-brand/20';
-    case 'Document Review': return 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800/30';
+    case 'Document Review': return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)] dark:bg-[var(--alo-brand)]/20 dark:text-[var(--alo-brand)] dark:border-[var(--alo-brand-deep)]/30';
     case 'SOP/CV Review': case 'sop_cv_review': return 'bg-alo-cta/10 text-alo-cta border-alo-cta/20';
     case 'Visa Interview Practice': case 'visa_interview': return 'bg-crm-success-bg text-crm-success-text border-crm-success/20';
     case 'Application Review': case 'application_review': return 'bg-sky-100 text-sky-700 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800/30';
-    case 'English Test Discussion': case 'english_test': return 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/30';
+    case 'English Test Discussion': case 'english_test': return 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border dark:bg-[var(--alo-warning)]/20 dark:text-crm-warning-text dark:border-crm-warning-border/30';
     case 'Financial Guidance': return 'bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-400 dark:border-teal-800/30';
     default: return 'bg-muted text-alo-text-muted border-alo-border/50';
   }
@@ -298,7 +298,7 @@ export default function StudentAppointments() {
               <div className="flex items-center gap-2">
                 {pastExpanded ? <ChevronUp className="size-4 text-alo-text-muted" /> : <ChevronDown className="size-4 text-alo-text-muted" />}
                 <h2 className="text-lg font-semibold text-alo-text">Past Appointments</h2>
-                <Badge variant="muted" className="text-[10px]">{past.length}</Badge>
+                <Badge variant="muted" className="text-[11px]">{past.length}</Badge>
               </div>
             </button>
           </CollapsibleTrigger>
@@ -315,19 +315,19 @@ export default function StudentAppointments() {
                 </TableRow></TableHeader><TableBody>
                   {past.map((apt) => (<TableRow key={apt.id} className="border-b-alo-border/40">
                     <TableCell className="whitespace-nowrap text-sm text-alo-text-secondary">{formatDate(apt.date)}</TableCell>
-                    <TableCell><Badge className={cn('text-[10px]', getTypeColor(apt.type))}><span className="flex items-center gap-1">{getTypeIcon(apt.type)}{toTitleCase(apt.type)}</span></Badge></TableCell>
+                    <TableCell><Badge className={cn('text-[11px]', getTypeColor(apt.type))}><span className="flex items-center gap-1">{getTypeIcon(apt.type)}{toTitleCase(apt.type)}</span></Badge></TableCell>
                     <TableCell className="text-sm text-alo-text">{apt.counselor || 'TBD'}</TableCell>
                     <TableCell className="text-sm text-alo-text-muted">{apt.duration}</TableCell>
                     <TableCell className="max-w-[200px] truncate text-xs text-alo-text-muted">{apt.notes}</TableCell>
-                    <TableCell><Badge className={cn('text-[10px]', getStatusColor(apt.status))}>{toTitleCase(apt.status)}</Badge></TableCell>
+                    <TableCell><Badge className={cn('text-[11px]', getStatusColor(apt.status))}>{toTitleCase(apt.status)}</Badge></TableCell>
                   </TableRow>))}
                 </TableBody></Table>
               </div>
               <div className="space-y-3 p-4 md:hidden">
                 {past.map((apt) => (<div key={apt.id} className="rounded-lg border border-alo-border/50 p-4 space-y-2.5">
                   <div className="flex items-start justify-between">
-                    <div><Badge className={cn('text-[10px]', getTypeColor(apt.type))}><span className="flex items-center gap-1">{getTypeIcon(apt.type)}{toTitleCase(apt.type)}</span></Badge><p className="mt-1.5 text-sm font-medium text-alo-text">{formatDate(apt.date)}</p></div>
-                    <Badge className={cn('text-[10px]', getStatusColor(apt.status))}>{toTitleCase(apt.status)}</Badge>
+                    <div><Badge className={cn('text-[11px]', getTypeColor(apt.type))}><span className="flex items-center gap-1">{getTypeIcon(apt.type)}{toTitleCase(apt.type)}</span></Badge><p className="mt-1.5 text-sm font-medium text-alo-text">{formatDate(apt.date)}</p></div>
+                    <Badge className={cn('text-[11px]', getStatusColor(apt.status))}>{toTitleCase(apt.status)}</Badge>
                   </div>
                   <p className="text-xs text-alo-text-muted line-clamp-2">{apt.notes}</p>
                   <div className="flex items-center gap-4 text-xs text-alo-text-muted">
@@ -360,7 +360,7 @@ function UpcomingAppointmentCard({ appointment, onCancel }: { appointment: Appoi
       <CardContent className="space-y-4 p-5">
         <div className="flex items-start justify-between">
           <Badge className={cn('text-xs', getTypeColor(appointment.type))}><span className="flex items-center gap-1.5">{getTypeIcon(appointment.type)}{toTitleCase(appointment.type)}</span></Badge>
-          <Badge className={cn('text-[10px]', getStatusColor(appointment.status))}>{(appointment.status === 'Confirmed' || appointment.status === 'upcoming') && <CheckCircle2 className="size-3" />}{toTitleCase(appointment.status)}</Badge>
+          <Badge className={cn('text-[11px]', getStatusColor(appointment.status))}>{(appointment.status === 'Confirmed' || appointment.status === 'upcoming') && <CheckCircle2 className="size-3" />}{toTitleCase(appointment.status)}</Badge>
         </div>
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-2xl font-bold text-alo-text"><Calendar className="size-5 text-alo-brand" />{formatDate(appointment.date)}</div>
@@ -369,7 +369,7 @@ function UpcomingAppointmentCard({ appointment, onCancel }: { appointment: Appoi
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5 text-xs text-alo-text-secondary">
             {appointment.mode === 'Online' ? <Video className="size-3.5 text-alo-brand" /> : <MapPin className="size-3.5 text-alo-cta" />}
-            <Badge variant={appointment.mode === 'Online' ? 'brand' : 'cta'} className="text-[10px]">{appointment.mode}</Badge>
+            <Badge variant={appointment.mode === 'Online' ? 'brand' : 'cta'} className="text-[11px]">{appointment.mode}</Badge>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-alo-text-secondary"><User className="size-3.5 text-alo-text-muted" /><span>with <span className="font-medium text-alo-text">{appointment.counselor || 'TBD'}</span></span></div>
         </div>

@@ -97,16 +97,16 @@ const PAYMENT_TYPE_META: Record<string, { label: string; color: string; icon: st
 };
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  PAID: "bg-emerald-100 text-emerald-700",
-  REFUNDED: "bg-red-100 text-red-700",
-  FAILED: "bg-red-100 text-red-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  PAID: "bg-crm-success-bg text-crm-success-text",
+  REFUNDED: "bg-crm-danger-bg text-crm-danger-text",
+  FAILED: "bg-crm-danger-bg text-crm-danger-text",
 };
 
 const COMMISSION_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
   APPROVED: "bg-sky-100 text-sky-700",
-  PAID: "bg-emerald-100 text-emerald-700",
+  PAID: "bg-crm-success-bg text-crm-success-text",
 };
 
 const PAYMENT_METHOD_LABEL: Record<string, string> = {
@@ -145,7 +145,7 @@ function PrivateAmount({
       <span className={cn("inline-flex items-center gap-1.5 tabular-nums", className)}>
         <span className={compact ? "text-sm font-semibold" : "text-sm font-semibold"}>{display}</span>
         {privacyOn && revealed && (
-          <button onClick={rehide} className="text-muted-foreground hover:text-[#0057B8]" title="Hide again">
+          <button onClick={rehide} className="text-muted-foreground hover:text-[var(--alo-brand)]" title="Hide again">
             <Icon name="EyeOff" className="size-3" />
           </button>
         )}
@@ -159,7 +159,7 @@ function PrivateAmount({
         <span className="select-none font-mono text-sm font-semibold blur-sm">{display}</span>
         <button
           onClick={() => setShowPin(true)}
-          className="inline-flex items-center gap-0.5 rounded border border-[#0057B8]/30 px-1.5 py-0.5 text-[10px] font-semibold text-[#0057B8] hover:bg-[#e8f0fb]"
+          className="inline-flex items-center gap-0.5 rounded border border-[var(--alo-brand)]/30 px-1.5 py-0.5 text-[11px] font-semibold text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
           title="Click to reveal (requires PIN)"
         >
           <Icon name="Lock" className="size-2.5" />
@@ -168,22 +168,22 @@ function PrivateAmount({
       </span>
       {showPin && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--alo-navy)]/40 p-4"
           onClick={() => {
             setShowPin(false);
             setPin("");
           }}
         >
           <div
-            className="w-full max-w-xs rounded-2xl border-2 border-[#0057B8]/20 bg-white p-5 shadow-xl"
+            className="w-full max-w-xs rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-white p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                 <Icon name="ShieldCheck" className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-bold text-[#0057B8]">Reveal amount</p>
+                <p className="text-sm font-bold text-[var(--alo-brand)]">Reveal amount</p>
                 <p className="text-xs text-muted-foreground">Enter your PIN to view this amount</p>
               </div>
             </div>
@@ -202,14 +202,14 @@ function PrivateAmount({
               className="mt-3 h-10 text-center font-mono tracking-widest"
               autoFocus
             />
-            <p className="mt-2 text-[10px] text-muted-foreground">
+            <p className="mt-2 text-[11px] text-muted-foreground">
               This action will be audit-logged as <code className="font-mono">sensitive_data_revealed</code>.
             </p>
             <div className="mt-3 flex gap-2">
               <Button
-                variant="outline"
-                className="flex-1 h-9"
-                onClick={() => {
+ variant="outline"
+ className="flex-1 "
+ onClick={() => {
                   setShowPin(false);
                   setPin("");
                 }}
@@ -217,9 +217,9 @@ function PrivateAmount({
                 Cancel
               </Button>
               <Button
-                className="flex-1 h-9 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
-                disabled={pin.length < 4}
-                onClick={() => {
+ className="flex-1 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={pin.length < 4}
+ onClick={() => {
                   reveal(id);
                   setShowPin(false);
                   setPin("");
@@ -419,14 +419,14 @@ export function FinanceDashboard() {
                           <Icon name={meta.icon} className="size-3.5" />
                         </div>
                         <span className="text-sm font-medium text-foreground">{meta.label}</span>
-                        <Badge variant="outline" className="border-[#0057B8]/20 px-1.5 py-0 text-[10px] text-muted-foreground">
+                        <Badge variant="outline" className="border-[var(--alo-brand)]/20 px-1.5 py-0 text-[11px] text-muted-foreground">
                           {sharePct}% share
                         </Badge>
                       </div>
                       <PrivateAmount id={`fin-rev-${type}`} amount={amount} />
                     </div>
                     <MiniBar value={amount} max={maxRevenue} color={meta.color} />
-                    <div className="text-right text-[10px] text-muted-foreground">
+                    <div className="text-right text-[11px] text-muted-foreground">
                       {pct}% of peak
                     </div>
                   </div>
@@ -489,9 +489,9 @@ export function FinanceDashboard() {
                     {recentPayments.map((p) => {
                       const meta = PAYMENT_TYPE_META[p.type] || { label: p.type, color: "#0057B8", icon: "Circle" };
                       return (
-                        <TableRow key={p.id} className="hover:bg-[#e8f0fb]/40">
+                        <TableRow key={p.id} className="hover:bg-[var(--alo-brand-light)]/40">
                           <TableCell>
-                            <span className="font-mono text-xs font-semibold text-[#0057B8]">
+                            <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">
                               {p.paymentId}
                             </span>
                           </TableCell>
@@ -520,7 +520,7 @@ export function FinanceDashboard() {
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="text-xs text-foreground">{fmtDate(p.createdAt)}</span>
-                              <span className="text-[10px] text-muted-foreground">{timeAgo(p.createdAt)}</span>
+                              <span className="text-[11px] text-muted-foreground">{timeAgo(p.createdAt)}</span>
                             </div>
                           </TableCell>
                           <TableCell className="text-right">
@@ -528,7 +528,7 @@ export function FinanceDashboard() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleViewPayment(p)}
-                              className="h-8 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+                              className="h-8 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                             >
                               <Icon name="Eye" className="size-3.5" />
                               <span className="hidden md:inline">View</span>
@@ -546,7 +546,7 @@ export function FinanceDashboard() {
           {/* Partner commissions */}
           <TabsContent value="partner" className="p-4 pt-4 sm:px-6">
             {!loading && (
-              <div className="mb-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-700">
+              <div className="mb-3 flex items-start gap-2 rounded-xl border border-crm-warning-border bg-crm-warning-bg px-3 py-2.5 text-xs text-crm-warning-text">
                 <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0" />
                 <p>
                   Partner commission amounts are <strong>restricted</strong>. Visible only to <strong>Finance</strong> and{" "}
@@ -577,9 +577,9 @@ export function FinanceDashboard() {
                   </TableHeader>
                   <TableBody>
                     {partnerCommissions.map((p) => (
-                      <TableRow key={p.id} className="hover:bg-[#e8f0fb]/40">
+                      <TableRow key={p.id} className="hover:bg-[var(--alo-brand-light)]/40">
                         <TableCell>
-                          <span className="font-mono text-xs font-semibold text-[#0057B8]">
+                          <span className="font-mono text-xs font-semibold text-[var(--alo-brand)]">
                             {p.paymentId}
                           </span>
                         </TableCell>
@@ -603,7 +603,7 @@ export function FinanceDashboard() {
                             size="sm"
                             onClick={() => handleApproveCommission(p)}
                             disabled={p.commissionStatus === "PAID"}
-                            className="h-8 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                            className="h-8 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
                           >
                             <Icon name="CheckCheck" className="size-3.5" />
                             <span className="hidden md:inline">Approve</span>
@@ -642,10 +642,10 @@ export function FinanceDashboard() {
                   </TableHeader>
                   <TableBody>
                     {employeeCommissions.map((c) => (
-                      <TableRow key={c.id} className="hover:bg-[#e8f0fb]/40">
+                      <TableRow key={c.id} className="hover:bg-[var(--alo-brand-light)]/40">
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                            <div className="flex size-7 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                               <Icon name="User" className="size-3.5" />
                             </div>
                             <span className="font-mono text-xs font-medium text-foreground">{c.userId}</span>
@@ -671,7 +671,7 @@ export function FinanceDashboard() {
                             variant="outline"
                             onClick={() => handleMarkPaid(c)}
                             disabled={c.status === "PAID"}
-                            className="h-8 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                            className="h-8 border-crm-success-border text-crm-success-text hover:bg-crm-success-bg"
                           >
                             <Icon name="BadgeCheck" className="size-3.5" />
                             <span className="hidden md:inline">Mark Paid</span>
@@ -688,7 +688,7 @@ export function FinanceDashboard() {
           {/* Payroll summary */}
           <TabsContent value="payroll" className="p-4 pt-4 sm:px-6">
             {!loading && (
-              <div className="mb-3 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-700">
+              <div className="mb-3 flex items-start gap-2 rounded-xl border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-xs text-crm-danger-text">
                 <Icon name="ShieldAlert" className="mt-0.5 size-3.5 shrink-0" />
                 <p>
                   Payroll data is <strong>highly restricted</strong>. <code className="font-mono">HR_MANAGER</code> and{" "}
@@ -706,13 +706,13 @@ export function FinanceDashboard() {
               />
             ) : (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+                <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
                   <CardContent className="space-y-1 pt-5">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                      <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                         <Icon name="Wallet" className="size-4" />
                       </div>
-                      <p className="text-sm font-bold text-[#0057B8]">Monthly payroll overview</p>
+                      <p className="text-sm font-bold text-[var(--alo-brand)]">Monthly payroll overview</p>
                     </div>
                     <div className="mt-2">
                       <SensitiveField
@@ -734,13 +734,13 @@ export function FinanceDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+                <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
                   <CardContent className="space-y-3 pt-5">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-9 items-center justify-center rounded-lg bg-[#fdece4] text-[#E8501A]">
+                      <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
                         <Icon name="Scale" className="size-4" />
                       </div>
-                      <p className="text-sm font-bold text-[#E8501A]">Salary band distribution</p>
+                      <p className="text-sm font-bold text-[var(--alo-cta)]">Salary band distribution</p>
                     </div>
                     <div className="space-y-2">
                       {[
@@ -773,8 +773,8 @@ export function FinanceDashboard() {
         description="How commission approvals are handled in ALO Finance."
       >
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+          <div className="rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
               <Icon name="FileCheck" className="size-4" />
             </div>
             <p className="mt-2 text-sm font-bold text-foreground">1. Submit</p>
@@ -782,8 +782,8 @@ export function FinanceDashboard() {
               Commission entries are accrued against each closed application automatically.
             </p>
           </div>
-          <div className="rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-[#fdece4] text-[#E8501A]">
+          <div className="rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]">
               <Icon name="CheckCheck" className="size-4" />
             </div>
             <p className="mt-2 text-sm font-bold text-foreground">2. Approve</p>
@@ -791,8 +791,8 @@ export function FinanceDashboard() {
               Finance can approve commission payments. All commission approvals are audit-logged.
             </p>
           </div>
-          <div className="rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+          <div className="rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-crm-success-bg text-crm-success-text">
               <Icon name="BadgeCheck" className="size-4" />
             </div>
             <p className="mt-2 text-sm font-bold text-foreground">3. Disburse</p>
@@ -801,7 +801,7 @@ export function FinanceDashboard() {
             </p>
           </div>
         </div>
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-crm-success-border bg-crm-success-bg px-3 py-2 text-xs text-crm-success-text">
           <Icon name="History" className="mt-0.5 size-3.5 shrink-0" />
           <p>
             Every commission approval, edit, and disbursement is recorded in the audit log with actor, timestamp, and

@@ -63,4 +63,15 @@ describe('current database authority and bounded grants', () => {
     expect((await validateRequestAccess({ userId: 'staff' }, 'documents', 'view', { ownerId: 'other' })).allowed).toBe(false);
     expect((await validateRequestAccess({ userId: 'staff' }, 'documents', 'view', { ownerId: 'staff' })).allowed).toBe(true);
   });
+  it.each([false, true])('explicit denial/approval gate overrides a global temporary grant (approval=%s)', async requiresApproval => {
+    mocks.rules.mockResolvedValue([{ isEnabled: requiresApproval, requiresApproval }]);
+    mocks.grants.mockResolvedValue([{ scopeType: 'GLOBAL' }]);
+    expect((await validateRequestAccess({ userId: 'staff' }, 'documents', 'download', { ownerId: 'staff' })).allowed).toBe(false);
+    expect(mocks.grants).not.toHaveBeenCalled();
+  });
+  it('revoked private-field permission overrides the default own-record view', async () => {
+    mocks.rules.mockResolvedValue([{ isEnabled: false, requiresApproval: false }]);
+    expect((await validateRequestAccess({ userId: 'staff' }, 'employee.fields.salary', 'view', { ownerId: 'staff' })).allowed).toBe(false);
+  });
+
 });

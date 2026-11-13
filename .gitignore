@@ -74,6 +74,7 @@ node_modules/
 .env.*
 !.env.example
 !.env.production.example
+!.env.ai-gateway.example
 
 # Archives / exported packages
 *.zip
@@ -112,6 +113,7 @@ build/
 .env.*
 !.env.example
 !.env.production.example
+!.env.ai-gateway.example
 
 # Archives / exported packages
 *.zip
@@ -251,6 +253,7 @@ _reference_repos/*
 
 # Offline dev-sqlite sandbox artifacts (see docs/DEV-SQLITE-SANDBOX.md)
 prisma/schema.dev.prisma
+prisma/schema.sqlite-runtime.prisma
 prisma/dev.db*
 # ALO AI Workforce offline verification scratch (fake engine, sqlite mirror db, generated DDL)
 .awf-tmp/
@@ -266,3 +269,17 @@ prisma/dev.db*
 
 # Synthetic generator output (scripts/lib/synthetic-output-guard.*) - never commit
 /staging/synthetic/
+
+# Research deliverable required by the ALO master implementation specification.
+# The blanket `*.csv` rule above would otherwise silently drop it, the same way
+# the bare `test` pattern silently dropped an API route. Negation must follow
+# the pattern it overrides, so it lives here at the end of the file.
+!docs/research/GITHUB_SOURCE_CATALOG.csv
+
+# Local verification artifacts (temporary databases, gateway logs, JSON reports).
+/.phd-tmp/
+/.ai-gateway-tmp/
+# Local audit evidence (test/lint/build reports)
+/.audit-tmp/
+# Runtime document store for the PhD module (private uploads, never committed)
+/storage/phd/

@@ -59,6 +59,14 @@
     {
       "path": "/api/cron/university-monitoring",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/webhook-dispatch",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/phd-maintenance",
+      "schedule": "0 * * * *"
     }
   ]
 }

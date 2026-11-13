@@ -2,8 +2,8 @@
  * Canonical Student Identity Service
  *
  * Provides:
- *   - isCanonicalStudentCode(value): validates AE-YYYYXXXXXX format
- *   - generateCanonicalStudentCode(): year-prefixed sequential code (AE-2025XXXXXX)
+ *   - isCanonicalStudentCode(value): accepts current AE-YYYYNNNN and preserved legacy AE codes
+ *   - generateCanonicalStudentCode(): year-prefixed sequential code (AE-YYYYNNNN)
  *   - createCanonicalStudent(params): idempotent create / link by email
  *   - registerStudentAtomically(params): atomic User + Student creation in a transaction
  *
@@ -17,10 +17,12 @@
 
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
-import { createRegistrationLead } from "@/lib/crm/registration-lead";
+import { createRegistrationLead, type RegistrationAttributionInput } from "@/lib/crm/registration-lead";
+import { allocateIdentifier, allocateIdentifierCommitted } from "@/lib/identity/student-id";
 import { Prisma } from "@prisma/client";
 
-const CANONICAL_STUDENT_REGEX = /^AE-(\d{4})(\d{6})$/;
+// New IDs use four sequence digits. Accept historical five/six-digit AE IDs and ALO-S IDs without rewriting them.
+const CANONICAL_STUDENT_REGEX = /^(?:AE-\d{4}(?:\d{4}|\d{5}|\d{6})|ALO-S-\d+)$/;
 export const CONSENT_VERSION = "1.0";
 const MAX_CODE_RETRIES = 5;
 
@@ -30,37 +32,15 @@ export function isCanonicalStudentCode(value: string): boolean {
 }
 
 /**
- * Find the highest existing AE-{year}XXXXXX code for the current year
- * and return the next sequential code.
+ * Allocate a unique, year-scoped AE student code through the shared transactional identifier service.
  */
 export async function generateCanonicalStudentCode(): Promise<string> {
-  return generateCanonicalStudentCodeTx(db);
+  return allocateIdentifierCommitted('AE');
 }
 
-async function generateCanonicalStudentCodeTx(
-  tx: Prisma.TransactionClient | PrismaClient
-): Promise<string> {
-  const year = new Date().getFullYear();
-  const prefix = `AE-${year}`;
-
-  const students = await tx.student.findMany({
-    where: { studentId: { startsWith: prefix } },
-    select: { studentId: true },
-  });
-
-  let maxSeq = 0;
-  for (const s of students) {
-    const m = s.studentId.match(CANONICAL_STUDENT_REGEX);
-    if (m && parseInt(m[2], 10) > maxSeq) {
-      maxSeq = parseInt(m[2], 10);
-    }
-  }
-
-  return `${prefix}${String(maxSeq + 1).padStart(6, "0")}`;
+async function generateCanonicalStudentCodeTx(tx: Prisma.TransactionClient): Promise<string> {
+  return allocateIdentifier(tx, 'AE');
 }
-
-// PrismaClient alias for typing (avoids importing PrismaClient type explicitly)
-type PrismaClient = typeof db;
 
 export interface CreateCanonicalStudentParams {
   name: string;
@@ -150,6 +130,11 @@ export interface RegisterStudentParams {
   phone?: string;
   password: string;
   pendingVerification?: boolean;
+  /**
+   * Acquisition attribution captured on the public site, forwarded to the lead
+   * created alongside the account (Google Free Stack).
+   */
+  attribution?: RegistrationAttributionInput | null;
 }
 
 export interface RegisterStudentResult {
@@ -272,7 +257,8 @@ export async function registerStudentAtomically(
       // commits the acquisition record with its account, never best-effort.
       if (params.pendingVerification) {
         const crm = await createRegistrationLead(tx, { domain: 'user', userId: user.id,
-          studentId: studentRec.studentId, name: fullName, email, phone: params.phone || '' });
+          studentId: studentRec.studentId, name: fullName, email, phone: params.phone || '',
+          attribution: params.attribution ?? null });
         await tx.student.update({ where: { id: studentRec.id }, data: {
           leadId: crm.leadId, counselorId: crm.counselorId,
           journeyStage: crm.counselorId ? 'assigned' : 'lead_created',

@@ -138,7 +138,7 @@ export const COUNTRY_DESTINATIONS: Record<string, CountryDestinationData> = {
       { question: "What bank accounts are accepted for the 28-day financial statement?", answer: "Savings or current personal accounts in the student's name or parents' names at standard commercial banks in Bangladesh." },
       { question: "Can I switch to a UK Skilled Worker Visa after graduation?", answer: "Yes, once you secure a qualifying job offer from a Home Office licensed sponsor meeting the minimum salary threshold, you can switch from Graduate Route to Skilled Worker visa." },
       { question: "What happens if my UK student visa is refused?", answer: "You can request an Administrative Review if an official casework error occurred, or address the refusal grounds and reapply with ALO counselor guidance." },
-      { question: "Does ALO Education charge any service fee for UK university admission?", answer: "No, ALO Education provides 100% free counseling, course matching, university admission processing, and scholarship application support." }
+      { question: "Does ALO Education charge any service fee for UK university admission?", answer: "No, ALO Education provides 100% counseling, course matching, university admission processing, and scholarship application support." }
     ],
 
     sources: [
@@ -1117,7 +1117,7 @@ export const COUNTRY_DESTINATIONS: Record<string, CountryDestinationData> = {
       { question: "Can I bring dependents to Cyprus?", answer: "Not on initial student permit; family reunification only after work/employer sponsorship." },
       { question: "Which cities/branches are popular in Cyprus?", answer: "Nicosia (University of Nicosia, Cyprus), Limassol (CUT), Larnaca (UCLan Cyprus) and Paphos (Neapolis)." },
       { question: "Can I travel to Schengen with Cyprus residence?", answer: "Cyprus residence facilitates short-stay academic travel; full Schengen membership progress allows future free travel." },
-      { question: "Does ALO Education handle Cyprus admission free?", answer: "Yes — free counseling, offer, visa file, medical guidance and pre-departure until Pink Slip." }
+      { question: "Does ALO Education handle Cyprus admission free?", answer: "Yes — counseling, offer, visa file, medical guidance and pre-departure until Pink Slip." }
     ],
 
     sources: [
@@ -1223,7 +1223,7 @@ export const COUNTRY_DESTINATIONS: Record<string, CountryDestinationData> = {
       { question: "Can polytechnic diploma holders apply?", answer: "Evaluated centrally; bridging year or direct bachelor depends on university mapping of 12+ years." },
       { question: "Where is biometrics for Sweden in Bangladesh?", answer: "Sweden Visa Application Centre / Embassy of Sweden on Bay's Edgewater, Gulshan-2, Dhaka." },
       { question: "Are Swedish PhDs free/salaried?", answer: "Yes, PhD posts are employment contracts (28k-35k SEK/month) and tuition-free — you are hired, not paying." },
-      { question: "Does ALO cover Sweden admission?", answer: "Yes — program shortlist, UniversityAdmissions.se filing, SOP, SI scholarship, permit and Tax Agency guide — free counseling." }
+      { question: "Does ALO cover Sweden admission?", answer: "Yes — program shortlist, UniversityAdmissions.se filing, SOP, SI scholarship, permit and Tax Agency guide — counseling." }
     ],
 
     sources: [

@@ -124,17 +124,17 @@ export default function EnquiryForm({
 
   if (state === 'sent') {
     return (
-      <section className={`rounded-2xl border border-emerald-200 bg-emerald-50 p-6 ${className}`} aria-live="polite">
-        <h3 className="flex items-center gap-2 text-base font-bold text-emerald-900">
+      <section className={`rounded-2xl border border-crm-success-border bg-crm-success-bg p-6 ${className}`} aria-live="polite">
+        <h3 className="flex items-center gap-2 text-base font-bold text-crm-success-text">
           <CheckCircle2 className="h-5 w-5" /> {copy.heading} sent
         </h3>
-        <p className="mt-2 text-sm text-emerald-900">
+        <p className="mt-2 text-sm text-crm-success-text">
           Thank you, {form.name}. A confirmation email is on its way to {form.email}, and a counselor will reply within
           24 hours{form.whatsappOptIn ? ' — first on WhatsApp' : ''}.
         </p>
-        <p className="mt-3 text-xs text-emerald-800">
+        <p className="mt-3 text-xs text-crm-success-text">
           Want to move faster?{' '}
-          <Link href="/book-consultation" className="font-semibold underline underline-offset-2">Book a free counseling session</Link>{' '}
+          <Link href="/book-consultation" className="font-semibold underline underline-offset-2">Book a counseling session</Link>{' '}
           or{' '}
           <Link href="/register" className="font-semibold underline underline-offset-2">create your student account</Link>{' '}
           to start an application.
@@ -145,17 +145,17 @@ export default function EnquiryForm({
 
   return (
     <form onSubmit={submit} className={`rounded-2xl border border-alo-brand-border bg-white p-6 ${className}`}>
-      <h3 className="flex items-center gap-2 text-base font-bold text-alo-text-heading">
+      <h3 className="flex items-center gap-2 text-base font-bold text-alo-text">
         <MessageSquare className="h-4 w-4 text-alo-cta" /> {copy.heading}
       </h3>
       <p className="mt-1 text-sm text-alo-text-muted">{copy.blurb}</p>
-      <p className="mt-3 rounded-lg border border-alo-brand-border bg-alo-brand-light px-3 py-2 text-xs text-alo-text-body">
+      <p className="mt-3 rounded-lg border border-alo-brand-border bg-alo-brand-light px-3 py-2 text-xs text-alo-body">
         <span className="font-semibold">{copy.subjectLabel}:</span> {context.subject}
         {context.institution ? ` · ${context.institution}` : ''}
       </p>
 
       <div className={`mt-4 grid gap-3 ${compact ? '' : 'sm:grid-cols-2'}`}>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Full name *
           <input
             required
@@ -164,7 +164,7 @@ export default function EnquiryForm({
             className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal"
           />
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Email *
           <input
             required
@@ -174,7 +174,7 @@ export default function EnquiryForm({
             className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal"
           />
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Phone / WhatsApp *
           <input
             required
@@ -184,7 +184,7 @@ export default function EnquiryForm({
             className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal"
           />
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Preferred destination
           <select
             value={form.destination}
@@ -197,7 +197,7 @@ export default function EnquiryForm({
             ))}
           </select>
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Course level
           <select
             value={form.level}
@@ -210,7 +210,7 @@ export default function EnquiryForm({
             ))}
           </select>
         </label>
-        <label className="text-xs font-semibold text-alo-text-heading">
+        <label className="text-xs font-semibold text-alo-text">
           Intended intake
           <input
             value={form.intake}
@@ -219,7 +219,7 @@ export default function EnquiryForm({
             className="mt-1 w-full rounded-lg border border-alo-brand-border px-3 py-2 text-sm font-normal"
           />
         </label>
-        <label className={`text-xs font-semibold text-alo-text-heading ${compact ? '' : 'sm:col-span-2'}`}>
+        <label className={`text-xs font-semibold text-alo-text ${compact ? '' : 'sm:col-span-2'}`}>
           Your question
           <textarea
             rows={3}
@@ -231,7 +231,7 @@ export default function EnquiryForm({
         </label>
       </div>
 
-      <label className="mt-3 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 text-xs text-emerald-900">
+      <label className="mt-3 flex items-start gap-3 rounded-xl border border-crm-success-border bg-crm-success-bg/60 p-3 text-xs text-[var(--crm-success-text)]">
         <input
           type="checkbox"
           checked={form.whatsappOptIn}
@@ -242,7 +242,7 @@ export default function EnquiryForm({
       </label>
 
       {state === 'error' && (
-        <p className="mt-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+        <p className="mt-3 flex items-center gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2 text-xs text-crm-danger-text">
           <AlertTriangle className="h-4 w-4" /> {error}
         </p>
       )}
@@ -250,7 +250,7 @@ export default function EnquiryForm({
       <button
         type="submit"
         disabled={state === 'sending'}
-        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3 text-sm font-bold text-black transition hover:brightness-95 disabled:opacity-60"
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-alo-cta px-5 py-3 text-sm font-bold text-white transition hover:brightness-95 disabled:opacity-60"
       >
         {state === 'sending' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         {copy.cta}

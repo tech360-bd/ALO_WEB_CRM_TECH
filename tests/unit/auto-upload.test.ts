@@ -1,24 +1,29 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 
-// Canonical Student.studentId contract: AE-YYYYXXXXXX.
-const CANONICAL_REGEX = /^AE-(\d{4})(\d{6})$/;
+// New Student.studentId contract: AE-YYYYNNNN; accept historical five/six-digit IDs unchanged.
+const CANONICAL_REGEX = /^(?:AE-\d{4}(?:\d{4}|\d{5}|\d{6})|ALO-S-\d+)$/;
 function isCanonicalStudentCode(value: string) { return typeof value === 'string' && CANONICAL_REGEX.test(value); }
 
 describe('canonical Student ID format', () => {
-  it('validates AE-YYYYXXXXXX', () => {
+  it('validates new AE-YYYYNNNN and preserves historical ID formats', () => {
+    expect(isCanonicalStudentCode('AE-20260001')).toBe(true);
     expect(isCanonicalStudentCode('AE-2025000001')).toBe(true);
     expect(isCanonicalStudentCode('AE-2026000001')).toBe(true);
     expect(isCanonicalStudentCode('AE-2025XXXX')).toBe(false);
-    expect(isCanonicalStudentCode('ALO-S-123')).toBe(false);
+    expect(isCanonicalStudentCode('ALO-S-123')).toBe(true);
     expect(isCanonicalStudentCode('ae-2025000001')).toBe(false);
     expect(isCanonicalStudentCode('')).toBe(false);
   });
 
-  it('uses a current-year prefix and bounded collision retries in the canonical allocator', async () => {
+  it('uses the shared year-scoped allocator and bounds unique-key retries', async () => {
     const canonical = readFileSync('src/lib/student/canonical-student.ts', 'utf8');
-    expect(canonical).toContain('AE-${year}');
+    const allocator = readFileSync('src/lib/identity/student-id.ts', 'utf8');
+    expect(canonical).toContain("allocateIdentifierCommitted('AE')");
+    expect(canonical).toContain("allocateIdentifier(tx, 'AE')");
     expect(canonical).toContain('MAX_CODE_RETRIES');
+    expect(allocator).toContain("timeZone: BUSINESS_TIME_ZONE");
+    expect(allocator).toContain("scope === 'AE' ? 4 : 5");
   });
 });
 

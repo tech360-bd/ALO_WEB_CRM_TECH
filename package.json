@@ -8,8 +8,8 @@
   },
   "packageManager": "npm@10.9.2",
   "scripts": {
-    "dev": "next dev -p 3000",
-    "build": "node scripts/assert-node22.cjs && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' prisma generate && npm run db:verify-client && SKIP_CMS_DB=1 RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS='--max-old-space-size=4096' next build --webpack && node scripts/prepare-standalone.mjs",
+    "dev": "next dev --webpack -p 3000",
+    "build": "node scripts/assert-node22.cjs && RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS=\"--max-old-space-size=${ALO_BUILD_HEAP_MB:-4096}\" prisma generate && npm run db:verify-client && SKIP_CMS_DB=1 RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 NEXT_PRIVATE_BUILD_WORKER=0 NODE_OPTIONS=\"--max-old-space-size=${ALO_BUILD_HEAP_MB:-4096}\" next build --webpack && node scripts/prepare-standalone.mjs",
     "start": "NODE_ENV=production node server.js",
     "lint": "eslint .",
     "awf:mirror": "node scripts/ai-workforce/mirror-schema.mjs",
@@ -34,9 +34,21 @@
     "remotion:studio": "npx remotion studio src/lib/video-engine/remotion/entry.tsx",
     "remotion:render": "npx remotion render src/lib/video-engine/remotion/entry.tsx",
     "db:verify-client": "node scripts/verify-prisma-client.mjs",
+    "data:course-month:check": "tsx scripts/stage-course-month-coverage.ts",
+    "data:course-month:stage": "tsx scripts/stage-course-month-coverage.ts --stage",
     "db:diagnose": "node scripts/db-diagnose.mjs",
     "audit:env": "node scripts/audit-env-vars.mjs",
-    "typecheck:references": "npm run db:verify-client && tsc --project tsconfig.supplied-references.json --noEmit"
+    "typecheck:references": "npm run db:verify-client && tsc --project tsconfig.supplied-references.json --noEmit",
+    "verified:validate": "tsx scripts/verified-catalogue/validate-dataset.ts",
+    "verified:ingest": "tsx scripts/verified-catalogue/ingest.ts --apply",
+    "verified:ingest:dry": "tsx scripts/verified-catalogue/ingest.ts --dry-run",
+    "verified:decide": "tsx scripts/verified-catalogue/decide.ts",
+    "verified:report": "tsx scripts/verified-catalogue/report-coverage.ts",
+    "verified:e2e": "tsx scripts/verified-catalogue/e2e-verify.ts",
+    "verified:coverage-monitor": "tsx scripts/verified-catalogue/run-coverage-monitor.ts",
+    "catalogue:diagnose": "tsx scripts/diagnose-public-catalogue.ts",
+    "typecheck:verified": "tsc --project tsconfig.verified-catalogue-check.json --noEmit",
+    "security:super-admin": "tsx scripts/super-admin/run-security-tests.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
@@ -97,6 +109,7 @@
     "dotenv": "^17.4.2",
     "effect": "^3.21.4",
     "embla-carousel-react": "^8.6.0",
+    "exceljs": "^4.4.0",
     "framer-motion": "^12.42.2",
     "input-otp": "^1.4.2",
     "ioredis": "^6.0.0",
@@ -104,7 +117,7 @@
     "js-yaml": "^5.2.2",
     "lucide-react": "^0.525.0",
     "mysql2": "^3.24.4",
-    "next": "16.4.0",
+    "next": "16.4.2",
     "next-auth": "^4.24.11",
     "next-intl": "^4.3.4",
     "next-themes": "^0.4.6",
@@ -130,7 +143,7 @@
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",
     "z-ai-web-dev-sdk": "^0.0.18",
-    "zod": "^4.0.2",
+    "zod": "^4.6.7",
     "zustand": "^5.0.6"
   },
   "optionalDependencies": {
@@ -148,9 +161,11 @@
     "@vitest/coverage-v8": "4.1.11",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
+    "vite": "8.2.4",
     "vitest": "4.1.11"
   },
   "overrides": {
+    "zod": "$zod",
     "postcss": "8.5.25",
     "sharp": "0.35.5",
     "source-map-js": "1.2.2",

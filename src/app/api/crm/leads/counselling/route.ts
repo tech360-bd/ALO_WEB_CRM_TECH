@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
 import { APPLICATION_FORM_SECTIONS, type FormSectionKey } from '@/lib/forms/application-form-schema';
+import { isFormSectionComplete } from '@/lib/forms/form-section-validation';
+import { allocateIdentifier } from '@/lib/identity/student-id';
+import { acquireStudentCreateLock, releaseStudentCreateLock, studentLockKey } from '@/lib/identity/student-create-lock';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -129,37 +132,60 @@ export const POST = withAuth(async (req, auth) => {
         : await tx.leadForm.create({ data: leadData });
 
       // ── 2. Student row so the case can move into the portal ────────────────
-      const existingStudent = await tx.student.findFirst({
-        where: { OR: [{ email }, { phone }] },
-        select: { id: true, studentId: true, userId: true, counselorId: true },
-      });
+      //
+      // Duplicate-safety, two independent layers:
+      //
+      // (a) Student ID — allocated by the canonical `StudentIdSequence` counter
+      //     (src/lib/identity/student-id.ts), the same allocator used by portal
+      //     registration and the admin import center. It advances one row with
+      //     `LAST_INSERT_ID(expr)` under a row lock, so two concurrent
+      //     transactions can never receive the same number. The previous
+      //     implementation counted matching `studentId` prefixes and added one,
+      //     which handed the identical identifier to every concurrent
+      //     submission and produced a 6-digit sequence that matched no other
+      //     writer's `AE-YYYY#####` format.
+      //
+      // (b) Student row — `email`/`phone` carry no unique index, so the
+      //     find-then-create below is serialized on an advisory lock keyed by
+      //     the normalized natural key (see student-create-lock.ts for why a
+      //     unique index is not added here).
+      const lockKey = studentLockKey(email, phone);
+      const lockHeld = await acquireStudentCreateLock(tx, lockKey);
+      let studentId = '';
+      let existingStudent: { id: string; studentId: string; userId: string | null; counselorId: string | null } | null = null;
+      try {
+        existingStudent = await tx.student.findFirst({
+          where: { OR: [{ email }, { phone }] },
+          select: { id: true, studentId: true, userId: true, counselorId: true },
+        });
 
-      let studentId = existingStudent?.id || '';
-      if (!existingStudent) {
-        const year = now.getFullYear();
-        const seq = (await tx.student.count({ where: { studentId: { startsWith: `AE-${year}` } } })) + 1;
-        const studentCode = `AE-${year}${String(seq).padStart(6, '0')}`;
-        const created = await tx.student.create({
-          data: {
-            studentId: studentCode,
-            name,
-            email,
-            phone,
-            status: 'active',
-            userType: 'ALO_FULL_STUDENT',
-            journeyStage: 'lead_created',
-            counselorId: requestedCounselorId || auth.userId,
-            counselorName: auth.name || '',
-            leadId: leadRow.id,
-          },
-          select: { id: true, studentId: true },
-        });
-        studentId = created.id;
-      } else if (!existingStudent.counselorId && (requestedCounselorId || auth.userId)) {
-        await tx.student.update({
-          where: { id: existingStudent.id },
-          data: { counselorId: requestedCounselorId || auth.userId, counselorName: auth.name || '' },
-        });
+        studentId = existingStudent?.id || '';
+        if (!existingStudent) {
+          const studentCode = await allocateIdentifier(tx, 'AE');
+          const created = await tx.student.create({
+            data: {
+              studentId: studentCode,
+              name,
+              email,
+              phone,
+              status: 'active',
+              userType: 'ALO_FULL_STUDENT',
+              journeyStage: 'lead_created',
+              counselorId: requestedCounselorId || auth.userId,
+              counselorName: auth.name || '',
+              leadId: leadRow.id,
+            },
+            select: { id: true, studentId: true },
+          });
+          studentId = created.id;
+        } else if (!existingStudent.counselorId && (requestedCounselorId || auth.userId)) {
+          await tx.student.update({
+            where: { id: existingStudent.id },
+            data: { counselorId: requestedCounselorId || auth.userId, counselorName: auth.name || '' },
+          });
+        }
+      } finally {
+        if (lockHeld) await releaseStudentCreateLock(tx, lockKey);
       }
 
       // ── 3. Form B sections captured by the counselor ───────────────────────
@@ -169,6 +195,9 @@ export const POST = withAuth(async (req, auth) => {
         // StudentProfileSection has no compound unique index on every deployed
         // database, so a counselor's captured answer is written with an explicit
         // find-then-write: update the existing row, otherwise create it.
+        const complete = isFormSectionComplete(sectionKey, payload);
+        const status = complete ? 'complete' : 'incomplete';
+        const completedAt = complete ? now : null;
         const data = JSON.stringify({ ...payload, capturedBy: auth.userId, capturedAt: now.toISOString() });
         const existingSection = await tx.studentProfileSection.findFirst({
           where: { studentId, section: sectionKey },
@@ -177,11 +206,11 @@ export const POST = withAuth(async (req, auth) => {
         if (existingSection) {
           await tx.studentProfileSection.update({
             where: { id: existingSection.id },
-            data: { status: 'complete', data, completedAt: now },
+            data: { status, data, completedAt },
           });
         } else {
           await tx.studentProfileSection.create({
-            data: { studentId, section: sectionKey, status: 'complete', data, completedAt: now },
+            data: { studentId, section: sectionKey, status, data, completedAt },
           });
         }
         written.push(sectionKey);

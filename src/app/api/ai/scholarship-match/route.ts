@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { db } from '@/lib/db';
 import { rateLimitMiddleware } from '@/lib/rate-limiter';
 import { rankScholarships, type ScholarshipRecord } from '@/lib/scholarship-match';
+import { publicScholarshipWhere } from '@/lib/public-catalog';
+import { hasCurrentScholarshipSourceVerification } from '@/lib/scholarships/status-engine';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -52,7 +54,7 @@ export async function POST(request: Request) {
   const profile = parsed.data;
 
   try {
-    const where: Record<string, unknown> = { status: 'active' };
+    const where: Record<string, unknown> = { ...publicScholarshipWhere() };
     if (profile.countries && profile.countries.length > 0) {
       where.OR = profile.countries.map((country) => ({ country: { contains: country } }));
     }
@@ -87,7 +89,13 @@ export async function POST(request: Request) {
       },
     });
 
-    const records: ScholarshipRecord[] = rows.map((row: any) => ({
+    const records: ScholarshipRecord[] = rows
+      .filter((row: any) => hasCurrentScholarshipSourceVerification({
+        verificationStatus: row.verificationStatus,
+        lastVerifiedAt: row.lastVerifiedAt,
+        officialSourceUrl: row.officialSourceUrl,
+      }))
+      .map((row: any) => ({
       id: row.id,
       slug: row.slug,
       name: row.name,

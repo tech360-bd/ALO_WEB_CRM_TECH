@@ -17,6 +17,7 @@ vi.mock('@/lib/auth-middleware', () => ({ getOptionalAuth: mocks.getOptionalAuth
 
 import type { NextRequest } from 'next/server';
 import { GET } from '@/app/api/universities/[slug]/route';
+import { publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicUniversityWhere } from '@/lib/public-catalog';
 
 function makeRequest(url: string): NextRequest {
   return new Request(url) as NextRequest;
@@ -127,7 +128,7 @@ describe('university information catalogue API', () => {
       include: expect.objectContaining({
         intakeFees: expect.objectContaining({ where: expect.objectContaining({
           status: 'active', verificationStatus: 'VERIFIED',
-          OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }],
+          OR: [{ intakeSourceUrl: { startsWith: 'https://' } }, { feeSourceUrl: { startsWith: 'https://' } }],
         }) }),
       }),
     }));
@@ -176,22 +177,17 @@ describe('university information catalogue API', () => {
         verificationStatus: 'VERIFIED',
         publicationStatus: { in: ['published', 'PUBLISHED'] },
         internationalEligibility: expect.objectContaining({ in: expect.arrayContaining(['eligible']) }),
-        intakeFees: expect.objectContaining({ some: expect.objectContaining({ verificationStatus: 'VERIFIED', intakeSourceUrl: { not: '' } }) }),
+        intakeFees: expect.objectContaining({ some: expect.objectContaining({ verificationStatus: 'VERIFIED', intakeSourceUrl: { startsWith: 'https://' } }) }),
       }),
       include: expect.objectContaining({
-        intakeFees: expect.objectContaining({ where: expect.objectContaining({ verificationStatus: 'VERIFIED', intakeSourceUrl: { not: '' } }) }),
+        intakeFees: expect.objectContaining({ where: expect.objectContaining({ verificationStatus: 'VERIFIED', intakeSourceUrl: { startsWith: 'https://' } }) }),
       }),
     }));
     const courseWhere = mocks.courseFindMany.mock.calls[0][0].where;
     expect(courseWhere.internationalEligibility.in).not.toContain('not_verified');
     expect(courseWhere).not.toHaveProperty('courseIntakes');
-    expect(mocks.universityFindFirst).toHaveBeenCalledWith(expect.objectContaining({
-      where: expect.objectContaining({
-        status: 'active',
-        verificationStatus: 'VERIFIED',
-        publicationStatus: { in: ['published', 'PUBLISHED'] },
-      }),
-    }));
+    const universityQuery = mocks.universityFindFirst.mock.calls[0][0];
+    expect(universityQuery.where.AND).toEqual(expect.arrayContaining([publicUniversityWhere()]));
   });
 
   it('filters embedded public courses, fees, and requirements to verified published records', async () => {
@@ -202,19 +198,17 @@ describe('university information catalogue API', () => {
 
     expect(response.status).toBe(200);
     const query = mocks.universityFindFirst.mock.calls[0][0];
-    expect(query.include.courses.where).toEqual({
-      status: 'active',
-      verificationStatus: 'VERIFIED',
-      publicationStatus: { in: ['published', 'PUBLISHED'] },
-    });
-    expect(query.include.courses.include.intakeFees.where).toEqual({
-      status: 'active',
-      verificationStatus: 'VERIFIED',
-    });
-    expect(query.include.courses.include.requirements.where).toEqual({ verificationStatus: 'VERIFIED' });
+    expect(query.include.courses.where).toEqual(publicCourseWhere());
+    expect(query.include.courses.include.intakeFees.where).toEqual(publicIntakeWhere());
+    expect(query.include.courses.include.requirements.where).toEqual(publicRequirementWhere());
     expect(query.include.rankingRecords.where).toEqual({ verificationStatus: 'VERIFIED' });
-    expect(query.include.scholarshipRecords.where).toEqual({ status: 'active', verificationStatus: 'VERIFIED' });
-    expect(query.include._count.select.courses.where).toMatchObject({ status: 'active', verificationStatus: 'VERIFIED' });
+    expect(query.include.scholarshipRecords.where).toMatchObject({
+      status: 'active',
+      verificationStatus: { in: ['VERIFIED', 'verified', 'VERIFIED_RECENT', 'verified_recent'] },
+      lastCheckedAt: { gte: expect.any(String), lte: expect.any(String) },
+      officialScholarshipUrl: { startsWith: 'https://' },
+    });
+    expect(query.include._count.select.courses.where).toEqual(publicCourseWhere());
   });
 
   it('does not apply public publication filters to an authorized staff profile lookup', async () => {

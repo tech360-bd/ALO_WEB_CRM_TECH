@@ -1,0 +1,92 @@
+{
+  "candidates": 3,
+  "verdicts": {
+    "cent-biotech-admission": "APPROVE",
+    "cent-biotech-fees": "APPROVE_WITH_CAVEAT",
+    "mon-b6005-requirements": "APPROVE"
+  },
+  "perRecordCoverage": [
+    {
+      "evidence_id": "cent-biotech-admission",
+      "course": "centennial-biotechnology-fast-track",
+      "before": "4/10",
+      "after_this_record_only": "6/10",
+      "newly_unlocked": "entry_requirement;english_requirement",
+      "verdict": "APPROVE"
+    },
+    {
+      "evidence_id": "cent-biotech-fees",
+      "course": "centennial-biotechnology-fast-track",
+      "before": "4/10",
+      "after_this_record_only": "4/10",
+      "newly_unlocked": "NONE",
+      "verdict": "APPROVE_WITH_CAVEAT"
+    },
+    {
+      "evidence_id": "mon-b6005-requirements",
+      "course": "monash-master-of-business",
+      "before": "4/10",
+      "after_this_record_only": "4/10",
+      "newly_unlocked": "NONE",
+      "verdict": "APPROVE"
+    }
+  ],
+  "cumulativeAfterAllApprovedRelinks": [
+    {
+      "course_slug": "centennial-biotechnology-fast-track",
+      "course_title": "Biotechnology (Fast-Track)",
+      "coverage_now": "4/10",
+      "coverage_after_all_approved_relinks": "6/10",
+      "delta": 2,
+      "groups_newly_covered": "entry_requirement;english_requirement"
+    },
+    {
+      "course_slug": "monash-master-of-business",
+      "course_title": "Master of Business",
+      "coverage_now": "4/10",
+      "coverage_after_all_approved_relinks": "4/10",
+      "delta": 0,
+      "groups_newly_covered": "NONE"
+    }
+  ],
+  "coursesReceivingNothing": [
+    {
+      "course_slug": "manchester-msc-accounting",
+      "course_title": "MSc Accounting",
+      "coverage": "6/10",
+      "note": "no candidate evidence record names this course; a university-level match would be a false link"
+    },
+    {
+      "course_slug": "centennial-construction-project-management",
+      "course_title": "Construction Project Management",
+      "coverage": "4/10",
+      "note": "no candidate evidence record names this course; a university-level match would be a false link"
+    },
+    {
+      "course_slug": "tum-master-informatics",
+      "course_title": "MSc Informatics",
+      "coverage": "6/10",
+      "note": "no candidate evidence record names this course; a university-level match would be a false link"
+    },
+    {
+      "course_slug": "auckland-master-of-data-science",
+      "course_title": "Master of Data Science (MDataSci)",
+      "coverage": "5/10",
+      "note": "no candidate evidence record names this course; a university-level match would be a false link"
+    },
+    {
+      "course_slug": "copenhagen-master-computer-science",
+      "course_title": "MSc Computer Science",
+      "coverage": "4/10",
+      "note": "no candidate evidence record names this course; a university-level match would be a false link"
+    },
+    {
+      "course_slug": "yonsei-bsc-computer-science",
+      "course_title": "BSc Computer Science & Engineering",
+      "coverage": "4/10",
+      "note": "no candidate evidence record names this course; a university-level match would be a false link"
+    }
+  ],
+  "phase0cClaimCorrected": "Phase 0C estimated both Centennial courses would rise 4/10 -> 6/10. Only centennial-biotechnology-fast-track is named by the evidence; construction project management receives nothing, because the match must be on courseSlug, not university.",
+  "monashNote": "mon-b6005-requirements scopes creditPoints and structure, neither of which is a core publication field, so Monash stays at 2/10 and remains on hold as approved."
+}

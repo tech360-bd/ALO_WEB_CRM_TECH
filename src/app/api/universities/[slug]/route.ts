@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getOptionalAuth } from '@/lib/auth-middleware';
+import { publicCourseWhere, publicCrmScholarshipWhere, publicIntakeWhere, publicRequirementWhere, publicUniversityWhere } from '@/lib/public-catalog';
 import {
   UNIVERSITY_COURSE_INTAKE_WINDOW,
   universityIntakeWindowWhere,
@@ -37,16 +38,10 @@ export async function GET(
 
     const university = await db.crmUniversity.findFirst({
       where: {
-        OR: [
-          { slug: cleanSlug },
-          { universityId: cleanSlug },
-          { id: cleanSlug },
+        AND: [
+          { OR: [{ slug: cleanSlug }, { universityId: cleanSlug }, { id: cleanSlug }] },
+          ...(!isPrivileged ? [publicUniversityWhere()] : []),
         ],
-        ...(!isPrivileged ? {
-          status: 'active',
-          verificationStatus: 'VERIFIED',
-          publicationStatus: { in: ['published', 'PUBLISHED'] },
-        } : {}),
       },
       include: {
         rankingRecords: {
@@ -54,31 +49,21 @@ export async function GET(
           orderBy: { rankingYear: 'desc' },
         },
         scholarshipRecords: {
-          ...(!isPrivileged ? {
-            where: { status: 'active', verificationStatus: 'VERIFIED' },
-          } : {}),
+          ...(!isPrivileged ? { where: publicCrmScholarshipWhere() } : {}),
           take: 10,
         },
         ...(!includeIntakeWindow && !includeCourseCatalogue ? {
           courses: {
-            ...(!isPrivileged ? {
-              where: {
-                status: 'active',
-                verificationStatus: 'VERIFIED',
-                publicationStatus: { in: ['published', 'PUBLISHED'] },
-              },
-            } : {}),
+            ...(!isPrivileged ? { where: publicCourseWhere() } : {}),
             take: 20,
             include: {
               intakeFees: {
-                ...(!isPrivileged ? {
-                  where: { status: 'active', verificationStatus: 'VERIFIED' },
-                } : {}),
+                ...(!isPrivileged ? { where: publicIntakeWhere() } : {}),
                 take: 2,
                 orderBy: { intakeYear: 'asc' },
               },
               requirements: {
-                ...(!isPrivileged ? { where: { verificationStatus: 'VERIFIED' } } : {}),
+                ...(!isPrivileged ? { where: publicRequirementWhere() } : {}),
                 take: 1,
               },
             },
@@ -86,16 +71,8 @@ export async function GET(
         } : {}),
         _count: {
           select: {
-            courses: !isPrivileged ? {
-              where: {
-                status: 'active',
-                verificationStatus: 'VERIFIED',
-                publicationStatus: { in: ['published', 'PUBLISHED'] },
-              },
-            } : true,
-            scholarshipRecords: !isPrivileged ? {
-              where: { status: 'active', verificationStatus: 'VERIFIED' },
-            } : true,
+            courses: !isPrivileged ? { where: publicCourseWhere() } : true,
+            scholarshipRecords: !isPrivileged ? { where: publicCrmScholarshipWhere() } : true,
           },
         },
       },
@@ -120,7 +97,7 @@ export async function GET(
 
     if (!includeCourseCatalogue && includeIntakeWindow) {
       const intakeWindowWhere = universityIntakeWindowWhere();
-      const sourceLinkWhere = { OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] };
+      const sourceLinkWhere = { OR: [{ sourceUrl: { startsWith: 'https://' } }, { officialUrl: { startsWith: 'https://' } }] };
       const verifiedPublishedCourseWhere: Record<string, unknown> = {
         universityId: university.universityId,
         status: 'active',
@@ -135,7 +112,7 @@ export async function GET(
           some: {
             status: 'active',
             verificationStatus: 'VERIFIED',
-            intakeSourceUrl: { not: '' },
+            intakeSourceUrl: { startsWith: 'https://' },
             ...intakeWindowWhere,
           },
         },
@@ -166,13 +143,13 @@ export async function GET(
               where: {
                 status: 'active',
                 verificationStatus: 'VERIFIED',
-                intakeSourceUrl: { not: '' },
+                intakeSourceUrl: { startsWith: 'https://' },
                 ...intakeWindowWhere,
               },
               orderBy: [{ intakeYear: 'asc' }, { intakeMonth: 'asc' }],
             },
             requirements: {
-              ...(!isPrivileged ? { where: { verificationStatus: 'VERIFIED' } } : {}),
+              ...(!isPrivileged ? { where: publicRequirementWhere() } : {}),
               take: 1,
             },
           },
@@ -203,7 +180,7 @@ export async function GET(
 
     let internationalCourseCatalog: Record<string, unknown> | undefined;
     if (includeCourseCatalogue) {
-      const sourceLinkWhere = { OR: [{ sourceUrl: { not: '' } }, { officialUrl: { not: '' } }] };
+      const sourceLinkWhere = { OR: [{ sourceUrl: { startsWith: 'https://' } }, { officialUrl: { startsWith: 'https://' } }] };
       const verifiedPublishedCourseWhere: Record<string, unknown> = {
         universityId: university.universityId,
         status: 'active',
@@ -218,7 +195,7 @@ export async function GET(
       const sourceBackedVerifiedIntakeWhere = {
         status: 'active',
         verificationStatus: 'VERIFIED',
-        OR: [{ intakeSourceUrl: { not: '' } }, { feeSourceUrl: { not: '' } }],
+        OR: [{ intakeSourceUrl: { startsWith: 'https://' } }, { feeSourceUrl: { startsWith: 'https://' } }],
       };
       const [
         candidateCourseRecords,
@@ -251,7 +228,7 @@ export async function GET(
             orderBy: [{ intakeYear: 'asc' }, { intakeMonth: 'asc' }],
           },
           requirements: {
-            where: { verificationStatus: 'VERIFIED' },
+            where: publicRequirementWhere(),
             take: 1,
           },
         },

@@ -1,9 +1,9 @@
-/**
- * After-Hours AI Auto Reply Engine
- * Bangladesh time 18:00-10:00, office Sat-Thu 09:00-18:00, Friday closed
- */
+/** After-hours communications policy, shared with UCC office hours and SLA. */
+import { createHash } from 'node:crypto';
 import { db } from '@/lib/db';
-import { isAfterHours, AFTER_HOURS_MESSAGE } from './unified-engine';
+import { AFTER_HOURS_MESSAGE } from './unified-engine';
+import { dayScheduleAt, isAfterBusinessHours, nextBusinessOpening } from './business-hours';
+import { loadBusinessHoursPolicy } from './business-hours-store';
 
 export async function handleAfterHoursMessage(params: {
   channel: string;
@@ -12,74 +12,79 @@ export async function handleAfterHoursMessage(params: {
   message: string;
   leadId?: string;
   studentId?: string;
-}): Promise<{ isAfterHours: boolean; autoReply: string | null; leadCreated?: boolean; leadId?: string; taskCreated?: boolean }> {
-  const after = isAfterHours(new Date());
-  if (!after) return { isAfterHours: false, autoReply: null };
+  assignedTo?: string;
+}): Promise<{
+  isAfterHours: boolean;
+  autoReply: string | null;
+  leadCreated: false;
+  leadId?: string;
+  taskCreated: boolean;
+  taskId?: string;
+  followUpQueued: boolean;
+}> {
+  const now = new Date();
+  const policy = await loadBusinessHoursPolicy();
+  const hours = policy.config;
+  const after = isAfterBusinessHours(now, hours);
+  if (!after) return { isAfterHours: false, autoReply: null, leadCreated: false, taskCreated: false, followUpQueued: false };
+  const afterHoursReplyEnabled = policy.scheduleReadAvailable && policy.hasPersistedSchedule && dayScheduleAt(now, hours).afterHoursAiAuto;
 
-  let leadCreated = false;
-  let leadId = params.leadId;
-
-  // If new contact gives phone/email during after-hours, create lead
-  const hasContact = params.senderPhone || params.senderEmail;
-  const hasInfo = params.message.length > 10; // simple check: if user shared name/phone/country/level/intake
-  if (hasContact && !params.leadId && !params.studentId && hasInfo) {
-    try {
-      // Detect if message contains phone/email-like patterns
-      const phoneMatch = params.senderPhone || params.message.match(/\+?88?\d{10,13}/)?.[0];
-      const emailMatch = params.senderEmail || params.message.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i)?.[0];
-      if (phoneMatch || emailMatch) {
-        const lead = await db.marketingLead.create({
-          data: {
-            name: params.message.substring(0, 60) || 'After-hours lead',
-            phone: phoneMatch || params.senderPhone || '',
-            email: emailMatch || params.senderEmail || '',
-            source: `after_hours_${params.channel}`,
-            sourceDetail: params.message.substring(0, 200),
-            status: 'new',
-            createdById: 'after-hours-bot',
-          }
-        });
-        leadCreated = true;
-        leadId = lead.id;
-        // Create follow-up task for next working hour 10:00 Dhaka
-        const nextWorking = new Date();
-        if (new Date().getHours() >= 18) nextWorking.setDate(nextWorking.getDate() + 1);
-        // Skip Friday
-        if (nextWorking.getDay() === 5) nextWorking.setDate(nextWorking.getDate() + 1);
-        nextWorking.setUTCHours(4, 0, 0, 0); // 10:00 Dhaka = 04:00 UTC
-        await db.counselorTask.create({
-          data: {
-            employeeId: '',
-            leadId: lead.id,
-            title: 'After-hours lead follow-up',
-            description: `Lead from ${params.channel} after hours: ${params.message.substring(0,200)}`,
-            priority: 'high',
-            type: 'follow_up',
-            status: 'pending',
-            dueDate: nextWorking.toISOString(),
-          }
-        }).catch(()=>{});
-      }
-    } catch {}
+  // This handler is deliberately not an inquiry-ingestion path. Verified
+  // provider webhooks must deduplicate and resolve/create the inquiry first;
+  // otherwise repeated after-hours messages could create duplicate leads.
+  const entityId = params.leadId || params.studentId;
+  if (!entityId) {
+    return { isAfterHours: true, autoReply: null, leadCreated: false, taskCreated: false, followUpQueued: false };
   }
 
-  return {
-    isAfterHours: true,
-    autoReply: AFTER_HOURS_MESSAGE,
-    leadCreated,
-    leadId,
-    taskCreated: leadCreated,
-  };
+  const nextOpen = nextBusinessOpening(now, hours);
+  const idempotencyKey = createHash('sha256')
+    .update(`${params.leadId ? `lead:${params.leadId}` : `student:${params.studentId}`}|${nextOpen.toISOString()}`)
+    .digest('hex')
+    .slice(0, 40);
+  const taskId = `afterhours_${idempotencyKey}`;
+  const existing = await db.counselorTask.findUnique({ where: { id: taskId }, select: { id: true } });
+  if (existing) {
+    return { isAfterHours: true, autoReply: afterHoursReplyEnabled ? AFTER_HOURS_MESSAGE : null, leadCreated: false, leadId: params.leadId, taskCreated: false, taskId: existing.id, followUpQueued: true };
+  }
+
+  try {
+    const task = await db.counselorTask.create({
+      data: {
+        id: taskId,
+        employeeId: params.assignedTo || '',
+        studentId: params.studentId || '',
+        leadId: params.leadId || '',
+        title: `After-hours ${params.channel} follow-up`,
+        description: `Follow up after the next business opening. Contact details and message are retained in the linked communication thread.`,
+        priority: 'high',
+        type: 'follow_up',
+        status: 'pending',
+        dueDate: nextOpen.toISOString(),
+      },
+    });
+    return { isAfterHours: true, autoReply: afterHoursReplyEnabled ? AFTER_HOURS_MESSAGE : null, leadCreated: false, leadId: params.leadId, taskCreated: true, taskId: task.id, followUpQueued: true };
+  } catch (error) {
+    // A concurrent replay may win the deterministic task id. Report it as an
+    // existing task only after confirming that row actually persisted.
+    const persisted = await db.counselorTask.findUnique({ where: { id: taskId }, select: { id: true } }).catch(() => null);
+    if (persisted) {
+      return { isAfterHours: true, autoReply: afterHoursReplyEnabled ? AFTER_HOURS_MESSAGE : null, leadCreated: false, leadId: params.leadId, taskCreated: false, taskId: persisted.id, followUpQueued: true };
+    }
+    throw error;
+  }
 }
 
-export async function getOfficeHoursStatus(): Promise<{ isAfterHours: boolean; message: string; nextOpen: string }> {
-  const after = isAfterHours(new Date());
-  if (after) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    if (tomorrow.getDay() === 5) tomorrow.setDate(tomorrow.getDate() + 1); // skip Friday
-    tomorrow.setUTCHours(4, 0, 0, 0);
-    return { isAfterHours: true, message: AFTER_HOURS_MESSAGE, nextOpen: tomorrow.toISOString() };
-  }
-  return { isAfterHours: false, message: 'Office is open (10:00-18:00 Asia/Dhaka)', nextOpen: new Date().toISOString() };
+export async function getOfficeHoursStatus(): Promise<{ isAfterHours: boolean; message: string; nextOpen: string; timezone: string }> {
+  const now = new Date();
+  const policy = await loadBusinessHoursPolicy();
+  const hours = policy.config;
+  const after = isAfterBusinessHours(now, hours);
+  const nextOpen = nextBusinessOpening(now, hours);
+  const day = dayScheduleAt(now, hours);
+  const autoAcknowledgementEnabled = policy.scheduleReadAvailable && policy.hasPersistedSchedule && day.afterHoursAiAuto;
+  const message = after
+    ? (autoAcknowledgementEnabled ? 'A static after-hours acknowledgement is enabled; an associated follow-up must be queued before any reply is sent.' : 'Our team is outside office hours. For account-specific help, sign in to the secure Student Portal or contact an authorized ALO counselor.')
+    : `Office is open (${day.startTime}–${day.endTime} ${hours.timeZone})`;
+  return { isAfterHours: after, message, nextOpen: nextOpen.toISOString(), timezone: hours.timeZone };
 }

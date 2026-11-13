@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import { db } from '../src/lib/db';
+import { seedOfficialNumberPool } from '../src/lib/whatsapp-number-pool';
 import bcrypt from 'bcryptjs';
 
 async function seed() {
@@ -33,6 +34,11 @@ async function seed() {
     update: {},
     create: { name: 'production-seed' },
   });
+
+  // Add only missing number-pool configuration rows. This is not an ownership,
+  // credential, or Meta Cloud API connectivity assertion.
+  const waPool = await seedOfficialNumberPool();
+  console.log(`[Seed] WhatsApp number-pool configuration rows: ${waPool.count} total (${waPool.created} added; unverified).`);
 
   const superAdminRole = await db.portalRole.upsert({
     where: { name: 'SUPER_ADMIN' },

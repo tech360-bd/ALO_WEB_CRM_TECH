@@ -15,9 +15,9 @@ beforeEach(() => {
     user: { findUnique: vi.fn().mockResolvedValue({ id: 'user', role: 'STUDENT', status: 'PENDING', emailVerified: false }), updateMany: vi.fn().mockResolvedValue({ count: 1 }), findMany: vi.fn().mockResolvedValue([{ id: 'counselor-user', name: 'Synthetic Counselor', role: 'COUNSELOR' }]) },
     portalUser: { findUnique: vi.fn().mockResolvedValue({ id: 'portal', userType: 'STUDENT', status: 'pending_verification', emailVerified: false }), updateMany: vi.fn().mockResolvedValue({ count: 1 }) },
     student: { findFirst: vi.fn().mockResolvedValue({ id: 'student', studentId: 'AE-2026000001', leadId: 'lead' }), update: vi.fn(), updateMany: vi.fn() },
-    portalStudentProfile: { findUnique: vi.fn().mockResolvedValue({ id: 'profile', studentId: 'AE-202600001' }), update: vi.fn() },
+    portalStudentProfile: { findUnique: vi.fn().mockResolvedValue({ id: 'profile', studentId: 'AE-2026000001' }), update: vi.fn() },
     lead: { findMany: vi.fn().mockResolvedValue([{ id: 'lead' }]), findUnique: vi.fn().mockResolvedValue({ id: 'lead', status: 'NEW', studentId: 'AE-2026000001', source: 'USER_STUDENT_REGISTRATION' }), updateMany: vi.fn().mockResolvedValue({ count: 1 }), count: vi.fn().mockResolvedValue(0), update: vi.fn() },
-    timelineEvent: { create: vi.fn() }, portalAuditLog: { create: vi.fn(), findMany: vi.fn().mockResolvedValue([{ entityId: 'lead', metadata: JSON.stringify({ identityDomain: 'portal', studentId: 'AE-202600001' }) }]) },
+    timelineEvent: { create: vi.fn() }, portalAuditLog: { create: vi.fn(), findMany: vi.fn().mockResolvedValue([{ entityId: 'lead', metadata: JSON.stringify({ identityDomain: 'portal', studentId: 'AE-2026000001' }) }]) },
   };
   m.consume.mockResolvedValue(true);
   m.db.$transaction.mockImplementation(async cb => { const result = await cb(tx); completed = true; return result; });
@@ -25,7 +25,7 @@ beforeEach(() => {
 for (const [domain, verify, model, active, pending] of [
   ['user', canonicalVerify, 'user', 'ACTIVE', 'PENDING'], ['portal', portalVerify, 'portalUser', 'active', 'pending_verification'],
 ] as const) describe(`${domain} verification`, () => {
-  beforeEach(() => { if (domain === 'portal') tx.lead.findUnique.mockResolvedValue({ id: 'lead', status: 'NEW', studentId: 'AE-202600001', source: 'PORTAL_STUDENT_REGISTRATION' }); });
+  beforeEach(() => { if (domain === 'portal') tx.lead.findUnique.mockResolvedValue({ id: 'lead', status: 'NEW', studentId: 'AE-2026000001', source: 'PORTAL_STUDENT_REGISTRATION' }); });
   it('consumes OTP with transaction client and assigns a NEW registration only after activation claim', async () => {
     const res = await verify(request()); expect(res.status).toBe(200); expect(await res.json()).toMatchObject({ userStatus: active });
     expect(m.consume).toHaveBeenCalledWith(expect.objectContaining({ purpose: 'email_verification' }), tx);

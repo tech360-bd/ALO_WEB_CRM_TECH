@@ -1,19 +1,15 @@
 /**
  * CANONICAL INTAKE WINDOW
  * =======================
- * Master-build requirement: "all courses are added for every month — Jan 2027 to
- * Jan 2028 intakes."
+ * The supported planning/filter range is January 2027 through January 2028.
+ * This is a date-range capability, NOT a claim that every course or university
+ * offers every month in that range.
  *
- * This file is the single definition of that window. Everything that shows or
- * filters intakes (public Course Finder chips, the search API, the student and
- * partner finders, the backfill script and the admin screen) reads it from here,
- * so the window can never drift between screens.
- *
- * Honesty rules from the brief (§47 NO FAKE DATA) are respected by the backfill:
- * a generated row records that the month is an ALO-tracked intake, and carries
- * NO tuition, deadline, deposit or application fee. Those stay empty until an
- * official source is verified, and the UI labels such rows as pending
- * verification instead of inventing numbers.
+ * This file is the single definition of the range. Public/student/partner
+ * finders may select dates in it, but an individual intake is displayed only
+ * when that course-month is verified from an appropriate official source.
+ * Missing months remain missing; no code may infer intake availability from the
+ * calendar window alone.
  */
 
 export const MONTH_NAMES = [
@@ -38,6 +34,7 @@ export const INTAKE_WINDOW_START: { year: number; month: number } = { year: 2027
 /** Last month of the ALO intake window (inclusive). */
 export const INTAKE_WINDOW_END: { year: number; month: number } = { year: 2028, month: 1 };
 
+/** Legacy internal marker only; it is not evidence that a course offers an intake. */
 export const SCHEDULED_INTAKE_VERIFICATION = 'SCHEDULED';
 
 function period(year: number, month: number): IntakePeriod {
@@ -51,7 +48,7 @@ function period(year: number, month: number): IntakePeriod {
   };
 }
 
-/** Every month in the window, oldest first — Jan 2027 … Jan 2028 (13 months). */
+/** Calendar months available for filtering/reporting, oldest first (13 months); not per-course availability. */
 export const INTAKE_WINDOW_MONTHS: IntakePeriod[] = (() => {
   const months: IntakePeriod[] = [];
   for (let year = INTAKE_WINDOW_START.year; year <= INTAKE_WINDOW_END.year; year += 1) {

@@ -7,6 +7,26 @@ import { getRequestIp, issueEmailOtp } from '@/lib/auth/email-otp';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const ATTRIBUTION_KEYS = [
+  'landingPage', 'referrer', 'visitorId',
+  'utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm',
+  'gclid', 'fbclid',
+] as const;
+
+/** Keep only bounded string attribution keys; ignore anything else. */
+function readBoundedAttribution(raw: unknown): Record<string, string> | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const source = raw as Record<string, unknown>;
+  const out: Record<string, string> = {};
+  for (const key of ATTRIBUTION_KEYS) {
+    const value = source[key];
+    if (typeof value !== 'string') continue;
+    const cleaned = value.replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, 191);
+    if (cleaned !== '') out[key] = cleaned;
+  }
+  return Object.keys(out).length > 0 ? out : null;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => null);
@@ -20,6 +40,11 @@ export async function POST(req: NextRequest) {
     // the flag are accepted only while REGISTRATION_REQUIRE_TERMS is not 'true',
     // so existing integrations keep working and the switch is explicit.
     const termsAccepted = body?.termsAccepted === true || body?.acceptTerms === true;
+    // Acquisition attribution forwarded by the registration form. This route
+    // validates its body by hand rather than with a schema, so each key is
+    // checked and bounded here: only strings, only up to the VARCHAR(191) the
+    // attribution migration created, everything else discarded.
+    const attribution = readBoundedAttribution(body?.attribution);
     const termsRequired = (process.env.REGISTRATION_REQUIRE_TERMS || 'true') !== 'false';
 
     if (!name || name.length > 191 || !email || email.length > 191 || (phone?.length || 0) > 40 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8 || password.length > 200) {
@@ -64,7 +89,7 @@ export async function POST(req: NextRequest) {
     let userId: string;
     let studentId: string | undefined;
     if (role === 'STUDENT') {
-      const result = await registerStudentAtomically({ name, email, password, phone, pendingVerification: true });
+      const result = await registerStudentAtomically({ name, email, password, phone, pendingVerification: true, attribution });
       if (!result.success) {
         const status = result.errorCode === 'EMAIL_EXISTS' ? 409 : result.errorCode === 'STUDENT_EXISTS_DIFFERENT_OWNER' ? 409 : 500;
         return NextResponse.json({ error: result.error, errorCode: result.errorCode }, { status });

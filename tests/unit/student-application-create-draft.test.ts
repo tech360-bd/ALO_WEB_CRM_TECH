@@ -3,27 +3,51 @@ import { publicCourseWhere, publicIntakeWhere } from '@/lib/public-catalog';
 
 const mocks = vi.hoisted(() => ({
   courseFindFirst: vi.fn(),
-  studentFindFirst: vi.fn(),
-  studentCreate: vi.fn(),
+  studentFindUnique: vi.fn(),
+  createCanonicalStudent: vi.fn(),
   applicationFindFirst: vi.fn(),
   applicationCreate: vi.fn(),
-  documentCreate: vi.fn(),
+  applicationUpdate: vi.fn(),
+  studentDocumentFindFirst: vi.fn(),
+  applicationDocumentCreate: vi.fn(),
+  applicationDocumentFindMany: vi.fn(),
+  stageHistoryCreate: vi.fn(),
+  statusLogCreate: vi.fn(),
   timelineCreate: vi.fn(),
+  auth: vi.fn(),
 }));
+
+const tx = {
+  application: {
+    findFirst: mocks.applicationFindFirst,
+    create: mocks.applicationCreate,
+    update: mocks.applicationUpdate,
+  },
+  studentDocument: { findFirst: mocks.studentDocumentFindFirst },
+  applicationDocument: {
+    create: mocks.applicationDocumentCreate,
+    findMany: mocks.applicationDocumentFindMany,
+  },
+  applicationStageHistory: { create: mocks.stageHistoryCreate },
+  applicationStatusLog: { create: mocks.statusLogCreate },
+};
 
 vi.mock('@/lib/db', () => ({
   db: {
     crmCourse: { findFirst: mocks.courseFindFirst },
-    student: { findFirst: mocks.studentFindFirst, create: mocks.studentCreate },
-    application: { findFirst: mocks.applicationFindFirst, create: mocks.applicationCreate },
-    studentDocument: { create: mocks.documentCreate },
+    student: { findUnique: mocks.studentFindUnique },
     timelineEvent: { create: mocks.timelineCreate },
+    $transaction: (callback: (client: typeof tx) => unknown) => callback(tx),
   },
+}));
+
+vi.mock('@/lib/student/canonical-student', () => ({
+  createCanonicalStudent: (...args: unknown[]) => mocks.createCanonicalStudent(...args),
 }));
 
 vi.mock('@/lib/auth-middleware', () => ({
   withAuth: (handler: (request: Request, auth: Record<string, unknown>) => Promise<Response>) =>
-    (request: Request) => handler(request, { userId: 'student-1', email: 'student@example.org', name: 'Student One', roles: ['STUDENT'] }),
+    (request: Request) => handler(request, mocks.auth()),
 }));
 
 import { POST } from '@/app/api/student/applications/create-draft/route';
@@ -56,17 +80,23 @@ function request(body: unknown): Request {
 
 beforeEach(() => {
   vi.resetAllMocks();
+  mocks.auth.mockReturnValue({ userId: 'user-1', email: 'student@example.org', name: 'Student One', roles: ['STUDENT'] });
   mocks.courseFindFirst.mockResolvedValue(verifiedCourse());
-  mocks.studentFindFirst.mockResolvedValue({ id: 'student-row-1' });
-  mocks.studentCreate.mockResolvedValue({ id: 'student-row-1' });
+  mocks.createCanonicalStudent.mockResolvedValue({ success: true, studentId: 'AE-2026000001', studentDbId: 'student-row-1', mode: 'LINKED' });
+  mocks.studentFindUnique.mockResolvedValue({ id: 'student-row-1', studentId: 'AE-2026000001' });
   mocks.applicationFindFirst.mockResolvedValue(null);
   mocks.applicationCreate.mockResolvedValue({ id: 'application-row-1', applicationId: 'APP-1' });
-  mocks.documentCreate.mockResolvedValue({});
+  mocks.applicationUpdate.mockResolvedValue({});
+  mocks.studentDocumentFindFirst.mockResolvedValue(null);
+  mocks.applicationDocumentCreate.mockResolvedValue({});
+  mocks.applicationDocumentFindMany.mockResolvedValue([]);
+  mocks.stageHistoryCreate.mockResolvedValue({});
+  mocks.statusLogCreate.mockResolvedValue({});
   mocks.timelineCreate.mockResolvedValue({});
 });
 
 describe('POST /api/student/applications/create-draft', () => {
-  it('queries only public verified courses and does not create a student for unavailable records', async () => {
+  it('queries only public verified courses and does not link/create a student for unavailable records', async () => {
     mocks.courseFindFirst.mockResolvedValue(null);
     const response = await POST(request({ courseId: 'CRS-HIDDEN' }) as never);
 
@@ -79,7 +109,7 @@ describe('POST /api/student/applications/create-draft', () => {
         }),
       }),
     }));
-    expect(mocks.studentFindFirst).not.toHaveBeenCalled();
+    expect(mocks.createCanonicalStudent).not.toHaveBeenCalled();
     expect(mocks.applicationCreate).not.toHaveBeenCalled();
   });
 
@@ -94,16 +124,42 @@ describe('POST /api/student/applications/create-draft', () => {
     const response = await POST(request({ courseId: 'CRS-1' }) as never);
 
     expect(response.status).toBe(200);
+    expect(mocks.createCanonicalStudent).toHaveBeenCalledWith({ name: 'Student One', email: 'student@example.org', userId: 'user-1' });
     expect(mocks.applicationCreate).toHaveBeenCalledWith({ data: expect.objectContaining({
       universityName: 'Example University',
       courseName: 'MSc Data Science',
+      courseId: 'CRS-1',
+      universityId: 'UNI-1',
       intake: '',
       country: 'Australia',
       level: '',
     }) });
+    expect(mocks.studentDocumentFindFirst).toHaveBeenCalledTimes(6);
+    expect(mocks.applicationDocumentCreate).toHaveBeenCalledTimes(6);
+    expect(mocks.applicationDocumentCreate.mock.calls[0][0].data).toMatchObject({ documentId: '', status: 'REQUIRED', fileUrl: '' });
     expect(mocks.timelineCreate).toHaveBeenCalledWith({ data: expect.objectContaining({
       description: expect.stringContaining('(intake not yet confirmed)'),
     }) });
+  });
+
+  it('does not expose partner, commission, or internal workflow fields when reusing an existing application', async () => {
+    mocks.applicationFindFirst.mockResolvedValue({
+      id: 'application-row-1', applicationId: 'APP-1', applicationCode: 'APP-1',
+      universityId: 'UNI-1', universityName: 'Example University', courseId: 'CRS-1', courseName: 'MSc Data Science',
+      country: 'United Kingdom', intake: '', level: 'Master', safeStatus: 'SUBMITTED', documentStatus: 'COMPLETE',
+      stage: 'SUBMITTED_TO_B2B', isB2b: true, isB2bConfidential: true, b2bProviderId: 'private-provider-id',
+      b2bCommissionAmount: 9000, internalNotes: 'private note',
+    });
+    const response = await POST(request({ courseId: 'CRS-1' }) as never);
+    const body = await response.json();
+    expect(response.status).toBe(200);
+    expect(body.reused).toBe(true);
+    expect(body.data).not.toHaveProperty('stage');
+    expect(body.data).not.toHaveProperty('b2bProviderId');
+    expect(body.data).not.toHaveProperty('b2bCommissionAmount');
+    expect(body.data).not.toHaveProperty('internalNotes');
+    expect(JSON.stringify(body)).not.toContain('private-provider-id');
+    expect(JSON.stringify(body)).not.toContain('private note');
   });
 
   it('accepts only an intake returned by the verified official-source query', async () => {
@@ -126,15 +182,23 @@ describe('POST /api/student/applications/create-draft', () => {
     const response = await POST(request({ courseId: 'CRS-1', intakeYear: 2028, intakeMonth: 'January' }) as never);
 
     expect(response.status).toBe(422);
-    expect(mocks.studentFindFirst).not.toHaveBeenCalled();
+    expect(mocks.createCanonicalStudent).not.toHaveBeenCalled();
     expect(mocks.applicationCreate).not.toHaveBeenCalled();
   });
 
-  it('rejects a mismatched university identifier before creating a student record', async () => {
+  it('rejects a mismatched university identifier before linking a student record', async () => {
     const response = await POST(request({ courseId: 'CRS-1', universityId: 'UNI-OTHER' }) as never);
 
     expect(response.status).toBe(400);
-    expect(mocks.studentFindFirst).not.toHaveBeenCalled();
+    expect(mocks.createCanonicalStudent).not.toHaveBeenCalled();
+    expect(mocks.applicationCreate).not.toHaveBeenCalled();
+  });
+
+  it('does not fabricate a profile when the verified account name/email is missing', async () => {
+    mocks.auth.mockReturnValue({ userId: 'user-1', email: '', name: '', roles: ['STUDENT'] });
+    const response = await POST(request({ courseId: 'CRS-1' }) as never);
+    expect(response.status).toBe(422);
+    expect(mocks.createCanonicalStudent).not.toHaveBeenCalled();
     expect(mocks.applicationCreate).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { getWhatsAppAccessToken, getWhatsAppGraphUrl, getWhatsAppGraphVersion } from '@/lib/whatsapp-config';
 
 export const MAX_WHATSAPP_INBOUND_FILE_BYTES = 20 * 1024 * 1024;
 
@@ -92,13 +93,14 @@ export async function downloadWhatsAppInboundMedia(
   expectedMimeType: string,
   fetcher: typeof fetch = fetch,
 ): Promise<WhatsAppInboundMedia> {
-  const token = process.env.WHATSAPP_ACCESS_TOKEN || process.env.WHATSAPP_TOKEN;
-  const apiVersion = process.env.WHATSAPP_API_VERSION || process.env.WHATSAPP_GRAPH_API_VERSION || 'v22.0';
+  const token = getWhatsAppAccessToken();
+  const apiVersion = getWhatsAppGraphVersion();
+  const metadataUrl = getWhatsAppGraphUrl(encodeURIComponent(mediaId));
   if (!token) throw new Error('WHATSAPP_MEDIA_TOKEN_NOT_CONFIGURED');
-  if (!/^v\d{1,2}\.\d{1,2}$/.test(apiVersion)) throw new Error('WHATSAPP_API_VERSION_INVALID');
+  if (!apiVersion || !metadataUrl) throw new Error('WHATSAPP_API_VERSION_INVALID');
   if (!/^[A-Za-z0-9_.:-]{1,200}$/.test(mediaId)) throw new Error('MEDIA_ID_INVALID');
 
-  const metadataResponse = await fetcher(`https://graph.facebook.com/${apiVersion}/${encodeURIComponent(mediaId)}`, {
+  const metadataResponse = await fetcher(metadataUrl, {
     headers: { Authorization: `Bearer ${token}` },
     signal: AbortSignal.timeout(15_000),
     redirect: 'error',

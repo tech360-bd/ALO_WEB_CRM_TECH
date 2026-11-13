@@ -94,15 +94,15 @@ export function ImageCard({ image, imageAlt, title, description, ctaLabel, onCta
 }) {
   return (
     <AloCardBase onClick={onClick} className={className}>
+      {/* Master §09 image card: the photograph keeps its own contrast — the
+          title sits underneath in the white information area, never on top of
+          a dark scrim. */}
       <div className="relative h-48 overflow-hidden bg-[var(--alo-gray-light)]">
         <img src={image} alt={imageAlt} className="alo-card-img size-full object-cover" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-3 left-4 right-4">
-          <h3 className="text-lg font-bold text-white drop-shadow-md">{title}</h3>
-        </div>
       </div>
       <CardContent className="p-5">
-        {description && <p className="text-sm text-[var(--alo-text-secondary)]">{description}</p>}
+        <h3 className="text-lg font-bold text-[var(--alo-text)]">{title}</h3>
+        {description && <p className="mt-1 text-sm text-[var(--alo-text-secondary)]">{description}</p>}
         {ctaLabel && (
           <Button variant="alo" size="sm" className="alo-card-cta mt-3 w-full" onClick={onCta}>
             {ctaLabel}
@@ -207,7 +207,7 @@ export function CourseCard({ title, university, level, duration, tuition, intake
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--alo-blue-soft)] text-xs font-bold text-[var(--alo-blue)]">
                 {matchScore}%
               </div>
-              <p className="mt-0.5 text-[10px] text-[var(--alo-muted)]">AI Match</p>
+              <p className="mt-0.5 text-[11px] text-[var(--alo-muted)]">AI Match</p>
             </div>
           )}
         </div>
@@ -287,22 +287,25 @@ export function CountryCard({ name, flag, image, universityCount, courseCount, p
 }) {
   return (
     <AloCardBase onClick={onView} accent className={className}>
+      {/* Master §09 image card: photograph on top, name + metadata in the
+          white information area. No dark scrim, no text over photography. */}
       <div className="relative h-40 overflow-hidden bg-[var(--alo-gray-light)]">
         {image ? (
           <img src={image} alt={`${name} — study abroad destination`} className="alo-card-img size-full object-cover" loading="lazy" />
         ) : (
-          <div className="flex size-full items-center justify-center bg-alo-gradient">
-            <span className="text-5xl">{flag || "🌍"}</span>
+          <div className="flex size-full items-center justify-center bg-[var(--alo-brand-pale)]">
+            <Icon name="Globe" className="size-10 text-[var(--alo-brand)]" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        {flag && <span className="absolute left-3 top-3 text-3xl drop-shadow-lg">{flag}</span>}
-        <div className="absolute bottom-2 left-3 right-3">
-          <h3 className="text-lg font-black text-white drop-shadow-md">{name}</h3>
-        </div>
+        {flag && (
+          <span className="absolute left-3 top-3 rounded-lg border border-[var(--alo-border)] bg-white/95 px-2 py-0.5 text-base leading-none">
+            {flag}
+          </span>
+        )}
       </div>
       <CardContent className="p-4">
-        <div className="grid grid-cols-2 gap-2 text-xs">
+        <h3 className="text-base font-bold text-[var(--alo-text)]">{name}</h3>
+        <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
           {universityCount !== undefined && (
             <div className="rounded-lg bg-[var(--alo-gray-light)] p-2">
               <p className="caption-text">Universities</p>
@@ -366,7 +369,7 @@ export function LeadCard({ leadId, name, destination, course, intake, aiMatch, l
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs text-[var(--alo-muted)]">{leadId}</span>
               {isHot && (
-                <Badge variant="orange" className="gap-1 text-[10px]">
+                <Badge variant="orange" className="gap-1 text-[11px]">
                   <Icon name="Flame" className="size-2.5" />HOT
                 </Badge>
               )}
@@ -400,7 +403,7 @@ export function LeadCard({ leadId, name, destination, course, intake, aiMatch, l
           </div>
         )}
         <div className="alo-card-cta mt-3 flex gap-1.5">
-          <Button size="sm" variant="outline" onClick={onOpen} className="flex-1 text-xs">Open</Button>
+          <Button size="sm" variant="outline" onClick={onOpen} className="flex-1 ">Open</Button>
           <Button size="icon" variant="ghost" onClick={onWhatsApp} className="size-8 text-[var(--alo-success)]" aria-label="WhatsApp"><Icon name="MessageCircle" className="size-4" /></Button>
           <Button size="icon" variant="ghost" onClick={onAssign} className="size-8 text-[var(--alo-blue)]" aria-label="Assign"><Icon name="UserPlus" className="size-4" /></Button>
         </div>
@@ -433,7 +436,7 @@ export function StudentCard({ name, studentId, avatar, destination, course, stag
             <p className="text-sm font-bold text-[var(--alo-text)] truncate">{name}</p>
             <p className="font-mono text-xs text-[var(--alo-muted)]">{studentId}</p>
           </div>
-          {stage && <Badge variant="blue" className="text-[10px]">{stage}</Badge>}
+          {stage && <Badge variant="blue" className="text-[11px]">{stage}</Badge>}
         </div>
         <div className="mt-3 space-y-1 text-xs">
           {destination && <div className="flex items-center gap-1.5"><Icon name="Globe" className="size-3 text-[var(--alo-muted)]" /><span className="text-[var(--alo-text-secondary)]">{destination}</span></div>}
@@ -522,7 +525,7 @@ export function ApplicationCard({ applicationId, university, course, stage, stat
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <span className="font-mono text-xs text-[var(--alo-muted)]">{applicationId}</span>
-          {status && <Badge variant={status === "APPROVED" ? "success" : status === "REJECTED" ? "danger" : "info"} className="text-[10px]">{status}</Badge>}
+          {status && <Badge variant={status === "APPROVED" ? "success" : status === "REJECTED" ? "danger" : "info"} className="text-[11px]">{status}</Badge>}
         </div>
         <p className="mt-1 text-sm font-bold text-[var(--alo-text)]">{university}</p>
         <p className="text-xs text-[var(--alo-muted)]">{course}</p>
@@ -570,7 +573,7 @@ export function AIRecommendCard({ title, recommendation, confidence, reasoning, 
           </div>
           {confidence !== undefined && (
             <div className="shrink-0 text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--alo-muted)]">Confidence</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-muted)]">Confidence</p>
               <p className={cn("text-sm font-bold", confidence >= 80 ? "text-[var(--alo-success)]" : confidence >= 50 ? "text-[var(--alo-warning)]" : "text-[var(--alo-danger)]")}>{confidence}%</p>
             </div>
           )}

@@ -14,12 +14,12 @@ import {
 } from 'lucide-react';
 
 const CHANNEL_ICONS: Record<string, React.ReactNode> = {
-  whatsapp: <Zap className="w-3.5 h-3.5 text-emerald-500" />,
-  facebook: <Facebook className="w-3.5 h-3.5 text-blue-600" />,
-  instagram: <Instagram className="w-3.5 h-3.5 text-pink-500" />,
-  email: <Mail className="w-3.5 h-3.5 text-amber-500" />,
-  live_chat: <Globe className="w-3.5 h-3.5 text-blue-400" />,
-  sms: <Phone className="w-3.5 h-3.5 text-slate-500" />,
+  whatsapp: <Zap className="w-3.5 h-3.5 text-crm-success-text" />,
+  facebook: <Facebook className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
+  instagram: <Instagram className="w-3.5 h-3.5 text-crm-danger-text" />,
+  email: <Mail className="w-3.5 h-3.5 text-crm-warning-text" />,
+  live_chat: <Globe className="w-3.5 h-3.5 text-[var(--alo-brand)]" />,
+  sms: <Phone className="w-3.5 h-3.5 text-[var(--alo-text-muted)]" />,
 };
 
 interface SummaryData {
@@ -85,9 +85,9 @@ export default function MorningSummaryView() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-64 text-slate-400">
+      <div className="flex items-center justify-center min-h-64 text-[var(--alo-text-muted)]">
         <div className="text-center space-y-3">
-          <div className="w-8 h-8 border-2 border-[#0057B8] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-2 border-[var(--alo-brand)] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs">Loading your briefing...</p>
         </div>
       </div>
@@ -97,9 +97,9 @@ export default function MorningSummaryView() {
   if (error) {
     return (
       <div className="p-8 text-center">
-        <AlertTriangle className="w-8 h-8 text-[#EF4444] mx-auto mb-2" />
-        <p className="text-sm font-medium text-[#EF4444]">{error}</p>
-        <button onClick={fetchSummary} className="mt-3 text-xs text-[#0057B8] hover:underline">Retry</button>
+        <AlertTriangle className="w-8 h-8 text-[var(--alo-error)] mx-auto mb-2" />
+        <p className="text-sm font-medium text-[var(--alo-error)]">{error}</p>
+        <button onClick={fetchSummary} className="mt-3 text-xs text-[var(--alo-brand)] hover:underline">Retry</button>
       </div>
     );
   }
@@ -118,12 +118,12 @@ export default function MorningSummaryView() {
       {/* Greeting header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center">
-            <Sun className="w-8 h-8 text-amber-500" />
+          <div className="w-14 h-14 bg-crm-warning-bg rounded-2xl flex items-center justify-center">
+            <Sun className="w-8 h-8 text-crm-warning-text" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[#0F172A]">{greeting()} ☀️</h1>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h1 className="text-2xl font-bold text-[var(--alo-text)]">{greeting()} ☀️</h1>
+            <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">
               Daily briefing • {new Date(summary.generatedAt).toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'short' })}
               {' '}• Scope: {summary.scope === 'all' ? 'All Teams' : 'Your Assignments'}
             </p>
@@ -131,7 +131,7 @@ export default function MorningSummaryView() {
         </div>
         <button
           onClick={fetchSummary}
-          className="p-2.5 rounded-xl bg-white border border-[#E2E8F0] hover:bg-[#F8FAFC] transition text-slate-400"
+          className="p-2.5 rounded-xl bg-white border border-[var(--alo-border)] hover:bg-[var(--alo-page)] transition text-[var(--alo-text-muted)]"
         >
           <RefreshCw className="w-4 h-4" />
         </button>
@@ -141,57 +141,57 @@ export default function MorningSummaryView() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           {
-            icon: <MessageSquare className="w-6 h-6 text-[#0057B8]" />,
+            icon: <MessageSquare className="w-6 h-6 text-[var(--alo-brand)]" />,
             value: summary.overnight.newConversations,
             label: 'New Conversations',
-            bg: 'bg-blue-50',
+            bg: 'bg-[var(--alo-brand-pale)]',
           },
           {
-            icon: <AlertTriangle className="w-6 h-6 text-[#E8501A]" />,
+            icon: <AlertTriangle className="w-6 h-6 text-[var(--alo-cta)]" />,
             value: summary.overnight.highPriority,
             label: 'High Priority',
-            bg: 'bg-orange-50',
+            bg: 'bg-[var(--alo-cta-soft)]',
           },
           {
-            icon: <FileText className="w-6 h-6 text-amber-500" />,
+            icon: <FileText className="w-6 h-6 text-crm-warning-text" />,
             value: summary.pendingActions.ocrReviewRequired,
             label: 'OCR Reviews',
-            bg: 'bg-amber-50',
+            bg: 'bg-crm-warning-bg',
           },
           {
-            icon: <Clock className="w-6 h-6 text-[#EF4444]" />,
+            icon: <Clock className="w-6 h-6 text-[var(--alo-error)]" />,
             value: summary.pendingActions.overdueReplies,
             label: 'Overdue Replies',
-            bg: 'bg-red-50',
+            bg: 'bg-crm-danger-bg',
           },
         ].map((kpi, i) => (
           <div key={i} className={`${kpi.bg} rounded-2xl p-4 border border-white text-center`}>
             <div className="flex justify-center mb-2">{kpi.icon}</div>
-            <div className="text-3xl font-extrabold text-[#0F172A]">{kpi.value}</div>
-            <div className="text-[10px] text-slate-500 mt-0.5 font-medium">{kpi.label}</div>
+            <div className="text-3xl font-extrabold text-[var(--alo-text)]">{kpi.value}</div>
+            <div className="text-[11px] text-[var(--alo-text-muted)] mt-0.5 font-medium">{kpi.label}</div>
           </div>
         ))}
       </div>
 
       {/* Urgent conversations */}
       {summary.topPriorityConversations.length > 0 && (
-        <div className="bg-white border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm">
-          <div className="px-5 py-3.5 border-b border-[#E2E8F0] flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-[#E8501A]" />
-            <h2 className="font-bold text-sm text-[#0F172A]">Urgent / High Priority Conversations</h2>
-            <span className="ml-auto text-xs font-bold text-[#E8501A] bg-red-50 px-2 py-0.5 rounded-full">
+        <div className="bg-white border border-[var(--alo-border)] rounded-2xl overflow-hidden shadow-sm">
+          <div className="px-5 py-3.5 border-b border-[var(--alo-border)] flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-[var(--alo-cta)]" />
+            <h2 className="font-bold text-sm text-[var(--alo-text)]">Urgent / High Priority Conversations</h2>
+            <span className="ml-auto text-xs font-bold text-[var(--alo-cta)] bg-crm-danger-bg px-2 py-0.5 rounded-full">
               {summary.topPriorityConversations.length} cases
             </span>
           </div>
-          <div className="divide-y divide-[#E2E8F0]">
+          <div className="divide-y divide-[var(--alo-border)]">
             {summary.topPriorityConversations.map((conv) => (
-              <div key={conv.id} className="flex items-center gap-3 px-5 py-3 hover:bg-[#F8FAFC] transition">
-                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-sm font-bold text-red-700">
+              <div key={conv.id} className="flex items-center gap-3 px-5 py-3 hover:bg-[var(--alo-page)] transition">
+                <div className="w-8 h-8 bg-crm-danger-bg rounded-full flex items-center justify-center text-sm font-bold text-crm-danger-text">
                   {(conv.name || 'U')[0].toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-xs text-[#0F172A]">{conv.name}</div>
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1.5">
+                  <div className="font-semibold text-xs text-[var(--alo-text)]">{conv.name}</div>
+                  <div className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1.5">
                     {CHANNEL_ICONS[conv.channel]}
                     <span className="capitalize">{conv.channel}</span>
                     {conv.country && <><span>•</span><span>{conv.country}</span></>}
@@ -199,12 +199,12 @@ export default function MorningSummaryView() {
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <div className={`text-[9px] font-bold px-2 py-0.5 rounded-full mb-1 ${
-                    conv.priority === 'urgent' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-700'
+                  <div className={`text-[11px] font-bold px-2 py-0.5 rounded-full mb-1 ${
+                    conv.priority === 'urgent' ? 'bg-crm-danger-bg text-crm-danger-text' : 'bg-crm-warning-bg text-crm-warning-text'
                   }`}>
                     {conv.priority.toUpperCase()}
                   </div>
-                  <div className="text-[9px] text-slate-400">
+                  <div className="text-[11px] text-[var(--alo-text-muted)]">
                     {new Date(conv.lastAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -216,21 +216,21 @@ export default function MorningSummaryView() {
 
       {/* Channel breakdown */}
       {Object.keys(summary.overnight.byChannel).length > 0 && (
-        <div className="bg-white border border-[#E2E8F0] rounded-2xl p-5 shadow-sm">
+        <div className="bg-white border border-[var(--alo-border)] rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="w-4 h-4 text-[#0057B8]" />
-            <h2 className="font-bold text-sm text-[#0F172A]">Overnight Channel Breakdown</h2>
+            <BarChart3 className="w-4 h-4 text-[var(--alo-brand)]" />
+            <h2 className="font-bold text-sm text-[var(--alo-text)]">Overnight Channel Breakdown</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {Object.entries(summary.overnight.byChannel)
               .sort(([, a], [, b]) => (b as number) - (a as number))
               .map(([channel, count]) => (
-                <div key={channel} className="flex items-center justify-between bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-3 py-2.5">
+                <div key={channel} className="flex items-center justify-between bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl px-3 py-2.5">
                   <div className="flex items-center gap-1.5">
-                    {CHANNEL_ICONS[channel] || <Globe className="w-3.5 h-3.5 text-slate-400" />}
-                    <span className="text-xs font-medium capitalize text-[#0F172A]">{channel}</span>
+                    {CHANNEL_ICONS[channel] || <Globe className="w-3.5 h-3.5 text-[var(--alo-text-muted)]" />}
+                    <span className="text-xs font-medium capitalize text-[var(--alo-text)]">{channel}</span>
                   </div>
-                  <span className="text-sm font-extrabold text-[#0057B8]">{count}</span>
+                  <span className="text-sm font-extrabold text-[var(--alo-brand)]">{count}</span>
                 </div>
               ))}
           </div>
@@ -239,36 +239,36 @@ export default function MorningSummaryView() {
 
       {/* Pending actions summary */}
       {totalActions > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+        <div className="bg-crm-warning-bg border border-crm-warning-border rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Bell className="w-4 h-4 text-amber-600" />
-            <h2 className="font-bold text-sm text-amber-900">
+            <Bell className="w-4 h-4 text-crm-warning-text" />
+            <h2 className="font-bold text-sm text-crm-warning-text">
               {totalActions} Pending Action{totalActions !== 1 ? 's' : ''} Required
             </h2>
           </div>
           <div className="space-y-2">
             {summary.pendingActions.ocrReviewRequired > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-800">OCR documents awaiting human review</span>
-                <span className="font-bold text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full">{summary.pendingActions.ocrReviewRequired}</span>
+                <span className="text-crm-warning-text">OCR documents awaiting human review</span>
+                <span className="font-bold text-crm-warning-text bg-crm-warning-bg px-2 py-0.5 rounded-full">{summary.pendingActions.ocrReviewRequired}</span>
               </div>
             )}
             {summary.pendingActions.approvalsPending > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-800">Approval requests pending</span>
-                <span className="font-bold text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full">{summary.pendingActions.approvalsPending}</span>
+                <span className="text-crm-warning-text">Approval requests pending</span>
+                <span className="font-bold text-crm-warning-text bg-crm-warning-bg px-2 py-0.5 rounded-full">{summary.pendingActions.approvalsPending}</span>
               </div>
             )}
             {summary.pendingActions.overdueReplies > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-800">Conversations with overdue replies (4h+)</span>
-                <span className="font-bold text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full">{summary.pendingActions.overdueReplies}</span>
+                <span className="text-crm-warning-text">Conversations with overdue replies (4h+)</span>
+                <span className="font-bold text-crm-warning-text bg-crm-warning-bg px-2 py-0.5 rounded-full">{summary.pendingActions.overdueReplies}</span>
               </div>
             )}
             {summary.pendingActions.contentApprovalsPending > 0 && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-800">Social content pending approval</span>
-                <span className="font-bold text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full">{summary.pendingActions.contentApprovalsPending}</span>
+                <span className="text-crm-warning-text">Social content pending approval</span>
+                <span className="font-bold text-crm-warning-text bg-crm-warning-bg px-2 py-0.5 rounded-full">{summary.pendingActions.contentApprovalsPending}</span>
               </div>
             )}
           </div>
@@ -276,11 +276,11 @@ export default function MorningSummaryView() {
       )}
 
       {totalActions === 0 && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 flex items-center gap-3">
-          <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0" />
+        <div className="bg-crm-success-bg border border-crm-success-border rounded-2xl p-5 flex items-center gap-3">
+          <CheckCircle2 className="w-6 h-6 text-crm-success-text flex-shrink-0" />
           <div>
-            <p className="text-sm font-bold text-emerald-900">All clear!</p>
-            <p className="text-xs text-emerald-700">No pending actions. You are fully up to date.</p>
+            <p className="text-sm font-bold text-crm-success-text">All clear!</p>
+            <p className="text-xs text-crm-success-text">No pending actions. You are fully up to date.</p>
           </div>
         </div>
       )}

@@ -354,7 +354,7 @@ export default function MarketingAuditAccessView() {
         className={cn(
           'text-xs',
           isFull
-            ? 'bg-violet-100 text-violet-700 hover:bg-violet-100'
+            ? 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]'
             : 'bg-sky-100 text-sky-700 hover:bg-sky-100',
         )}
       >
@@ -366,11 +366,11 @@ export default function MarketingAuditAccessView() {
 
   const statusBadge = (status: string) => {
     const map: Record<string, { cls: string; label: string }> = {
-      ACTIVE: { cls: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100', label: 'Active' },
-      REVOKED: { cls: 'bg-gray-100 text-gray-600 hover:bg-gray-100', label: 'Revoked' },
-      SUSPENDED: { cls: 'bg-red-100 text-red-700 hover:bg-red-100', label: 'Suspended' },
+      ACTIVE: { cls: 'bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg', label: 'Active' },
+      REVOKED: { cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hover:bg-[var(--alo-surface-muted)]', label: 'Revoked' },
+      SUSPENDED: { cls: 'bg-crm-danger-bg text-crm-danger-text hover:bg-crm-danger-bg', label: 'Suspended' },
     };
-    const match = map[status] || { cls: 'bg-gray-100 text-gray-600', label: status || 'Unknown' };
+    const match = map[status] || { cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]', label: status || 'Unknown' };
     return <Badge variant="secondary" className={cn('text-xs', match.cls)}>{match.label}</Badge>;
   };
 
@@ -514,7 +514,7 @@ export default function MarketingAuditAccessView() {
                               <>
                                 <span>{log.userName || 'User'}</span>
                                 {log.role ? (
-                                  <Badge variant="outline" className="ml-1 text-[10px]">{log.role}</Badge>
+                                  <Badge variant="outline" className="ml-1 text-[11px]">{log.role}</Badge>
                                 ) : null}
                               </>
                             ) : (
@@ -522,7 +522,7 @@ export default function MarketingAuditAccessView() {
                             )}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-[11px]">
                               {log.source === 'marketingAuditLog' ? 'Marketing audit' : 'System audit'}
                             </Badge>
                           </TableCell>
@@ -670,7 +670,7 @@ export default function MarketingAuditAccessView() {
                           <p className="text-destructive text-sm">{saveError}</p>
                         )}
                         {saveMessage && (
-                          <p className="text-sm text-emerald-600">{saveMessage}</p>
+                          <p className="text-sm text-crm-success-text">{saveMessage}</p>
                         )}
                       </div>
 
@@ -752,7 +752,7 @@ export default function MarketingAuditAccessView() {
                               {permissions.length > 0 ? (
                                 <div className="flex flex-wrap gap-1">
                                   {permissions.map((permission) => (
-                                    <Badge key={permission} variant="outline" className="text-[10px]">
+                                    <Badge key={permission} variant="outline" className="text-[11px]">
                                       {permission}
                                     </Badge>
                                   ))}

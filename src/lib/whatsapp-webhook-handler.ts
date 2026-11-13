@@ -6,7 +6,8 @@
 
 import { allocateIdentifierCommitted } from '@/lib/identity/student-id';
 import crypto from 'crypto';
-import { normalizeBdPhone } from '@/lib/whatsapp-number-pool';
+import { MAIN_NUMBER, normalizeBdPhone } from '@/lib/whatsapp-number-pool';
+import { sendWhatsAppMessage } from '@/lib/whatsapp-cloud-api';
 
 // ── Phone normalization ──
 // Canonical: normalizeBdPhone (BD-specific, 880 prefix, no +) — used by main webhook, number-pool, tests
@@ -58,26 +59,16 @@ export function verifySignatureStrict(rawBody: string, signature: string | null)
   return { ok: true };
 }
 
-// ── Outbound API (main webhook) ──
+// ── Outbound API compatibility wrapper (uses the verified central sender) ──
 export async function sendOutboundViaApi(recipientPhone: string, text: string): Promise<{ messageId: string | null; apiResponse: any }> {
-  const token = process.env.WHATSAPP_TOKEN || process.env.WHATSAPP_ACCESS_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  if (!token || !phoneNumberId) {
-    return { messageId: null, apiResponse: { error: 'WHATSAPP_TOKEN or WHATSAPP_PHONE_NUMBER_ID not configured' } };
-  }
-  const payload = { messaging_product: 'whatsapp', to: recipientPhone, type: 'text', text: { body: text } };
-  try {
-    const res = await fetch(`https://graph.facebook.com/v20.0/${phoneNumberId}/messages`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    const json = await res.json();
-    const messageId = json?.messages?.[0]?.id || null;
-    return { messageId, apiResponse: json };
-  } catch (err: any) {
-    return { messageId: null, apiResponse: { error: err.message } };
-  }
+  const result = await sendWhatsAppMessage({
+    to: recipientPhone,
+    text,
+    purpose: 'SERVICE',
+    actorId: 'system',
+    senderNumber: MAIN_NUMBER,
+  });
+  return { messageId: result.messageId, apiResponse: result.success ? { status: 'accepted' } : { error: result.error || 'WHATSAPP_SEND_FAILED' } };
 }
 
 // ── Message content extraction (main webhook — comprehensive, 10 types) ──
@@ -122,7 +113,7 @@ export function detectPriority(intent: string, text: string): string {
 }
 
 // ── Student ID generation (main webhook) ──
-// Sequence-allocated AE-YYYYNNNNN identifier (committed, never reused).
+// Sequence-allocated AE-YYYYNNNN identifier for new students (committed, never reused).
 export async function generateStudentId(_db?: unknown): Promise<string> {
   return allocateIdentifierCommitted('AE');
 }

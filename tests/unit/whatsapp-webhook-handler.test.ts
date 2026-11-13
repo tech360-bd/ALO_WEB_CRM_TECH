@@ -1,4 +1,14 @@
-const allocateMock = vi.hoisted(() => vi.fn(async () => 'AE-202600001'));
+// Deployment configuration fixture: the handler re-exports the sender registry,
+// whose numbers come from operator configuration, not source constants.
+const allocateMock = vi.hoisted(() => {
+  process.env.ALO_MAIN_WHATSAPP_NUMBER = '01805020100';
+  process.env.ALO_COO_WHATSAPP_NUMBER = '01805020101';
+  process.env.ALO_EMPLOYEE_WHATSAPP_NUMBERS = Array.from(
+    { length: 18 },
+    (_, index) => `0${1805020102 + index}`,
+  ).join(',');
+  return vi.fn(async () => 'AE-20260001');
+});
 vi.mock('@/lib/identity/student-id', () => ({ allocateIdentifierCommitted: allocateMock }));
 import { describe, it, expect, vi } from 'vitest';
 
@@ -81,11 +91,11 @@ describe('Consolidated WhatsApp Webhook Handler — lossless', () => {
     expect(detectPriority('GENERAL', 'hello')).toBe('normal');
   });
 
-  it('generateStudentId delegates to the sequence allocator and returns AE-YYYYNNNNN', async () => {
+  it('generateStudentId delegates to the sequence allocator and returns AE-YYYYNNNN', async () => {
     allocateMock.mockClear();
     const id = await generateStudentId({});
     expect(allocateMock).toHaveBeenCalledWith('AE');
-    expect(id).toMatch(/^AE-\d{4}\d{5}$/);
+    expect(id).toMatch(/^AE-\d{4}\d{4}$/);
   });
 
   it('re-exports number-pool and AI helpers', async () => {

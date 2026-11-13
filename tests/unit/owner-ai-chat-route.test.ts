@@ -1,0 +1,21 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { NextRequest, NextResponse } from 'next/server';
+const m = vi.hoisted(() => ({ auth: vi.fn(), access: vi.fn(), read: vi.fn(), run: vi.fn() }));
+vi.mock('@/lib/auth-middleware', () => ({ authenticateRequest: m.auth }));
+vi.mock('@/lib/access-control/central-security-engine', () => ({ validateRequestAccess: m.access }));
+vi.mock('@/lib/ai-providers/owner-chat', () => ({ readOwnerChat: m.read, runOwnerChat: m.run }));
+import { GET, POST } from '@/app/api/admin/ai-chat/route';
+const body = { requestId: 'f3696e3b-87b8-42cb-b2ce-9b7a9f612321', conversationId: 'c38e384f-cd8e-4f4f-b3ae-782e2e543212', provider: 'local', model: 'configured', message: 'Help me draft a plan.' };
+const request = (payload = body, origin = 'https://alo.test') => new NextRequest('https://alo.test/api/admin/ai-chat', { method: 'POST', headers: { 'Content-Type': 'application/json', origin }, body: JSON.stringify(payload) });
+beforeEach(() => { vi.resetAllMocks(); vi.stubEnv('UNOROUTER_ENABLED','false'); vi.stubEnv('NEXTAUTH_URL','https://alo.test'); m.auth.mockResolvedValue({ userId: 'owner', actorUserId: 'owner', userType: 'SUPER_ADMIN', roles: ['SUPER_ADMIN'] }); m.access.mockResolvedValue({ allowed: true }); m.run.mockResolvedValue({ status: 'COMPLETED', reply: 'Saved reply' }); m.read.mockResolvedValue({ conversationId: null, messages: [], conversations: [] }); });
+describe('owner AI chat API authorization', () => {
+  it.each(['STUDENT','PARTNER','ADMIN','HR_MANAGER','EMPLOYEE'])('rejects %s before reading history or contacting a model', async role => { m.auth.mockResolvedValue({ userId: 'other', actorUserId: 'other', userType: role, roles: [role] }); expect((await POST(request())).status).toBe(403); expect((await GET(new NextRequest('https://alo.test/api/admin/ai-chat'))).status).toBe(403); expect(m.read).not.toHaveBeenCalled(); expect(m.run).not.toHaveBeenCalled(); });
+  it('does not trust a master role attached to a student', async () => { m.auth.mockResolvedValue({ userId: 'student', actorUserId: 'student', userType: 'STUDENT', roles: ['SUPER_ADMIN'] }); expect((await POST(request())).status).toBe(403); });
+  it('requires authentication', async () => { m.auth.mockResolvedValue(NextResponse.json({ error: 'Unauthorized' }, { status: 401 })); expect((await POST(request())).status).toBe(401); });
+  it('denies acting-as sessions', async () => { m.auth.mockResolvedValue({ userId: 'owner', actorUserId: 'owner', actingAsSessionId: 'acting-session', userType: 'SUPER_ADMIN', roles: ['SUPER_ADMIN'] }); expect((await POST(request())).status).toBe(403); });
+  it('checks current central database authority', async () => { m.access.mockResolvedValue({ allowed: false }); expect((await POST(request())).status).toBe(403); expect(m.run).not.toHaveBeenCalled(); });
+  it('rejects cross-origin requests', async () => { expect((await POST(request(body, 'https://other.test'))).status).toBe(403); expect(m.run).not.toHaveBeenCalled(); });
+  it.each([{ ...body, role: 'SUPER_ADMIN' }, { ...body, apiKey: 'never-accept' }, { ...body, endpoint: 'https://other.test' }, { ...body, tools: ['shell'] }, { ...body, provider: 'openrouter' }, { ...body, message: 'x'.repeat(4001) }])('rejects client authority, secrets, endpoints, tools and invalid messages', async payload => { expect((await POST(request(payload))).status).toBe(400); expect(m.run).not.toHaveBeenCalled(); });
+  it('does not cache chat responses', async () => { const response = await POST(request()); expect(response.status).toBe(200); expect(response.headers.get('cache-control')).toBe('private, no-store'); });
+  it('never turns a failed provider into a fake successful reply', async () => { m.run.mockRejectedValue(new Error('private provider error')); const response = await POST(request()); expect(response.status).toBe(503); expect(await response.text()).not.toContain('private provider error'); });
+});

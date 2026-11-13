@@ -1,84 +1,40 @@
-# Bangla Intake AI — ID-First (Website / WhatsApp / Webchat / Facebook) — Super-Admin Managed
+# Student Intake and AI Safety — Current Implementation Contract
 
-One brain for all channels. Fulfills Bengali spec: **website / counselor WhatsApp / web chat → first asks Student ID; if provided informs independent submission without help; handles Bangla/English/docs/voice → analyzes → logical answer + university/country suggestion; office-hours human-like + retains conversation memory; sequential per-question; managed via Super-Admin Dashboard.**
+**Reviewed:** 2026-10-19 (Asia/Dhaka)
+**Status:** Implementation notes only; this is not a production-readiness certification. External credentials, production deployment, and provider delivery have not been verified.
 
-## Architecture
-- `src/lib/ai-agents/student-intake-agent.ts` — state machine `ASK_ID → VERIFYING → INFORMED_INDEPENDENT → COUNSELING`, canonical `AE-YYYYXXXXXX` validation, Bangla/English/Banglish detection, office-hours `Asia/Dhaka 10:00-19:00 Sat-Thu`, `AgentMemory` (per `senderId+channel`) + `TimelineEvent` fallback, sequential (`history.slice(-20)`, caller must await), RAG via `aiGateway` (Groq real) + rule fallback with country suggestions.
-- `src/app/api/ai/student-intake/route.ts` — unified endpoint `POST` (website/webchat/any) + `GET` contract. Public, no auth required; officeHours flag.
-- `src/app/api/whatsapp/webhook/route.ts` — patched to delegate `text|image|document|audio` → `handleStudentIntake` (ID-first) before legacy reply, with STOP respect, idempotency, media ingestion preserved, outbound via Graph.
-- `src/app/api/facebook/webhook/route.ts` — extended: page `object==='page'` messaging events `sender.id`, `mid` dedupe, same intake brain, outbound via Graph `me/messages`.
-- `src/app/api/admin/ai/student-intake/route.ts` — Super-Admin governance: `GET` health, `PUT` (SUPER_ADMIN only) enable/disable/prompt, audit logged.
-- `src/components/admin/StudentIntakeControlPanel.tsx` — embedded in `EnhancedSuperAdminControlCenter`, shows channels/lang/multimodal/office, probe tester, links.
-- `src/components/ai/WebChatWidget.tsx` — embed on any page `import WebChatWidget from '@/components/ai/WebChatWidget'`; handles text + file (image/doc) + voice transcription (prompt fallback; replace with Web Speech API / Whisper as needed).
+## Public intake contract
 
-## Flow
-1) Every inbound message → `loadMemory(senderId, channel)`; if `ASK_ID` and no `AE-…` in text → reply `ask_id` (BN/EN) + office note + save.
-2) If `AE-YYYYXXXXXX` present → `verifyAndInform` via `db.student` (+ legacy) → on hit: `INFORMED_INDEPENDENT` + message *"আপনি কোনো সহায়তা ছাড়াই স্বাধীনভাবে আপনার আবেদন জমা দিতে পারবেন — My Applications → New Application"* (EN equivalent); persists `studentDbId`.
-3) Next turns → `COUNSELING`: doc/voice ack + `counselWithRag` → university/country shortlist (UK/Manchester etc. / Canada / Australia) + next step; multilingual, `history` aware, sequential.
+- `POST /api/ai/student-intake` uses a server-signed, HTTP-only session cookie (`alo_intake_session`, 30-day lifetime). Client-supplied `senderId` is accepted only for backward compatibility and is ignored as an identity or memory key.
+- A Student ID is **not authentication**. The public flow does not look up a student or reveal profile/application data. If an ID is typed, the response directs the visitor to the authenticated Student Portal; the ID is omitted from saved conversation memory.
+- Public intake does not accept or review image, video, or document uploads. Voice is only accepted when a verified transcription is supplied; otherwise the visitor is asked to type the question.
+- Public replies are deterministic, general guidance. This route has no verified, current university/visa knowledge corpus and does not claim current admission requirements. It does not make final visa/eligibility decisions, guarantee outcomes, or ask for passwords, OTPs, bank/card details, passports, or private documents.
+- Conversation memory is bounded to 20 turns and redacts common student-ID, email, phone/account-number, and credential patterns before persistence. No profile identity is inferred from a public message.
 
-## Usage
+## Relevant implementation
 
-### Website / Webchat
+- `src/lib/ai-agents/student-intake-agent.ts` — public-only deterministic response policy, language detection, signed-session memory support, and ID redaction. It does not query a student record from a typed ID.
+- `src/lib/ai-agents/intake-session.ts` — HMAC-signed session cookie. A server secret of at least 32 characters is required; the route fails closed if none is available.
+- `src/app/api/ai/student-intake/route.ts` — public intake endpoint; signed session identity is derived server-side.
+- `src/app/api/admin/ai/student-intake/route.ts` — authenticated admin health/governance endpoint. Its status reads the configured office schedule; prompt changes are not a substitute for the fixed privacy rules.
+- `src/app/api/whatsapp/webhook/route.ts` and `src/app/api/facebook/webhook/route.ts` — signed Meta webhooks. Generated intake text is saved as a human-review draft. The only automatic reply path is the configured, pre-approved static after-hours acknowledgement; it requires the persisted after-hours setting and a durable follow-up task. Delivery is recorded only after a provider message ID is returned. No live provider call was made during this work.
+- `src/lib/communication/after-hours.ts` and `src/lib/communication/business-hours-store.ts` — persisted UCC schedule and next-opening follow-up scheduling.
+
+## Office-hours policy
+
+The no-record fallback is **Asia/Dhaka, Saturday–Thursday 09:00–18:00; Friday closed**. Persisted `UccOfficeHours` rows remain authoritative. Existing stored schedules are not silently rewritten: if a legacy 10:00–19:00 schedule is present, an authorized administrator must review/save the intended schedule in CRM Settings. The office-hours UI now reads and writes the existing API and preserves per-day differences.
+
+## AI provider billing policy
+
+- `PAID_AI_API_ALLOWED=false` is the documented default in `.env.example` and `.env.production.example`.
+- Native and catalogued cloud providers are blocked before inference unless an owner explicitly sets `PAID_AI_API_ALLOWED=true`. Key presence and an advertised free tier are not treated as proof that overage billing is impossible.
+- The separate AI Workforce cloud runtime additionally requires `ALO_ENABLE_OPTIONAL_CLOUD_AI=true`. Confidential/private gateway requests remain local-only; local inference requires an operator-configured local endpoint.
+- No provider credentials were requested or tested. A production owner must review provider/model/account billing controls before enabling cloud inference.
+
+## Local verification
+
 ```bash
-curl -X POST http://localhost:3000/api/ai/student-intake \
- -H 'Content-Type: application/json' \
- -d '{"channel":"webchat","senderId":"web-123","text":"Hello"}'
-# → ask_id reply
-
-curl -X POST http://localhost:3000/api/ai/student-intake \
- -H 'Content-Type: application/json' \
- -d '{"channel":"webchat","senderId":"web-123","text":"My ID is AE-2025000123"}'
-# → verified_independent notice
-
-curl -X POST http://localhost:3000/api/ai/student-intake \
- -H 'Content-Type: application/json' \
- -d '{"channel":"webchat","senderId":"web-123","text":"UK MSc Data Science জন্য কোন ইউনিভার্সিটি ভালো?"}'
-# → Bangla counseling + 2 suggestions
-
-# Media + voice
-curl -X POST http://localhost:3000/api/ai/student-intake \
- -H 'Content-Type: application/json' \
- -d '{"channel":"website","senderId":"web-123","text":"transcript here","mediaType":"voice","mediaInfo":{"transcription":"UK visa requirement কী?"}}'
+npx vitest run tests/unit/student-intake-public-safety.test.ts tests/unit/business-hours-policy.test.ts tests/unit/ai-provider-policy.test.ts tests/unit/ai-provider-catalog.test.ts
 ```
 
-Embed widget:
-```tsx
-import WebChatWidget from '@/components/ai/WebChatWidget';
-export default function Page(){ return <WebChatWidget channel="webchat" /> }
-```
-
-### WhatsApp (Cloud API)
-Inbound `POST /api/whatsapp/webhook` already wired — no client change. Text, image, document, audio all routed via intake. First message → asks ID; ID → independent notice; thereafter counseling.
-
-### Facebook Messenger
-Inbound `POST /api/facebook/webhook` with `object:page` + `messaging[].message` routed same; outbound via `graph.facebook.com/me/messages`.
-
-### Super-Admin
-Dashboard → **Bangla Intake AI** card (inside Super Admin Control Center). Health:
-```bash
-curl -H "Authorization: Bearer $TOKEN" http://localhost:3000/api/admin/ai/student-intake
-```
-Update (SUPER_ADMIN):
-```bash
-curl -X PUT -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
-  -d '{"status":"paused","description":"Paused for exam week"}' \
-  http://localhost:3000/api/admin/ai/student-intake
-```
-
-### Office Hours
-`isOfficeHours()` Dhaka UTC+6, 10-19 Sat-Thu. Friday = after-hours banner removed but still queues; UI shows `typing sequentially…`.
-
-### Memory
-`AgentMemory { agentId: STUDENT_INTAKE_BN, key: intake:channel:senderId, value: JSON(IntakeContext), memoryType:intake }` capped 20 turns; fallback `TimelineEvent stage AI_MEMORY`.
-
-### Voice
-- WhatsApp `audio` → `transcription` field if Whisper configured (pass `mediaInfo.transcription`); else `body=[Audio]` but intake still acknowledges.
-- Web widget prompt fallback; swap with `webkitSpeechRecognition` or server Whisper + set `mediaType:voice`.
-
-## Security
-- Webhooks keep signature verification; intake inherits idempotency + archive + audit.
-- Admin governance `SUPER_ADMIN` only, audit logged `INTAKE_AGENT_UPDATE`.
-- No fake data; all replies derived from DB or AI gateway; audit via `AloAuditLog` + `PortalAuditLog`.
-
-## Related
-- Auto-create Student ID + document: `POST /api/documents/auto-upload` (multipart `file+email+name` → AE-YYYYXXXXXX + portal + Application.APPLICATION_DRAFT when `fullApplication=true`) — see `AUTO_CREATE_STUDENT_ID_GUIDE.md`.
+Do not use a real student record, contact, or live Meta destination in automated tests. Production activation also requires the normal backup/restore, migration review, Meta webhook signature/number configuration, private-storage review, and deployment/worker verification; this guide does not establish that those are complete.

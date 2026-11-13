@@ -157,13 +157,13 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
               <Icon name="GraduationCap" className="size-7" />
             </div>
             <div className="text-left">
-              <p className="text-lg font-bold leading-tight text-[#0057B8]">ALO Education</p>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="text-lg font-bold leading-tight text-[var(--alo-brand)]">ALO Education</p>
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                 Study Abroad, Done Right
               </p>
             </div>
           </button>
-          <h1 className="text-2xl font-bold text-[#0057B8] sm:text-3xl">Reset Your Password</h1>
+          <h1 className="text-2xl font-bold text-[var(--alo-brand)] sm:text-3xl">Reset Your Password</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {step === "request" && "Enter your email to receive a reset link"}
             {step === "reset" && "Enter your reset token and new password"}
@@ -174,14 +174,14 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
         {/* Stepper */}
         <div className="mb-6 flex items-center justify-center gap-2">
           <StepDot active={step === "request"} done={step !== "request"} label="1" />
-          <div className={`h-0.5 w-8 ${step !== "request" ? "bg-[#0057B8]" : "bg-[#E2E8F0]"}`} />
+          <div className={`h-0.5 w-8 ${step !== "request" ? "bg-[var(--alo-brand)]" : "bg-[var(--alo-border)]"}`} />
           <StepDot active={step === "reset"} done={step === "success"} label="2" />
-          <div className={`h-0.5 w-8 ${step === "success" ? "bg-[#0057B8]" : "bg-[#E2E8F0]"}`} />
+          <div className={`h-0.5 w-8 ${step === "success" ? "bg-[var(--alo-brand)]" : "bg-[var(--alo-border)]"}`} />
           <StepDot active={step === "success"} done={step === "success"} label="3" />
         </div>
 
         {/* Card */}
-        <Card className="rounded-2xl border-2 border-[#E2E8F0] shadow-sm">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)] shadow-sm">
           <CardContent className="pt-6">
             {/* STEP 1 — Request reset */}
             {step === "request" && (
@@ -211,7 +211,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
                 {error && (
                   <div
                     role="alert"
-                    className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+                    className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-sm text-crm-danger-text"
                   >
                     <Icon name="AlertCircle" className="mt-0.5 size-4 shrink-0" />
                     <span>{error}</span>
@@ -221,7 +221,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
                 <Button
                   type="submit"
                   disabled={requesting}
-                  className="h-12 w-full bg-[#E8501A] text-sm font-semibold text-white hover:bg-[#E8501A]/90 disabled:opacity-60"
+                  className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-white hover:bg-[var(--alo-cta)]/90 disabled:opacity-60"
                 >
                   {requesting ? (
                     <>
@@ -241,7 +241,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
                   <button
                     type="button"
                     onClick={() => onNavigate("auth-login")}
-                    className="font-semibold text-[#0057B8] hover:underline"
+                    className="font-semibold text-[var(--alo-brand)] hover:underline"
                   >
                     Sign In
                   </button>
@@ -254,19 +254,19 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
               <form onSubmit={handleReset} className="space-y-4" noValidate>
                 {/* Dev token notice */}
                 {devToken && (
-                  <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
+                  <div className="rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2.5 text-xs text-crm-warning-text">
                     <div className="flex items-center gap-1.5 font-semibold">
                       <Icon name="FlaskConical" className="size-3.5" />
                       Dev mode — token auto-filled
                     </div>
                     <div className="mt-2 flex items-center gap-2">
-                      <code className="flex-1 truncate rounded bg-white px-2 py-1 font-mono text-[11px] text-amber-900">
+                      <code className="flex-1 truncate rounded bg-white px-2 py-1 font-mono text-[11px] text-crm-warning-text">
                         {devToken}
                       </code>
                       <button
                         type="button"
                         onClick={copyToken}
-                        className="rounded-md border border-amber-300 bg-white px-2 py-1 text-[11px] font-medium text-amber-800 hover:bg-amber-100"
+                        className="rounded-md border border-crm-warning-border bg-white px-2 py-1 text-[11px] font-medium text-crm-warning-text hover:bg-crm-warning-bg"
                       >
                         {devCopied ? "Copied!" : "Copy"}
                       </button>
@@ -356,14 +356,14 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
                     />
                   </div>
                   {confirmPassword && confirmPassword !== newPassword && (
-                    <p className="text-xs text-red-600">Passwords do not match.</p>
+                    <p className="text-xs text-crm-danger-text">Passwords do not match.</p>
                   )}
                 </div>
 
                 {error && (
                   <div
                     role="alert"
-                    className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+                    className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-sm text-crm-danger-text"
                   >
                     <Icon name="AlertCircle" className="mt-0.5 size-4 shrink-0" />
                     <span>{error}</span>
@@ -373,7 +373,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
                 <Button
                   type="submit"
                   disabled={resetting}
-                  className="h-12 w-full bg-[#E8501A] text-sm font-semibold text-white hover:bg-[#E8501A]/90 disabled:opacity-60"
+                  className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-white hover:bg-[var(--alo-cta)]/90 disabled:opacity-60"
                 >
                   {resetting ? (
                     <>
@@ -408,8 +408,8 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
             {/* STEP 3 — Success */}
             {step === "success" && (
               <div className="space-y-5 text-center">
-                <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-50">
-                  <Icon name="CheckCircle2" className="size-9 text-emerald-600" />
+                <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-crm-success-bg">
+                  <Icon name="CheckCircle2" className="size-9 text-crm-success-text" />
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-foreground">Password Reset Successful</h2>
@@ -420,7 +420,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
                 <Button
                   type="button"
                   onClick={() => onNavigate("auth-login")}
-                  className="h-12 w-full bg-[#E8501A] text-sm font-semibold text-white hover:bg-[#E8501A]/90"
+                  className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-white hover:bg-[var(--alo-cta)]/90"
                 >
                   <Icon name="LogIn" className="size-4" />
                   Sign In
@@ -430,7 +430,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
 
             {/* Security note */}
             {step !== "success" && (
-              <div className="mt-6 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#0057B8]">
+              <div className="mt-6 flex items-start gap-2 rounded-lg bg-[var(--alo-brand-light)]/60 px-3 py-2 text-xs text-[var(--alo-brand)]">
                 <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0" />
                 <span>
                   Reset tokens are single-use, hashed (SHA-256), and expire after 1 hour. All
@@ -442,7 +442,7 @@ export function AuthResetPassword({ onNavigate }: AuthResetPasswordProps) {
         </Card>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          <Badge variant="outline" className="mr-1.5 border-[#E2E8F0]">
+          <Badge variant="outline" className="mr-1.5 border-[var(--alo-border)]">
             Security
           </Badge>
           We never store passwords in plain text. If you didn&apos;t request this reset, you can
@@ -458,10 +458,10 @@ function StepDot({ active, done, label }: { active: boolean; done: boolean; labe
     <div
       className={`flex size-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-colors ${
         done
-          ? "border-[#0057B8] bg-[#0057B8] text-white"
+          ? "border-[var(--alo-brand)] bg-[var(--alo-brand)] text-white"
           : active
-            ? "border-[#0057B8] bg-white text-[#0057B8]"
-            : "border-[#E2E8F0] bg-white text-muted-foreground"
+            ? "border-[var(--alo-brand)] bg-white text-[var(--alo-brand)]"
+            : "border-[var(--alo-border)] bg-white text-muted-foreground"
       }`}
       aria-label={`Step ${label}`}
     >

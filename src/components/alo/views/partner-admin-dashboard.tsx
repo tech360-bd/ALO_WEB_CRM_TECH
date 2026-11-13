@@ -240,31 +240,31 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const ROLE_BADGE_COLORS: Record<string, string> = {
-  PARTNER_SUPER_ADMIN: "bg-[#E8501A]/15 text-[#E8501A]",
-  PARTNER_COUNSELOR: "bg-[#0057B8]/15 text-[#0057B8]",
-  PARTNER_APPLICATION_ASSISTANT: "bg-violet-100 text-violet-700",
-  PARTNER_MARKETING_ASSISTANT: "bg-amber-100 text-amber-700",
-  PARTNER_DOCUMENT_ASSISTANT: "bg-emerald-100 text-emerald-700",
-  PARTNER_VIEWER: "bg-slate-100 text-slate-700",
+  PARTNER_SUPER_ADMIN: "bg-[var(--alo-cta)]/15 text-[var(--alo-cta)]",
+  PARTNER_COUNSELOR: "bg-[var(--alo-brand)]/15 text-[var(--alo-brand)]",
+  PARTNER_APPLICATION_ASSISTANT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  PARTNER_MARKETING_ASSISTANT: "bg-crm-warning-bg text-crm-warning-text",
+  PARTNER_DOCUMENT_ASSISTANT: "bg-crm-success-bg text-crm-success-text",
+  PARTNER_VIEWER: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const USER_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
-  INACTIVE: "bg-slate-100 text-slate-600",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
 };
 
 const VOUCHER_STATUS_COLORS: Record<string, string> = {
-  AVAILABLE: "bg-emerald-100 text-emerald-700",
-  USED: "bg-slate-100 text-slate-700",
-  EXPIRED: "bg-rose-100 text-rose-700",
-  CANCELLED: "bg-slate-100 text-slate-500",
+  AVAILABLE: "bg-crm-success-bg text-crm-success-text",
+  USED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  EXPIRED: "bg-crm-warning-bg text-crm-warning-text",
+  CANCELLED: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
 };
 
 const SEAT_REQ_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const SOCIAL_PLATFORM_LABELS: Record<string, string> = {
@@ -274,9 +274,9 @@ const SOCIAL_PLATFORM_LABELS: Record<string, string> = {
 };
 
 const SOCIAL_CONNECTION_COLORS: Record<string, string> = {
-  CONNECTED: "bg-emerald-100 text-emerald-700",
-  DISCONNECTED: "bg-slate-100 text-slate-600",
-  EXPIRED: "bg-rose-100 text-rose-700",
+  CONNECTED: "bg-crm-success-bg text-crm-success-text",
+  DISCONNECTED: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  EXPIRED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const BENEFIT_LABELS: Record<string, string> = {
@@ -289,12 +289,12 @@ const BENEFIT_LABELS: Record<string, string> = {
 };
 
 const MARKETING_STATUS_COLORS: Record<string, string> = {
-  DRAFT: "bg-slate-100 text-slate-700",
-  PENDING_APPROVAL: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  PENDING_APPROVAL: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
   SCHEDULED: "bg-sky-100 text-sky-700",
-  PUBLISHED: "bg-[#0057B8]/15 text-[#0057B8]",
+  PUBLISHED: "bg-[var(--alo-brand)]/15 text-[var(--alo-brand)]",
 };
 
 const FINAL_STAGES = new Set(["VISA_REFUSED", "ENROLLED", "CANCELLED"]);
@@ -406,7 +406,7 @@ function CreateUserDialog({
     <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if (!o) reset(); }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
             <Icon name="UserPlus" className="size-5" />
             Create Partner User
           </DialogTitle>
@@ -416,12 +416,12 @@ function CreateUserDialog({
         </DialogHeader>
 
         {seatError ? (
-          <div className="space-y-3 rounded-xl border-2 border-rose-200 bg-rose-50/60 p-4">
+          <div className="space-y-3 rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/60 p-4">
             <div className="flex items-start gap-2.5">
-              <Icon name="AlertTriangle" className="mt-0.5 size-5 shrink-0 text-rose-600" />
+              <Icon name="AlertTriangle" className="mt-0.5 size-5 shrink-0 text-crm-warning-text" />
               <div>
-                <p className="text-sm font-bold text-rose-700">User seat limit reached</p>
-                <p className="mt-1 text-xs text-rose-700/90">{seatError.message}</p>
+                <p className="text-sm font-bold text-crm-warning-text">User seat limit reached</p>
+                <p className="mt-1 text-xs text-[var(--alo-error)]/90">{seatError.message}</p>
                 <p className="mt-1.5 text-xs text-muted-foreground">
                   Used <strong className="tabular-nums">{seatError.used}</strong> of{" "}
                   <strong className="tabular-nums">{seatError.currentLimit}</strong> seats.
@@ -434,7 +434,7 @@ function CreateUserDialog({
               </Button>
               <Button
                 size="sm"
-                className="flex-1 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="flex-1 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
                 onClick={() => { onOpenChange(false); onRequestSeats(); }}>
                 <Icon name="Armchair" className="size-4" />
                 Request Extra Seats
@@ -479,7 +479,7 @@ function CreateUserDialog({
         {!seatError && (
           <DialogFooter>
             <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90" disabled={submitting} onClick={submit}>
+            <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={submitting} onClick={submit}>
               {submitting ? (
                 <>
                   <Icon name="Loader2" className="size-4 animate-spin" />
@@ -569,7 +569,7 @@ function GenerateVoucherDialog({
     <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if (!o) reset(); }}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
             <Icon name="Ticket" className="size-5" />
             Generate Mock Test Vouchers
           </DialogTitle>
@@ -580,12 +580,12 @@ function GenerateVoucherDialog({
 
         {createdVouchers ? (
           <div className="space-y-3">
-            <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/60 p-4">
+            <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/60 p-4">
               <div className="flex items-start gap-2.5">
-                <Icon name="CheckCircle2" className="mt-0.5 size-5 shrink-0 text-emerald-600" />
+                <Icon name="CheckCircle2" className="mt-0.5 size-5 shrink-0 text-crm-success-text" />
                 <div>
-                  <p className="text-sm font-bold text-emerald-700">Vouchers generated successfully</p>
-                  <p className="mt-1 text-xs text-emerald-700/90">
+                  <p className="text-sm font-bold text-crm-success-text">Vouchers generated successfully</p>
+                  <p className="mt-1 text-xs text-crm-success-text/90">
                     Share these codes with your student. They unlock English mock tests, interview prep, speaking practice, and document checklist.
                   </p>
                 </div>
@@ -593,9 +593,9 @@ function GenerateVoucherDialog({
             </div>
             <div className="space-y-2">
               {createdVouchers.map((v) => (
-                <div key={v.id} className="flex items-center justify-between gap-3 rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-3 py-2">
-                  <code className="font-mono text-sm font-bold text-[#0057B8]">{v.voucherCode}</code>
-                  <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">{v.testType}</Badge>
+                <div key={v.id} className="flex items-center justify-between gap-3 rounded-lg border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-3 py-2">
+                  <code className="font-mono text-sm font-bold text-[var(--alo-brand)]">{v.voucherCode}</code>
+                  <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">{v.testType}</Badge>
                 </div>
               ))}
             </div>
@@ -604,7 +604,7 @@ function GenerateVoucherDialog({
               Copy all codes
             </Button>
             <DialogFooter>
-              <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90" onClick={() => { reset(); onOpenChange(false); }}>
+              <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" onClick={() => { reset(); onOpenChange(false); }}>
                 Done
               </Button>
             </DialogFooter>
@@ -613,10 +613,10 @@ function GenerateVoucherDialog({
           <>
             <div className="space-y-4">
               {eligibleStudents.length === 0 ? (
-                <div className="rounded-xl border-2 border-dashed border-amber-200 bg-amber-50/40 p-4 text-center">
-                  <Icon name="AlertCircle" className="mx-auto size-6 text-amber-600" />
-                  <p className="mt-2 text-sm font-semibold text-amber-800">No eligible students</p>
-                  <p className="mt-1 text-xs text-amber-700/90">
+                <div className="rounded-xl border-2 border-dashed border-crm-warning-border bg-crm-warning-bg/40 p-4 text-center">
+                  <Icon name="AlertCircle" className="mx-auto size-6 text-crm-warning-text" />
+                  <p className="mt-2 text-sm font-semibold text-crm-warning-text">No eligible students</p>
+                  <p className="mt-1 text-xs text-crm-warning-text/90">
                     Vouchers only available for students with an active ALO application. No application, no voucher.
                   </p>
                 </div>
@@ -656,9 +656,9 @@ function GenerateVoucherDialog({
                   <Input id="gv-count" type="number" min={1} max={10} value={count} onChange={(e) => setCount(e.target.value)} />
                 </div>
               </div>
-              <div className="rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
+              <div className="rounded-lg border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-3 py-2.5 text-xs text-foreground/80">
                 <p className="flex items-start gap-2">
-                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                   <span>
                     Each eligible student gets <strong>3 English mock vouchers</strong> + 1 interview prep + 1 speaking practice + 1 document checklist + 1 application guidance benefit.
                   </span>
@@ -667,7 +667,7 @@ function GenerateVoucherDialog({
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-              <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90" disabled={submitting || eligibleStudents.length === 0} onClick={submit}>
+              <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={submitting || eligibleStudents.length === 0} onClick={submit}>
                 {submitting ? (
                   <>
                     <Icon name="Loader2" className="size-4 animate-spin" />
@@ -755,7 +755,7 @@ function RequestSeatDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0057B8]">
+          <DialogTitle className="flex items-center gap-2 text-[var(--alo-brand)]">
             <Icon name="Armchair" className="size-5" />
             Request Extra Seats
           </DialogTitle>
@@ -784,16 +784,16 @@ function RequestSeatDialog({
               placeholder="e.g. We are scaling our counseling team for September intake and need 2 more counselor seats to handle the lead volume."
             />
           </div>
-          <div className="rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
+          <div className="rounded-lg border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-3 py-2.5 text-xs text-foreground/80">
             <p className="flex items-start gap-2">
-              <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+              <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
               <span>ALO Super Admin will review and approve/reject your request. New seats become available immediately upon approval.</span>
             </p>
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90" disabled={submitting} onClick={submit}>
+          <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90" disabled={submitting} onClick={submit}>
             {submitting ? (
               <>
                 <Icon name="Loader2" className="size-4 animate-spin" />
@@ -977,7 +977,7 @@ export function PartnerAdminDashboard() {
           <StatCard label="Interview Prep Usage" value={kpis.interviewPrepUsage} icon="Mic" accent="amber" />
           <StatCard label="English Mock Vouchers" value={kpis.englishMockVouchersUsed} icon="GraduationCap" accent="emerald" />
           <StatCard label="Pending ALO Approvals" value={kpis.pendingAloApprovals} icon="Clock" accent="rose" />
-          <Card className="relative overflow-hidden rounded-2xl border-2 border-[#0057B8]/20">
+          <Card className="relative overflow-hidden rounded-2xl border-2 border-[var(--alo-brand)]/20">
             <CardContent className="pt-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -986,13 +986,13 @@ export function PartnerAdminDashboard() {
                     <SensitiveField id="kpi-comm-total" label="Total" type="currency" value={fmtCurrency(kpis.totalCommission)} />
                   </div>
                 </div>
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-crm-success-bg text-crm-success-text">
                   <Icon name="DollarSign" className="size-5" />
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="relative overflow-hidden rounded-2xl border-2 border-[#0057B8]/20">
+          <Card className="relative overflow-hidden rounded-2xl border-2 border-[var(--alo-brand)]/20">
             <CardContent className="pt-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -1001,7 +1001,7 @@ export function PartnerAdminDashboard() {
                     <SensitiveField id="kpi-comm-pending" label="Pending" type="currency" value={fmtCurrency(kpis.pendingCommission)} />
                   </div>
                 </div>
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-crm-warning-bg text-crm-warning-text">
                   <Icon name="Wallet" className="size-5" />
                 </div>
               </div>
@@ -1051,23 +1051,23 @@ export function PartnerAdminDashboard() {
                 description="Default limit: 1 Partner Super Admin + 2 Partner Employees = 3"
                 icon="Armchair"
                 action={
-                  <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={openCreateUser}>
+                  <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openCreateUser}>
                     <Icon name="UserPlus" className="size-4" />
                     Create User
                   </Button>
                 }>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/40 px-4 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Available Seats</p>
-                    <p className="mt-1 text-2xl font-bold tabular-nums text-emerald-700">{availableSeats}</p>
+                  <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/40 px-4 py-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Available Seats</p>
+                    <p className="mt-1 text-2xl font-bold tabular-nums text-crm-success-text">{availableSeats}</p>
                   </div>
-                  <div className="rounded-xl border-2 border-[#E8501A]/30 bg-[#fdece4]/40 px-4 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Used Seats</p>
-                    <p className="mt-1 text-2xl font-bold tabular-nums text-[#E8501A]">{usedSeats}</p>
+                  <div className="rounded-xl border-2 border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)]/40 px-4 py-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Used Seats</p>
+                    <p className="mt-1 text-2xl font-bold tabular-nums text-[var(--alo-cta)]">{usedSeats}</p>
                   </div>
-                  <div className="rounded-xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40 px-4 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Max Seats</p>
-                    <p className="mt-1 text-2xl font-bold tabular-nums text-[#0057B8]">{maxSeats}</p>
+                  <div className="rounded-xl border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40 px-4 py-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Max Seats</p>
+                    <p className="mt-1 text-2xl font-bold tabular-nums text-[var(--alo-brand)]">{maxSeats}</p>
                   </div>
                 </div>
                 <div className="mt-4 space-y-2">
@@ -1077,7 +1077,7 @@ export function PartnerAdminDashboard() {
                   </div>
                   <Progress value={seatPct} className="h-2.5" />
                   <p className="flex items-start gap-2 text-xs text-muted-foreground">
-                    <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                    <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                     <span>Default limit: <strong>1 Partner Super Admin + 2 Partner Employees = 3</strong>. Request extra seats if needed.</span>
                   </p>
                 </div>
@@ -1099,7 +1099,7 @@ export function PartnerAdminDashboard() {
                     title="No team members yet"
                     description="Add counselors, application assistants, marketing assistants, and document assistants to your workspace."
                     action={
-                      <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={openCreateUser}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openCreateUser}>
                         <Icon name="UserPlus" className="size-4" />
                         Create First User
                       </Button>
@@ -1124,12 +1124,12 @@ export function PartnerAdminDashboard() {
                             <TableCell className="font-medium">{u.fullName}</TableCell>
                             <TableCell className="hidden text-xs text-muted-foreground md:table-cell">{u.email}</TableCell>
                             <TableCell>
-                              <Badge className={ROLE_BADGE_COLORS[u.role] ?? "bg-slate-100 text-slate-700"}>
+                              <Badge className={ROLE_BADGE_COLORS[u.role] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                                 {ROLE_LABELS[u.role] ?? u.role}
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              <Badge className={USER_STATUS_COLORS[u.status] ?? "bg-slate-100 text-slate-700"}>
+                              <Badge className={USER_STATUS_COLORS[u.status] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                                 {u.status}
                               </Badge>
                             </TableCell>
@@ -1192,13 +1192,13 @@ export function PartnerAdminDashboard() {
                           const stage = stages.length > 0 ? stages[0] : "COUNSELING";
                           return (
                             <TableRow key={s.id}>
-                              <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">{s.studentId}</TableCell>
+                              <TableCell className="font-mono text-xs font-semibold text-[var(--alo-brand)]">{s.studentId}</TableCell>
                               <TableCell className="font-medium">{s.fullName}</TableCell>
                               <TableCell className="hidden text-xs text-muted-foreground md:table-cell">{s.email}</TableCell>
                               <TableCell className="hidden text-xs text-muted-foreground lg:table-cell">{s.mobile || "—"}</TableCell>
                               <TableCell className="text-center font-semibold tabular-nums">{s.applications?.length ?? 0}</TableCell>
                               <TableCell>
-                                <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                                <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                                   {stageLabel(stage)}
                                 </Badge>
                               </TableCell>
@@ -1238,11 +1238,11 @@ export function PartnerAdminDashboard() {
                       <TableBody>
                         {leads.map((l) => (
                           <TableRow key={l.id}>
-                            <TableCell className="font-mono text-xs font-semibold text-[#0057B8]">{l.leadId || l.id.slice(-6).toUpperCase()}</TableCell>
+                            <TableCell className="font-mono text-xs font-semibold text-[var(--alo-brand)]">{l.leadId || l.id.slice(-6).toUpperCase()}</TableCell>
                             <TableCell className="font-medium">{l.fullName}</TableCell>
                             <TableCell className="text-xs">{l.phone}</TableCell>
                             <TableCell className="hidden md:table-cell">
-                              <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                              <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                                 {l.preferredCountry || "—"}
                               </Badge>
                             </TableCell>
@@ -1278,7 +1278,7 @@ export function PartnerAdminDashboard() {
                       <span>{imageLimit > 0 ? Math.round((imagesUsed / imageLimit) * 100) : 0}% used</span>
                     </div>
                     <p className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <Icon name="Sparkles" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                      <Icon name="Sparkles" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                       <span>Each AI image generation consumes 1 image credit. Quota resets on the 1st of each month.</span>
                     </p>
                   </div>
@@ -1296,7 +1296,7 @@ export function PartnerAdminDashboard() {
                       <span>{videoLimit > 0 ? Math.round((videosUsed / videoLimit) * 100) : 0}% used</span>
                     </div>
                     <p className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[#E8501A]" />
+                      <Icon name="Clock" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-cta)]" />
                       <span>Max <strong>30 seconds</strong> per video. Each generation consumes 1 video credit.</span>
                     </p>
                   </div>
@@ -1305,31 +1305,31 @@ export function PartnerAdminDashboard() {
 
               <SectionCard title="Publishing & Approval" icon="ShieldCheck" description="Compliance status for this partner">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="flex items-center justify-between rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-4 py-3">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Auto-Publish</p>
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Auto-Publish</p>
                       <p className="mt-0.5 text-sm font-semibold text-foreground">
                         {marketingQuota?.autoPublishAllowed ? "Allowed" : "Disabled"}
                       </p>
                     </div>
-                    <Badge className={marketingQuota?.autoPublishAllowed ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}>
+                    <Badge className={marketingQuota?.autoPublishAllowed ? "bg-crm-success-bg text-crm-success-text" : "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                       {marketingQuota?.autoPublishAllowed ? "ON" : "OFF"}
                     </Badge>
                   </div>
-                  <div className="flex items-center justify-between rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-4 py-3">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Requires ALO Approval</p>
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Requires ALO Approval</p>
                       <p className="mt-0.5 text-sm font-semibold text-foreground">
                         {marketingQuota?.requiresAloApproval ? "Yes — Starter plan" : "No — Self-serve"}
                       </p>
                     </div>
-                    <Badge className={marketingQuota?.requiresAloApproval ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}>
+                    <Badge className={marketingQuota?.requiresAloApproval ? "bg-crm-warning-bg text-crm-warning-text" : "bg-crm-success-bg text-crm-success-text"}>
                       {marketingQuota?.requiresAloApproval ? "REQUIRED" : "WAIVED"}
                     </Badge>
                   </div>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={openMarketingStudio}>
+                  <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openMarketingStudio}>
                     <Icon name="Megaphone" className="size-4" />
                     Open Marketing Studio
                   </Button>
@@ -1351,7 +1351,7 @@ export function PartnerAdminDashboard() {
                     title="No marketing requests yet"
                     description="Open the Marketing Studio to generate AI-powered campaigns for Facebook, Instagram, and LinkedIn."
                     action={
-                      <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={openMarketingStudio}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openMarketingStudio}>
                         <Icon name="Sparkles" className="size-4" />
                         Open Marketing Studio
                       </Button>
@@ -1361,14 +1361,14 @@ export function PartnerAdminDashboard() {
                   <ScrollArea className="max-h-96">
                     <div className="space-y-2">
                       {marketingRequests.slice(0, 5).map((r) => (
-                        <div key={r.id} className="flex flex-col gap-2 rounded-xl border border-[#0057B8]/15 bg-white px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+                        <div key={r.id} className="flex flex-col gap-2 rounded-xl border border-[var(--alo-brand)]/15 bg-white px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
                           <div className="min-w-0">
                             <p className="truncate text-sm font-semibold text-foreground">{r.idea}</p>
                             <p className="mt-0.5 text-xs text-muted-foreground">
                               {r.platform} • {timeAgo(r.createdAt)}
                             </p>
                           </div>
-                          <Badge className={MARKETING_STATUS_COLORS[r.approvalStatus] ?? "bg-slate-100 text-slate-700"}>
+                          <Badge className={MARKETING_STATUS_COLORS[r.approvalStatus] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                             {r.approvalStatus.replace(/_/g, " ")}
                           </Badge>
                         </div>
@@ -1386,28 +1386,28 @@ export function PartnerAdminDashboard() {
           {loading ? <LoadingGrid count={4} /> : (
             <>
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                <Card className="rounded-2xl border-2 border-[#0057B8]/20">
+                <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20">
                   <CardContent className="pt-5">
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total Vouchers</p>
-                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-[#0057B8]">{voucherSummary.total}</p>
+                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-[var(--alo-brand)]">{voucherSummary.total}</p>
                   </CardContent>
                 </Card>
-                <Card className="rounded-2xl border-2 border-emerald-200">
+                <Card className="rounded-2xl border-2 border-crm-success-border">
                   <CardContent className="pt-5">
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Available</p>
-                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-emerald-700">{voucherSummary.available}</p>
+                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-crm-success-text">{voucherSummary.available}</p>
                   </CardContent>
                 </Card>
-                <Card className="rounded-2xl border-2 border-slate-200">
+                <Card className="rounded-2xl border-2 border-[var(--alo-border)]">
                   <CardContent className="pt-5">
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Used</p>
-                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-slate-700">{voucherSummary.used}</p>
+                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-[var(--alo-body)]">{voucherSummary.used}</p>
                   </CardContent>
                 </Card>
-                <Card className="rounded-2xl border-2 border-rose-200">
+                <Card className="rounded-2xl border-2 border-crm-warning-border">
                   <CardContent className="pt-5">
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Expired</p>
-                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-rose-700">{voucherSummary.expired}</p>
+                    <p className="mt-1.5 text-2xl font-bold tabular-nums text-crm-warning-text">{voucherSummary.expired}</p>
                   </CardContent>
                 </Card>
               </div>
@@ -1417,7 +1417,7 @@ export function PartnerAdminDashboard() {
                 description="Voucher codes for English mock tests, interview prep, and speaking practice"
                 icon="Ticket"
                 action={
-                  <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={openVoucherDialog}>
+                  <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openVoucherDialog}>
                     <Icon name="Sparkles" className="size-4" />
                     Generate Vouchers
                   </Button>
@@ -1428,7 +1428,7 @@ export function PartnerAdminDashboard() {
                     title="No vouchers yet"
                     description="Generate mock test vouchers for students with active ALO applications."
                     action={
-                      <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={openVoucherDialog}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openVoucherDialog}>
                         <Icon name="Sparkles" className="size-4" />
                         Generate First Vouchers
                       </Button>
@@ -1451,19 +1451,19 @@ export function PartnerAdminDashboard() {
                         {vouchers.map((v) => (
                           <TableRow key={v.id}>
                             <TableCell>
-                              <code className="font-mono text-xs font-bold text-[#0057B8]">{v.voucherCode}</code>
+                              <code className="font-mono text-xs font-bold text-[var(--alo-brand)]">{v.voucherCode}</code>
                             </TableCell>
                             <TableCell className="text-sm">
                               {v.student?.fullName || "—"}
                               {v.student?.studentId && (
-                                <span className="ml-1 font-mono text-[10px] text-muted-foreground">({v.student.studentId})</span>
+                                <span className="ml-1 font-mono text-[11px] text-muted-foreground">({v.student.studentId})</span>
                               )}
                             </TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">{v.testType}</Badge>
+                              <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">{v.testType}</Badge>
                             </TableCell>
                             <TableCell>
-                              <Badge className={VOUCHER_STATUS_COLORS[v.status] ?? "bg-slate-100 text-slate-700"}>
+                              <Badge className={VOUCHER_STATUS_COLORS[v.status] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                                 {v.status}
                               </Badge>
                             </TableCell>
@@ -1515,18 +1515,18 @@ export function PartnerAdminDashboard() {
                             <TableCell className="text-sm">
                               {b.student?.fullName || "—"}
                               {b.student?.studentId && (
-                                <span className="ml-1 font-mono text-[10px] text-muted-foreground">({b.student.studentId})</span>
+                                <span className="ml-1 font-mono text-[11px] text-muted-foreground">({b.student.studentId})</span>
                               )}
                             </TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="border-violet-200 text-violet-700">
+                              <Badge variant="outline" className="border-[var(--alo-border)] text-[var(--alo-brand)]">
                                 {BENEFIT_LABELS[b.benefitType] ?? b.benefitType.replace(/_/g, " ")}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-center font-semibold tabular-nums">{b.limitCount}</TableCell>
                             <TableCell className="text-center tabular-nums">{b.usedCount}</TableCell>
                             <TableCell>
-                              <Badge variant="outline" className={b.status === "ACTIVE" ? "border-emerald-200 text-emerald-700" : "border-slate-200 text-slate-600"}>
+                              <Badge variant="outline" className={b.status === "ACTIVE" ? "border-crm-success-border text-crm-success-text" : "border-[var(--alo-border)] text-[var(--alo-body)]"}>
                                 {b.status}
                               </Badge>
                             </TableCell>
@@ -1536,8 +1536,8 @@ export function PartnerAdminDashboard() {
                     </Table>
                   </div>
                 )}
-                <div className="mt-4 flex items-start gap-2 rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
-                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                <div className="mt-4 flex items-start gap-2 rounded-lg border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-3 py-2.5 text-xs text-foreground/80">
+                  <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                   <p>
                     Vouchers only for students with <strong>active ALO application</strong>. No application, no voucher. Each eligible student gets{" "}
                     <strong>3 English mock vouchers</strong> + 1 interview prep + 1 speaking practice + 1 document checklist + 1 application guidance.
@@ -1557,25 +1557,25 @@ export function PartnerAdminDashboard() {
                 description="Submit expansion requests to ALO Education Super Admin"
                 icon="Armchair"
                 action={
-                  <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={openSeatDialog}>
+                  <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openSeatDialog}>
                     <Icon name="Send" className="size-4" />
                     Request Extra Seats
                   </Button>
                 }>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Current Limit</p>
-                    <p className="mt-1 text-2xl font-bold tabular-nums text-[#0057B8]">{maxSeats}</p>
+                  <div className="rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-4 py-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Current Limit</p>
+                    <p className="mt-1 text-2xl font-bold tabular-nums text-[var(--alo-brand)]">{maxSeats}</p>
                   </div>
-                  <div className="rounded-xl border-2 border-amber-200 bg-amber-50/40 px-4 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Pending Requests</p>
-                    <p className="mt-1 text-2xl font-bold tabular-nums text-amber-700">
+                  <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/40 px-4 py-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Pending Requests</p>
+                    <p className="mt-1 text-2xl font-bold tabular-nums text-crm-warning-text">
                       {seatRequests.filter((r) => r.status === "PENDING").length}
                     </p>
                   </div>
-                  <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50/40 px-4 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Approved Seats Added</p>
-                    <p className="mt-1 text-2xl font-bold tabular-nums text-emerald-700">
+                  <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/40 px-4 py-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Approved Seats Added</p>
+                    <p className="mt-1 text-2xl font-bold tabular-nums text-crm-success-text">
                       {seatRequests.filter((r) => r.status === "APPROVED").reduce((s, r) => s + r.requestedExtraSeats, 0)}
                     </p>
                   </div>
@@ -1593,7 +1593,7 @@ export function PartnerAdminDashboard() {
                     title="No seat requests yet"
                     description="When you need more counselor seats beyond your plan limit, request them here."
                     action={
-                      <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={openSeatDialog}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={openSeatDialog}>
                         <Icon name="Send" className="size-4" />
                         Request Extra Seats
                       </Button>
@@ -1616,13 +1616,13 @@ export function PartnerAdminDashboard() {
                       <TableBody>
                         {seatRequests.map((r) => (
                           <TableRow key={r.id}>
-                            <TableCell className="text-center font-semibold tabular-nums text-[#E8501A]">+{r.requestedExtraSeats}</TableCell>
+                            <TableCell className="text-center font-semibold tabular-nums text-[var(--alo-cta)]">+{r.requestedExtraSeats}</TableCell>
                             <TableCell className="text-center tabular-nums">{r.currentLimit}</TableCell>
                             <TableCell className="hidden max-w-[260px] truncate text-xs text-muted-foreground md:table-cell">
                               {r.reason || "—"}
                             </TableCell>
                             <TableCell>
-                              <Badge className={SEAT_REQ_STATUS_COLORS[r.status] ?? "bg-slate-100 text-slate-700"}>
+                              <Badge className={SEAT_REQ_STATUS_COLORS[r.status] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                                 {r.status}
                               </Badge>
                             </TableCell>
@@ -1633,11 +1633,11 @@ export function PartnerAdminDashboard() {
                             <TableCell className="text-right">
                               {r.status === "PENDING" ? (
                                 <div className="flex justify-end gap-1.5">
-                                  <Button size="sm" className="bg-emerald-600 text-white hover:bg-emerald-600/90" onClick={() => reviewSeatRequest(r, "APPROVED")}>
+                                  <Button size="sm" className="bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90" onClick={() => reviewSeatRequest(r, "APPROVED")}>
                                     <Icon name="Check" className="size-3.5" />
                                     Approve
                                   </Button>
-                                  <Button size="sm" variant="outline" className="border-rose-200 text-rose-700 hover:bg-rose-50" onClick={() => reviewSeatRequest(r, "REJECTED")}>
+                                  <Button size="sm" variant="outline" className="border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg" onClick={() => reviewSeatRequest(r, "REJECTED")}>
                                     <Icon name="X" className="size-3.5" />
                                     Reject
                                   </Button>
@@ -1652,8 +1652,8 @@ export function PartnerAdminDashboard() {
                     </Table>
                   </div>
                 )}
-                <div className="mt-4 flex items-start gap-2 rounded-lg border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-3 py-2.5 text-xs text-foreground/80">
-                  <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+                <div className="mt-4 flex items-start gap-2 rounded-lg border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-3 py-2.5 text-xs text-foreground/80">
+                  <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
                   <p>
                     Approve/Reject actions are available to <strong>ALO Super Admin</strong>. Approved seats become immediately available for new user creation.
                   </p>
@@ -1689,7 +1689,7 @@ export function PartnerAdminDashboard() {
                     title="No social accounts connected"
                     description="Connect Facebook and Instagram to enable direct publishing from the Marketing Studio."
                     action={
-                      <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={() => toast({ title: "OAuth flow", description: "Connect Facebook — OAuth flow would start here." })}>
+                      <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => toast({ title: "OAuth flow", description: "Connect Facebook — OAuth flow would start here." })}>
                         <Icon name="Plus" className="size-4" />
                         Connect a Platform
                       </Button>
@@ -1713,13 +1713,13 @@ export function PartnerAdminDashboard() {
                         {socialAccounts.map((a) => (
                           <TableRow key={a.id}>
                             <TableCell>
-                              <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                              <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                                 {SOCIAL_PLATFORM_LABELS[a.platform] ?? a.platform}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-sm font-medium">{a.accountName}</TableCell>
                             <TableCell>
-                              <Badge className={SOCIAL_CONNECTION_COLORS[a.connectionStatus] ?? "bg-slate-100 text-slate-700"}>
+                              <Badge className={SOCIAL_CONNECTION_COLORS[a.connectionStatus] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                                 {a.connectionStatus}
                               </Badge>
                             </TableCell>
@@ -1730,12 +1730,12 @@ export function PartnerAdminDashboard() {
                             <TableCell className="hidden text-xs text-muted-foreground lg:table-cell">{a.lastSync ? timeAgo(a.lastSync) : "—"}</TableCell>
                             <TableCell>
                               {a.approvedByAlo ? (
-                                <Badge className="bg-emerald-100 text-emerald-700">
+                                <Badge className="bg-crm-success-bg text-crm-success-text">
                                   <Icon name="Check" className="mr-1 size-3" />
                                   Approved
                                 </Badge>
                               ) : (
-                                <Badge className="bg-amber-100 text-amber-700">
+                                <Badge className="bg-crm-warning-bg text-crm-warning-text">
                                   <Icon name="Clock" className="mr-1 size-3" />
                                   Pending
                                 </Badge>
@@ -1747,8 +1747,8 @@ export function PartnerAdminDashboard() {
                     </Table>
                   </div>
                 )}
-                <div className="mt-4 flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50/40 px-3 py-2.5 text-xs text-rose-800/90">
-                  <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0 text-rose-600" />
+                <div className="mt-4 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg/40 px-3 py-2.5 text-xs text-[var(--alo-error)]/90">
+                  <Icon name="Lock" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
                   <p>
                     <strong>Tokens are encrypted and masked.</strong> Never shown in full. All token views are audit-logged as <code className="font-mono">sensitive_data_revealed</code>.
                   </p>

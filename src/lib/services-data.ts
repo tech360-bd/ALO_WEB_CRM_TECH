@@ -33,7 +33,7 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
     heroImage: "/images/services/counseling.png",
     iconName: "GraduationCap",
     seoTitle: "Personalized Study Abroad Counseling | ALO Education Bangladesh",
-    seoDescription: "Get 1-on-1 expert study abroad counseling in Bangladesh for UK, USA, Australia, Canada, Germany & Ireland universities. Book free consultation today.",
+    seoDescription: "Get one-to-one study abroad counseling in Bangladesh for UK, USA, Australia, Canada, Germany and Ireland. Confirm consultation availability and fees before booking.",
     benefits: [
       "Individual 1-on-1 consultation with certified senior study abroad advisors.",
       "Comprehensive evaluation of academic transcripts, CGPA, and English scores.",
@@ -58,7 +58,7 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
       "Updated Curriculum Vitae (CV) / Resume."
     ],
     faqs: [
-      { question: "Is the initial counseling session at ALO Education free?", answer: "Yes! ALO Education provides 100% free personalized study abroad counseling for all students." },
+      { question: "What does an initial counseling session cost?", answer: "Please confirm current consultation availability and any applicable fee with ALO Education before booking." },
       { question: "Can I bring my parents to the counseling session?", answer: "Absolutely. Parents are warmly welcomed to join and discuss tuition fees, living expenses, bank solvency, and student safety." }
     ]
   },
@@ -81,7 +81,7 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
     processSteps: [
       { step: 1, title: "Course Curriculum Analysis", desc: "Compare subject modules, specialization tracks, and practical internship opportunities." },
       { step: 2, title: "Entry Requirement Verification", desc: "Ensure your GPA and English scores fulfill official university thresholds." },
-      { step: 3, title: "Tuition & Scholarship Comparison", desc: "Identify universities offering maximum tuition discounts (£1,000 to 100% full funding)." },
+      { step: 3, title: "Tuition & Scholarship Comparison", desc: "Compare tuition and funding options. Awards, eligibility and coverage vary by university and programme; confirm current terms with the provider." },
       { step: 4, title: "Final Program Lock-in", desc: "Select 3 priority universities for immediate application processing." }
     ],
     whoIsItFor: [
@@ -118,7 +118,7 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
       { step: 3, title: "Application Submission", desc: "Submit scholarship forms prior to university hard deadlines." }
     ],
     whoIsItFor: [
-      "High-achieving students seeking 100% fully-funded Master's or PhD awards.",
+      "Students exploring Master's or PhD funding opportunities; eligibility and award coverage are set by each programme.",
       "Applicants needing partial tuition fee reductions to fit their study budget."
     ],
     requiredDocuments: [
@@ -127,7 +127,7 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
       "Two Academic or Professional Reference Letters."
     ],
     faqs: [
-      { question: "Are ALO Education partner scholarships guaranteed?", answer: "Eligible Bangladeshi students meeting CGPA criteria automatically receive tuition discounts upon offer letter issuance." }
+      { question: "Are ALO Education partner scholarships guaranteed?", answer: "No. Availability, eligibility and award amounts depend on the programme and the provider's current terms. Confirm directly with the university or scholarship administrator." }
     ]
   },
   {
@@ -144,7 +144,7 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
       "Structural SOP outline aligned with university expectations.",
       "Academic LOR drafting advice for professors and employers.",
       "Europass & International Academic CV formatting.",
-      "100% plagiarism-free content review."
+      "Originality and source-attribution review support; students remain responsible for the accuracy and authorship of submitted work."
     ],
     processSteps: [
       { step: 1, title: "SOP Questionnaire", desc: "Complete our guided SOP framework outlining academic milestones and goals." },
@@ -200,12 +200,12 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
     id: "srv-06",
     slug: "student-visa-guidance-file-processing",
     title: "Student Visa Guidance & File Processing",
-    shortDesc: "99% visa success rate for UK Student Visas (CAS), Australia Subclass 500, Canada Study Permits, and US F-1 Visas.",
+    shortDesc: "Guidance with student visa preparation, document checklists and interview practice. Decisions are made by the relevant authorities and cannot be guaranteed.",
     longDescription: "Navigating student visa requirements is the most critical phase of studying abroad. Our dedicated visa compliance team assists with online visa form filing, health surcharges (IHS), biometrics scheduling at VFS/TLS, and interview prep.",
     heroImage: "/images/services/visa.png",
     iconName: "Shield",
-    seoTitle: "Student Visa Processing & Guidance Bangladesh | 99% Success | ALO Education",
-    seoDescription: "Expert student visa guidance for UK, Australia, Canada, USA, Germany, and Ireland. 99% visa success rate, VFS booking, and mock interview preparation.",
+    seoTitle: "Student Visa Preparation & Guidance Bangladesh | ALO Education",
+    seoDescription: "Student visa preparation guidance for the UK, Australia, Canada, USA, Germany and Ireland. Confirm current requirements with the relevant official authority; visa decisions are not guaranteed.",
     benefits: [
       "Comprehensive visa document checklist tailored to embassy rules.",
       "Online visa application filling (UKVI, DHA Australia, IRCC Canada, US DS-160).",
@@ -228,7 +228,7 @@ export const MASTER_SERVICES_DATA: ServiceRecord[] = [
       "TB Test Certificate, Academic Papers, Passport."
     ],
     faqs: [
-      { question: "What is ALO Education's student visa success rate?", answer: "ALO Education maintains a 99%+ student visa approval rate across UK, Australia, Canada, and USA." }
+      { question: "What is ALO Education's student visa success rate?", answer: "ALO Education does not publish an aggregate visa-approval rate without current, independently verifiable evidence. Visa decisions are made by the relevant authorities and cannot be guaranteed." }
     ]
   },
   {

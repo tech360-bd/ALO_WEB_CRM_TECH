@@ -1,0 +1,189 @@
+diff --git a/src/app/course/[slug]/page.tsx b/src/app/course/[slug]/page.tsx
+index 54e9d936..fdaa7657 100644
+--- a/src/app/course/[slug]/page.tsx
++++ b/src/app/course/[slug]/page.tsx
+@@ -2,9 +2,15 @@ import React, { Suspense } from 'react';
+ import { Metadata } from 'next';
+ import { notFound, redirect } from 'next/navigation';
+ import CourseDetailHub from '@/components/website/CourseDetailHub';
++import LimitedCourseDetail from '@/components/website/LimitedCourseDetail';
+ import { db } from '@/lib/db';
+ import { loadOpenConflicts, passesPublicCoursePagePolicy, publicCoursePageWhere } from '@/lib/course-finder/public-content-page-policy';
+ import { publicCourseIdentifierWhere } from '@/lib/public-catalog';
++import {
++  evaluateLimitedPublication,
++  LIMITED_PUBLICATION_STATE,
++  type LimitedPublicationEvidence,
++} from '@/lib/partial-publication/limited-publication-policy';
+ import { breadcrumbSchema, courseSchema } from '@/lib/seo/schema-helpers';
+ 
+ export const dynamic = 'force-dynamic';
+@@ -27,6 +33,102 @@ async function findPublicCourse(slug: string) {
+   });
+ }
+ 
++/**
++ * SEPARATE pathway for partially verified records.
++ *
++ * This is not a relaxation of findPublicCourse above: it runs only after that
++ * lookup returns nothing, it requires a per-course Super Admin approval row,
++ * and every field it renders must carry course-specific official evidence.
++ * Records on the policy's deny list can never resolve here.
++ */
++async function findLimitedPublicationCourse(slug: string) {
++  const record = await db.crmCourse.findFirst({
++    where: {
++      OR: [{ slug }, { courseId: slug }],
++      verificationStatus: 'PARTIALLY_VERIFIED',
++      publicationStatus: { notIn: ['published', 'PUBLISHED'] },
++      limitedPublication: { state: LIMITED_PUBLICATION_STATE.APPROVED, revokedAt: null },
++    },
++    select: {
++      id: true,
++      courseId: true,
++      slug: true,
++      courseTitle: true,
++      studyLevel: true,
++      studyMode: true,
++      campus: true,
++      academicYear: true,
++      country: true,
++      durationMonths: true,
++      tuitionFee: true,
++      deadline: true,
++      verificationStatus: true,
++      publicationStatus: true,
++      universityId: true,
++      university: { select: { name: true, slug: true, universityId: true } },
++      limitedPublication: true,
++    },
++  });
++  if (!record) return null;
++
++  const evidence = await db.crmOfficialEvidence.findMany({
++    where: {
++      entityType: 'COURSE',
++      courseSlug: record.slug,
++      universitySlug: record.university?.slug || record.university?.universityId || '',
++      verificationStatus: 'VERIFIED',
++    },
++    select: {
++      evidenceKey: true,
++      sourceUrl: true,
++      entityType: true,
++      courseSlug: true,
++      universitySlug: true,
++      verificationStatus: true,
++      contentHash: true,
++      fieldScope: true,
++    },
++  });
++
++  const decision = evaluateLimitedPublication({
++    course: {
++      id: record.id,
++      courseId: record.courseId,
++      slug: record.slug,
++      universityId: record.universityId,
++      universitySlug: record.university?.slug || record.university?.universityId || '',
++      universityName: record.university?.name || '',
++      courseTitle: record.courseTitle,
++      studyLevel: record.studyLevel,
++      studyMode: record.studyMode,
++      campus: record.campus,
++      academicYear: record.academicYear,
++      country: record.country,
++      verificationStatus: record.verificationStatus,
++      publicationStatus: record.publicationStatus,
++      durationMonths: record.durationMonths,
++      tuitionFee: record.tuitionFee,
++      deadline: record.deadline,
++    },
++    evidence: evidence as LimitedPublicationEvidence[],
++    approval: record.limitedPublication
++      ? {
++          id: record.limitedPublication.id,
++          courseId: record.limitedPublication.courseId,
++          state: record.limitedPublication.state,
++          approvedByUserId: record.limitedPublication.approvedByUserId,
++          approvedByRoles: JSON.parse(record.limitedPublication.approvedByRoles || '[]'),
++          approvedAt: record.limitedPublication.approvedAt?.toISOString?.() || '',
++          revokedAt: record.limitedPublication.revokedAt?.toISOString?.() || null,
++          evidenceSnapshotKeys: JSON.parse(record.limitedPublication.evidenceSnapshotKeys || '[]'),
++        }
++      : null,
++  });
++
++  if (!decision.publishable) return null;
++  return { record, decision };
++}
++
+ export async function generateMetadata({
+   params,
+ }: {
+@@ -34,8 +136,11 @@ export async function generateMetadata({
+ }): Promise<Metadata> {
+   const { slug } = await params;
+   const record = await findPublicCourse(slug);
+-  const name = record?.courseTitle || slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+-  const canonicalSlug = record?.slug || record?.courseId || slug;
++  const limited = record ? null : await findLimitedPublicationCourse(slug);
++  const name = record?.courseTitle
++    || limited?.record.courseTitle
++    || slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
++  const canonicalSlug = record?.slug || record?.courseId || limited?.record.slug || limited?.record.courseId || slug;
+   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com').replace(/\/$/, '');
+   const description = `Source-linked course information for ${name}. Facts are shown when recorded; missing information is identified clearly.`;
+   return {
+@@ -48,6 +153,9 @@ export async function generateMetadata({
+       url: `${siteUrl}/course/${encodeURIComponent(canonicalSlug)}`,
+       type: 'website',
+     },
++    // A partially verified record is not indexed until the owner approves
++    // indexing separately; the page states its own limits in the body.
++    ...(limited ? { robots: { index: false, follow: true } } : {}),
+   };
+ }
+ 
+@@ -58,6 +166,41 @@ export default async function CourseDetailPageRoute({
+ }) {
+   const { slug } = await params;
+   const record = await findPublicCourse(slug);
++  const limited = record ? null : await findLimitedPublicationCourse(slug);
++  if (limited) {
++    const limitedSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aloeducation.com').replace(/\/$/, '');
++    const limitedSlug = limited.record.slug || limited.record.courseId || slug;
++    const limitedLd = [
++      breadcrumbSchema(
++        [
++          { name: 'Home', url: '/' },
++          { name: 'Courses', url: '/courses' },
++          { name: limited.record.courseTitle, url: `/course/${encodeURIComponent(limitedSlug)}` },
++        ],
++        limitedSiteUrl,
++      ),
++    ];
++    return (
++      <div className="min-h-screen bg-white flex flex-col justify-between">
++        <script
++          type="application/ld+json"
++          dangerouslySetInnerHTML={{ __html: JSON.stringify(limitedLd).replace(/</g, '\\u003c') }}
++        />
++        <main className="flex-1 pt-20 pb-16">
++          <LimitedCourseDetail
++            title={limited.record.courseTitle}
++            institution={limited.record.university?.name || ''}
++            institutionSlug={limited.record.university?.slug || limited.record.university?.universityId || ''}
++            fields={limited.decision.fields}
++            suppressed={limited.decision.suppressed}
++            banner={limited.decision.banner}
++            lastVerifiedAt={null}
++            evidenceUrls={[]}
++          />
++        </main>
++      </div>
++    );
++  }
+   if (!record) {
+     // Legacy course-page records keep working via a permanent redirect path.
+     // Phase 1 review (P0-C): only redirect to a page that passes the public policy.

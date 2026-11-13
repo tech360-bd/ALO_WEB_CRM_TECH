@@ -14,7 +14,7 @@ describe('WhatsApp media download', () => {
     vi.stubGlobal('fetch', fetchMock);
     expect(await downloadWhatsAppMedia('123456', '789')).toMatchObject({ bytes, mimeType: 'application/pdf', hash: metadata.sha256 });
     expect(String(fetchMock.mock.calls[0][0])).toBe('https://graph.facebook.com/v23.0/123456?phone_number_id=789');
-    expect(fetchMock.mock.calls[1][1]).toMatchObject({ headers: { Authorization: 'Bearer test-only-provider-token' }, redirect: 'error' });
+    expect(fetchMock.mock.calls[1][1]).toMatchObject({ headers: { Authorization: 'Bearer test-only-provider-token' }, redirect: 'manual' });
   });
   it.each(['http://lookaside.fbsbx.com/file', 'https://127.0.0.1/file', 'https://fbcdn.net.attacker.example/file'])('rejects untrusted metadata download URL %s before sending credentials', async url => {
     const fetchMock = vi.fn().mockResolvedValue(Response.json({ ...metadata, url }));

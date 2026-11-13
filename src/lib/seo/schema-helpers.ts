@@ -1,3 +1,5 @@
+import { ALO_CONTACT, ALO_SOCIALS } from '../alo-site-info';
+
 // SEO Schema helpers — Article / Breadcrumb / FAQPage / Organization
 // FAQPage kept for Bing/AI parsers; Google Search no longer shows FAQ rich results since 7 May 2026.
 // Use Schema.org Validator, not Rich Results Test, for FAQ validation.
@@ -71,21 +73,73 @@ export function organizationSchema(baseUrl?: string) {
     logo: `${base}/logo.png`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "68/69 Green Road, Concept Tower, Suite 347 (2nd Floor)",
+      streetAddress: ALO_CONTACT.address,
       addressLocality: "Panthapath, Dhaka",
       postalCode: "1205",
       addressCountry: "BD",
     },
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+8801327189194",
+      telephone: ALO_CONTACT.mobileHref.replace('tel:', ''),
+      email: ALO_CONTACT.email,
       contactType: "customer service",
       availableLanguage: ["en", "bn"],
     },
-    sameAs: [
-      // fill when verified
-      // "https://www.facebook.com/aloeducation",
-      // "https://www.linkedin.com/company/alo-education",
-    ],
+    sameAs: ALO_SOCIALS.map(social => social.href),
   };
 }
+
+export function collegeOrUniversitySchema(opts: {
+  name: string;
+  slug: string;
+  country: string;
+  city?: string;
+  officialWebsite?: string;
+  logoUrl?: string;
+  baseUrl?: string;
+}) {
+  const base = (opts.baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://aloeducation.com").replace(/\/$/, "");
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollegeOrUniversity",
+    name: opts.name,
+    url: `${base}/universities/${opts.slug}`,
+    ...(opts.officialWebsite ? { sameAs: [opts.officialWebsite] } : {}),
+    ...(opts.logoUrl ? { logo: opts.logoUrl } : {}),
+    address: {
+      "@type": "PostalAddress",
+      ...(opts.city ? { addressLocality: opts.city } : {}),
+      addressCountry: opts.country,
+    },
+  };
+}
+
+export function courseSchema(opts: {
+  name: string;
+  description: string;
+  slug: string;
+  providerName: string;
+  providerUrl?: string;
+  educationalCredentialAwarded?: string;
+  inLanguage?: string;
+  baseUrl?: string;
+}) {
+  const base = (opts.baseUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://aloeducation.com").replace(/\/$/, "");
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: opts.name,
+    description: opts.description.slice(0, 300),
+    url: `${base}/course/${opts.slug}`,
+    provider: {
+      "@type": "CollegeOrUniversity",
+      name: opts.providerName,
+      ...(opts.providerUrl ? { sameAs: opts.providerUrl } : {}),
+    },
+    ...(opts.educationalCredentialAwarded
+      ? { educationalCredentialAwarded: opts.educationalCredentialAwarded }
+      : {}),
+    inLanguage: opts.inLanguage || "en",
+  };
+}
+

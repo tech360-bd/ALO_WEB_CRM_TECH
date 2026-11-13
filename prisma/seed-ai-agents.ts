@@ -61,28 +61,51 @@ const DEPARTMENTS = [
   { name: "Legal & Visa Compliance", icon: "Scale", agents: ["Legal Advisor", "Visa Compliance Checker", "Legal Reporter", "Legal Auditor", "Legal Optimizer", "Legal Anomaly Detector", "Legal Trend Spotter", "Legal Forecast Generator", "Legal Benchmark Builder", "Legal Alert Manager", "Legal Incident Responder", "Legal Archive", "Legal Compliance Checker", "Legal Cost Tracker", "Legal Satisfaction Survey", "Legal Risk Assessor", "Legal Training Coordinator", "Legal Standard Builder", "Legal Checklist Manager", "Legal Issue Tracker"] },
 ];
 
+/**
+ * Idempotent registry seed.
+ *
+ * This script must never destroy data (`deleteMany`) and must never invent
+ * operational telemetry. Previous versions deleted every AiAgent row and then
+ * wrote random statuses, job counts, pending approvals and last-run timestamps,
+ * which is exactly the "fake agent row" that the ALO specification forbids:
+ * a fresh registry has zero processed jobs and no last run until an agent
+ * actually executes. Re-running upgrades names/descriptions in place.
+ */
 async function main() {
-  console.log("Seeding 51 AI departments / 1020 AI agents...");
-  await db.aiAgent.deleteMany();
+  console.log("Seeding 51 AI departments / 1020 AI agents (idempotent, no destructive reset)...");
 
   let code = 1000;
   let totalAgents = 0;
+  let created = 0;
+  let updated = 0;
   for (const dept of DEPARTMENTS) {
     for (const agentName of dept.agents) {
       code++;
       totalAgents++;
-      await db.aiAgent.create({
-        data: {
-          department: dept.name,
-          agentName,
-          agentCode: `AI-${code}`,
-          description: `${agentName} for ${dept.name} department`,
-          status: Math.random() > 0.3 ? "ACTIVE" : "IDLE",
-          jobsProcessed: Math.floor(Math.random() * 5000),
-          pendingApprovals: Math.floor(Math.random() * 8),
-          lastRunAt: new Date(Date.now() - Math.floor(Math.random() * 86400000)),
-        },
-      });
+      const agentCode = `AI-${code}`;
+      const existing = await db.aiAgent.findFirst({ where: { agentCode }, select: { id: true } });
+      const fields = {
+        department: dept.name,
+        agentName,
+        description: `${agentName} for ${dept.name} department`,
+      };
+      if (existing) {
+        await db.aiAgent.update({ where: { id: existing.id }, data: fields });
+        updated++;
+      } else {
+        await db.aiAgent.create({
+          data: {
+            ...fields,
+            agentCode,
+            // No executions yet: an idle, zero-job agent is the truthful state.
+            status: "IDLE",
+            jobsProcessed: 0,
+            pendingApprovals: 0,
+            lastRunAt: null,
+          },
+        });
+        created++;
+      }
     }
   }
 
@@ -90,7 +113,7 @@ async function main() {
   const all = await db.aiAgent.findMany();
   for (const a of all) byDept[a.department] = (byDept[a.department] || 0) + 1;
 
-  console.log(`Seeded ${totalAgents} AI agents across ${DEPARTMENTS.length} departments`);
+  console.log(`Processed ${totalAgents} AI agents across ${DEPARTMENTS.length} departments (created ${created}, updated ${updated})`);
   console.log(`Verification — DB count: ${all.length}, Departments: ${Object.keys(byDept).length}`);
 }
 

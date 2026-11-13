@@ -61,6 +61,9 @@ export async function GET(req: NextRequest) {
     }
 
     const pending = byStatus.find((s: any) => s.status === "PENDING")?._count || 0;
+    const approved = byStatus.find((s: any) => s.status === "APPROVED")?._count || 0;
+    const executing = byStatus.find((s: any) => s.status === "EXECUTING")?._count || 0;
+    const rejected = byStatus.find((s: any) => s.status === "REJECTED")?._count || 0;
     const executed = byStatus.find((s: any) => s.status === "EXECUTED")?._count || 0;
     const failed = byStatus.find((s: any) => s.status === "FAILED")?._count || 0;
     const rolledBack = byStatus.find((s: any) => s.status === "ROLLED_BACK")?._count || 0;
@@ -75,13 +78,16 @@ export async function GET(req: NextRequest) {
       })),
       summary: {
         pending,
+        approved,
+        executing,
+        rejected,
         executed,
         failed,
         rolledBack,
         executedInWindow: recentExecuted,
         totalRetries: totalRetries._sum.retryCount || 0,
         successRate:
-          total > 0 ? Math.round((executed / (executed + failed)) * 10000) / 100 : 0,
+          executed + failed > 0 ? Math.round((executed / (executed + failed)) * 10000) / 100 : 0,
       },
       recentFailures,
       globalAiPaused,

@@ -62,7 +62,7 @@ describe('employee leads API scope and defaults', () => {
     const response = await GET(new NextRequest('https://alo.test/api/employee/leads?scope=created'));
     expect(response.status).toBe(200);
     expect(mockDb.marketingLead.findMany.mock.calls[0]?.[0]?.where).toEqual({ createdById: 'user-id' });
-    expect(mockDb.employee.findUnique).not.toHaveBeenCalled();
+    expect(mockDb.employee.findUnique).toHaveBeenCalledWith({ where: { userId: 'user-id' }, select: { id: true, userId: true, employeeId: true, status: true } });
   });
 
   it('blocks cross-origin cookie-authenticated lead creation', async () => {

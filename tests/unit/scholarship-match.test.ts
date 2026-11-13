@@ -110,6 +110,11 @@ describe('scholarship matching', () => {
     expect(result.openForApplications).toBeNull();
   });
 
+  it.each(['VERIFIED', 'verified_recent', 'VERIFIED_RECENT'])('accepts current verified status %s without a false warning', (verificationStatus) => {
+    const result = scoreScholarship(makeScholarship({ verificationStatus }), {}, FIXED_NOW);
+    expect(result.concerns.some((concern) => concern.includes('Verification status'))).toBe(false);
+  });
+
   it('warns when the record is not verified', () => {
     const result = scoreScholarship(makeScholarship({ verificationStatus: 'pending' }), {}, FIXED_NOW);
     expect(result.concerns.some((concern) => concern.includes('"pending"'))).toBe(true);

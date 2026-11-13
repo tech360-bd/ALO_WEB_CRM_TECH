@@ -1,6 +1,6 @@
 # Public header — every page BEFORE login (brand specification)
 
-Status: implemented 2026-10-13. Single source of truth for the marketing header.
+Status: implemented; public-brand alignment updated 2026-10-19. Single source of truth for the marketing header.
 
 ## 1. What the header must contain
 
@@ -12,10 +12,10 @@ Status: implemented 2026-10-13. Single source of truth for the marketing header.
 | 4 | Course Finder | `/course-finder` |
 | 5 | Services | `/services` |
 | 6 | Language Prep | `/language-prep` |
-| 7 | Resources ▾ | 10 curated links (Blogs → FAQs) |
+| 7 | Resources ▾ | 10 curated links (Blogs → FAQs) plus the existing tracked English Test link |
 | 8 | Portal ▾ | Student `/student/login` · Partner `/partner/login` · Employee `/employee/login` |
 | 9 | AI SUPPORT TOOLS ▾ | AI Course Match, AI Scholarship Match, AI Visa Coach, AI SOP Helper, AI CV Helper, Eligibility Check |
-| 10 | CTA button | **Book Free Counseling** (ALO Orange) → `/book-consultation` |
+| 10 | CTA button | **Book Free Counseling** (ALO Orange `#F37021`, black text for contrast) → `/book-consultation` |
 
 Order, labels and the ▾ affordances are asserted by
 `tests/e2e/public-header.spec.ts` (menu order is checked by x-coordinate, so a
@@ -82,19 +82,20 @@ Brand spec: **Headings Montserrat/Poppins Bold**, **Body Open Sans/Roboto**.
 `src/i18n/dictionaries.ts` gained `nav.portal` and `nav.aiSupportTools` (EN + বাংলা);
 `cta.bookConsultation` now reads **Book Free Counseling** in English
 (Bangla remains `ফ্রি পরামর্শ নিন`). The header reads every label through `t()`,
-and the EN|বাংলা toggle lives in the blue utility strip.
+and the EN|বাংলা toggle lives in the blue utility strip. The tracked English Test
+entry is nested in Resources (desktop and mobile) so it stays available without
+interrupting the requested top-level order.
 
-## 6. Verification performed
+## 6. Verification performed (current palette/order alignment, 2026-10-19)
 
 | Check | Result |
 | ----- | ------ |
-| `npx tsc --noEmit` limited to the header sub-graph (layout, navbar, toggle, ui, i18n, proxy) | clean (a full-project run needs the CI memory budget) |
-| `npx eslint` on every touched file | clean |
-| `GET /` and 15 public routes on a live dev server | 200, `#alo-public-header` present, CTA label correct |
-| Rendered menu order in SSR HTML | Destinations · Course Finder · Services · Language Prep · Resources · Portal · AI SUPPORT TOOLS · Book Free Counseling |
-| `GET /fonts/montserrat-latin-700-normal.woff2` | 200 `font/woff2` |
-| `vitest run tests/unit/catalogue-phase1-proxy.test.ts tests/unit/catalogue-phase1-review-publication.test.ts` | 21 passed (static-asset allow-list incl. `/fonts/*`) |
-| `tests/e2e/public-header.spec.ts` | added (runs in CI: header on every public route, menu order, dropdowns, mobile sheet, header scope) |
+| Targeted ESLint on public header/footer, related public routes/components and tests | passed |
+| Scoped TypeScript check on public chrome and directly changed client components | passed (root-layout-inclusive check is blocked by the missing generated Prisma client after `npm ci --ignore-scripts`) |
+| `npx vitest run tests/unit/english-exam-cta.test.ts` | 21 passed; asserts the English Test link remains inside Resources and footer Quick Links stay exact |
+| `npx playwright test tests/e2e/public-header.spec.ts tests/e2e/public-footer.spec.ts --list` | 24 tests parsed; browser execution not run because the sandbox has no Playwright browser binary |
+| `git diff --check` | passed |
+
 
 Known environment limits while developing this change: no MySQL/Prisma query
 engine in the sandbox (`npm run build` requires the MySQL engine download), so the

@@ -1,0 +1,16 @@
+diff --git a/src/lib/whatsapp-number-pool.ts b/src/lib/whatsapp-number-pool.ts
+index 917850f2..c1c4d506 100644
+--- a/src/lib/whatsapp-number-pool.ts
++++ b/src/lib/whatsapp-number-pool.ts
+@@ -22,7 +22,10 @@ export function normalizeBdPhone(phone: string): string {
+ /** Normalize configured/input numbers to the local 01XXXXXXXXX display form. */
+ export function toBdDisplayPhone(phone: string): string {
+   const normalized = normalizeBdPhone(phone);
+-  return normalized ? `0${normalized.slice(2)}` : '';
++  // `normalized` is E.164 without '+', i.e. 880 + 10 subscriber digits. Slice 3
++  // removes the country code; slicing 2 left a stray leading 1 and produced
++  // 001XXXXXXXXXX, which never matches a configured sender or an inbound number.
++  return normalized ? `0${normalized.slice(3)}` : '';
+ }
+ 
+ function parseConfiguredList(value: string | undefined): string[] {

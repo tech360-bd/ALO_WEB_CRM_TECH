@@ -1,0 +1,30 @@
+# Prometheus scrape configuration for the shared AI gateway.
+#
+# Only the private metrics listener is scraped. The public API port must never
+# be scraped (it answers 404 on /metrics by design).
+#
+# Validate with: promtool check config monitoring/prometheus/ai-gateway-scrape.yml
+global:
+  scrape_interval: 30s
+  scrape_timeout: 10s
+  evaluation_interval: 30s
+
+rule_files:
+  - /etc/alo/ai-gateway-alerts.yml
+
+scrape_configs:
+  - job_name: ai-gateway
+    static_configs:
+      - targets:
+          - 127.0.0.1:9180
+        labels:
+          service: ai-gateway
+          environment: production
+
+  - job_name: node-exporter
+    static_configs:
+      - targets:
+          - 127.0.0.1:9100
+        labels:
+          service: host
+          environment: production

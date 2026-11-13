@@ -1,39 +1,24 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { logSecurityAudit } from '@/lib/access-control/central-security-engine';
 import { authenticateRequest } from '@/lib/auth-middleware';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024;
-const MIME_BY_EXTENSION: Record<string, string> = {
-  pdf: 'application/pdf',
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-  png: 'image/png',
-  gif: 'image/gif',
-  webp: 'image/webp',
-};
-const STAFF_ROLES = new Set([
-  'EMPLOYEE', 'HR_MANAGER', 'SUPER_ADMIN', 'ADMIN', 'COUNSELOR', 'APPLICATION_TEAM',
-  'VISA_OFFICER', 'VISA_INTERVIEW_OFFICER', 'BRANCH_MANAGER', 'FRONT_DESK',
-  'SUPPORT_STAFF', 'MARKETING_MANAGER', 'MARKETING', 'FINANCE', 'ENGLISH_TRAINER',
-]);
-const HR_ROLES = new Set(['HR_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
+const MIME_BY_EXTENSION: Record<string, string> = { pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp' };
+const MANDATORY_TYPES = new Set(['passport','nid','photo','cv','certificates','experience_letter','appointment_letter','confirmation_letter','increment_letter','promotion_letter','transfer_letter','warning_letter','termination_letter','employment_agreement','nda','confidentiality_agreement','device_agreement','it_policy','data_privacy_agreement','international_agreement','bangladesh_agreement','exit_clearance']);
+const DOCUMENT_TYPES = new Set([...MANDATORY_TYPES, 'other']);
+const STAFF_ROLES = new Set(['EMPLOYEE','HR','HR_MANAGER','SUPER_ADMIN','COUNSELOR','APPLICATION_TEAM','VISA_OFFICER','VISA_INTERVIEW_OFFICER','BRANCH_MANAGER','FRONT_DESK','SUPPORT_STAFF','MARKETING_MANAGER','MARKETING','FINANCE','ENGLISH_TRAINER']);
+const HR_ROLES = new Set(['HR','HR_MANAGER','SUPER_ADMIN']);
 
-function rolesOf(auth: { userType: string; roles: string[] }): Set<string> {
-  return new Set([auth.userType, ...auth.roles].map((role) => role.toUpperCase()));
-}
-
-function hasEmployeeAccess(auth: { userType: string; roles: string[] }): boolean {
-  return [...rolesOf(auth)].some((role) => STAFF_ROLES.has(role));
-}
-
-function canManageOtherEmployeeDocuments(auth: { userType: string; roles: string[] }): boolean {
-  return [...rolesOf(auth)].some((role) => HR_ROLES.has(role));
-}
+function rolesOf(auth: { userType: string; roles: string[] }): Set<string> { return new Set([auth.userType, ...auth.roles].map((role) => role.toUpperCase())); }
+function isSuperAdmin(auth: { userType: string; roles: string[] }): boolean { const roles = rolesOf(auth); return roles.has('SUPER_ADMIN'); }
+function hasEmployeeAccess(auth: { userType: string; roles: string[] }): boolean { return [...rolesOf(auth)].some((role) => STAFF_ROLES.has(role)); }
+function canManageOtherEmployeeDocuments(auth: { userType: string; roles: string[] }): boolean { return [...rolesOf(auth)].some((role) => HR_ROLES.has(role)); }
 
 function detectMime(bytes: Buffer): string | null {
   if (bytes.length >= 5 && bytes.subarray(0, 5).toString('ascii') === '%PDF-') return 'application/pdf';
@@ -46,172 +31,99 @@ function detectMime(bytes: Buffer): string | null {
 
 function safeDownloadDocument(document: any) {
   return {
-    id: document.id,
-    employeeId: document.employeeId,
-    documentType: document.documentType,
-    title: document.title,
-    fileName: document.fileName,
-    fileSize: document.fileSize,
-    mimeType: document.mimeType,
-    isMandatory: document.isMandatory,
-    isVerified: document.isVerified,
-    status: document.status,
-    version: document.version,
-    expiryDate: document.expiryDate,
-    reviewerId: document.reviewerId,
-    reviewNote: document.reviewNote,
-    createdAt: document.createdAt,
-    updatedAt: document.updatedAt,
-    downloadUrl: `/api/employee/documents/${document.id}/download`,
+    id: document.id, employeeId: document.employeeId, documentType: document.documentType, title: document.title,
+    fileName: document.fileName, fileSize: document.fileSize, mimeType: document.mimeType, isMandatory: document.isMandatory,
+    isVerified: document.isVerified, status: document.status, version: document.version, expiryDate: document.expiryDate,
+    createdAt: document.createdAt, updatedAt: document.updatedAt, downloadUrl: `/api/employee/documents/${document.id}/download`,
   };
 }
 
-export async function GET(req: Request) {
+async function resolveEmployee(value: string) {
+  const employee = await db.employee.findFirst({ where: { OR: [{ id: value }, { userId: value }, { employeeId: value }] }, select: { id: true, userId: true, employeeId: true, status: true, role: true } });
+  const hr = await db.employeeHR.findFirst({ where: { OR: [{ employeeId: value }, ...(employee ? [{ userId: employee.userId }] : [])] }, select: { employeeId: true, userId: true } });
+  const userId = employee?.userId || hr?.userId || '';
+  if (!userId) return null;
+  const [account, currentEmployee] = await Promise.all([
+    db.portalUser.findUnique({ where: { id: userId }, select: { id: true, userType: true, status: true } }),
+    employee ? Promise.resolve(employee) : db.employee.findUnique({ where: { userId }, select: { id: true, userId: true, employeeId: true, status: true, role: true } }),
+  ]);
+  if (!account || ['STUDENT', 'PARTNER'].includes(account.userType.toUpperCase())) return null;
+  if (!currentEmployee || currentEmployee.status.toLowerCase() !== 'active' || account.status.toLowerCase() !== 'active') return null;
+  const identifiers = [...new Set([userId, currentEmployee.id, currentEmployee.employeeId, hr?.employeeId].filter((item): item is string => Boolean(item)))];
+  return { userId, employeeId: currentEmployee.id, identifiers };
+}
+
+async function requireActiveActor(auth: { userId: string; userType: string; roles: string[] }) {
+  if (isSuperAdmin(auth)) return true;
+  const employee = await db.employee.findUnique({ where: { userId: auth.userId }, select: { status: true } });
+  return Boolean(employee && employee.status.toLowerCase() === 'active');
+}
+
+export async function GET(req: NextRequest) {
   const auth = await authenticateRequest(req);
   if (auth instanceof NextResponse) return auth;
   if (!hasEmployeeAccess(auth)) return NextResponse.json({ success: false, error: 'Employee access required.' }, { status: 403 });
+  if (!await requireActiveActor(auth).catch(() => false)) return NextResponse.json({ success: false, error: 'An active employee account is required.' }, { status: 403 });
 
-  const url = new URL(req.url);
-  const targetEmployeeId = url.searchParams.get('employeeId') || auth.userId;
-  const self = targetEmployeeId === auth.userId;
-  if (!self && !canManageOtherEmployeeDocuments(auth)) {
-    return NextResponse.json({ success: false, error: 'Only HR or administrators may view another employee’s documents.' }, { status: 403 });
-  }
-  const type = url.searchParams.get('documentType');
-  const where: Record<string, unknown> = { employeeId: targetEmployeeId, isDeleted: false };
-  if (type) where.documentType = type;
-
+  const params = req.nextUrl.searchParams;
+  const requested = (params.get('employeeId') || params.get('userId') || auth.userId).trim();
+  const target = await resolveEmployee(requested).catch(() => null);
+  if (!target) return NextResponse.json({ success: false, error: 'Active employee record not found.' }, { status: 404 });
+  const self = target.userId === auth.userId;
+  if (!self && !canManageOtherEmployeeDocuments(auth)) return NextResponse.json({ success: false, error: 'Only HR or Super Admin may view another employee’s documents.' }, { status: 403 });
+  const type = params.get('documentType')?.trim().toLowerCase();
+  if (type && !DOCUMENT_TYPES.has(type)) return NextResponse.json({ success: false, error: 'Unsupported document type filter.' }, { status: 400 });
   try {
-    const documents = await db.employeeDocument.findMany({ where, orderBy: { createdAt: 'desc' } });
-    return NextResponse.json({ success: true, documents: documents.map(safeDownloadDocument) });
+    const documents = await db.employeeDocument.findMany({ where: { employeeId: { in: target.identifiers }, isDeleted: false, ...(type ? { documentType: type } : {}) }, orderBy: { createdAt: 'desc' } });
+    await db.$transaction(async (tx) => {
+      await logSecurityAudit({ actorId: auth.actorUserId || auth.userId, actorRole: [...rolesOf(auth)].join(','), action: 'EMPLOYEE_DOCUMENTS_VIEWED', targetType: 'EmployeeDocument', targetId: target.employeeId, newValue: JSON.stringify({ count: documents.length }), ipAddress: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '', sessionIdentifier: auth.sessionId }, tx);
+    });
+    return NextResponse.json({ success: true, documents: documents.map(safeDownloadDocument) }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch {
-    return NextResponse.json({ success: false, error: 'Employee documents are temporarily unavailable.' }, { status: 503 });
+    return NextResponse.json({ success: false, error: 'Employee documents are temporarily unavailable.' }, { status: 503, headers: { 'Cache-Control': 'no-store' } });
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const auth = await authenticateRequest(req);
   if (auth instanceof NextResponse) return auth;
   if (!hasEmployeeAccess(auth)) return NextResponse.json({ success: false, error: 'Employee access required.' }, { status: 403 });
+  if (!await requireActiveActor(auth).catch(() => false)) return NextResponse.json({ success: false, error: 'An active employee account is required.' }, { status: 403 });
+  if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
 
   let form: FormData;
-  try {
-    form = await req.formData();
-  } catch {
-    return NextResponse.json({ success: false, error: 'Upload the actual file bytes using multipart/form-data.' }, { status: 415 });
-  }
+  try { form = await req.formData(); } catch { return NextResponse.json({ success: false, error: 'Upload actual file bytes using multipart/form-data.' }, { status: 415 }); }
+  const requested = String(form.get('employeeId') || auth.userId).trim();
+  const target = await resolveEmployee(requested).catch(() => null);
+  if (!target) return NextResponse.json({ success: false, error: 'An active employee account is required for document uploads.' }, { status: 404 });
+  const self = target.userId === auth.userId;
+  if (!self && !canManageOtherEmployeeDocuments(auth)) return NextResponse.json({ success: false, error: 'Only HR or Super Admin may upload for another employee.' }, { status: 403 });
 
-  const targetEmployeeId = String(form.get('employeeId') || auth.userId).trim();
   const documentType = String(form.get('documentType') || '').trim().toLowerCase();
   const title = String(form.get('title') || '').trim();
+  const expiryDate = String(form.get('expiryDate') || '').trim();
   const formFile = form.get('file');
-  if (!targetEmployeeId || !/^[a-z0-9][a-z0-9_-]{0,79}$/.test(documentType) || !(formFile instanceof File) || !formFile.size || formFile.size > MAX_FILE_BYTES) {
-    return NextResponse.json({ success: false, error: 'A valid document type and non-empty file up to 20 MB are required.' }, { status: 400 });
-  }
-  if (title.length > 191 || /[\u0000-\u001f]/.test(title)) {
-    return NextResponse.json({ success: false, error: 'Document title is invalid.' }, { status: 400 });
-  }
-
-  const self = targetEmployeeId === auth.userId;
-  if (!self && !canManageOtherEmployeeDocuments(auth)) {
-    return NextResponse.json({ success: false, error: 'Only HR or administrators may upload for another employee.' }, { status: 403 });
-  }
-  if (!self) {
-    const [portalUser, legacyUser, employee] = await Promise.all([
-      db.portalUser.findUnique({ where: { id: targetEmployeeId }, select: { id: true, userType: true, status: true } }).catch(() => null),
-      db.user.findUnique({ where: { id: targetEmployeeId }, select: { id: true, role: true, status: true } }).catch(() => null),
-      db.employee.findFirst({ where: { userId: targetEmployeeId }, select: { userId: true, role: true } }).catch(() => null),
-    ]);
-    const targetRole = String(portalUser?.userType || legacyUser?.role || employee?.role || '').toUpperCase();
-    if (!portalUser && !legacyUser && !employee) {
-      return NextResponse.json({ success: false, error: 'Employee account not found.' }, { status: 404 });
-    }
-    if (['STUDENT', 'PARTNER'].includes(targetRole)) {
-      return NextResponse.json({ success: false, error: 'Employee documents cannot be attached to a student or partner account.' }, { status: 403 });
-    }
-  }
-
+  if (!DOCUMENT_TYPES.has(documentType) || !(formFile instanceof File) || !formFile.size || formFile.size > MAX_FILE_BYTES) return NextResponse.json({ success: false, error: 'A configured document type and non-empty file up to 20 MB are required.' }, { status: 400 });
+  if (title.length > 191 || /[\u0000-\u001f]/.test(title)) return NextResponse.json({ success: false, error: 'Document title is invalid.' }, { status: 400 });
+  if (expiryDate && (!/^\d{4}-\d{2}-\d{2}$/.test(expiryDate) || Number.isNaN(new Date(`${expiryDate}T00:00:00.000Z`).getTime()) || new Date(`${expiryDate}T00:00:00.000Z`).toISOString().slice(0, 10) !== expiryDate)) return NextResponse.json({ success: false, error: 'Expiry date must use YYYY-MM-DD.' }, { status: 400 });
   const bytes = Buffer.from(await formFile.arrayBuffer());
   const detectedMime = detectMime(bytes);
   const extension = formFile.name.split('.').pop()?.toLowerCase() || '';
-  if (!detectedMime || MIME_BY_EXTENSION[extension] !== detectedMime || (formFile.type && formFile.type !== detectedMime)) {
-    return NextResponse.json({ success: false, error: 'File content does not match an allowed PDF or image type.' }, { status: 400 });
-  }
+  if (!detectedMime || MIME_BY_EXTENSION[extension] !== detectedMime || (formFile.type && formFile.type !== detectedMime)) return NextResponse.json({ success: false, error: 'File content does not match an allowed PDF or image type.' }, { status: 400 });
 
   const stored = await storePrivateFile(bytes, formFile.name);
-  const actorRole = [...rolesOf(auth)].join(',');
   try {
     const document = await db.$transaction(async (tx) => {
-      const existing = await tx.employeeDocument.findFirst({
-        where: { employeeId: targetEmployeeId, documentType, isDeleted: false },
-        orderBy: { updatedAt: 'desc' },
-      });
+      const existing = await tx.employeeDocument.findFirst({ where: { employeeId: { in: target.identifiers }, documentType, isDeleted: false }, orderBy: { updatedAt: 'desc' } });
       const nextVersion = existing ? existing.version + 1 : 1;
-      if (existing) {
-        await tx.employeeDocumentVersion.updateMany({
-          where: { employeeDocumentId: existing.id, status: 'current' },
-          data: { status: 'historical' },
-        });
-      }
+      if (existing) await tx.employeeDocumentVersion.updateMany({ where: { employeeDocumentId: existing.id, status: 'current' }, data: { status: 'historical' } });
       const updated = existing
-        ? await tx.employeeDocument.update({
-            where: { id: existing.id },
-            data: {
-              title: title || existing.title || documentType,
-              filePath: stored.storagePath,
-              fileName: formFile.name.slice(0, 191),
-              fileSize: stored.fileSize,
-              fileHash: stored.fileHash,
-              mimeType: detectedMime,
-              uploadedBy: auth.userId,
-              status: 'pending',
-              isVerified: false,
-              reviewerId: '',
-              reviewNote: '',
-              version: nextVersion,
-            },
-          })
-        : await tx.employeeDocument.create({
-            data: {
-              employeeId: targetEmployeeId,
-              documentType,
-              title: title || documentType,
-              filePath: stored.storagePath,
-              fileName: formFile.name.slice(0, 191),
-              fileSize: stored.fileSize,
-              fileHash: stored.fileHash,
-              mimeType: detectedMime,
-              uploadedBy: auth.userId,
-              status: 'pending',
-              version: nextVersion,
-            },
-          });
-
-      await tx.employeeDocumentVersion.create({
-        data: {
-          documentId: updated.id,
-          employeeDocumentId: updated.id,
-          version: nextVersion,
-          filePath: stored.storagePath,
-          fileName: formFile.name.slice(0, 191),
-          fileHash: stored.fileHash,
-          uploadedBy: auth.userId,
-          status: 'current',
-        },
-      });
-      await logSecurityAudit({
-        actorId: auth.actorUserId || auth.userId,
-        actorRole,
-        action: 'EMPLOYEE_DOCUMENT_UPLOADED',
-        targetType: 'EmployeeDocument',
-        targetId: updated.id,
-        newValue: JSON.stringify({ documentType, employeeId: targetEmployeeId, fileHash: stored.fileHash, version: nextVersion }),
-        ipAddress: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '',
-        sessionIdentifier: auth.sessionId,
-      }, tx);
+        ? await tx.employeeDocument.update({ where: { id: existing.id }, data: { title: title || existing.title || documentType, filePath: stored.storagePath, fileName: formFile.name.slice(0, 191), fileSize: stored.fileSize, fileHash: stored.fileHash, mimeType: detectedMime, expiryDate: expiryDate || existing.expiryDate, uploadedBy: auth.userId, isMandatory: MANDATORY_TYPES.has(documentType), status: 'pending', isVerified: false, reviewerId: '', reviewNote: '', version: nextVersion } })
+        : await tx.employeeDocument.create({ data: { employeeId: target.userId, documentType, title: title || documentType, filePath: stored.storagePath, fileName: formFile.name.slice(0, 191), fileSize: stored.fileSize, fileHash: stored.fileHash, mimeType: detectedMime, expiryDate, isMandatory: MANDATORY_TYPES.has(documentType), uploadedBy: auth.userId, status: 'pending', version: nextVersion } });
+      await tx.employeeDocumentVersion.create({ data: { documentId: updated.id, employeeDocumentId: updated.id, version: nextVersion, filePath: stored.storagePath, fileName: formFile.name.slice(0, 191), fileHash: stored.fileHash, uploadedBy: auth.userId, status: 'current' } });
+      await logSecurityAudit({ actorId: auth.actorUserId || auth.userId, actorRole: [...rolesOf(auth)].join(','), action: 'EMPLOYEE_DOCUMENT_UPLOADED', targetType: 'EmployeeDocument', targetId: updated.id, newValue: JSON.stringify({ documentType, targetEmployeeId: target.employeeId, fileHash: stored.fileHash, version: nextVersion }), ipAddress: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '', sessionIdentifier: auth.sessionId }, tx);
       return updated;
     });
-
     return NextResponse.json({ success: true, document: safeDownloadDocument(document) }, { status: 201 });
   } catch {
     await removePrivateFile(stored.storagePath).catch(() => {});
@@ -219,45 +131,26 @@ export async function POST(req: Request) {
   }
 }
 
-export async function PATCH(req: Request) {
+export async function PATCH(req: NextRequest) {
   const auth = await authenticateRequest(req);
   if (auth instanceof NextResponse) return auth;
-  if (!hasEmployeeAccess(auth) || !canManageOtherEmployeeDocuments(auth)) {
-    return NextResponse.json({ success: false, error: 'HR or administrator access is required to review employee documents.' }, { status: 403 });
-  }
-
+  if (!hasEmployeeAccess(auth) || !canManageOtherEmployeeDocuments(auth)) return NextResponse.json({ success: false, error: 'HR or Super Admin access is required to review employee documents.' }, { status: 403 });
+  if (!await requireActiveActor(auth).catch(() => false)) return NextResponse.json({ success: false, error: 'An active employee account is required.' }, { status: 403 });
+  if (!mutationOriginAllowed(req, auth)) return NextResponse.json({ success: false, error: 'Same-origin request required.' }, { status: 403 });
   const body = await req.json().catch(() => null);
-  const documentId = typeof body?.documentId === 'string' ? body.documentId : '';
+  const documentId = typeof body?.documentId === 'string' ? body.documentId.trim() : '';
   const action = typeof body?.action === 'string' ? body.action.toLowerCase() : '';
   const reviewNote = typeof body?.reviewNote === 'string' ? body.reviewNote.trim() : '';
-  if (!documentId || !['approve', 'reject'].includes(action) || (action === 'reject' && (!reviewNote || reviewNote.length > 1000))) {
-    return NextResponse.json({ success: false, error: 'A document id and valid approve/reject decision are required; rejected documents need a reason.' }, { status: 400 });
-  }
-
+  if (!documentId || !['approve', 'reject'].includes(action) || reviewNote.length > 1000 || (action === 'reject' && !reviewNote)) return NextResponse.json({ success: false, error: 'A document id and valid approve/reject decision are required; rejected documents need a reason.' }, { status: 400 });
   try {
     const document = await db.employeeDocument.findUnique({ where: { id: documentId } });
     if (!document || document.isDeleted) return NextResponse.json({ success: false, error: 'Document not found.' }, { status: 404 });
+    if (document.uploadedBy === auth.userId || document.uploadedBy === auth.actorUserId) return NextResponse.json({ success: false, error: 'Document maker cannot approve their own upload.' }, { status: 403 });
     const status = action === 'approve' ? 'approved' : 'rejected';
     const updated = await db.$transaction(async (tx) => {
-      const result = await tx.employeeDocument.update({
-        where: { id: documentId },
-        data: { status, isVerified: action === 'approve', reviewerId: auth.userId, reviewNote },
-      });
-      await tx.employeeDocumentVersion.updateMany({
-        where: { employeeDocumentId: documentId, version: document.version, status: 'current' },
-        data: { reviewerId: auth.userId, reviewNote, status },
-      });
-      await logSecurityAudit({
-        actorId: auth.actorUserId || auth.userId,
-        actorRole: [...rolesOf(auth)].join(','),
-        action: `EMPLOYEE_DOCUMENT_${status.toUpperCase()}`,
-        targetType: 'EmployeeDocument',
-        targetId: documentId,
-        oldValue: JSON.stringify({ status: document.status }),
-        newValue: JSON.stringify({ status, reviewNote }),
-        ipAddress: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '',
-        sessionIdentifier: auth.sessionId,
-      }, tx);
+      const result = await tx.employeeDocument.update({ where: { id: documentId }, data: { status, isVerified: action === 'approve', reviewerId: auth.actorUserId || auth.userId, reviewNote } });
+      await tx.employeeDocumentVersion.updateMany({ where: { employeeDocumentId: documentId, version: document.version, status: 'current' }, data: { reviewerId: auth.actorUserId || auth.userId, reviewNote, status } });
+      await logSecurityAudit({ actorId: auth.actorUserId || auth.userId, actorRole: [...rolesOf(auth)].join(','), action: `EMPLOYEE_DOCUMENT_${status.toUpperCase()}`, targetType: 'EmployeeDocument', targetId: documentId, oldValue: JSON.stringify({ status: document.status }), newValue: JSON.stringify({ status, reviewNote }), ipAddress: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '', sessionIdentifier: auth.sessionId }, tx);
       return result;
     });
     return NextResponse.json({ success: true, document: safeDownloadDocument(updated) });

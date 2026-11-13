@@ -1,7 +1,7 @@
 'use client';
 
 import { usePortalStore, type PortalView } from '@/lib/stores/portal-store';
-import EmployeeDashboard from './EmployeeDashboard';
+import EmployeeDashboard from './UnifiedEmployeeDashboard';
 import EmployeeProfilePage from './EmployeeProfilePage';
 import EmployeeTasksPage from './EmployeeTasksPage';
 import EmployeeLeadsPage from './EmployeeLeadsPage';

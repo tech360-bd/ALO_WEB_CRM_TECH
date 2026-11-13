@@ -46,51 +46,51 @@ export default function ResourcesCategoryListing({ categorySlug, categoryName, i
   return (
     <div className="min-h-screen bg-white">
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-20 space-y-8">
-        <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-[#0057B8]">Home</Link><span>›</span>
-          <Link href="/resources" className="hover:text-[#0057B8]">Resources</Link><span>›</span>
-          <span className="text-[#0057B8] font-bold">{categoryName}</span>
+        <nav className="flex items-center gap-2 text-xs text-[var(--alo-text-muted)] font-medium" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-[var(--alo-brand)]">Home</Link><span>›</span>
+          <Link href="/resources" className="hover:text-[var(--alo-brand)]">Resources</Link><span>›</span>
+          <span className="text-[var(--alo-brand)] font-bold">{categoryName}</span>
         </nav>
 
-        <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 shadow-sm">
-          <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-xs px-3 py-1 mb-3">{categoryName}</Badge>
-          <h1 className="text-3xl md:text-4xl font-bold text-[#0F172A] mb-2">{categoryName} — ALO Education</h1>
-          <p className="text-sm md:text-base text-gray-600 max-w-3xl">{intro || `Practical ${categoryName.toLowerCase()} guidance — database-driven, verified where time-sensitive.`}</p>
+        <div className="bg-white border border-[var(--alo-border)] rounded-3xl p-8 shadow-sm">
+          <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-xs px-3 py-1 mb-3">{categoryName}</Badge>
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--alo-text)] mb-2">{categoryName} — ALO Education</h1>
+          <p className="text-sm md:text-base text-[var(--alo-body)] max-w-3xl">{intro || `Practical ${categoryName.toLowerCase()} guidance — database-driven, verified where time-sensitive.`}</p>
         </div>
 
-        <Card className="p-4 bg-white border-[#E2E8F0] rounded-2xl shadow-sm">
+        <Card className="p-4 bg-white border-[var(--alo-border)] rounded-2xl shadow-sm">
           <form role="search" onSubmit={(e) => e.preventDefault()} className="flex gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden />
-              <Input aria-label={`Search ${categoryName}`} placeholder="Search articles..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 bg-white border-[#E2E8F0] h-11" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--alo-text-muted)]" aria-hidden />
+              <Input aria-label={`Search ${categoryName}`} placeholder="Search articles..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 bg-white border-[var(--alo-border)] h-11" />
             </div>
-            <select aria-label="Study level" value={level} onChange={(e) => setLevel(e.target.value)} className="bg-white border border-[#E2E8F0] rounded-xl px-3 text-sm h-11">
+            <select aria-label="Study level" value={level} onChange={(e) => setLevel(e.target.value)} className="bg-white border border-[var(--alo-border)] rounded-xl px-3 text-sm h-11">
               <option value="">All Levels</option><option value="undergraduate">Undergraduate</option><option value="postgraduate">Postgraduate</option>
             </select>
           </form>
         </Card>
 
-        {loading ? <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{[...Array(6)].map((_, i) => <div key={i} className="h-40 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl animate-pulse" />)}</div> : items.length === 0 ? (
-          <Card className="p-12 bg-[#F8FAFC] border-[#E2E8F0] rounded-2xl text-center">
-            <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm text-gray-600">No {categoryName.toLowerCase()} articles published yet.</p>
-            <p className="text-xs text-gray-500 mt-2">ALO publishes only complete, verified articles — check other categories or return soon.</p>
-            <Link href="/resources"><Button className="mt-4 bg-[#0057B8] text-white h-12 px-6">Browse All Resources</Button></Link>
+        {loading ? <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{[...Array(6)].map((_, i) => <div key={i} className="h-40 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-2xl animate-pulse" />)}</div> : items.length === 0 ? (
+          <Card className="p-12 bg-[var(--alo-page)] border-[var(--alo-border)] rounded-2xl text-center">
+            <BookOpen className="w-12 h-12 text-[var(--alo-placeholder)] mx-auto mb-3" />
+            <p className="text-sm text-[var(--alo-body)]">No {categoryName.toLowerCase()} articles published yet.</p>
+            <p className="text-xs text-[var(--alo-text-muted)] mt-2">ALO publishes only complete, verified articles — check other categories or return soon.</p>
+            <Link href="/resources"><Button className="mt-4 bg-[var(--alo-brand)] text-white h-12 px-6">Browse All Resources</Button></Link>
           </Card>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map((b: any) => (
-              <Card key={b.id} className="p-5 bg-white border-[#E2E8F0] rounded-2xl hover:border-[#0057B8] hover:shadow-md transition-all flex flex-col justify-between">
+              <Card key={b.id} className="p-5 bg-white border-[var(--alo-border)] rounded-2xl hover:border-[var(--alo-brand)] hover:shadow-md transition-all flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <Badge className="bg-[#0057B8]/10 text-[#0057B8] border-[#0057B8]/20 text-[10px]">{b.category?.name || categoryName}</Badge>
-                    <span className="text-[10px] text-gray-400 flex items-center gap-1"><Clock className="w-3 h-3" />{b.readingTime || 5} min</span>
+                    <Badge className="bg-[var(--alo-brand)]/10 text-[var(--alo-brand)] border-[var(--alo-brand)]/20 text-[11px]">{b.category?.name || categoryName}</Badge>
+                    <span className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1"><Clock className="w-3 h-3" />{b.readingTime || 5} min</span>
                   </div>
-                  <h3 className="font-bold text-sm text-[#0F172A] mb-2 line-clamp-2">{b.title}</h3>
-                  <p className="text-xs text-gray-600 mb-3 line-clamp-3">{b.excerpt || b.summary || ''}</p>
-                  <p className="text-[10px] text-gray-500">Updated: {b.publishedAt ? new Date(b.publishedAt).toLocaleDateString() : '—'}{b.lastVerifiedAt ? ` • Last verified: ${new Date(b.lastVerifiedAt).toLocaleDateString()}` : ''} • ALO Editorial Team</p>
+                  <h3 className="font-bold text-sm text-[var(--alo-text)] mb-2 line-clamp-2">{b.title}</h3>
+                  <p className="text-xs text-[var(--alo-body)] mb-3 line-clamp-3">{b.excerpt || b.summary || ''}</p>
+                  <p className="text-[11px] text-[var(--alo-text-muted)]">Updated: {b.publishedAt ? new Date(b.publishedAt).toLocaleDateString() : '—'}{b.lastVerifiedAt ? ` • Last verified: ${new Date(b.lastVerifiedAt).toLocaleDateString()}` : ''} • ALO Editorial Team</p>
                 </div>
-                <Link href={`/resources/${categorySlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[#0057B8] text-white hover:bg-[#003F87] text-xs font-bold h-12 rounded-xl mt-4">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
+                <Link href={`/resources/${categorySlug}/${b.slug}`} aria-label={`Read ${b.title}`}><Button className="w-full bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand-hover)] font-bold h-12 rounded-xl mt-4">Read Full Guide <ArrowRight className="w-4 h-4 ml-1" /></Button></Link>
               </Card>
             ))}
           </div>

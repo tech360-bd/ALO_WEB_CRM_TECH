@@ -1,27 +1,77 @@
 import { NextResponse } from 'next/server';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
 import { validateMergeDecisions } from '@/lib/import-merge-engine';
 
-// POST /api/admin/import/merge { stagedId, matchedStudentId, decisions: {field: KEEP_EXISTING|USE_IMPORTED|MERGE|SKIP}, batchId }
+function isSuperAdmin(auth: AuthContext): boolean {
+  return auth.roles.some((role) => role.toLowerCase() === 'super_admin');
+}
+
 export const POST = withAuth(async (request: Request, auth: AuthContext) => {
-  if (!auth.roles.includes('super_admin') && !auth.roles.includes('admin')) {
-    return NextResponse.json({ success:false, error:'Forbidden — Super Admin/Admin only' }, { status:403 });
+  if (!isSuperAdmin(auth)) return NextResponse.json({ success: false, error: 'Super Admin access required.' }, { status: 403 });
+  const body = await request.json().catch(() => null);
+  const { stagedId, matchedStudentId, decisions } = body || {};
+  if (typeof stagedId !== 'string' || typeof matchedStudentId !== 'string' || !decisions || typeof decisions !== 'object' || Array.isArray(decisions)) {
+    return NextResponse.json({ success: false, error: 'stagedId, matchedStudentId and field decisions are required.' }, { status: 400 });
   }
-  const body = await request.json().catch(()=>({}));
-  const { stagedId, matchedStudentId, decisions } = body;
-  if (!stagedId || !matchedStudentId || !decisions) return NextResponse.json({ success:false, error:'stagedId, matchedStudentId, decisions required' }, { status:400 });
-  const staged = await db.importStagingStudent.findUnique({ where:{ id: stagedId } }).catch(()=>null) as any;
-  const existing = await db.student.findUnique({ where:{ id: matchedStudentId } }).catch(()=>null) as any;
-  if (!staged || !existing) return NextResponse.json({ success:false, error:'Staged or existing not found' }, { status:404 });
-  // Build field comparisons for validation
-  const comparisons = Object.entries(decisions).map(([field, decision]:any)=> ({ field, existingValue: existing[field], importedValue: (staged as any)[field] ?? staged.studentName, existingSource:'ALO', importedSource:'OLD_CRM', lastUpdatedExisting: String(existing.updatedAt||''), conflict: true, decision }));
-  const validation = validateMergeDecisions(comparisons as any);
-  if (!validation.ok) return NextResponse.json({ success:false, error: validation.errors.join('; ') }, { status:400 });
-  // Mark staged as merged; actual live merge applied at execute time per field decisions
+
   try {
-    await db.importStagingStudent.update({ where:{ id: stagedId }, data:{ status:'merged', matchedStudentId, errorDetails: JSON.stringify({ decisions, actor: auth.userId, at: new Date().toISOString() }) } as any });
-    await db.crmAuditLog.create({ data:{ actorUserId: auth.userId, actorRole: auth.roles.join(','), action:'STUDENT_IMPORT_MERGE_DECIDED', targetId: matchedStudentId, batchId: staged.batchId, beforeData: JSON.stringify({ stagedId, matchedStudentId }), afterData: JSON.stringify(decisions) } as any });
-    return NextResponse.json({ success:true, message:'Merge decision saved — will apply on batch execute with field-level safety' });
-  } catch(e:any){ return NextResponse.json({ success:false, error:e.message }, { status:500 }); }
+    const staged = await db.importStagingStudent.findUnique({ where: { id: stagedId } });
+    if (!staged) return NextResponse.json({ success: false, error: 'Staged row not found.' }, { status: 404 });
+    if (staged.status !== 'possible_duplicate' || !staged.matchedStudentId || staged.matchedStudentId !== matchedStudentId) {
+      return NextResponse.json({ success: false, error: 'Merge target must match the staged duplicate suggestion.' }, { status: 409 });
+    }
+    const batch = await db.importBatch.findUnique({ where: { id: staged.batchId }, select: { id: true, status: true } });
+    if (!batch || batch.status !== 'ready_for_review') {
+      return NextResponse.json({ success: false, error: 'Merge decisions can be changed only while the batch is awaiting review.' }, { status: 409 });
+    }
+    const existing = await db.student.findUnique({ where: { id: matchedStudentId } });
+    if (!existing) return NextResponse.json({ success: false, error: 'Matched student not found.' }, { status: 404 });
+
+    // These are the only fields the executor currently knows how to apply.
+    const allowedFields = new Set(['studentName', 'email', 'phone', 'countryInterest']);
+    const entries = Object.entries(decisions as Record<string, unknown>);
+    if (!entries.length || entries.some(([field, value]) => !allowedFields.has(field) || !['KEEP_EXISTING', 'USE_IMPORTED', 'SKIP'].includes(String(value)))) {
+      return NextResponse.json({ success: false, error: 'Only supported student identity/interest fields and merge decisions are allowed.' }, { status: 400 });
+    }
+    const comparisons = entries.map(([field, decision]) => ({
+      field,
+      existingValue: field === 'studentName' ? existing.name : (existing as any)[field],
+      importedValue: (staged as any)[field],
+      existingSource: 'ALO',
+      importedSource: 'OLD_CRM',
+      lastUpdatedExisting: String(existing.updatedAt || ''),
+      conflict: true,
+      decision: String(decision),
+    }));
+    const validation = validateMergeDecisions(comparisons as any);
+    if (!validation.ok) return NextResponse.json({ success: false, error: validation.errors.join('; ') }, { status: 400 });
+
+    await db.$transaction(async (tx) => {
+      const currentBatch = await tx.importBatch.findUnique({ where: { id: staged.batchId }, select: { status: true } });
+      if (currentBatch?.status !== 'ready_for_review') throw new Error('The batch is no longer awaiting review.');
+      const changed = await tx.importStagingStudent.updateMany({
+        where: { id: stagedId, status: 'possible_duplicate', matchedStudentId },
+        data: {
+          status: 'merged',
+          errorDetails: JSON.stringify({ decisions, actor: auth.userId, at: new Date().toISOString() }),
+        },
+      });
+      if (changed.count !== 1) throw new Error('The staged duplicate changed; reload the preview before saving.');
+      await tx.crmAuditLog.create({
+        data: {
+          actorUserId: auth.userId,
+          actorRole: auth.roles.join(','),
+          action: 'STUDENT_IMPORT_MERGE_DECIDED',
+          targetId: matchedStudentId,
+          batchId: staged.batchId,
+          beforeData: JSON.stringify({ stagedId, matchedStudentId }),
+          afterData: JSON.stringify(decisions),
+        },
+      });
+    });
+    return NextResponse.json({ success: true, message: 'Explicit field decisions saved. They apply only after the separately approved batch is executed.' });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Merge decision could not be saved.' }, { status: 503 });
+  }
 });

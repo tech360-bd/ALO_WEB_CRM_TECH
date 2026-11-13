@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { usePortalStore, type PortalView } from '@/lib/stores/portal-store';
+import PortalFooter from '@/components/portals/PortalFooter';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -83,6 +84,28 @@ const bottomNavItems: NavItem[] = [
 ];
 
 /* ------------------------------------------------------------------ */
+/*  Realtime transport status labels (spec s86, s94)                    */
+/* ------------------------------------------------------------------ */
+const REALTIME_STATUS_LABEL: Record<string, string> = {
+  idle: 'offline',
+  connecting: 'connecting',
+  connected: 'live',
+  reconnecting: 'reconnecting',
+  not_configured: 'not configured',
+  error: 'unavailable',
+};
+
+const REALTIME_STATUS_HINT: Record<string, string> = {
+  idle: 'No live connection is open for this session.',
+  connecting: 'Opening the live notification stream…',
+  connected: 'Live: new notifications arrive without refreshing.',
+  reconnecting: 'The live connection dropped and is being re-established.',
+  not_configured:
+    'Realtime updates are not enabled on this deployment. Refresh the page to check for new notifications.',
+  error: 'The live notification stream failed. Refresh the page to check for new notifications.',
+};
+
+/* ------------------------------------------------------------------ */
 /*  Sidebar content (shared between desktop & mobile sheet)             */
 /* ------------------------------------------------------------------ */
 function SidebarContent() {
@@ -133,7 +156,7 @@ function SidebarContent() {
                 />
                 <span className="flex-1 text-left truncate">{item.label}</span>
                 {item.badge === 'unread-messages' && unreadMessages > 0 && (
-                  <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-[var(--alo-error)] text-white text-[11px] flex items-center justify-center font-bold shrink-0">
                     {unreadMessages > 9 ? '9+' : unreadMessages}
                   </span>
                 )}
@@ -179,7 +202,7 @@ function SidebarContent() {
       <div className="p-3">
         <Button
           variant="ghost"
-          className="w-full justify-start text-red-600 hover:bg-red-50"
+          className="w-full justify-start text-crm-danger-text hover:bg-crm-danger-bg"
           onClick={logout}
         >
           <LogOut className="w-4 h-4 mr-2" />
@@ -198,7 +221,7 @@ export default function StudentPortalShell({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, setView, notifications, sidebarOpen, setSidebarOpen } =
+  const { user, setView, notifications, sidebarOpen, setSidebarOpen, realtimeStatus } =
     usePortalStore();
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -257,7 +280,7 @@ export default function StudentPortalShell({
           {user && (
             <Badge
               variant="secondary"
-              className="font-mono text-xs bg-slate-100 text-slate-600 hidden sm:inline-flex"
+              className="font-mono text-xs bg-[var(--alo-surface-muted)] text-[var(--alo-body)] hidden sm:inline-flex"
             >
               ID: {user.id.slice(0, 8).toUpperCase()}
             </Badge>
@@ -276,7 +299,7 @@ export default function StudentPortalShell({
             >
               <Bell className="w-5 h-5 text-alo-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-[var(--alo-error)] text-white text-[11px] flex items-center justify-center font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -288,15 +311,44 @@ export default function StudentPortalShell({
                   <span className="font-semibold text-sm text-alo-text">
                     Notifications
                   </span>
-                  <button
-                    onClick={() => {
-                      setView('student-notifications');
-                      setShowNotifDropdown(false);
-                    }}
-                    className="text-xs text-alo-brand hover:underline font-medium"
-                  >
-                    View All
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {/* Live transport state (s86/s94): a bell that silently never
+                        updates is indistinguishable from an empty inbox. */}
+                    <span
+                      className={cn(
+                        'inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-semibold',
+                        realtimeStatus === 'connected' && 'bg-crm-success-bg text-crm-success-text',
+                        realtimeStatus === 'connecting' && 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+                        realtimeStatus === 'reconnecting' && 'bg-crm-warning-bg text-crm-warning-text',
+                        realtimeStatus === 'not_configured' && 'bg-[var(--alo-page)] text-[var(--alo-body)]',
+                        realtimeStatus === 'error' && 'bg-crm-danger-bg text-crm-danger-text',
+                        realtimeStatus === 'idle' && 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
+                      )}
+                      title={REALTIME_STATUS_HINT[realtimeStatus] ?? ''}
+                    >
+                      <span
+                        className={cn(
+                          'size-1.5 rounded-full',
+                          realtimeStatus === 'connected' && 'bg-[var(--alo-success)]',
+                          realtimeStatus === 'connecting' && 'bg-[var(--alo-brand)]',
+                          realtimeStatus === 'reconnecting' && 'animate-pulse bg-[var(--alo-warning)]',
+                          realtimeStatus === 'not_configured' && 'bg-[var(--alo-page)]',
+                          realtimeStatus === 'error' && 'bg-[var(--alo-error)]',
+                          realtimeStatus === 'idle' && 'bg-[var(--alo-page)]',
+                        )}
+                      />
+                      {REALTIME_STATUS_LABEL[realtimeStatus] ?? 'idle'}
+                    </span>
+                    <button
+                      onClick={() => {
+                        setView('student-notifications');
+                        setShowNotifDropdown(false);
+                      }}
+                      className="text-xs text-alo-brand hover:underline font-medium"
+                    >
+                      View All
+                    </button>
+                  </div>
                 </div>
                 <div className="max-h-72 overflow-y-auto custom-scrollbar">
                   {notifications.length > 0 ? (
@@ -321,7 +373,14 @@ export default function StudentPortalShell({
                     ))
                   ) : (
                     <p className="text-sm text-alo-text-muted p-4 text-center">
-                      No notifications
+                      {/* An empty list means different things depending on whether
+                          the stream is healthy. Never imply "no notifications"
+                          when we could not actually check (s91, s94). */}
+                      {realtimeStatus === 'not_configured' || realtimeStatus === 'error'
+                        ? 'Live updates are unavailable, so this list may be incomplete. Open View All to reload.'
+                        : realtimeStatus === 'connecting' || realtimeStatus === 'reconnecting'
+                          ? 'Connecting to your notifications…'
+                          : 'No notifications'}
                     </p>
                   )}
                 </div>
@@ -354,9 +413,13 @@ export default function StudentPortalShell({
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-4 lg:p-6 max-w-7xl mx-auto">{children}</div>
-        </main>
+        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+          <main className="flex-1 p-4 lg:p-6">
+            <div className="mx-auto w-full max-w-7xl">{children}</div>
+          </main>
+          {/* Site footer — a sibling of <main>, so it is the page's only footer landmark. */}
+          <PortalFooter scope="student" />
+        </div>
       </div>
     </div>
   );

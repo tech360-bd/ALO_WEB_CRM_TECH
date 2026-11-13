@@ -63,17 +63,17 @@ interface LoadState {
 }
 
 const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
-  high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
-  urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
-  medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
-  low: { label: 'Low', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
-  normal: { label: 'Normal', cls: 'bg-gray-100 text-gray-600 border-gray-200' },
+  high: { label: 'High', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  urgent: { label: 'Urgent', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  medium: { label: 'Medium', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  low: { label: 'Low', cls: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
+  normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
 };
 
 function priorityBadge(priority?: string) {
   const key = (priority || 'normal').toLowerCase();
   const meta = PRIORITY_CONFIG[key] || PRIORITY_CONFIG.normal;
-  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+  return <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>{meta.label}</Badge>;
 }
 
 function formatTimestamp(value?: string | null): string {
@@ -238,7 +238,7 @@ export default function CrmWhatsAppPage() {
               <p className="text-2xl font-bold">{meta.escalatedCount ?? 0}</p>
             </div>
             <AlertTriangle
-              className={`h-5 w-5 ${(meta.escalatedCount ?? 0) > 0 ? 'text-red-600' : 'text-muted-foreground'}`}
+              className={`h-5 w-5 ${(meta.escalatedCount ?? 0) > 0 ? 'text-crm-danger-text' : 'text-muted-foreground'}`}
             />
           </CardContent>
         </Card>
@@ -314,7 +314,7 @@ export default function CrmWhatsAppPage() {
                         {thread.subject || thread.lastMessagePreview || thread.threadCode || 'Untitled conversation'}
                       </p>
                       {thread.unreadCount && thread.unreadCount > 0 ? (
-                        <Badge variant="outline" className="bg-blue-100 text-blue-700 text-[10px]">
+                        <Badge variant="outline" className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] text-[11px]">
                           {thread.unreadCount}
                         </Badge>
                       ) : null}
@@ -325,10 +325,10 @@ export default function CrmWhatsAppPage() {
                     </p>
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                       {priorityBadge(thread.priority)}
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-[11px]">
                         {thread.status || 'unknown'}
                       </Badge>
-                      <span className="text-muted-foreground flex items-center gap-1 text-[10px]">
+                      <span className="text-muted-foreground flex items-center gap-1 text-[11px]">
                         <Clock className="h-3 w-3" />
                         {formatTimestamp(thread.lastMessageAt)}
                       </span>
@@ -463,7 +463,7 @@ export default function CrmWhatsAppPage() {
                     <p className="font-medium">
                       {template.templateName || template.templateCode || 'Untitled template'}
                     </p>
-                    <Badge variant="outline" className="text-[10px]">
+                    <Badge variant="outline" className="text-[11px]">
                       {template.status || 'draft'}
                     </Badge>
                   </div>

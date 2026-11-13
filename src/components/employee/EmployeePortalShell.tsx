@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import PortalFooter from '@/components/portals/PortalFooter';
 import { usePortalStore, type PortalView } from '@/lib/stores/portal-store';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -39,18 +40,17 @@ interface NavItem {
   icon: React.ElementType;
   label: string;
   view: PortalView;
-  badge?: string;
 }
 
 const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', view: 'employee-dashboard' },
-  { icon: CheckSquare, label: 'Tasks', view: 'employee-tasks', badge: '5 due' },
+  { icon: CheckSquare, label: 'Tasks', view: 'employee-tasks' },
   { icon: Users, label: 'Leads', view: 'employee-leads' },
   { icon: GraduationCap, label: 'Students', view: 'employee-students' },
   { icon: FileText, label: 'Applications', view: 'employee-applications' },
   { icon: FileUp, label: 'Documents', view: 'employee-documents' },
-  { icon: MessageSquare, label: 'Messages', view: 'employee-messages', badge: 'unread' },
-  { icon: MessageCircle, label: 'WhatsApp', view: 'employee-whatsapp', badge: '14' },
+  { icon: MessageSquare, label: 'Messages', view: 'employee-messages' },
+  { icon: MessageCircle, label: 'WhatsApp', view: 'employee-whatsapp' },
   { icon: CalendarDays, label: 'Calendar', view: 'employee-calendar' },
   { icon: Clock, label: 'Attendance', view: 'employee-attendance' },
   { icon: CalendarOff, label: 'Leave', view: 'employee-leave' },
@@ -62,17 +62,20 @@ const navItems: NavItem[] = [
 
 export default function EmployeePortalShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { user, currentView, setView, logout, hydrate, notifications, sidebarOpen, setSidebarOpen } =
+  const pathname = usePathname();
+  const { user, currentView, setView, logout, hydrate, notifications, setNotifications, sidebarOpen, setSidebarOpen } =
     usePortalStore();
   const [showNotifications, setShowNotifications] = useState(false);
-  const [actingAs, setActingAs] = useState<{ isActing: boolean; originalAdmin?: string } | null>(null);
+  const [actingAs, setActingAs] = useState<{ sessionId: string; userId: string; role: string; name: string; reason: string; expiresAt: string | null; realActor: string } | null>(null);
+  const [serverIdentity, setServerIdentity] = useState<{ id: string; name: string; role: string; branch: string; country: string } | null>(null);
+  const [actingAsError, setActingAsError] = useState('');
+  const [taskCount, setTaskCount] = useState<number | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
-  const designation = (user as any)?.designation || (user as any)?.role || 'Employee';
-  const branch = (user as any)?.branch || 'Dhaka Main Branch';
-  const country = (user as any)?.country || 'Bangladesh';
-  const taskCount = 5; // could be fetched from /api/employee/tasks count
-  const pendingApprovals = 2;
+  const displayName = actingAs?.name || serverIdentity?.name || user?.name || 'Employee';
+  const designation = actingAs?.role || serverIdentity?.role || (user as any)?.designation || 'Employee';
+  const branch = serverIdentity?.branch || '';
+  const country = serverIdentity?.country || '';
 
   useEffect(() => {
     hydrate();
@@ -89,16 +92,80 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const actingAdmin = localStorage.getItem('alo_acting_as_admin');
-      if (actingAdmin) setActingAs({ isActing: true, originalAdmin: actingAdmin });
-    }
+    let cancelled = false;
+    fetch('/api/employee/acting-as', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((payload) => {
+        if (cancelled) return;
+        if (payload?.success && payload?.isActing && payload.actingAs) {
+          setActingAs({
+            sessionId: payload.actingAs.sessionId,
+            userId: payload.actingAs.userId,
+            role: payload.actingAs.role,
+            name: payload.actingAs.name,
+            reason: payload.actingAs.reason || '',
+            expiresAt: payload.actingAs.expiresAt || null,
+            realActor: payload.realActor?.name || payload.realActor?.userId || 'Super Admin',
+          });
+        } else {
+          setActingAs(null);
+        }
+      })
+      .catch(() => { if (!cancelled) setActingAs(null); });
+    return () => { cancelled = true; };
   }, []);
 
-  const handleStopActingAs = () => {
-    localStorage.removeItem('alo_acting_as_admin');
-    setActingAs(null);
-    router.replace('/admin/employees');
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/portal-auth/session', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((payload) => {
+        if (cancelled || !payload?.success || !payload.data?.user) return;
+        const profile = payload.data.user.employeeProfile;
+        const roles = Array.isArray(payload.data.roles) ? payload.data.roles : [];
+        setServerIdentity({
+          id: payload.data.user.id,
+          name: payload.data.user.name || '',
+          role: roles[0]?.name || payload.data.user.userType || '',
+          branch: profile?.branch || '',
+          country: '',
+        });
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/employee/tasks?status=pending&limit=1', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((payload) => {
+        if (!cancelled && payload?.success && Number.isFinite(payload.pagination?.total)) setTaskCount(payload.pagination.total);
+      })
+      .catch(() => {});
+    fetch('/api/employee-access/notifications?unreadOnly=false', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((payload) => {
+        if (!cancelled && payload?.success && Array.isArray(payload.notifications)) setNotifications(payload.notifications);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [setNotifications]);
+
+  const handleStopActingAs = async () => {
+    setActingAsError('');
+    try {
+      const response = await fetch('/api/portal-auth/acting-as/stop', { method: 'POST' });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.success) {
+        setActingAsError(payload?.error || 'Acting-As session could not be ended.');
+        return;
+      }
+      setActingAs(null);
+      router.replace('/super-admin/dashboard');
+    } catch {
+      setActingAsError('Acting-As session could not be ended. Retry before leaving this view.');
+    }
   };
 
   const sidebarContent = (
@@ -117,11 +184,12 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
         <nav className="px-3 space-y-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentView === item.view;
+            const target = `/employee/${item.view.replace(/^employee-/, '')}`;
+            const isActive = pathname === target || (item.view === 'employee-dashboard' && pathname.endsWith('-dashboard'));
             return (
               <button
                 key={item.view}
-                onClick={() => setView(item.view)}
+                onClick={() => router.push(target)}
                 className={cn(
                   'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
                   isActive
@@ -136,11 +204,6 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
                   )}
                 />
                 <span className="flex-1 text-left">{item.label}</span>
-                {item.badge && !isActive && (
-                  <span className="text-[11px] leading-none font-medium px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">
-                    {item.badge}
-                  </span>
-                )}
                 {isActive && <ChevronRight className="w-3.5 h-3.5 text-alo-brand" />}
               </button>
             );
@@ -150,10 +213,10 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
       <Separator />
       <div className="p-3">
         <Button
-          variant="ghost"
-          className="w-full justify-start text-alo-text-secondary hover:text-red-600 hover:bg-red-50 h-10"
-          onClick={logout}
-        >
+ variant="ghost"
+ className="w-full justify-start text-alo-text-secondary hover:text-crm-danger-text hover:bg-crm-danger-bg "
+ onClick={logout}
+ >
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
         </Button>
@@ -163,16 +226,16 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
 
   return (
     <div className="h-screen flex flex-col bg-alo-page overflow-hidden">
-      {actingAs?.isActing && (
+      {actingAs && (
         <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-md z-50">
           <div className="flex items-center gap-2 text-sm font-semibold">
-            <ShieldAlert className="w-5 h-5 text-amber-200 animate-pulse" />
-            <span>SUPER ADMIN ACTING AS: <span className="underline decoration-wavy">{user?.name}</span> ({designation})</span>
-            <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-2">Audit Logging Active</span>
+            <ShieldAlert className="w-5 h-5 text-crm-warning-text animate-pulse" />
+            <span>SUPER ADMIN ACTING AS: <span className="underline decoration-wavy">{actingAs.role} / {actingAs.name}</span></span>
+            <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-2">Real actor: {actingAs.realActor} · Reason: {actingAs.reason} · Expires {actingAs.expiresAt ? new Date(actingAs.expiresAt).toLocaleTimeString() : 'in 30 minutes'}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs" onClick={() => router.push('/admin/access-control-center')}>View Acting-As Audit</Button>
-            <Button size="sm" className="bg-white text-orange-600 hover:bg-white/90 text-xs font-bold shadow" onClick={handleStopActingAs}>Stop Acting-As</Button>
+            {actingAsError && <span role="alert" className="text-xs font-semibold">{actingAsError}</span>}
+            <Button size="sm" className="bg-white text-[var(--alo-cta-active)] hover:bg-white/90 font-bold shadow" onClick={handleStopActingAs}>Stop Acting-As</Button>
           </div>
         </div>
       )}
@@ -180,7 +243,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
         <div className="flex items-center gap-3">
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="icon" className="lg:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open employee navigation">
                 <Menu className="w-5 h-5" />
               </Button>
             </SheetTrigger>
@@ -195,21 +258,20 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
             <span className="text-sm font-semibold text-alo-text">ALO Education</span>
           </div>
           <div className="hidden sm:flex items-center gap-2 ml-4">
-            <Badge variant="secondary" className="font-mono text-xs bg-slate-100 text-slate-600">
-              {user?.id}
+            <Badge variant="secondary" className="font-mono text-xs bg-[var(--alo-surface-muted)] text-[var(--alo-body)]">
+              {actingAs?.userId || serverIdentity?.id || user?.id || '—'}
             </Badge>
             <Badge variant="brand" className="text-xs">
               {designation}
             </Badge>
-            <span className="hidden lg:inline text-xs text-slate-500">{branch} • {country}</span>
-            <span className="hidden lg:inline-flex items-center gap-1 text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded-full font-medium">{taskCount} tasks</span>
-            <span className="hidden lg:inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full font-medium">{pendingApprovals} approvals</span>
+            <span className="hidden lg:inline text-xs text-[var(--alo-text-muted)]">{branch || 'Branch scope not assigned'}{country ? ` • ${country}` : ''}</span>
+            <span className="hidden lg:inline-flex items-center gap-1 text-xs bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)] px-2 py-1 rounded-full font-medium">{taskCount == null ? '—' : taskCount} open tasks</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <div className="hidden md:flex relative">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
-            <input placeholder="Search students, leads..." className="pl-9 pr-3 h-9 text-xs bg-slate-50 border border-slate-200 rounded-lg w-56 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-200" />
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--alo-text-muted)]" />
+            <input placeholder="Search students, leads..." className="pl-9 pr-3 h-9 text-xs bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-lg w-56 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-200" />
           </div>
           <div className="relative" ref={notifRef}>
             <Button
@@ -220,7 +282,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
             >
               <Bell className="w-5 h-5 text-alo-text-secondary" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-[var(--alo-error)] text-white text-[11px] flex items-center justify-center font-bold">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -231,7 +293,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
                   <span className="font-semibold text-sm text-alo-text">Notifications</span>
                   <button
                     onClick={() => {
-                      setView('employee-notifications');
+                      router.push('/employee/notifications');
                       setShowNotifications(false);
                     }}
                     className="text-xs text-alo-brand hover:text-alo-brand font-medium"
@@ -266,7 +328,7 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
           <div className="flex items-center gap-2 ml-1">
             <Avatar className="w-8 h-8">
               <AvatarFallback className="bg-alo-brand-light text-alo-brand text-xs font-semibold">
-                {user?.name
+                {displayName
                   ?.split(' ')
                   .map((n) => n[0])
                   .join('')
@@ -274,8 +336,8 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
               </AvatarFallback>
             </Avatar>
             <div className="hidden md:block">
-              <p className="text-sm font-medium text-alo-text leading-tight">{user?.name}</p>
-              <p className="text-xs text-alo-text-secondary">{user?.id}</p>
+              <p className="text-sm font-medium text-alo-text leading-tight">{displayName}</p>
+              <p className="text-xs text-alo-text-secondary">{actingAs?.userId || serverIdentity?.id || user?.id || ''}</p>
             </div>
           </div>
         </div>
@@ -284,9 +346,13 @@ export default function EmployeePortalShell({ children }: { children: React.Reac
         <aside className="hidden lg:block w-64 bg-white border-r border-alo-border shrink-0 overflow-y-auto">
           {sidebarContent}
         </aside>
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-4 lg:p-6 max-w-7xl mx-auto">{children}</div>
-        </main>
+        <div className="flex-1 overflow-y-auto flex flex-col">
+          <main className="flex-1 p-4 lg:p-6">
+            <div className="mx-auto w-full max-w-7xl">{children}</div>
+          </main>
+          {/* Site footer — a sibling of <main>, so it is the page's only footer landmark. */}
+          <PortalFooter scope="employee" />
+        </div>
       </div>
     </div>
   );

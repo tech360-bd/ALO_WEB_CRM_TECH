@@ -7,10 +7,11 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { allocateIdentifierCommitted } from '@/lib/identity/student-id';
 
 export interface StudentAuthContext {
   studentId: string;     // DB id (cuid)
-  studentCode: string;   // AE-2026XXXXXX permanent ID
+  studentCode: string;   // New IDs: AE-YYYYNNNN; historical IDs are preserved
   email: string;
   phone: string;
   name: string;
@@ -19,21 +20,10 @@ export interface StudentAuthContext {
 }
 
 // ============================================================
-// Generate a unique AE-YYYYXXXXXX student code
+// Generate a unique AE-YYYYNNNN student code (legacy IDs remain unchanged)
 // ============================================================
 export async function generateStudentCode(): Promise<string> {
-  const year = new Date().getFullYear();
-  const prefix = `AE-${year}`;
-
-  // Count students this year to get sequential number
-  const count = await db.student.count({
-    where: {
-      studentId: { startsWith: prefix },
-    },
-  });
-
-  const sequential = String(count + 1).padStart(6, '0');
-  return `${prefix}${sequential}`;
+  return allocateIdentifierCommitted('AE');
 }
 
 // ============================================================
@@ -150,7 +140,7 @@ export async function authenticateStudentRequest(
 
   return {
     studentId: student.id,
-    studentCode: student.studentId, // studentId field = the AE-YYYYXXXXXX code
+    studentCode: student.studentId, // stable Student ID; new codes use AE-YYYYNNNN
     email: student.email,
     phone: student.phone,
     name: student.name,

@@ -62,28 +62,28 @@ export default function CrmPermissionsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Permission Matrix</h1><p className="text-gray-500">Configure role-based access control for all system modules</p></div>
+        <div><h1 className="text-2xl font-bold text-[var(--alo-text)]">Permission Matrix</h1><p className="text-[var(--alo-text-muted)]">Configure role-based access control for all system modules</p></div>
         <div className="flex gap-2">
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline"><Download className="w-4 h-4 mr-2" />Export</Button>
           <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline"><Upload className="w-4 h-4 mr-2" />Import</Button>
-          <Button className="bg-orange-500 hover:bg-orange-600" onClick={handleSave}><Save className="w-4 h-4 mr-2" />{saved ? 'Saved!' : 'Save Changes'}</Button>
+          <Button className="bg-[var(--alo-cta)] hover:bg-[var(--alo-cta-hover)]" onClick={handleSave}><Save className="w-4 h-4 mr-2" />{saved ? 'Saved!' : 'Save Changes'}</Button>
         </div>
       </div>
 
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
-            <Shield className="w-5 h-5 text-blue-600" />
+            <Shield className="w-5 h-5 text-[var(--alo-brand)]" />
             <div>
-              <p className="font-medium text-gray-900">Access Control Configuration</p>
-              <p className="text-sm text-gray-500">Define what each role can do across {CATEGORIES.length} categories and {ACTIONS.length} action types</p>
+              <p className="font-medium text-[var(--alo-text)]">Access Control Configuration</p>
+              <p className="text-sm text-[var(--alo-text-muted)]">Define what each role can do across {CATEGORIES.length} categories and {ACTIONS.length} action types</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       <Tabs value={activeCategory} onValueChange={setActiveCategory}>
-        <TabsList className="flex-wrap h-auto gap-1 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="flex-wrap h-auto gap-1 bg-[var(--alo-surface-muted)] p-1 rounded-lg">
           {CATEGORIES.map(cat => (
             <TabsTrigger key={cat.key} value={cat.key} className="data-[state=active]:bg-white data-[state=active]:shadow-sm text-xs px-3 py-1.5 rounded-md">
               {cat.label}
@@ -96,21 +96,21 @@ export default function CrmPermissionsPage() {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg">{cat.label} Permissions</CardTitle>
-                <p className="text-sm text-gray-500">{cat.desc}</p>
+                <p className="text-sm text-[var(--alo-text-muted)]">{cat.desc}</p>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left p-2 font-medium text-gray-600 w-32">
+                        <th className="text-left p-2 font-medium text-[var(--alo-body)] w-32">
                           <div className="flex items-center gap-1"><Lock className="w-3 h-3" />Action</div>
                         </th>
                         {KEY_ROLES.map(role => (
                           <th key={role} className="p-2 text-center">
                             <label className="flex flex-col items-center gap-1 cursor-pointer">
-                              <input type="checkbox" checked={permissions[cat.key]?.[KEY_ROLES.indexOf(role)]?.every(Boolean)} onChange={e => toggleRole(cat.key, KEY_ROLES.indexOf(role), e.target.checked)} className="rounded border-gray-300" />
-                              <span className="text-[10px] font-medium text-gray-600 leading-tight">{role}</span>
+                              <input type="checkbox" checked={permissions[cat.key]?.[KEY_ROLES.indexOf(role)]?.every(Boolean)} onChange={e => toggleRole(cat.key, KEY_ROLES.indexOf(role), e.target.checked)} className="rounded border-[var(--alo-border-strong)]" />
+                              <span className="text-[11px] font-medium text-[var(--alo-body)] leading-tight">{role}</span>
                             </label>
                           </th>
                         ))}
@@ -118,17 +118,17 @@ export default function CrmPermissionsPage() {
                     </thead>
                     <tbody>
                       {(PERMISSIONS[cat.key] || []).map((perm, actionIdx) => (
-                        <tr key={actionIdx} className="border-b hover:bg-gray-50">
+                        <tr key={actionIdx} className="border-b hover:bg-[var(--alo-page)]">
                           <td className="p-2">
                             <div className="flex items-center gap-1.5">
-                              {[Eye, Pencil, Trash2, Lock, Download, Upload][actionIdx] && (() => { const I = [Eye, Pencil, Trash2, Lock, Download, Upload][actionIdx]; return <I className="w-3 h-3 text-gray-400" />; })()}
-                              <span className="text-gray-700 font-medium">{perm.action}</span>
+                              {[Eye, Pencil, Trash2, Lock, Download, Upload][actionIdx] && (() => { const I = [Eye, Pencil, Trash2, Lock, Download, Upload][actionIdx]; return <I className="w-3 h-3 text-[var(--alo-text-muted)]" />; })()}
+                              <span className="text-[var(--alo-body)] font-medium">{perm.action}</span>
                             </div>
-                            <p className="text-[10px] text-gray-400 mt-0.5">{perm.desc}</p>
+                            <p className="text-[11px] text-[var(--alo-text-muted)] mt-0.5">{perm.desc}</p>
                           </td>
                           {KEY_ROLES.map((_, roleIdx) => (
                             <td key={roleIdx} className="p-2 text-center">
-                              <input type="checkbox" checked={permissions[cat.key]?.[roleIdx]?.[actionIdx] || false} onChange={() => togglePermission(cat.key, roleIdx, actionIdx)} className="rounded border-gray-300 w-4 h-4" />
+                              <input type="checkbox" checked={permissions[cat.key]?.[roleIdx]?.[actionIdx] || false} onChange={() => togglePermission(cat.key, roleIdx, actionIdx)} className="rounded border-[var(--alo-border-strong)] w-4 h-4" />
                             </td>
                           ))}
                         </tr>

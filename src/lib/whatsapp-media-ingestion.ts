@@ -1,12 +1,14 @@
 import { createHash } from 'node:crypto';
 import { db } from '@/lib/db';
+import { scanForMalware, type ScanResult } from '@/lib/documents/malware-scan';
 import { normalizePhone } from '@/lib/phone-normalization';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
+import { getWhatsAppAccessToken, getWhatsAppGraphVersion } from '@/lib/whatsapp-config';
 
 const MAX_BYTES = 20 * 1024 * 1024;
 export const whatsappGraphBase = () => {
-  const version = process.env.WHATSAPP_GRAPH_VERSION || 'v23.0';
-  if (!/^v\d+\.0$/.test(version)) throw new Error('Invalid WHATSAPP_GRAPH_VERSION');
+  const version = getWhatsAppGraphVersion();
+  if (!version) throw new Error('WhatsApp Graph API version is not configured');
   return `https://graph.facebook.com/${version}`;
 };
 
@@ -40,6 +42,33 @@ export function classifyIncomingDocument(fileName: string): string {
   return 'other'; // Classification never marks a document as verified.
 }
 
+function isMetaMediaHost(hostname: string): boolean {
+  return hostname === 'lookaside.fbsbx.com' || hostname.endsWith('.fbcdn.net');
+}
+
+async function fetchMetaMedia(url: URL, token: string): Promise<Response> {
+  let current = url;
+  for (let redirects = 0; redirects <= 3; redirects += 1) {
+    if (current.protocol !== 'https:' || current.username || current.password || current.port || !isMetaMediaHost(current.hostname)) {
+      throw new Error('WhatsApp returned an untrusted media URL');
+    }
+    const response = await fetch(current, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+      redirect: 'manual',
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get('location');
+      if (!location || redirects === 3) throw new Error('WhatsApp media redirect is invalid');
+      try { current = new URL(location, current); } catch { throw new Error('WhatsApp media redirect is invalid'); }
+      continue;
+    }
+    return response;
+  }
+  throw new Error('WhatsApp media redirect is invalid');
+}
+
 async function boundedBytes(response: Response): Promise<Buffer> {
   if (!response.ok || !response.body) throw new Error('WhatsApp media download failed');
   if (Number(response.headers.get('content-length')) > MAX_BYTES) throw new Error('WhatsApp media exceeds 20 MB');
@@ -61,8 +90,9 @@ async function boundedBytes(response: Response): Promise<Buffer> {
 
 export async function downloadWhatsAppMedia(mediaId: string, phoneNumberId?: string) {
   if (!/^\d+$/.test(mediaId)) throw new Error('Invalid WhatsApp media ID');
-  const token = process.env.WHATSAPP_ACCESS_TOKEN || process.env.WHATSAPP_TOKEN;
+  const token = getWhatsAppAccessToken();
   if (!token) throw new Error('WhatsApp media access is not configured');
+  if (phoneNumberId && !/^\d{1,64}$/.test(phoneNumberId)) throw new Error('Invalid WhatsApp phone number ID');
   const metadataUrl = new URL(`${whatsappGraphBase()}/${mediaId}`);
   if (phoneNumberId) metadataUrl.searchParams.set('phone_number_id', phoneNumberId);
   const options = { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' as const, redirect: 'error' as const, signal: AbortSignal.timeout(30_000) };
@@ -78,7 +108,7 @@ export async function downloadWhatsAppMedia(mediaId: string, phoneNumberId?: str
       !(url.hostname === 'lookaside.fbsbx.com' || url.hostname.endsWith('.fbcdn.net'))) {
     throw new Error('WhatsApp returned an untrusted media URL');
   }
-  const bytes = await boundedBytes(await fetch(url, { ...options, signal: AbortSignal.timeout(30_000) }));
+  const bytes = await boundedBytes(await fetchMetaMedia(url, token));
   if (typeof declaredFileSize === 'number' && declaredFileSize !== bytes.byteLength) {
     throw new Error('WhatsApp media file size does not match downloaded bytes');
   }
@@ -92,6 +122,59 @@ export async function downloadWhatsAppMedia(mediaId: string, phoneNumberId?: str
     throw new Error('WhatsApp media integrity check failed');
   }
   return { bytes, mimeType: declared || mimeType, hash };
+}
+
+const trustedMalwareScanResults = new WeakSet<object>();
+
+function isValidMalwareScanResult(value: unknown): value is ScanResult {
+  if (!value || typeof value !== 'object') return false;
+  const result = value as Partial<ScanResult>;
+  if (result.detail !== null && typeof result.detail !== 'string') return false;
+
+  if (result.verdict === 'clean') {
+    return result.engine === 'clamd' && result.scanned === true && result.threat === null;
+  }
+  if (result.verdict === 'infected') {
+    return (result.engine === 'builtin' || result.engine === 'clamd')
+      && result.scanned === true && typeof result.threat === 'string';
+  }
+  if (result.verdict === 'unavailable') {
+    return result.engine === 'none' && result.scanned === false && result.threat === null;
+  }
+  return false;
+}
+
+/**
+ * Scan WhatsApp bytes before either private-storage path persists them.
+ * Development may retain the scanner's existing fail-open behavior for local
+ * storage only. Scanner exceptions and malformed results always fail closed.
+ */
+export async function scanWhatsAppMediaBeforeStorage(bytes: Uint8Array): Promise<ScanResult> {
+  const scan: unknown = await scanForMalware(bytes);
+  if (!isValidMalwareScanResult(scan)) {
+    throw new Error('WhatsApp media rejected because malware scanner returned an invalid result');
+  }
+  Object.freeze(scan);
+  trustedMalwareScanResults.add(scan);
+  if (scan.verdict === 'infected') {
+    throw new Error('WhatsApp media rejected by malware scanning');
+  }
+  if (scan.verdict === 'unavailable' && process.env.NODE_ENV === 'production') {
+    throw new Error('WhatsApp media rejected because malware scanning is unavailable');
+  }
+  return scan;
+}
+
+/** Only an explicit, valid clean scan can pass this external-forwarding gate. */
+export function requireCleanWhatsAppScanForExternalForward(
+  scan: unknown,
+): ScanResult & { verdict: 'clean' } {
+  if (!isValidMalwareScanResult(scan)
+    || scan.verdict !== 'clean'
+    || !trustedMalwareScanResults.has(scan)) {
+    throw new Error('External forwarding requires an explicit clean malware scan result');
+  }
+  return scan as ScanResult & { verdict: 'clean' };
 }
 
 /** Called only after the webhook's app-secret signature has been verified. */
@@ -117,6 +200,8 @@ export async function ingestWhatsAppMedia(input: {
   let stored: Awaited<ReturnType<typeof storePrivateFile>> | undefined;
   try {
     const media = await downloadWhatsAppMedia(input.mediaId, input.phoneNumberId);
+    await scanWhatsAppMediaBeforeStorage(media.bytes);
+
     const extension = ({ 'application/pdf': 'pdf', 'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp', 'audio/ogg': 'ogg', 'audio/mpeg': 'mp3', 'audio/mp4': 'm4a', 'video/mp4': 'mp4' } as Record<string, string>)[media.mimeType];
     const fileName = (input.fileName || `whatsapp-${input.mediaId}.${extension}`).replace(/[\/\\\u0000-\u001f]/g, '_').slice(0, 191);
     stored = await storePrivateFile(media.bytes, fileName);

@@ -126,9 +126,26 @@ describe('public surface regression guards', () => {
     expect(nav.match(/location="mobile_navbar"/g)?.length).toBe(1);
   });
 
-  it('footer exposes the English Test link once', () => {
+  it('keeps the English Test feature inside the Resources dropdown, not the required footer links', () => {
+    const nav = read('src/components/website/PublicNavbar.tsx');
+    const desktopResources = nav.indexOf("<DropdownTrigger label={t('nav.resources')}");
+    const desktopEnglishTest = nav.indexOf('location="navbar"');
+    const desktopPortal = nav.indexOf("label={t('nav.portal')}");
+    expect(desktopResources).toBeGreaterThanOrEqual(0);
+    expect(desktopEnglishTest).toBeGreaterThan(desktopResources);
+    expect(desktopEnglishTest).toBeLessThan(desktopPortal);
+
+    const mobileResources = nav.indexOf('<MobileAccordionSection value="resources"');
+    const mobileEnglishTest = nav.indexOf('location="mobile_navbar"');
+    const mobilePortal = nav.indexOf('<MobileAccordionSection value="portal"');
+    expect(mobileEnglishTest).toBeGreaterThan(mobileResources);
+    expect(mobileEnglishTest).toBeLessThan(mobilePortal);
+
     const footer = read('src/components/website/PublicFooter.tsx');
-    expect(footer.match(/location="footer"/g)?.length).toBe(1);
+    expect(footer).not.toContain('location="footer"');
+    for (const label of ['Course Finder', 'Services', 'Language Prep', 'Scholarships']) {
+      expect(footer).toContain(`label: '${label}'`);
+    }
   });
 
   it('homepage promotion uses the shared banner, not the old new-tab block', () => {

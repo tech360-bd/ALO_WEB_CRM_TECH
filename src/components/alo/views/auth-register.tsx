@@ -25,10 +25,10 @@ interface AuthRegisterProps {
 type Role = "STUDENT" | "PARTNER";
 
 const PASSWORD_STRENGTH = [
-  { label: "Weak", color: "bg-red-500", min: 0 },
-  { label: "Fair", color: "bg-amber-500", min: 8 },
+  { label: "Weak", color: "bg-[var(--alo-error)]", min: 0 },
+  { label: "Fair", color: "bg-[var(--alo-warning)]", min: 8 },
   { label: "Good", color: "bg-sky-500", min: 10 },
-  { label: "Strong", color: "bg-emerald-500", min: 12 },
+  { label: "Strong", color: "bg-[var(--alo-success)]", min: 12 },
 ];
 
 function scorePassword(pw: string): number {
@@ -149,20 +149,20 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
               <Icon name="GraduationCap" className="size-7" />
             </div>
             <div className="text-left">
-              <p className="text-lg font-bold leading-tight text-[#0057B8]">ALO Education</p>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <p className="text-lg font-bold leading-tight text-[var(--alo-brand)]">ALO Education</p>
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                 Study Abroad, Done Right
               </p>
             </div>
           </button>
-          <h1 className="text-2xl font-bold text-[#0057B8] sm:text-3xl">Create Your Account</h1>
+          <h1 className="text-2xl font-bold text-[var(--alo-brand)] sm:text-3xl">Create Your Account</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Join ALO Education to start your study abroad journey
           </p>
         </div>
 
         {/* Register Card */}
-        <Card className="rounded-2xl border-2 border-[#E2E8F0] shadow-sm">
+        <Card className="rounded-2xl border-2 border-[var(--alo-border)] shadow-sm">
           <CardContent className="pt-6">
             <form onSubmit={handleRegister} className="space-y-4" noValidate>
               {/* Role selector */}
@@ -177,13 +177,13 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
                   <SelectContent>
                     <SelectItem value="STUDENT">
                       <span className="flex items-center gap-2">
-                        <Icon name="GraduationCap" className="size-4 text-[#0057B8]" />
+                        <Icon name="GraduationCap" className="size-4 text-[var(--alo-brand)]" />
                         Student
                       </span>
                     </SelectItem>
                     <SelectItem value="PARTNER">
                       <span className="flex items-center gap-2">
-                        <Icon name="Handshake" className="size-4 text-[#0057B8]" />
+                        <Icon name="Handshake" className="size-4 text-[var(--alo-brand)]" />
                         Partner / Agency
                       </span>
                     </SelectItem>
@@ -197,7 +197,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
 
               {/* Partner notice */}
               {role === "PARTNER" && (
-                <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
+                <div className="flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2.5 text-xs text-crm-warning-text">
                   <Icon name="Info" className="mt-0.5 size-3.5 shrink-0" />
                   <span>
                     Partner accounts require ALO Education approval before activation. You will
@@ -345,7 +345,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
                   />
                 </div>
                 {confirmPassword && confirmPassword !== password && (
-                  <p className="text-xs text-red-600">Passwords do not match.</p>
+                  <p className="text-xs text-crm-danger-text">Passwords do not match.</p>
                 )}
               </div>
 
@@ -362,7 +362,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
                   <button
                     type="button"
                     onClick={() => onNavigate("public-home")}
-                    className="font-medium text-[#0057B8] hover:underline"
+                    className="font-medium text-[var(--alo-brand)] hover:underline"
                   >
                     Terms of Service
                   </button>{" "}
@@ -370,7 +370,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
                   <button
                     type="button"
                     onClick={() => onNavigate("public-home")}
-                    className="font-medium text-[#0057B8] hover:underline"
+                    className="font-medium text-[var(--alo-brand)] hover:underline"
                   >
                     Privacy Policy
                   </button>
@@ -382,7 +382,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
               {error && (
                 <div
                   role="alert"
-                  className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
+                  className="flex items-start gap-2 rounded-lg border border-crm-danger-border bg-crm-danger-bg px-3 py-2.5 text-sm text-crm-danger-text"
                 >
                   <Icon name="AlertCircle" className="mt-0.5 size-4 shrink-0" />
                   <span>{error}</span>
@@ -393,7 +393,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
               <Button
                 type="submit"
                 disabled={loading}
-                className="h-12 w-full bg-[#E8501A] text-sm font-semibold text-white hover:bg-[#E8501A]/90 disabled:opacity-60"
+                className="h-12 w-full bg-[var(--alo-cta)] text-sm font-semibold text-white hover:bg-[var(--alo-cta)]/90 disabled:opacity-60"
               >
                 {loading ? (
                   <>
@@ -414,7 +414,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
                 <button
                   type="button"
                   onClick={() => onNavigate("auth-login")}
-                  className="font-semibold text-[#0057B8] hover:underline"
+                  className="font-semibold text-[var(--alo-brand)] hover:underline"
                 >
                   Sign In
                 </button>
@@ -422,7 +422,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
             </form>
 
             {/* Security note */}
-            <div className="mt-6 flex items-start gap-2 rounded-lg bg-[#e8f0fb]/60 px-3 py-2 text-xs text-[#0057B8]">
+            <div className="mt-6 flex items-start gap-2 rounded-lg bg-[var(--alo-brand-light)]/60 px-3 py-2 text-xs text-[var(--alo-brand)]">
               <Icon name="ShieldCheck" className="mt-0.5 size-3.5 shrink-0" />
               <span>
                 Your password is bcrypt-hashed (12 rounds). Email verification required. All
@@ -431,7 +431,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
             </div>
 
             {/* What happens next */}
-            <div className="mt-3 flex items-start gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+            <div className="mt-3 flex items-start gap-2 rounded-lg bg-crm-success-bg px-3 py-2 text-xs text-crm-success-text">
               <Icon name="MailCheck" className="mt-0.5 size-3.5 shrink-0" />
               <span>
                 After registration, you will receive a 6-digit OTP at your email. Enter it on the
@@ -443,7 +443,7 @@ export function AuthRegister({ onNavigate }: AuthRegisterProps) {
 
         {/* Footer note */}
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          <Badge variant="outline" className="mr-1.5 border-[#E2E8F0]">
+          <Badge variant="outline" className="mr-1.5 border-[var(--alo-border)]">
             RBAC
           </Badge>
           All accounts are subject to ALO Education&apos;s role-based access control policy.

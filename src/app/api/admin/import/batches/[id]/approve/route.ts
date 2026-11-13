@@ -1,39 +1,47 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+
+function isSuperAdmin(auth: AuthContext): boolean {
+  return auth.roles.some((role) => role.toLowerCase() === 'super_admin');
+}
 
 export const POST = withAuth(async (request: Request, auth: AuthContext) => {
+  if (!isSuperAdmin(auth)) return NextResponse.json({ success: false, error: 'Super Admin access required.' }, { status: 403 });
+  const id = new URL(request.url).pathname.split('/').slice(-2, -1)[0];
+  if (!id) return NextResponse.json({ success: false, error: 'Batch ID is required.' }, { status: 400 });
+
   try {
-    // Next.js dynamic route parameters are available in the request url or context if passed
-    // But since withAuth replaces the signature to (request, auth) we need to extract from url
-    const url = new URL(request.url);
-    const id = url.pathname.split('/').slice(-2, -1)[0]; // /api/admin/import/batches/[id]/approve
-    
-    if (!auth.roles.includes('super_admin') && !auth.roles.includes('admin')) {
-       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
-    }
-
-    const batch = await db.importBatch.findUnique({ where: { id } });
-    if (!batch) {
-      return NextResponse.json({ success: false, error: 'Batch not found' }, { status: 404 });
-    }
-
-    const updatedBatch = await db.importBatch.update({
-      where: { id },
-      data: { status: 'approved' },
-    });
-
-    await db.crmAuditLog.create({
-      data: {
-        actorUserId: auth.userId,
-        actorRole: auth.roles.join(','),
-        action: 'STUDENT_IMPORT_APPROVED',
-        batchId: id,
+    type ApprovalResult =
+      | { kind: 'approved'; batch: unknown }
+      | { kind: 'missing' }
+      | { kind: 'conflict'; status: string };
+    const result: ApprovalResult = await db.$transaction(async (tx): Promise<ApprovalResult> => {
+      const updated = await tx.importBatch.updateMany({
+        where: { id, status: 'ready_for_review' },
+        data: { status: 'approved' },
+      });
+      if (updated.count !== 1) {
+        const current = await tx.importBatch.findUnique({ where: { id }, select: { status: true } });
+        if (!current) return { kind: 'missing' };
+        return { kind: 'conflict', status: current.status };
       }
+      await tx.crmAuditLog.create({
+        data: {
+          actorUserId: auth.userId,
+          actorRole: auth.roles.join(','),
+          action: 'STUDENT_IMPORT_APPROVED',
+          batchId: id,
+          afterData: JSON.stringify({ status: 'approved' }),
+        },
+      });
+      const batch = await tx.importBatch.findUnique({ where: { id } });
+      return { kind: 'approved', batch };
     });
-
-    return NextResponse.json({ success: true, batch: updatedBatch });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    if (result.kind === 'missing') return NextResponse.json({ success: false, error: 'Batch not found.' }, { status: 404 });
+    if (result.kind === 'conflict') return NextResponse.json({ success: false, error: `Only a batch ready for review can be approved (current: ${result.status}).` }, { status: 409 });
+    return NextResponse.json({ success: true, batch: result.batch });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Import batch approval could not be saved.' }, { status: 503 });
   }
 });

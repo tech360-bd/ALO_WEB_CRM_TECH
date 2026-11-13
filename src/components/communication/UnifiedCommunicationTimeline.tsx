@@ -69,17 +69,17 @@ export interface TimelineEntry {
 }
 
 const VISIBILITY_BADGES: Record<VisibilityLevel, { label: string; bg: string; text: string }> = {
-  public_safe: { label: 'Public Safe', bg: 'bg-gray-100', text: 'text-gray-700' },
-  student_visible: { label: 'Student Visible', bg: 'bg-blue-50', text: 'text-blue-700' },
-  partner_visible: { label: 'Partner Visible', bg: 'bg-emerald-50', text: 'text-emerald-700' },
-  counselor_visible: { label: 'Counselor Only', bg: 'bg-purple-50', text: 'text-purple-700' },
-  application_team_visible: { label: 'App Team', bg: 'bg-amber-50', text: 'text-amber-700' },
-  visa_team_visible: { label: 'Visa Team', bg: 'bg-cyan-50', text: 'text-cyan-700' },
+  public_safe: { label: 'Public Safe', bg: 'bg-[var(--alo-surface-muted)]', text: 'text-[var(--alo-body)]' },
+  student_visible: { label: 'Student Visible', bg: 'bg-[var(--alo-brand-pale)]', text: 'text-[var(--alo-brand)]' },
+  partner_visible: { label: 'Partner Visible', bg: 'bg-crm-success-bg', text: 'text-crm-success-text' },
+  counselor_visible: { label: 'Counselor Only', bg: 'bg-[var(--alo-brand-pale)]', text: 'text-[var(--alo-brand)]' },
+  application_team_visible: { label: 'App Team', bg: 'bg-crm-warning-bg', text: 'text-crm-warning-text' },
+  visa_team_visible: { label: 'Visa Team', bg: 'bg-[var(--alo-info-bg)]', text: 'text-[var(--alo-info-text)]' },
   finance_visible: { label: 'Finance Team', bg: 'bg-teal-50', text: 'text-teal-700' },
-  marketing_visible: { label: 'Marketing', bg: 'bg-pink-50', text: 'text-pink-700' },
-  b2b_confidential: { label: 'B2B Confidential 🔒', bg: 'bg-rose-100', text: 'text-rose-800' },
-  internal_only: { label: 'Internal Only', bg: 'bg-amber-100', text: 'text-amber-900' },
-  super_admin_only: { label: 'Super Admin 🔐', bg: 'bg-red-100', text: 'text-red-900' },
+  marketing_visible: { label: 'Marketing', bg: 'bg-crm-danger-bg', text: 'text-crm-danger-text' },
+  b2b_confidential: { label: 'B2B Confidential', bg: 'bg-crm-warning-bg', text: 'text-crm-warning-text' },
+  internal_only: { label: 'Internal Only', bg: 'bg-crm-warning-bg', text: 'text-crm-warning-text' },
+  super_admin_only: { label: 'Super Admin', bg: 'bg-crm-danger-bg', text: 'text-crm-danger-text' },
 };
 
 const TYPE_ICONS: Record<TimelineItemType, React.ElementType> = {
@@ -216,15 +216,15 @@ export default function UnifiedCommunicationTimeline({
   };
 
   return (
-    <Card className="border border-gray-200 shadow-sm bg-white rounded-xl">
-      <CardHeader className="pb-3 border-b border-gray-100 flex flex-row items-center justify-between">
+    <Card className="border border-[var(--alo-border)] shadow-sm bg-white rounded-xl">
+      <CardHeader className="pb-3 border-b border-[var(--alo-border)] flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-indigo-600" />
-          <CardTitle className="text-sm font-bold text-gray-900">
+          <MessageSquare className="w-5 h-5 text-[var(--alo-brand)]" />
+          <CardTitle className="text-sm font-bold text-[var(--alo-text)]">
             Unified Communication Timeline ({entityType.toUpperCase()} #{entityId})
           </CardTitle>
         </div>
-        <Badge variant="outline" className="text-[11px] bg-indigo-50 text-indigo-700 border-indigo-200">
+        <Badge variant="outline" className="text-[11px] bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]">
           {visibleEntries.length} Records
         </Badge>
       </CardHeader>
@@ -232,14 +232,14 @@ export default function UnifiedCommunicationTimeline({
       <CardContent className="p-4 space-y-4">
         {/* Reply Box */}
         {userRole !== 'STUDENT' || (entityType === 'student' && userRole === 'STUDENT') ? (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2">
+          <div className="bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-lg p-3 space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-gray-700">Channel:</span>
+                <span className="text-xs font-medium text-[var(--alo-body)]">Channel:</span>
                 <select
                   value={selectedChannel}
                   onChange={(e) => setSelectedChannel(e.target.value)}
-                  className="h-7 text-xs border border-gray-300 rounded px-2 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="h-7 text-xs border border-[var(--alo-border-strong)] rounded px-2 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 >
                   <option value="whatsapp">WhatsApp</option>
                   <option value="sms">SMS</option>
@@ -253,11 +253,11 @@ export default function UnifiedCommunicationTimeline({
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-gray-700">Visibility:</span>
+                <span className="text-xs font-medium text-[var(--alo-body)]">Visibility:</span>
                 <select
                   value={selectedVisibility}
                   onChange={(e) => setSelectedVisibility(e.target.value as VisibilityLevel)}
-                  className="h-7 text-xs border border-gray-300 rounded px-2 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="h-7 text-xs border border-[var(--alo-border-strong)] rounded px-2 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 >
                   <option value="student_visible">Student Visible</option>
                   <option value="partner_visible">Partner Visible</option>
@@ -265,7 +265,7 @@ export default function UnifiedCommunicationTimeline({
                   <option value="application_team_visible">App Team Only</option>
                   <option value="internal_only">Internal Staff Only</option>
                   {userRole === 'APPLICATION_TEAM' || userRole === 'SUPER_ADMIN' ? (
-                    <option value="b2b_confidential">B2B Confidential 🔒</option>
+                    <option value="b2b_confidential">B2B Confidential</option>
                   ) : null}
                 </select>
               </div>
@@ -279,10 +279,10 @@ export default function UnifiedCommunicationTimeline({
             />
 
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gray-400">
-                🔒 All communication is logged to database &amp; audit trail
+              <span className="text-[11px] text-[var(--alo-text-muted)]">
+                All communication is logged to database &amp; audit trail
               </span>
-              <Button size="sm" className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={handleSend}>
+              <Button size="sm" className=" bg-[var(--alo-brand)] hover:bg-[var(--alo-brand)] text-white" onClick={handleSend}>
                 <Send className="w-3.5 h-3.5 mr-1" />
                 Send &amp; Log
               </Button>
@@ -291,7 +291,7 @@ export default function UnifiedCommunicationTimeline({
         ) : null}
 
         {/* Timeline Entries List */}
-        <div className="relative border-l-2 border-indigo-100 pl-4 space-y-4">
+        <div className="relative border-l-2 border-[var(--alo-border)] pl-4 space-y-4">
           {visibleEntries.map((item) => {
             const Icon = TYPE_ICONS[item.type] || MessageSquare;
             const visMeta = VISIBILITY_BADGES[item.visibility] || VISIBILITY_BADGES.public_safe;
@@ -299,38 +299,38 @@ export default function UnifiedCommunicationTimeline({
             return (
               <div key={item.id} className="relative group">
                 {/* Timeline node */}
-                <div className="absolute -left-[25px] top-1.5 w-6 h-6 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center">
-                  <Icon className="w-3 h-3 text-indigo-600" />
+                <div className="absolute -left-[25px] top-1.5 w-6 h-6 rounded-full bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] flex items-center justify-center">
+                  <Icon className="w-3 h-3 text-[var(--alo-brand)]" />
                 </div>
 
-                <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-xs space-y-1.5">
+                <div className="bg-white border border-[var(--alo-border)] rounded-lg p-3 shadow-xs space-y-1.5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-gray-900">{item.senderName}</span>
-                      <span className="text-[10px] text-gray-400">({item.senderRole})</span>
+                      <span className="text-xs font-bold text-[var(--alo-text)]">{item.senderName}</span>
+                      <span className="text-[11px] text-[var(--alo-text-muted)]">({item.senderRole})</span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Badge className={`text-[10px] px-2 py-0.5 border ${visMeta.bg} ${visMeta.text}`}>
+                      <Badge className={`text-[11px] px-2 py-0.5 border ${visMeta.bg} ${visMeta.text}`}>
                         {visMeta.label}
                       </Badge>
-                      <span className="text-[10px] text-gray-400">{item.createdAt}</span>
+                      <span className="text-[11px] text-[var(--alo-text-muted)]">{item.createdAt}</span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">
+                  <p className="text-xs text-[var(--alo-body)] whitespace-pre-wrap leading-relaxed">
                     {item.body}
                   </p>
 
                   {item.linkedEntity && (
-                    <div className="text-[10px] text-gray-400 flex items-center gap-1">
+                    <div className="text-[11px] text-[var(--alo-text-muted)] flex items-center gap-1">
                       <span>Linked to:</span>
-                      <span className="font-semibold text-gray-600">{item.linkedEntity.label}</span>
+                      <span className="font-semibold text-[var(--alo-body)]">{item.linkedEntity.label}</span>
                     </div>
                   )}
 
                   {item.aiDrafted && (
-                    <div className="text-[10px] text-purple-600 font-medium flex items-center gap-1">
+                    <div className="text-[11px] text-[var(--alo-brand)] font-medium flex items-center gap-1">
                       <Sparkles className="w-3 h-3" />
                       Generated by AI Assistant (Pending Manager Approval)
                     </div>
@@ -341,7 +341,7 @@ export default function UnifiedCommunicationTimeline({
           })}
 
           {visibleEntries.length === 0 && (
-            <div className="py-8 text-center text-xs text-gray-400">
+            <div className="py-8 text-center text-xs text-[var(--alo-text-muted)]">
               No communication logs visible for your role.
             </div>
           )}

@@ -14,6 +14,7 @@ import {
   PageHeader,
 } from "@/components/alo/shared";
 import { SensitiveField, usePrivacy } from "@/components/alo/privacy-mode";
+import { FeatureFlagsPanel } from "@/components/alo/feature-flags-panel";
 import { ViewKey, fmtDate, timeAgo, STAGE_LABELS, STAGE_COLORS } from "@/lib/alo-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -184,21 +185,21 @@ interface ScholarshipPage {
 // ---------------------------------------------------------------------------
 
 const PROFILE_STATUS_COLORS: Record<string, string> = {
-  INCOMPLETE: "bg-slate-100 text-slate-700",
-  SUBMITTED: "bg-amber-100 text-amber-700",
+  INCOMPLETE: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  SUBMITTED: "bg-crm-warning-bg text-crm-warning-text",
   UNDER_REVIEW: "bg-sky-100 text-sky-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  CORRECTION_REQUIRED: "bg-rose-100 text-rose-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
-  INACTIVE: "bg-slate-100 text-slate-500",
-  TERMINATED: "bg-slate-200 text-slate-600",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  CORRECTION_REQUIRED: "bg-crm-warning-bg text-crm-warning-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const EMPLOYEE_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  SUSPENDED: "bg-rose-100 text-rose-700",
-  INACTIVE: "bg-slate-100 text-slate-500",
-  TERMINATED: "bg-slate-200 text-slate-600",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  SUSPENDED: "bg-crm-warning-bg text-crm-warning-text",
+  INACTIVE: "bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]",
+  TERMINATED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const PROFILE_STATUS_LABELS: Record<string, string> = {
@@ -213,9 +214,9 @@ const PROFILE_STATUS_LABELS: Record<string, string> = {
 };
 
 const AGENT_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  IDLE: "bg-amber-100 text-amber-700",
-  PAUSED: "bg-slate-200 text-slate-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  IDLE: "bg-crm-warning-bg text-crm-warning-text",
+  PAUSED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const QUOTA_TYPE_LABELS: Record<string, string> = {
@@ -226,9 +227,9 @@ const QUOTA_TYPE_LABELS: Record<string, string> = {
 };
 
 const QUOTA_STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  PENDING: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
 };
 
 const AUDIT_ACTION_LABELS: Record<string, string> = {
@@ -254,25 +255,25 @@ const AUDIT_ACTION_LABELS: Record<string, string> = {
 };
 
 const AUDIT_ACTION_COLORS: Record<string, string> = {
-  LOGIN: "bg-slate-100 text-slate-700",
-  FAILED_LOGIN: "bg-rose-100 text-rose-700",
-  LOGOUT: "bg-slate-100 text-slate-700",
+  LOGIN: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  FAILED_LOGIN: "bg-crm-warning-bg text-crm-warning-text",
+  LOGOUT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
   PROFILE_UPDATE: "bg-sky-100 text-sky-700",
   DOC_UPLOAD: "bg-sky-100 text-sky-700",
-  DOC_APPROVE: "bg-emerald-100 text-emerald-700",
-  DOC_REJECT: "bg-rose-100 text-rose-700",
-  APP_STATUS_CHANGE: "bg-violet-100 text-violet-700",
-  VISA_STATUS_CHANGE: "bg-orange-100 text-orange-700",
-  MOCK_CREDIT_CHANGE: "bg-amber-100 text-amber-700",
-  PAYMENT_UPDATE: "bg-emerald-100 text-emerald-700",
-  COMMISSION_APPROVE: "bg-emerald-100 text-emerald-700",
-  SALARY_ACCESS: "bg-amber-100 text-amber-700",
-  ROLE_CHANGE: "bg-rose-100 text-rose-700",
-  PERMISSION_CHANGE: "bg-rose-100 text-rose-700",
-  AI_ACTION: "bg-violet-100 text-violet-700",
+  DOC_APPROVE: "bg-crm-success-bg text-crm-success-text",
+  DOC_REJECT: "bg-crm-warning-bg text-crm-warning-text",
+  APP_STATUS_CHANGE: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  VISA_STATUS_CHANGE: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]",
+  MOCK_CREDIT_CHANGE: "bg-crm-warning-bg text-crm-warning-text",
+  PAYMENT_UPDATE: "bg-crm-success-bg text-crm-success-text",
+  COMMISSION_APPROVE: "bg-crm-success-bg text-crm-success-text",
+  SALARY_ACCESS: "bg-crm-warning-bg text-crm-warning-text",
+  ROLE_CHANGE: "bg-crm-warning-bg text-crm-warning-text",
+  PERMISSION_CHANGE: "bg-crm-warning-bg text-crm-warning-text",
+  AI_ACTION: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
   MESSAGE_ACTION: "bg-sky-100 text-sky-700",
-  DATA_IMPORT: "bg-blue-100 text-blue-700",
-  PUBLIC_PUBLISH: "bg-emerald-100 text-emerald-700",
+  DATA_IMPORT: "bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]",
+  PUBLIC_PUBLISH: "bg-crm-success-bg text-crm-success-text",
 };
 
 const DOC_STATUS_LABELS: Record<string, string> = {
@@ -404,20 +405,10 @@ const SETTINGS_CARDS = [
   },
 ];
 
-const FEATURE_FLAGS = [
-  { label: "Public Website", enabled: true, icon: "Globe" },
-  { label: "Student Portal", enabled: true, icon: "GraduationCap" },
-  { label: "Partner Portal", enabled: true, icon: "Handshake" },
-  { label: "Employee Portal", enabled: true, icon: "UserCog" },
-  { label: "AI Interview Engine", enabled: true, icon: "Mic" },
-  { label: "AI SOP Writer", enabled: true, icon: "FileText" },
-  { label: "AI Course Match", enabled: true, icon: "Sparkles" },
-  { label: "AI Visa Coach", enabled: false, icon: "Plane" },
-  { label: "Marketing AI Engine", enabled: true, icon: "Megaphone" },
-  { label: "Bulk Import", enabled: true, icon: "Download" },
-  { label: "CSV Pipeline", enabled: true, icon: "FileSpreadsheet" },
-  { label: "Audit Logging", enabled: true, icon: "ScrollText" },
-];
+// The hard-coded FEATURE_FLAGS mock array was removed (spec s92/s117): its
+// `enabled` values were literals unrelated to the platform, and toggling one
+// only showed a toast. Real flag state now comes from the persisted FeatureFlag
+// table via <FeatureFlagsPanel />.
 
 const AI_SAFETY_RULES = [
   "AI must never invent university requirements, deadlines, or scholarship amounts.",
@@ -515,7 +506,7 @@ function HealthCard({
   latency: string;
 }) {
   return (
-    <Card className="rounded-2xl border-2 border-[#E2E8F0] hover:border-emerald-300 transition-colors">
+    <Card className="rounded-2xl border-2 border-[var(--alo-border)] hover:border-crm-success-border transition-colors">
       <CardContent className="pt-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -523,12 +514,12 @@ function HealthCard({
             <p className="mt-1 text-sm font-medium text-foreground truncate">{detail}</p>
             <p className="mt-0.5 text-xs text-muted-foreground">p95 · {latency}</p>
           </div>
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-crm-success-bg text-crm-success-text">
             <Icon name={icon} className="size-5" />
           </div>
         </div>
-        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-          <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-crm-success-bg px-2.5 py-1 text-xs font-semibold text-crm-success-text">
+          <span className="size-1.5 rounded-full bg-[var(--alo-success)] animate-pulse" />
           Operational
         </div>
       </CardContent>
@@ -553,23 +544,23 @@ function QuickActionCard({
     <button
       type="button"
       onClick={() => onNavigate(def.view)}
-      className="group relative flex h-full w-full flex-col gap-2 rounded-2xl border-2 border-[#E2E8F0] bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0057B8]"
+      className="group relative flex h-full w-full flex-col gap-2 rounded-2xl border-2 border-[var(--alo-border)] bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:border-[var(--alo-brand)]/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--alo-brand)]"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex size-10 items-center justify-center rounded-xl bg-alo-gradient text-white shadow-sm">
           <Icon name={def.icon} className="size-5" />
         </div>
         {typeof count === "number" && count > 0 && (
-          <Badge className="border-0 bg-[#e8f0fb] text-[#0057B8] hover:bg-[#e8f0fb]">
+          <Badge className="border-0 bg-[var(--alo-brand-light)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
             {count.toLocaleString()}
           </Badge>
         )}
       </div>
       <div className="mt-1">
-        <p className="text-sm font-semibold text-foreground group-hover:text-[#0057B8]">{def.label}</p>
+        <p className="text-sm font-semibold text-foreground group-hover:text-[var(--alo-brand)]">{def.label}</p>
         <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground line-clamp-2">{def.description}</p>
       </div>
-      <div className="mt-auto flex items-center gap-1 text-xs font-medium text-[#0057B8] opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="mt-auto flex items-center gap-1 text-xs font-medium text-[var(--alo-brand)] opacity-0 transition-opacity group-hover:opacity-100">
         Open
         <Icon name="ArrowRight" className="size-3.5" />
       </div>
@@ -786,8 +777,8 @@ export function SuperAdminDashboard({
         subtitle="Full system control — employees, partners, courses, finance, AI, and security."
         icon="ShieldCheck"
         action={
-          <Badge className="gap-1.5 border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+          <Badge className="gap-1.5 border-crm-success-border bg-crm-success-bg px-3 py-1.5 text-sm font-semibold text-crm-success-text hover:bg-crm-success-bg">
+            <span className="size-2 rounded-full bg-[var(--alo-success)] animate-pulse" />
             All Systems Operational
           </Badge>
         }
@@ -798,7 +789,7 @@ export function SuperAdminDashboard({
       {/* ----------------------------------------------------------------- */}
       <section>
         <div className="mb-3 flex items-center gap-2">
-          <Icon name="Activity" className="size-4 text-[#0057B8]" />
+          <Icon name="Activity" className="size-4 text-[var(--alo-brand)]" />
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             System-wide Metrics
           </h2>
@@ -831,7 +822,7 @@ export function SuperAdminDashboard({
       <section>
         <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Icon name="LayoutGrid" className="size-4 text-[#0057B8]" />
+            <Icon name="LayoutGrid" className="size-4 text-[var(--alo-brand)]" />
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Quick Actions · Master Hub
             </h2>
@@ -854,28 +845,28 @@ export function SuperAdminDashboard({
       {/* 4. Tabs                                                            */}
       {/* ----------------------------------------------------------------- */}
       <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-2xl border-2 border-[#E2E8F0] bg-white p-1.5">
-          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-2xl border-2 border-[var(--alo-border)] bg-white p-1.5">
+          <TabsTrigger value="overview" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">
             <Icon name="Gauge" className="mr-1.5 size-4" />
             System Overview
           </TabsTrigger>
-          <TabsTrigger value="employee" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+          <TabsTrigger value="employee" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">
             <Icon name="UserCog" className="mr-1.5 size-4" />
             Employee Control
           </TabsTrigger>
-          <TabsTrigger value="branch" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+          <TabsTrigger value="branch" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">
             <Icon name="Building" className="mr-1.5 size-4" />
             Branch Control
           </TabsTrigger>
-          <TabsTrigger value="country" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+          <TabsTrigger value="country" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">
             <Icon name="Globe" className="mr-1.5 size-4" />
             Country Control
           </TabsTrigger>
-          <TabsTrigger value="ai" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+          <TabsTrigger value="ai" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">
             <Icon name="Bot" className="mr-1.5 size-4" />
             AI Command
           </TabsTrigger>
-          <TabsTrigger value="settings" className="rounded-xl data-[state=active]:bg-[#0057B8] data-[state=active]:text-white">
+          <TabsTrigger value="settings" className="rounded-xl data-[state=active]:bg-[var(--alo-brand)] data-[state=active]:text-white">
             <Icon name="Settings" className="mr-1.5 size-4" />
             System Settings
           </TabsTrigger>
@@ -886,7 +877,7 @@ export function SuperAdminDashboard({
           {/* Health cards */}
           <div>
             <div className="mb-3 flex items-center gap-2">
-              <Icon name="HeartPulse" className="size-4 text-emerald-600" />
+              <Icon name="HeartPulse" className="size-4 text-crm-success-text" />
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 System Health
               </h3>
@@ -932,7 +923,7 @@ export function SuperAdminDashboard({
                             <span
                               className={cn(
                                 "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold",
-                                AUDIT_ACTION_COLORS[log.action] || "bg-slate-100 text-slate-700",
+                                AUDIT_ACTION_COLORS[log.action] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
                               )}
                             >
                               {AUDIT_ACTION_LABELS[log.action] || log.action.replace(/_/g, " ")}
@@ -971,10 +962,10 @@ export function SuperAdminDashboard({
             >
               <div className="space-y-3">
                 {/* Pending employee profiles */}
-                <div className="rounded-xl border-2 border-[#E2E8F0] p-3">
+                <div className="rounded-xl border-2 border-[var(--alo-border)] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-crm-warning-bg text-crm-warning-text">
                         <Icon name="UserCheck" className="size-4" />
                       </div>
                       <div>
@@ -982,7 +973,7 @@ export function SuperAdminDashboard({
                         <p className="text-xs text-muted-foreground">Submitted / Under review</p>
                       </div>
                     </div>
-                    <Badge className="border-0 bg-amber-100 text-amber-700 hover:bg-amber-100">
+                    <Badge className="border-0 bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                       {pendingEmployeeProfiles.length}
                     </Badge>
                   </div>
@@ -1000,10 +991,10 @@ export function SuperAdminDashboard({
                 </div>
 
                 {/* Pending partner registrations */}
-                <div className="rounded-xl border-2 border-[#E2E8F0] p-3">
+                <div className="rounded-xl border-2 border-[var(--alo-border)] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                         <Icon name="Handshake" className="size-4" />
                       </div>
                       <div>
@@ -1011,7 +1002,7 @@ export function SuperAdminDashboard({
                         <p className="text-xs text-muted-foreground">Awaiting activation</p>
                       </div>
                     </div>
-                    <Badge className="border-0 bg-violet-100 text-violet-700 hover:bg-violet-100">
+                    <Badge className="border-0 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                       {accessData?.summary.totalPartners ?? 0}
                     </Badge>
                   </div>
@@ -1027,10 +1018,10 @@ export function SuperAdminDashboard({
                 </div>
 
                 {/* Pending quota requests */}
-                <div className="rounded-xl border-2 border-[#E2E8F0] p-3">
+                <div className="rounded-xl border-2 border-[var(--alo-border)] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-crm-warning-bg text-crm-warning-text">
                         <Icon name="PackagePlus" className="size-4" />
                       </div>
                       <div>
@@ -1038,7 +1029,7 @@ export function SuperAdminDashboard({
                         <p className="text-xs text-muted-foreground">Extra seats / image / video</p>
                       </div>
                     </div>
-                    <Badge className="border-0 bg-rose-100 text-rose-700 hover:bg-rose-100">
+                    <Badge className="border-0 bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                       {pendingQuota}
                     </Badge>
                   </div>
@@ -1071,10 +1062,10 @@ export function SuperAdminDashboard({
                 </div>
 
                 {/* Pending import approvals */}
-                <div className="rounded-xl border-2 border-[#E2E8F0] p-3">
+                <div className="rounded-xl border-2 border-[var(--alo-border)] p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-[#0057B8]">
+                      <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]">
                         <Icon name="FileCheck2" className="size-4" />
                       </div>
                       <div>
@@ -1082,7 +1073,7 @@ export function SuperAdminDashboard({
                         <p className="text-xs text-muted-foreground">Bulk + CSV pipelines</p>
                       </div>
                     </div>
-                    <Badge className="border-0 bg-blue-100 text-[#0057B8] hover:bg-blue-100">0</Badge>
+                    <Badge className="border-0 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">0</Badge>
                   </div>
                   <Button
                     variant="outline"
@@ -1135,12 +1126,12 @@ export function SuperAdminDashboard({
                       key={stage}
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
-                        STAGE_COLORS[stage] || "bg-slate-100 text-slate-700",
+                        STAGE_COLORS[stage] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
                       )}
                       title={STAGE_LABELS[stage] || stage}
                     >
                       {STAGE_LABELS[stage] || stage.replace(/_/g, " ")}
-                      <span className="ml-1 rounded-full bg-white/60 px-1.5 text-[10px] tabular-nums">{n}</span>
+                      <span className="ml-1 rounded-full bg-white/60 px-1.5 text-[11px] tabular-nums">{n}</span>
                     </span>
                   ))}
                 </div>
@@ -1195,7 +1186,7 @@ export function SuperAdminDashboard({
         <TabsContent value="employee" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#0057B8]">Employee Control</h3>
+              <h3 className="text-base font-bold text-[var(--alo-brand)]">Employee Control</h3>
               <p className="text-sm text-muted-foreground">
                 {employeeCount} employees · {activeEmployees} active · {pendingProfiles} pending profile
                 approvals
@@ -1293,7 +1284,7 @@ export function SuperAdminDashboard({
                   {Object.entries(byProfileStatus).map(([status, n]) => (
                     <div
                       key={status}
-                      className="rounded-xl border-2 border-[#E2E8F0] p-3"
+                      className="rounded-xl border-2 border-[var(--alo-border)] p-3"
                     >
                       <div className="flex items-center justify-between">
                         <StatusBadge
@@ -1375,7 +1366,7 @@ export function SuperAdminDashboard({
         <TabsContent value="branch" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#0057B8]">Branch Control</h3>
+              <h3 className="text-base font-bold text-[var(--alo-brand)]">Branch Control</h3>
               <p className="text-sm text-muted-foreground">
                 {branchStats.length} branches · {employeeCount} total employees
               </p>
@@ -1414,12 +1405,12 @@ export function SuperAdminDashboard({
                   return (
                     <Card
                       key={b.name}
-                      className="rounded-2xl border-2 border-[#E2E8F0] hover:border-[#0057B8]/40 transition-colors"
+                      className="rounded-2xl border-2 border-[var(--alo-border)] hover:border-[var(--alo-brand)]/40 transition-colors"
                     >
                       <CardContent className="pt-5">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2">
-                            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                            <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                               <Icon name="Building" className="size-5" />
                             </div>
                             <div>
@@ -1429,7 +1420,7 @@ export function SuperAdminDashboard({
                               </p>
                             </div>
                           </div>
-                          <Badge className="border-0 bg-amber-100 text-amber-700 hover:bg-amber-100">
+                          <Badge className="border-0 bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                             {b.employees} staff
                           </Badge>
                         </div>
@@ -1447,9 +1438,9 @@ export function SuperAdminDashboard({
                               {totalStudentsForBranch.toLocaleString()}
                             </p>
                           </div>
-                          <div className="col-span-2 rounded-lg bg-emerald-50 p-2">
-                            <p className="text-emerald-700/80">Revenue (share)</p>
-                            <p className="text-sm font-bold text-emerald-700 tabular-nums">
+                          <div className="col-span-2 rounded-lg bg-crm-success-bg p-2">
+                            <p className="text-crm-success-text/80">Revenue (share)</p>
+                            <p className="text-sm font-bold text-crm-success-text tabular-nums">
                               {formatCurrency(totalRevenueForBranch)}
                             </p>
                           </div>
@@ -1489,7 +1480,7 @@ export function SuperAdminDashboard({
         <TabsContent value="country" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#0057B8]">Country Control</h3>
+              <h3 className="text-base font-bold text-[var(--alo-brand)]">Country Control</h3>
               <p className="text-sm text-muted-foreground">
                 {countries.length} destinations · {universities.length} universities · {courses.length} courses ·{" "}
                 {scholarships.length} scholarships
@@ -1515,12 +1506,12 @@ export function SuperAdminDashboard({
               {countryStats.map((c) => (
                 <Card
                   key={c.id}
-                  className="rounded-2xl border-2 border-[#E2E8F0] hover:border-[#0057B8]/40 transition-colors"
+                  className="rounded-2xl border-2 border-[var(--alo-border)] hover:border-[var(--alo-brand)]/40 transition-colors"
                 >
                   <CardContent className="pt-5">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-2xl">
+                        <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-2xl">
                           {c.flag || "🌍"}
                         </div>
                         <div>
@@ -1532,12 +1523,12 @@ export function SuperAdminDashboard({
                         </div>
                       </div>
                       {c.verificationStatus === "VERIFIED" ? (
-                        <Badge className="border-0 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                        <Badge className="border-0 bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
                           <Icon name="CheckCircle2" className="mr-1 size-3" />
                           Verified
                         </Badge>
                       ) : (
-                        <Badge className="border-0 bg-amber-100 text-amber-700 hover:bg-amber-100">
+                        <Badge className="border-0 bg-crm-warning-bg text-crm-warning-text hover:bg-crm-warning-bg">
                           <Icon name="Clock" className="mr-1 size-3" />
                           Review
                         </Badge>
@@ -1641,7 +1632,7 @@ export function SuperAdminDashboard({
         <TabsContent value="ai" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#0057B8]">AI Command Center</h3>
+              <h3 className="text-base font-bold text-[var(--alo-brand)]">AI Command Center</h3>
               <p className="text-sm text-muted-foreground">
                 {agents.length} agents across {Object.keys(agentsByDept).length} departments ·{" "}
                 {aiJobsProcessed.toLocaleString()} jobs processed
@@ -1680,11 +1671,11 @@ export function SuperAdminDashboard({
                     return (
                       <div
                         key={dept}
-                        className="rounded-xl border-2 border-[#E2E8F0] p-3"
+                        className="rounded-xl border-2 border-[var(--alo-border)] p-3"
                       >
                         <div className="flex items-center justify-between">
                           <p className="text-sm font-semibold text-foreground">{dept}</p>
-                          <Badge className="border-0 bg-violet-100 text-violet-700 hover:bg-violet-100">
+                          <Badge className="border-0 bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                             {info.count} agent{info.count !== 1 ? "s" : ""}
                           </Badge>
                         </div>
@@ -1695,7 +1686,7 @@ export function SuperAdminDashboard({
                           <span>{info.active} active</span>
                           <span>{info.jobs.toLocaleString()} jobs</span>
                           {info.pending > 0 && (
-                            <span className="font-medium text-amber-700">{info.pending} pending</span>
+                            <span className="font-medium text-crm-warning-text">{info.pending} pending</span>
                           )}
                         </div>
                       </div>
@@ -1711,12 +1702,12 @@ export function SuperAdminDashboard({
             description="Non-negotiable rules enforced across all AI agents"
             icon="ShieldAlert"
           >
-            <div className="rounded-xl border-2 border-amber-200 bg-amber-50 p-4">
+            <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg p-4">
               <div className="mb-3 flex items-start gap-2">
-                <Icon name="AlertTriangle" className="mt-0.5 size-5 text-amber-600 shrink-0" />
+                <Icon name="AlertTriangle" className="mt-0.5 size-5 text-crm-warning-text shrink-0" />
                 <div>
-                  <p className="text-sm font-bold text-amber-900">AI must NOT</p>
-                  <p className="text-xs text-amber-800">
+                  <p className="text-sm font-bold text-crm-warning-text">AI must NOT</p>
+                  <p className="text-xs text-crm-warning-text">
                     These rules are enforced in the AI Command Center safety layer. Violations are
                     audit-logged.
                   </p>
@@ -1724,8 +1715,8 @@ export function SuperAdminDashboard({
               </div>
               <ul className="space-y-1.5">
                 {AI_SAFETY_RULES.map((rule, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs text-amber-900">
-                    <Icon name="X" className="mt-0.5 size-3.5 text-rose-600 shrink-0" />
+                  <li key={i} className="flex items-start gap-2 text-xs text-crm-warning-text">
+                    <Icon name="X" className="mt-0.5 size-3.5 text-crm-warning-text shrink-0" />
                     <span>{rule}</span>
                   </li>
                 ))}
@@ -1738,7 +1729,7 @@ export function SuperAdminDashboard({
         <TabsContent value="settings" className="mt-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-base font-bold text-[#0057B8]">System Settings</h3>
+              <h3 className="text-base font-bold text-[var(--alo-brand)]">System Settings</h3>
               <p className="text-sm text-muted-foreground">
                 Global configuration across the entire ALO Education platform
               </p>
@@ -1752,11 +1743,11 @@ export function SuperAdminDashboard({
           {/* Settings cards */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {SETTINGS_CARDS.map((card) => (
-              <Card key={card.key} className="rounded-2xl border-2 border-[#E2E8F0]">
+              <Card key={card.key} className="rounded-2xl border-2 border-[var(--alo-border)]">
                 <CardContent className="pt-5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                      <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                         <Icon name={card.icon} className="size-4.5" />
                       </div>
                       <p className="text-sm font-semibold text-foreground">{card.title}</p>
@@ -1792,73 +1783,22 @@ export function SuperAdminDashboard({
             ))}
           </div>
 
-          {/* Feature flags */}
-          <SectionCard
-            title="Feature Flags"
-            description="Enable or disable modules across the platform"
-            icon="ToggleLeft"
-          >
-            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-              {FEATURE_FLAGS.map((flag) => (
-                <div
-                  key={flag.label}
-                  className={cn(
-                    "flex items-center justify-between rounded-xl border-2 p-3 transition-colors",
-                    flag.enabled
-                      ? "border-emerald-200 bg-emerald-50/50"
-                      : "border-slate-200 bg-slate-50",
-                  )}
-                >
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={cn(
-                        "flex size-8 items-center justify-center rounded-lg",
-                        flag.enabled ? "bg-emerald-100 text-emerald-600" : "bg-slate-200 text-slate-500",
-                      )}
-                    >
-                      <Icon name={flag.icon} className="size-4" />
-                    </div>
-                    <span className="text-sm font-medium text-foreground">{flag.label}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toast({
-                        title: `Feature flag: ${flag.label}`,
-                        description: `Currently ${flag.enabled ? "ENABLED" : "DISABLED"}. Toggles require super admin confirmation — use the Access Control Center.`,
-                      })
-                    }
-                    className={cn(
-                      "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors",
-                      flag.enabled ? "bg-emerald-500" : "bg-slate-300",
-                    )}
-                    aria-label={`Toggle ${flag.label}`}
-                  >
-                    <span
-                      className={cn(
-                        "inline-block size-3.5 transform rounded-full bg-white shadow transition-transform",
-                        flag.enabled ? "translate-x-5" : "translate-x-1",
-                      )}
-                    />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
+          {/* Feature flags — real persisted state, audited (spec s117) */}
+          <FeatureFlagsPanel />
         </TabsContent>
       </Tabs>
 
       {/* ----------------------------------------------------------------- */}
       {/* 5. Security & RBAC summary                                         */}
       {/* ----------------------------------------------------------------- */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-br from-[#e8f0fb]/40 to-white">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-gradient-to-br from-[var(--alo-brand-light)]/40 to-white">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#0057B8] text-white alo-shadow">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--alo-brand)] text-white alo-shadow">
               <Icon name="ShieldCheck" className="size-6" />
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-bold text-[#0057B8]">Security & RBAC Summary</h3>
+              <h3 className="text-base font-bold text-[var(--alo-brand)]">Security & RBAC Summary</h3>
               <p className="mt-0.5 text-sm text-muted-foreground">
                 Defense-in-depth across backend, frontend, and middleware layers.
               </p>
@@ -1869,9 +1809,9 @@ export function SuperAdminDashboard({
             {RBAC_SUMMARY.map((item) => (
               <div
                 key={item.title}
-                className="rounded-xl border-2 border-[#E2E8F0] bg-white p-4"
+                className="rounded-xl border-2 border-[var(--alo-border)] bg-white p-4"
               >
-                <div className="flex size-9 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+                <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                   <Icon name={item.icon} className="size-4.5" />
                 </div>
                 <p className="mt-3 text-sm font-semibold text-foreground">{item.title}</p>
@@ -1881,11 +1821,11 @@ export function SuperAdminDashboard({
           </div>
 
           {/* Inline SensitiveField demo — revenue figure */}
-          <div className="mt-5 rounded-xl border-2 border-[#E2E8F0] bg-white p-4">
+          <div className="mt-5 rounded-xl border-2 border-[var(--alo-border)] bg-white p-4">
             <div className="mb-2 flex items-center gap-2">
-              <Icon name="DollarSign" className="size-4 text-emerald-600" />
+              <Icon name="DollarSign" className="size-4 text-crm-success-text" />
               <p className="text-sm font-semibold text-foreground">Revenue Snapshot</p>
-              <Badge className="ml-auto border-0 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+              <Badge className="ml-auto border-0 bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
                 Privacy-protected
               </Badge>
             </div>

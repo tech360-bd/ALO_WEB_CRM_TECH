@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, logAuditAction } from '@/lib/auth-middleware';
+import { hasMarketingAccess, isMarketingManager } from '@/lib/marketing/access';
 
-const VIEW_ROLES = new Set(['SUPER_ADMIN', 'ADMIN', 'MARKETING_MANAGER', 'MARKETING']);
-const MANAGE_ROLES = new Set(['SUPER_ADMIN', 'ADMIN', 'MARKETING_MANAGER']);
 const TRIGGER_TYPES = new Set(['LEAD_CREATED', 'FOLLOW_UP', 'WHATSAPP_REPLY', 'CAMPAIGN_REPORT', 'COUNSELOR_NOTIFY']);
-function hasRole(auth: { userType: string; roles: string[] }, roles: Set<string>) {
-  return [auth.userType, ...auth.roles].some((role) => roles.has(role.toUpperCase()));
-}
 async function parseBody(req: NextRequest): Promise<Record<string, unknown> | null> {
   try {
     const value: unknown = await req.json();
@@ -44,7 +40,7 @@ function safeWorkflow(workflow: {
 export async function GET(req: NextRequest) {
   const auth = await authenticateRequest(req);
   if (auth instanceof NextResponse) return auth;
-  if (!hasRole(auth, VIEW_ROLES)) return NextResponse.json({ success: false, error: 'Marketing workflow access is not permitted.' }, { status: 403 });
+  if (!(await hasMarketingAccess(auth, 'workspace'))) return NextResponse.json({ success: false, error: 'Marketing workflow access is not permitted.' }, { status: 403 });
   try {
     const workflows = await db.n8nWorkflow.findMany({ orderBy: { createdAt: 'desc' } });
     return NextResponse.json({ workflows: workflows.map(safeWorkflow) }, { headers: { 'Cache-Control': 'no-store' } });
@@ -57,7 +53,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const auth = await authenticateRequest(req);
   if (auth instanceof NextResponse) return auth;
-  if (!hasRole(auth, MANAGE_ROLES)) return NextResponse.json({ success: false, error: 'Marketing workflow administration is required.' }, { status: 403 });
+  if (!isMarketingManager(auth)) return NextResponse.json({ success: false, error: 'Marketing workflow administration is required.' }, { status: 403 });
   const body = await parseBody(req);
   if (!body) return NextResponse.json({ success: false, error: 'Invalid JSON body.' }, { status: 400 });
   if ((typeof body.webhookUrl === 'string' && body.webhookUrl.trim()) || (typeof body.webhookSecret === 'string' && body.webhookSecret.trim())) {
@@ -85,7 +81,7 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const auth = await authenticateRequest(req);
   if (auth instanceof NextResponse) return auth;
-  if (!hasRole(auth, MANAGE_ROLES)) return NextResponse.json({ success: false, error: 'Marketing workflow administration is required.' }, { status: 403 });
+  if (!isMarketingManager(auth)) return NextResponse.json({ success: false, error: 'Marketing workflow administration is required.' }, { status: 403 });
   const body = await parseBody(req);
   if (!body) return NextResponse.json({ success: false, error: 'Invalid JSON body.' }, { status: 400 });
   const id = typeof body.id === 'string' ? body.id.trim() : '';
@@ -107,7 +103,7 @@ export async function PATCH(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const auth = await authenticateRequest(req);
   if (auth instanceof NextResponse) return auth;
-  if (!hasRole(auth, MANAGE_ROLES)) return NextResponse.json({ success: false, error: 'Marketing workflow administration is required.' }, { status: 403 });
+  if (!isMarketingManager(auth)) return NextResponse.json({ success: false, error: 'Marketing workflow administration is required.' }, { status: 403 });
   return NextResponse.json({
     success: false,
     status: 'NOT_CONFIGURED',

@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 const { db, getServerSession } = vi.hoisted(() => ({
   getServerSession: vi.fn(),
   db: {
-    user: { findUnique: vi.fn() }, aloPayment: { aggregate: vi.fn() },
+    employee: { findFirst: vi.fn() }, user: { findUnique: vi.fn() }, aloPayment: { aggregate: vi.fn() },
     portalStudentApplication: { count: vi.fn() }, marketingLead: { count: vi.fn() },
     portalStudentProfile: { count: vi.fn() }, portalUser: { findMany: vi.fn() }, visaCase: { findMany: vi.fn() },
   },

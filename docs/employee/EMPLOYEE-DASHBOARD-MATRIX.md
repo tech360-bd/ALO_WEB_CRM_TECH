@@ -20,7 +20,9 @@ mandatory; hiding a button in the UI is never authorization (mandate §70).
 ## Legend
 - ✅ granted · ⛔ denied · 👁 view-only · PLANNED = designed, not yet role-wired
 
-## Core role matrix
+## Core role matrix — historical design reference, NOT a live grant list
+
+**Security correction (2026-10-24): do not treat the matrix below as runtime authorization evidence.** The repository contains overlapping permission catalogs and role defaults, and the full role×API matrix is not verified. In particular, executive titles and branch-manager roles must not inherit HR salary, Finance approval, or RBAC powers from designation alone. Runtime access must be checked against authenticated server-side permissions, scope, object, workflow state, and approval rules. The code-level helper `PERMISSION_MATRIX` was patched so Chairman/CEO/Director designations carry no wildcard capability by default; remaining role defaults and APIs still require route-by-route audit and negative tests.
 
 | Capability | CEO | Super Admin | Admin | HR Mgr | Team Lead | Counselor | Sr Counselor | Admissions | Visa | Finance | Marketing | Social Media | IT | Security |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -49,9 +51,13 @@ mandatory; hiding a button in the UI is never authorization (mandate §70).
 > employee's team/department · 👁 = read-only aggregate, no message-level content.
 
 ## Financial confidentiality (mandate §29)
-Confidential financial data (salaries, revenue, commissions) is exposed only to
-CEO, Super Admin, and Finance. `/api/hr/payroll` and `/api/finance` are gated by
-`withAuth` + `requireUserTypes` (see `tests/unit/finance-authz-regression.test.ts`).
+Salary and HR financial fields require explicit permission and field-level audit;
+Finance access to payroll calculations does not grant unrelated HR profile
+access. A CEO/Director title alone is not an access grant. The `/api/hr/payroll`,
+`/api/finance`, employee payroll, and reporting routes must each be verified for
+both server-side permission and ownership/scope. Existing auth tests cover only
+the routes and cases named in their tests; they do not prove every HR/finance
+endpoint or every field is private.
 
 ## Department dashboards (mandate §55)
 The dashboard engine must support department-specific widgets for: Admissions,

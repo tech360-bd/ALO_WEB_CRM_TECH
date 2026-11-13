@@ -526,7 +526,7 @@ export function PartnerCommHub() {
       key: "stage",
       header: "Stage",
       cell: (r) => (
-        <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", STAGE_COLORS[r.stage] || "bg-slate-100 text-slate-700")}>
+        <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", STAGE_COLORS[r.stage] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]")}>
           {STAGE_LABELS[r.stage] || r.stage}
         </span>
       ),
@@ -945,7 +945,7 @@ function ApplicationDetailsDialog({
               <DetailField
                 label="Current Stage"
                 value={
-                  <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", STAGE_COLORS[stage] || "bg-slate-100 text-slate-700")}>
+                  <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium", STAGE_COLORS[stage] || "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]")}>
                     {STAGE_LABELS[stage] || stage}
                   </span>
                 }

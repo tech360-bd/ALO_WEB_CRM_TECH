@@ -70,7 +70,7 @@ const FALLBACK_FAQS: FallbackFaq[] = [
   { category: "English Tests", question: "Which English test should I take?", answer: "IELTS is the most widely accepted. PTE Academic is popular if you're nervous speaking to a human examiner. Duolingo is cheapest ($59) and fastest but less widely accepted. Always check your target university's accepted tests first." },
   { category: "English Tests", question: "What IELTS score do I need for UK universities?", answer: "Most Bachelor's courses require IELTS 6.0 overall (no band below 5.5). Most Masters courses require IELTS 6.5 overall (no band below 6.0). Law, medicine, and education often require 7.0+. Check your specific course requirements." },
   { category: "English Tests", question: "Does ALO provide free IELTS mock tests?", answer: "Yes! ALO registered students get 3 free full AI-scored mock tests. Guests get 1 free mock. Each mock includes Listening, Reading, Writing, and Speaking with a detailed PDF report. Visit our Exams page to start." },
-  { category: "English Tests", question: "Can I take IELTS UKVI instead of regular IELTS?", answer: "Yes — IELTS UKVI is accepted by UKVI for visa applications and by UK universities. It's slightly more expensive. We recommend IELTS UKVI if you're planning to study in the UK, as it covers both university admission and visa requirements." },
+  { category: "English Tests", question: "Can I take IELTS UKVI instead of regular IELTS?", answer: "IELTS for UKVI is a Secure English Language Test for specified UK immigration routes when the relevant rules require it. Check the current UKVI list, test provider, sponsor, and course requirements before booking; an exam result does not itself establish visa eligibility." },
   { category: "English Tests", question: "What is Duolingo English Test and is it accepted?", answer: "Duolingo English Test (DET) is a 1-hour online English test costing $59. Results are available in 48 hours. Over 4,000 universities accept it, but visa officers may still require IELTS. Check your university's accepted tests before booking." },
 
   // Payments
@@ -94,7 +94,7 @@ const FALLBACK_FAQS: FallbackFaq[] = [
   // Scholarships
   { category: "Scholarships", question: "Can Bangladeshi students get fully-funded scholarships?", answer: "Yes — Chevening (UK), Commonwealth (UK), Australia Awards (Australia), DAAD (Germany), Fulbright (USA), and New Zealand Scholarships all fully-fund Bangladeshi students. Competition is fierce — apply 12 months in advance. ALO provides free scholarship guidance and SOP support." },
   { category: "Scholarships", question: "Do universities offer scholarships for international students?", answer: "Yes — most universities offer merit scholarships of £2,000-£10,000/year for international students. Some have country-specific scholarships for Bangladesh. Check each university's scholarship page and deadlines (often earlier than admission deadlines)." },
-  { category: "Scholarships", question: "What makes a strong scholarship application?", answer: "Strong scholarship applications show: (1) academic excellence (top 10% of your class), (2) leadership experience (volunteering, projects, initiatives), (3) clear career plan linked to the scholarship's mission, (4) why you specifically deserve this scholarship. ALO provides free SOP coaching for scholarship applicants." },
+  { category: "Scholarships", question: "What should I prepare for a scholarship application?", answer: "Read the current programme criteria and prepare the requested academic, experience, and career-plan evidence. Requirements differ by provider. Contact ALO to ask whether application support is available and confirm any applicable fee." },
 
   // Pre-Departure
   { category: "Pre-Departure", question: "What should I pack for studying abroad?", answer: "Essentials: passport, visa, CAS, offer letter, academic transcripts (originals), bank cards, prescribed medicines (with prescription), adapter (UK uses Type G), £200-£300 cash for arrival. Don't overpack — most things are available abroad. Cultural items (food, prayer mat) can be brought if important to you." },
@@ -153,7 +153,7 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -162,16 +162,16 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
               <Icon name="HelpCircle" className="mr-1 size-3" />
               Quick Answers
             </Badge>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Frequently Asked <span className="text-[#0057B8]">Questions</span>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-[var(--alo-text)] sm:text-5xl">
+              Frequently Asked <span className="text-[var(--alo-brand)]">Questions</span>
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">
               Real answers to the questions Bangladeshi students ask us most. Can't find your question?{" "}
-              <button onClick={() => onNavigate("public-contact")} className="font-semibold text-[#0057B8] hover:underline">
+              <button onClick={() => onNavigate("public-contact")} className="font-semibold text-[var(--alo-brand)] hover:underline">
                 Ask us directly
               </button>
               .
@@ -183,13 +183,13 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
       <div className="mx-auto max-w-4xl px-4 py-10 lg:px-6 lg:py-14">
         {/* Search */}
         <div className="relative mb-6">
-          <Icon name="Search" className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[#5A7299]" />
+          <Icon name="Search" className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[var(--alo-text-muted)]" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search questions... (e.g. 'visa', 'scholarship', 'IELTS')"
-            className="h-12 w-full rounded-xl border-2 border-[#0057B8]/15 bg-white pl-11 pr-4 text-sm text-[#0B2447] placeholder:text-[#5A7299] focus:border-[#0057B8] focus:outline-none focus:ring-2 focus:ring-[#0057B8]/10"
+            className="h-12 w-full rounded-xl border-2 border-[var(--alo-brand)]/15 bg-white pl-11 pr-4 text-sm text-[var(--alo-text)] placeholder:text-[var(--alo-text-muted)] focus:border-[var(--alo-brand)] focus:outline-none focus:ring-2 focus:ring-[var(--alo-brand)]/10"
           />
         </div>
 
@@ -202,8 +202,8 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
               className={cn(
                 "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
                 category === c
-                  ? "bg-[#0057B8] text-white"
-                  : "border border-[#0057B8]/20 bg-white text-[#0057B8] hover:bg-[#EAF3FF]"
+                  ? "bg-[var(--alo-brand)] text-white"
+                  : "border border-[var(--alo-brand)]/20 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
               )}
             >
               {c}
@@ -212,7 +212,7 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
         </div>
 
         {/* Results count */}
-        <p className="mb-4 text-sm text-[#5A7299]">
+        <p className="mb-4 text-sm text-[var(--alo-text-muted)]">
           {filtered.length} {filtered.length === 1 ? "question" : "questions"}
           {category !== "All" && ` in ${category}`}
           {search && ` matching "${search}"`}
@@ -227,28 +227,28 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
             title="No matching questions"
             description="Try a different search term or browse all categories."
             action={
-              <Button onClick={() => { setSearch(""); setCategory("All"); }} className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
+              <Button onClick={() => { setSearch(""); setCategory("All"); }} className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90">
                 Reset filters
               </Button>
             }
           />
         ) : (
-          <Card className="rounded-2xl border border-[#E2E8F0] bg-white alo-shadow">
+          <Card className="rounded-2xl border border-[var(--alo-border)] bg-white alo-shadow">
             <CardContent className="p-2">
               <Accordion type="single" collapsible className="w-full">
                 {filtered.map((faq, idx) => (
-                  <AccordionItem key={idx} value={`item-${idx}`} className="border-b border-[#E2E8F0] last:border-0">
-                    <AccordionTrigger className="px-4 py-4 text-left text-sm font-semibold text-[#0B2447] hover:bg-[#EAF3FF]/40 hover:no-underline">
+                  <AccordionItem key={idx} value={`item-${idx}`} className="border-b border-[var(--alo-border)] last:border-0">
+                    <AccordionTrigger className="px-4 py-4 text-left text-sm font-semibold text-[var(--alo-text)] hover:bg-[var(--alo-brand-light)]/40 hover:no-underline">
                       <div className="flex items-start gap-3">
                         {faq.category && (
-                          <Badge variant="outline" className="mt-0.5 shrink-0 bg-[#EAF3FF] text-[#0057B8]">
+                          <Badge variant="outline" className="mt-0.5 shrink-0 bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                             {faq.category}
                           </Badge>
                         )}
                         <span className="flex-1">{faq.question}</span>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-4 pt-1 text-sm leading-relaxed text-[#5A7299]">
+                    <AccordionContent className="px-4 pb-4 pt-1 text-sm leading-relaxed text-[var(--alo-text-muted)]">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -261,15 +261,15 @@ export function PublicFaq({ onNavigate }: PublicFaqProps) {
         {/* Still have questions CTA */}
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
           <SectionCard title="Still have questions?" description="Our counselors are happy to help" icon="Headset">
-            <Button onClick={() => onNavigate("public-contact")} className="mt-2 h-11 bg-[#0057B8] text-white hover:bg-[#0057B8]/90">
+            <Button onClick={() => onNavigate("public-contact")} className="mt-2 h-11 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90">
               <Icon name="Phone" className="size-4" />
               Contact Us
             </Button>
           </SectionCard>
-          <SectionCard title="Want a free consultation?" description="1-on-1 expert guidance" icon="CalendarCheck">
-            <Button onClick={() => onNavigate("public-contact")} className="mt-2 h-11 bg-[#E8501A] text-white hover:bg-[#c8451a]">
+          <SectionCard title="Want a consultation?" description="1-on-1 expert guidance" icon="CalendarCheck">
+            <Button onClick={() => onNavigate("public-contact")} className="mt-2 h-11 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]">
               <Icon name="CalendarCheck" className="size-4" />
-              Book Free Session
+              Request Consultation
             </Button>
           </SectionCard>
         </div>

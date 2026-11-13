@@ -141,7 +141,7 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -150,24 +150,24 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
               <Icon name="BookOpen" className="mr-1 size-3" />
               Knowledge Hub
             </Badge>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Study Abroad <span className="text-[#0057B8]">Resources</span>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-[var(--alo-text)] sm:text-5xl">
+              Study Abroad <span className="text-[var(--alo-brand)]">Resources</span>
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">
               Everything you need to plan your study abroad journey — in one place. Visa guides, scholarship finders,
               application tips, English test prep, pre-departure support, and more. All verified weekly against
               official sources.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button onClick={() => onNavigate("public-search")} className="h-12 bg-[#0057B8] px-6 text-white hover:bg-[#0057B8]/90">
+              <Button onClick={() => onNavigate("public-search")} className="h-12 bg-[var(--alo-brand)] px-6 text-white hover:bg-[var(--alo-brand)]/90">
                 <Icon name="Search" className="size-4" />
                 Search All Resources
               </Button>
-              <Button onClick={() => onNavigate("public-contact")} variant="outline" className="h-12 border-[#E8501A]/30 bg-white px-6 text-[#E8501A] hover:bg-[#FFF3EA]">
+              <Button onClick={() => onNavigate("public-contact")} variant="outline" className="h-12 border-[var(--alo-cta)]/30 bg-white px-6 text-[var(--alo-cta)] hover:bg-[var(--alo-cta-soft)]">
                 <Icon name="Phone" className="size-4" />
                 Ask a Question
               </Button>
@@ -179,33 +179,33 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
       <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
         {/* Resource grid */}
         <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-wider text-[#E8501A]">Browse by category</p>
-          <h2 className="mt-2 text-3xl font-black text-[#0B2447]">All ALO Resources</h2>
-          <p className="mt-2 text-sm text-[#5A7299]">{RESOURCE_CATEGORIES.length} resource categories — all free for students.</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-cta)]">Browse by category</p>
+          <h2 className="mt-2 text-3xl font-black text-[var(--alo-text)]">All ALO Resources</h2>
+          <p className="mt-2 text-sm text-[var(--alo-text-muted)]">{RESOURCE_CATEGORIES.length} resource categories — all free for students.</p>
         </div>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {RESOURCE_CATEGORIES.map((r) => (
             <Card
               key={r.title}
-              className="alo-card-hover group cursor-pointer rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-1 hover:shadow-lg"
+              className="alo-card-hover group cursor-pointer rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-1 hover:shadow-lg"
               onClick={() => onNavigate(r.viewKey, r.slug)}
             >
               <CardContent className="p-5">
                 <div className="flex items-start justify-between gap-2">
                   <div className={cn(
                     "flex size-12 items-center justify-center rounded-2xl",
-                    r.accent === "blue" ? "bg-[#EAF3FF] text-[#0057B8]" : "bg-[#FFF3EA] text-[#E8501A]"
+                    r.accent === "blue" ? "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]" : "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]"
                   )}>
                     <Icon name={r.icon} className="size-6" />
                   </div>
                   {r.count && (
-                    <Badge variant="outline" className="bg-[#F7FAFE] text-[#5A7299]">{r.count}</Badge>
+                    <Badge variant="outline" className="bg-[var(--alo-page)] text-[var(--alo-text-muted)]">{r.count}</Badge>
                   )}
                 </div>
-                <h3 className="mt-4 text-base font-bold text-[#0B2447] group-hover:text-[#0057B8]">{r.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-[#5A7299]">{r.description}</p>
-                <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#0057B8]">
+                <h3 className="mt-4 text-base font-bold text-[var(--alo-text)] group-hover:text-[var(--alo-brand)]">{r.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-[var(--alo-text-muted)]">{r.description}</p>
+                <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[var(--alo-brand)]">
                   Explore
                   <Icon name="ArrowRight" className="size-3.5 transition-transform group-hover:translate-x-0.5" />
                 </div>
@@ -218,10 +218,10 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
         <div className="mt-16">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#0057B8]">Featured Articles</p>
-              <h2 className="mt-2 text-2xl font-black text-[#0B2447]">Top reads this month</h2>
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--alo-brand)]">Featured Articles</p>
+              <h2 className="mt-2 text-2xl font-black text-[var(--alo-text)]">Top reads this month</h2>
             </div>
-            <Button onClick={() => onNavigate("public-blog")} variant="outline" className="h-11 border-[#0057B8]/30 bg-white text-[#0057B8] hover:bg-[#EAF3FF]">
+            <Button onClick={() => onNavigate("public-blog")} variant="outline" className="h-11 border-[var(--alo-brand)]/30 bg-white text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]">
               View All
               <Icon name="ArrowRight" className="size-4" />
             </Button>
@@ -230,15 +230,15 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
             {FEATURED_RESOURCES.map((r) => (
               <Card
                 key={r.title}
-                className="alo-card-hover group cursor-pointer rounded-2xl border border-[#E2E8F0] bg-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                className="alo-card-hover group cursor-pointer rounded-2xl border border-[var(--alo-border)] bg-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
                 onClick={() => onNavigate(r.viewKey, r.slug)}
               >
                 <CardContent className="p-5">
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#EAF3FF] text-[#0057B8]">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                     <Icon name={r.icon} className="size-5" />
                   </div>
-                  <Badge variant="outline" className="mt-3 bg-[#F7FAFE] text-[#5A7299] text-[10px]">{r.category}</Badge>
-                  <h3 className="mt-2 line-clamp-3 text-sm font-bold text-[#0B2447] group-hover:text-[#0057B8]">{r.title}</h3>
+                  <Badge variant="outline" className="mt-3 bg-[var(--alo-page)] text-[var(--alo-text-muted)] text-[11px]">{r.category}</Badge>
+                  <h3 className="mt-2 line-clamp-3 text-sm font-bold text-[var(--alo-text)] group-hover:text-[var(--alo-brand)]">{r.title}</h3>
                 </CardContent>
               </Card>
             ))}
@@ -259,10 +259,10 @@ export function PublicResources({ onNavigate }: PublicResourcesProps) {
                 { label: "Courses tracked", value: "794", icon: "BookOpen" },
                 { label: "Countries covered", value: "13", icon: "MapPin" },
               ].map((s) => (
-                <div key={s.label} className="rounded-xl border border-[#0057B8]/15 bg-[#EAF3FF]/40 p-4">
-                  <Icon name={s.icon} className="size-5 text-[#0057B8]" />
-                  <p className="mt-2 text-2xl font-black text-[#0B2447]">{s.value}</p>
-                  <p className="text-xs text-[#5A7299]">{s.label}</p>
+                <div key={s.label} className="rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 p-4">
+                  <Icon name={s.icon} className="size-5 text-[var(--alo-brand)]" />
+                  <p className="mt-2 text-2xl font-black text-[var(--alo-text)]">{s.value}</p>
+                  <p className="text-xs text-[var(--alo-text-muted)]">{s.label}</p>
                 </div>
               ))}
             </div>

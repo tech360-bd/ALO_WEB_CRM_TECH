@@ -4,7 +4,7 @@
  */
 import { db } from '@/lib/db';
 
-export type SmsProvider = 'httpsms' | 'domovina' | 'threecx' | 'generic';
+export type SmsProvider = 'httpsms' | 'domovina' | 'opensms' | 'threecx' | 'generic';
 export interface SendSmsOpts {
   to: string;
   message: string;
@@ -46,7 +46,7 @@ export async function sendSms(opts: SendSmsOpts): Promise<{ messageId: string; p
     throw new Error('SMS message must contain 1–1800 characters.');
   }
   const provider = opts.provider || process.env.SMS_PROVIDER || 'generic';
-  if (!['httpsms', 'domovina', 'threecx', 'generic'].includes(provider)) throw new Error('Unsupported SMS provider.');
+  if (!['httpsms', 'domovina', 'opensms', 'threecx', 'generic'].includes(provider)) throw new Error('Unsupported SMS provider.');
   if (provider === 'threecx') throw new Error('3CX outbound SMS transport is not implemented; the journal is not a sending API.');
   if (opts.requireDeliveryReceipt) throw new Error('Synchronous delivery receipts are not supported. Provider acceptance is not delivery.');
 
@@ -64,6 +64,19 @@ export async function sendSms(opts: SendSmsOpts): Promise<{ messageId: string; p
     url = `${configuredUrl(base)}/v1/messages/send`;
     headers = { 'Content-Type': 'application/json', 'x-api-key': key };
     payload = { from, to, content: opts.message };
+  } else if (provider === 'opensms') {
+    // Verified upstream contract: daslearning-org/OpenSMS app/services/postApi.py
+    // FastAPI route `@app.post("/sms/")` requires the trailing slash so uvicorn
+    // does not emit a 307 redirect, uses HTTPBearer (`osms_...`), accepts
+    // `{ number: "+880...", text: "..." }`, and returns `{ stat: boolean }`.
+    const base = process.env.OPENSMS_BASE_URL;
+    const key = process.env.OPENSMS_API_KEY;
+    if (!base || !key) throw new Error('OpenSMS URL and API key are required.');
+    const rawSender = opts.from || process.env.OPENSMS_FROM;
+    from = rawSender ? normalizeSmsNumber(rawSender) : 'opensms-default-sim';
+    url = `${configuredUrl(base)}/sms/`;
+    headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` };
+    payload = { number: to, text: opts.message };
   } else {
     const key = process.env.SMS_PROVIDER_API_KEY;
     const base = process.env.SMS_PROVIDER_URL;
@@ -109,6 +122,21 @@ export async function sendSms(opts: SendSmsOpts): Promise<{ messageId: string; p
   }
   let json: Record<string, unknown>;
   try { json = object(await response.json()); } catch { json = {}; }
+  if (provider === 'opensms') {
+    if (json.stat === false) {
+      await record('FAILED');
+      throw new SmsDeliveryError('rejected', 'OpenSMS Android gateway failed to dispatch the message.');
+    }
+    if (json.stat !== true) {
+      await record('UNKNOWN');
+      throw new SmsDeliveryError('unknown', 'OpenSMS gateway returned an unrecognized acknowledgement. Do not automatically retry.');
+    }
+    const upstreamId = typeof json.id === 'string' && json.id.trim() && json.id.length <= 191 && !/[\x00-\x1f]/.test(json.id)
+      ? json.id.trim()
+      : `opensms:${log.id}`;
+    const auditPersisted = await record('SENT', upstreamId);
+    return { messageId: upstreamId, provider: 'opensms', status: 'sent', auditPersisted };
+  }
   const data = provider === 'generic' ? json : object(json.data);
   const messageId = data.id;
   const status = typeof data.status === 'string' ? data.status.toLowerCase() : 'accepted';

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getOptionalAuth } from '@/lib/auth-middleware';
-import { publicCourseIdentifierWhere, publicCourseWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere, stripInternalFields } from '@/lib/public-catalog';
+import { publicCourseIdentifierWhere, publicCourseWhere, publicCrmScholarshipWhere, publicIntakeWhere, publicRequirementWhere, stripInternalFields } from '@/lib/public-catalog';
 
 export async function GET(
   request: NextRequest,
@@ -71,7 +71,7 @@ export async function GET(
         },
         scholarshipRecords: {
           where: !isPrivileged
-            ? publicScholarshipWhere()
+            ? publicCrmScholarshipWhere()
             : { status: 'active' },
         },
         // Commission data is internal: only staff/admin roles receive it.

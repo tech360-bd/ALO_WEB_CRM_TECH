@@ -13,7 +13,7 @@
 // never from client-provided claims.
 // ============================================================================
 
-export const MASTER_ROLES = new Set(["SUPER_ADMIN", "ADMIN", "CHAIRMAN"]);
+export const MASTER_ROLES = new Set(["SUPER_ADMIN"]);
 
 /** Scope resolution inputs — facts about the actor and the record. */
 export interface ObjectScopeInput {

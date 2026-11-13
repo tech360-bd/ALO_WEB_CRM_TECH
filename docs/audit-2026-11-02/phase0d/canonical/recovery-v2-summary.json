@@ -1,0 +1,68 @@
+{
+  "written": {
+    "courses": 8746,
+    "institutions": 593,
+    "relinks": 3,
+    "coverageRows": 2
+  },
+  "coursesByLegacyStatus": {
+    "VERIFIED": 7,
+    "PARTIALLY_VERIFIED": 1,
+    "NEEDS_REVIEW": 3,
+    "UNVERIFIED_SYNTHETIC": 8735
+  },
+  "coursesByApprovedStatus": {
+    "PARTIALLY_VERIFIED": 8,
+    "NEEDS_REVIEW": 3,
+    "UNVERIFIED_SYNTHETIC": 8735
+  },
+  "nonSyntheticByApprovedStatus": {
+    "PARTIALLY_VERIFIED": 8,
+    "NEEDS_REVIEW": 3
+  },
+  "publicationDecisions": {
+    "PENDING_PUBLIC_GATE": 7,
+    "HOLD": 1,
+    "UNPUBLISHED_INSUFFICIENT_EVIDENCE": 3,
+    "NEVER_PUBLIC_SYNTHETIC": 8735
+  },
+  "publicGateResults_nonSynthetic": {
+    "BLOCKED_BY_PUBLIC_GATE": 11
+  },
+  "institutionsByApprovedStatus": {
+    "IDENTITY_VERIFIED_COURSE_UNVERIFIED": 79,
+    "UNVERIFIED_NOT_PUBLIC": 514
+  },
+  "institutionsFlaggedDuplicateReview": 58,
+  "coverageChanges": [
+    {
+      "course_key": "VC-centennial-biotechnology-fast-track",
+      "course_title": "Biotechnology (Fast-Track)",
+      "coverage_before": "4/10",
+      "coverage_after": "6/10",
+      "delta": 2,
+      "evidence_ids_before": "cent-biotech-availability;cent-biotech-program-details",
+      "evidence_ids_after": "cent-biotech-admission;cent-biotech-availability;cent-biotech-fees;cent-biotech-program-details",
+      "groups_newly_covered": "entry_requirement;english_requirement",
+      "approved_status": "PARTIALLY_VERIFIED",
+      "publication_decision": "PENDING_PUBLIC_GATE"
+    },
+    {
+      "course_key": "VC-monash-master-of-business",
+      "course_title": "Master of Business",
+      "coverage_before": "4/10",
+      "coverage_after": "4/10",
+      "delta": 0,
+      "evidence_ids_before": "mon-b6005-handbook-2027",
+      "evidence_ids_after": "mon-b6005-handbook-2027;mon-b6005-requirements",
+      "groups_newly_covered": "NONE",
+      "approved_status": "PARTIALLY_VERIFIED",
+      "publication_decision": "HOLD"
+    }
+  ],
+  "hold": [
+    "monash-master-of-business"
+  ],
+  "monashDiscrepancy": "Approval text cites 2/10 for Monash. Measured 4/10 under both the grouped and the flat field definitions (identity via courseCode/handbookYear, studyMode, campus). The HOLD decision is retained because duration, fee, entry requirement, English requirement, start months and application deadline are all unevidenced.",
+  "gateFinding": "passesPublicPagePolicy requires verificationStatus === 'VERIFIED' AND approvalStatus === 'PUBLISHED'. No approved status here equals VERIFIED, so zero courses can be public without an application change. The classification is therefore export-only, as approved."
+}

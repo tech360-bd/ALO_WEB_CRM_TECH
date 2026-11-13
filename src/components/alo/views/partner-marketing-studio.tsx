@@ -158,13 +158,13 @@ const STYLES = [
 ];
 
 const MARKETING_STATUS_COLORS: Record<string, string> = {
-  DRAFT: "bg-slate-100 text-slate-700",
-  PENDING_APPROVAL: "bg-amber-100 text-amber-700",
-  APPROVED: "bg-emerald-100 text-emerald-700",
-  REJECTED: "bg-rose-100 text-rose-700",
+  DRAFT: "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]",
+  PENDING_APPROVAL: "bg-crm-warning-bg text-crm-warning-text",
+  APPROVED: "bg-crm-success-bg text-crm-success-text",
+  REJECTED: "bg-crm-warning-bg text-crm-warning-text",
   SCHEDULED: "bg-sky-100 text-sky-700",
-  PUBLISHED: "bg-[#0057B8]/15 text-[#0057B8]",
-  ARCHIVED: "bg-slate-200 text-slate-600",
+  PUBLISHED: "bg-[var(--alo-brand)]/15 text-[var(--alo-brand)]",
+  ARCHIVED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -215,9 +215,9 @@ function quotaColor(pct: number): string {
 }
 
 function quotaBadgeClass(pct: number): string {
-  if (pct >= 80) return "bg-rose-100 text-rose-700";
-  if (pct >= 60) return "bg-amber-100 text-amber-700";
-  return "bg-emerald-100 text-emerald-700";
+  if (pct >= 80) return "bg-crm-warning-bg text-crm-warning-text";
+  if (pct >= 60) return "bg-crm-warning-bg text-crm-warning-text";
+  return "bg-crm-success-bg text-crm-success-text";
 }
 
 // ---------------------------------------------------------------------------
@@ -229,11 +229,11 @@ function QuotaBar({ label, used, limit, icon, hint }: { label: string; used: num
   const remaining = Math.max(0, limit - used);
   const color = quotaColor(pct);
   return (
-    <Card className="rounded-2xl border-2 border-[#0057B8]/20">
+    <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20">
       <CardContent className="pt-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8]">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
               <Icon name={icon} className="size-5" />
             </div>
             <div>
@@ -273,10 +273,10 @@ function CopyButton({ text, label }: { text: string; label: string }) {
   const { toast } = useToast();
   return (
     <Button
-      variant="outline"
-      size="sm"
-      className="h-7 px-2 text-xs"
-      onClick={() => {
+ variant="outline"
+ size="sm"
+ className="h-7 px-2 "
+ onClick={() => {
         if (!text) return;
         navigator.clipboard?.writeText(text);
         toast({ title: `${label} copied`, description: "Content is now on your clipboard." });
@@ -304,14 +304,14 @@ function AiContentCard({
   action?: React.ReactNode;
 }) {
   return (
-    <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+    <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
       <CardContent className="pt-4">
         <div className="mb-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
               <Icon name={icon} className="size-3.5" />
             </div>
-            <p className="text-sm font-semibold text-[#0057B8]">{title}</p>
+            <p className="text-sm font-semibold text-[var(--alo-brand)]">{title}</p>
           </div>
           {action}
         </div>
@@ -597,7 +597,7 @@ export function PartnerMarketingStudio() {
         }
       />
 
-      <div role="status" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      <div role="status" className="rounded-xl border border-crm-warning-border bg-crm-warning-bg px-4 py-3 text-sm text-crm-warning-text">
         {isAloReviewMode
           ? 'ALO review queue: pending campaigns from partner tenants are listed below. Approvals and rejections are persisted; reviewed campaigns leave this queue.'
           : 'Draft creation, media generation (when a provider returns a real asset), submission, and review are persisted. Partner social-account OAuth, scheduled delivery, and publishing are not configured here; those actions are disabled and no external post is simulated.'}
@@ -605,7 +605,7 @@ export function PartnerMarketingStudio() {
       </div>
 
       {loadError && (
-        <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+        <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-crm-warning-border bg-crm-warning-bg px-4 py-3 text-sm text-crm-warning-text">
           <span>Marketing Studio data is unavailable: {loadError}</span>
           <Button type="button" size="sm" variant="outline" onClick={() => void load()} disabled={loading}>Retry</Button>
         </div>
@@ -624,8 +624,8 @@ export function PartnerMarketingStudio() {
             <QuotaBar label="Image Quota" icon="Image" used={imagesUsed} limit={imageLimit} hint="AI marketing visuals" />
             <QuotaBar label="Video Quota" icon="Video" used={videosUsed} limit={videoLimit} hint={`Max ${videoDurationLimit}s per video`} />
           </div>
-          <div className="flex items-start gap-2 rounded-xl border border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-2.5 text-xs text-foreground/80">
-            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[#0057B8]" />
+          <div className="flex items-start gap-2 rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-4 py-2.5 text-xs text-foreground/80">
+            <Icon name="Info" className="mt-0.5 size-3.5 shrink-0 text-[var(--alo-brand)]" />
             <p>
               <strong>Video max duration: {videoDurationLimit} seconds.</strong> Quota resets at the start of each UTC calendar month. Color coding: green &lt;60%, amber 60-80%, red &gt;80%.
               {requiresAloApproval && " ALO approval is required before publishing."}
@@ -640,15 +640,15 @@ export function PartnerMarketingStudio() {
           <div className="flex min-w-[760px] items-center gap-1 overflow-x-auto pb-2">
             {WORKFLOW_STEPS.map((step, i) => (
               <React.Fragment key={step.label}>
-                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[#0057B8]/15 bg-white px-3 py-2.5">
+                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-[var(--alo-brand)]/15 bg-white px-3 py-2.5">
                   <div className="flex size-9 items-center justify-center rounded-lg bg-alo-gradient text-white">
                     <Icon name={step.icon} className="size-4" />
                   </div>
                   <p className="text-center text-[11px] font-semibold text-foreground">{step.label}</p>
-                  <span className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 {i < WORKFLOW_STEPS.length - 1 && (
-                  <Icon name="ChevronRight" className="size-4 shrink-0 text-[#0057B8]/40" />
+                  <Icon name="ChevronRight" className="size-4 shrink-0 text-[var(--alo-brand)]/40" />
                 )}
               </React.Fragment>
             ))}
@@ -659,31 +659,31 @@ export function PartnerMarketingStudio() {
       {/* Compliance rules card */}
       <SectionCard title="Compliance Rules" description="All AI content must follow ALO Education brand guidelines" icon="ShieldCheck">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <div className="rounded-xl border-2 border-[#0057B8]/15 bg-[#e8f0fb]/40 px-4 py-3">
+          <div className="rounded-xl border-2 border-[var(--alo-brand)]/15 bg-[var(--alo-brand-light)]/40 px-4 py-3">
             <div className="flex items-center gap-2">
-              <Icon name="Sparkles" className="size-4 text-[#0057B8]" />
-              <p className="text-sm font-semibold text-[#0057B8]">AI Content MUST</p>
+              <Icon name="Sparkles" className="size-4 text-[var(--alo-brand)]" />
+              <p className="text-sm font-semibold text-[var(--alo-brand)]">AI Content MUST</p>
             </div>
             <ul className="mt-2 space-y-1 text-xs text-foreground/85">
-              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Follow ALO brand voice: professional, encouraging, student-focused</li>
-              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Review that each draft includes a clear, accurate call-to-action (CTA)</li>
-              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />Review for originality; automated plagiarism detection is not provided</li>
+              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-crm-success-text" />Follow ALO brand voice: professional, encouraging, student-focused</li>
+              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-crm-success-text" />Review that each draft includes a clear, accurate call-to-action (CTA)</li>
+              <li className="flex items-start gap-1.5"><Icon name="Check" className="mt-0.5 size-3 shrink-0 text-crm-success-text" />Review for originality; automated plagiarism detection is not provided</li>
             </ul>
           </div>
-          <div className="rounded-xl border-2 border-rose-200 bg-rose-50/40 px-4 py-3">
+          <div className="rounded-xl border-2 border-crm-warning-border bg-crm-warning-bg/40 px-4 py-3">
             <div className="flex items-center gap-2">
-              <Icon name="Ban" className="size-4 text-rose-600" />
-              <p className="text-sm font-semibold text-rose-700">AI Content MUST NOT</p>
+              <Icon name="Ban" className="size-4 text-crm-warning-text" />
+              <p className="text-sm font-semibold text-crm-warning-text">AI Content MUST NOT</p>
             </div>
-            <ul className="mt-2 space-y-1 text-xs text-rose-800/85">
-              <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-rose-600" />Promise visa or admission guarantees</li>
-              <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-rose-600" />Use misleading claims or false testimonials</li>
-              <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-rose-600" />Exceed monthly limits: {imageLimit} images, {videoLimit} videos ({videoDurationLimit}s max)</li>
+            <ul className="mt-2 space-y-1 text-xs text-[var(--alo-error)]/85">
+              <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-crm-warning-text" />Promise visa or admission guarantees</li>
+              <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-crm-warning-text" />Use misleading claims or false testimonials</li>
+              <li className="flex items-start gap-1.5"><Icon name="X" className="mt-0.5 size-3 shrink-0 text-crm-warning-text" />Exceed monthly limits: {imageLimit} images, {videoLimit} videos ({videoDurationLimit}s max)</li>
             </ul>
           </div>
         </div>
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50/50 px-3 py-2.5 text-xs text-amber-800">
-          <Icon name="AlertTriangle" className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-crm-warning-border bg-crm-warning-bg/50 px-3 py-2.5 text-xs text-crm-warning-text">
+          <Icon name="AlertTriangle" className="mt-0.5 size-3.5 shrink-0 text-crm-warning-text" />
           <p>
             {requiresAloApproval ? <><strong>ALO review is required</strong> after partner submission.</> : <><strong>Partner Super Admin review</strong> applies; ALO review is waived by the package setting.</>}
             {' '}Social publishing remains unavailable until a connection and publisher are configured.
@@ -704,7 +704,7 @@ export function PartnerMarketingStudio() {
             <TabsTrigger value="history" className="gap-1.5">
               <Icon name="History" className="size-4" />
               {isAloReviewMode ? 'ALO Review Queue' : 'Campaign History'}
-              <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px]">{requests.length}</Badge>
+              <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[11px]">{requests.length}</Badge>
             </TabsTrigger>
             {!isAloReviewMode && (
               <TabsTrigger value="social" className="gap-1.5">
@@ -725,7 +725,7 @@ export function PartnerMarketingStudio() {
               <div className="lg:col-span-1">
                 <SectionCard title="Campaign Idea" description="Describe what you want to promote" icon="Lightbulb">
                   {!canCreateCampaign && (
-                    <p className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                    <p className="mb-3 rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2 text-xs text-crm-warning-text">
                       {isAloStaff ? 'Select a partner in an ALO review workspace to manage cross-partner campaigns.' : 'Your partner role is read-only for Marketing Studio.'}
                     </p>
                   )}
@@ -803,7 +803,7 @@ export function PartnerMarketingStudio() {
                       </div>
                     </div>
                     <Button
-                      className="w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12"
+                      className="w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12"
                       disabled={generating || !canCreateCampaign}
                       onClick={generateContent}
                     >
@@ -831,7 +831,7 @@ export function PartnerMarketingStudio() {
                   icon="Sparkles"
                   action={
                     currentRequest ? (
-                      <Badge className={MARKETING_STATUS_COLORS[currentRequest.approvalStatus] ?? "bg-slate-100 text-slate-700"}>
+                      <Badge className={MARKETING_STATUS_COLORS[currentRequest.approvalStatus] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                         {STATUS_LABELS[currentRequest.approvalStatus] ?? currentRequest.approvalStatus}
                       </Badge>
                     ) : null
@@ -854,7 +854,7 @@ export function PartnerMarketingStudio() {
                         {[0, 1, 2].map((i) => (
                           <span
                             key={i}
-                            className="size-2 rounded-full bg-[#0057B8]"
+                            className="size-2 rounded-full bg-[var(--alo-brand)]"
                             style={{ animation: `pulse 1s ease-in-out ${i * 0.15}s infinite` }}
                           />
                         ))}
@@ -874,18 +874,18 @@ export function PartnerMarketingStudio() {
                         content={currentRequest.instagramCaption}
                         action={<CopyButton text={currentRequest.instagramCaption || ""} label="Instagram caption" />}
                       />
-                      <Card className="rounded-2xl border-2 border-[#0057B8]/15">
+                      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15">
                         <CardContent className="pt-4">
                           <div className="mb-2 flex items-center gap-2">
-                            <div className="flex size-7 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                            <div className="flex size-7 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                               <Icon name="Hash" className="size-3.5" />
                             </div>
-                            <p className="text-sm font-semibold text-[#0057B8]">Hashtags</p>
+                            <p className="text-sm font-semibold text-[var(--alo-brand)]">Hashtags</p>
                           </div>
                           {hashtags.length > 0 ? (
                             <div className="flex flex-wrap gap-1.5">
                               {hashtags.map((h, i) => (
-                                <Badge key={i} variant="outline" className="border-[#0057B8]/20 bg-[#e8f0fb]/40 font-mono text-[#0057B8]">
+                                <Badge key={i} variant="outline" className="border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40 font-mono text-[var(--alo-brand)]">
                                   {h}
                                 </Badge>
                               ))}
@@ -903,10 +903,10 @@ export function PartnerMarketingStudio() {
                           <div className="flex items-center gap-2">
                             <CopyButton text={currentRequest.imagePrompt || ""} label="Image prompt" />
                             <Button
-                              size="sm"
-                              className="h-7 bg-[#0057B8] px-2 text-xs text-white hover:bg-[#0057B8]/90"
-                              disabled={!canCreateCampaign || assetLoading === "generate_image" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
-                              onClick={() => runAssetAction("generate_image")}
+ size="sm"
+ className="h-7 bg-[var(--alo-brand)] px-2 text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={!canCreateCampaign || assetLoading === "generate_image" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
+ onClick={() => runAssetAction("generate_image")}
                             >
                               {assetLoading === "generate_image" ? (
                                 <><Icon name="Loader2" className="size-3 animate-spin" /> Generating...</>
@@ -925,10 +925,10 @@ export function PartnerMarketingStudio() {
                           <div className="flex items-center gap-2">
                             <CopyButton text={currentRequest.videoPrompt || ""} label="Video prompt" />
                             <Button
-                              size="sm"
-                              className="h-7 bg-[#0057B8] px-2 text-xs text-white hover:bg-[#0057B8]/90"
-                              disabled={!canCreateCampaign || assetLoading === "generate_video" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
-                              onClick={() => runAssetAction("generate_video")}
+ size="sm"
+ className="h-7 bg-[var(--alo-brand)] px-2 text-white hover:bg-[var(--alo-brand)]/90"
+ disabled={!canCreateCampaign || assetLoading === "generate_video" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus)}
+ onClick={() => runAssetAction("generate_video")}
                             >
                               {assetLoading === "generate_video" ? (
                                 <><Icon name="Loader2" className="size-3 animate-spin" /> Generating...</>
@@ -958,17 +958,17 @@ export function PartnerMarketingStudio() {
                         action={<CopyButton text={currentRequest.ctaText || ""} label="CTA text" />}
                       />
                       {currentRequest.approvalStatus === "REJECTED" && currentRequest.rejectionReason && (
-                        <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900">
+                        <div role="alert" className="rounded-lg border border-crm-warning-border bg-crm-warning-bg px-3 py-2 text-sm text-crm-warning-text">
                           <strong>Review feedback:</strong> {currentRequest.rejectionReason}
                         </div>
                       )}
 
                       {/* Workflow action buttons */}
-                      <Card className="rounded-2xl border-2 border-[#E8501A]/30 bg-[#fdece4]/30">
+                      <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)]/30">
                         <CardContent className="pt-4">
                           <div className="mb-3 flex items-center justify-between">
-                            <p className="text-sm font-semibold text-[#E8501A]">Workflow Actions</p>
-                            <Badge className={MARKETING_STATUS_COLORS[currentRequest.approvalStatus] ?? "bg-slate-100 text-slate-700"}>
+                            <p className="text-sm font-semibold text-[var(--alo-cta)]">Workflow Actions</p>
+                            <Badge className={MARKETING_STATUS_COLORS[currentRequest.approvalStatus] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                               {STATUS_LABELS[currentRequest.approvalStatus] ?? currentRequest.approvalStatus}
                             </Badge>
                           </div>
@@ -976,7 +976,7 @@ export function PartnerMarketingStudio() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="border-amber-200 text-amber-700 hover:bg-amber-50"
+                              className="border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
                               disabled={!canCreateCampaign || workflowLoading === "submit" || !["DRAFT", "REJECTED"].includes(currentRequest.approvalStatus) || !currentRequest.assetUrl}
                               onClick={() => void submitForApproval()}
                               title={!currentRequest.assetUrl ? "Generate an image or video asset before submitting." : undefined}
@@ -988,7 +988,7 @@ export function PartnerMarketingStudio() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                                className="border-crm-success-border text-crm-success-text hover:bg-crm-success-bg"
                                 disabled={workflowLoading === "approve"}
                                 onClick={() => void runWorkflowAction("approve")}
                               >
@@ -1008,7 +1008,7 @@ export function PartnerMarketingStudio() {
                             </Button>
                             <Button
                               size="sm"
-                              className="bg-emerald-600 text-white hover:bg-emerald-600/90"
+                              className="bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90"
                               disabled={!canPublish || workflowLoading === "publish"}
                               onClick={() => void runWorkflowAction("publish")}
                               title="Publishing requires an active, approved social connection and publisher."
@@ -1020,7 +1020,7 @@ export function PartnerMarketingStudio() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="border-rose-200 text-rose-700 hover:bg-rose-50"
+                                className="border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
                                 disabled={workflowLoading === "reject"}
                                 onClick={() => setRejectOpen(true)}
                               >
@@ -1030,25 +1030,25 @@ export function PartnerMarketingStudio() {
                             )}
                           </div>
                           {!canReviewCampaign && currentRequest.approvalStatus === "PENDING_APPROVAL" && (
-                            <p className="mt-3 flex items-start gap-1.5 text-xs text-amber-700">
+                            <p className="mt-3 flex items-start gap-1.5 text-xs text-crm-warning-text">
                               <Icon name="AlertTriangle" className="mt-0.5 size-3 shrink-0" />
                               <span>{requiresAloApproval ? "ALO review is required; this partner workspace cannot approve the campaign." : "Partner Super Admin review is required."}</span>
                             </p>
                           )}
                           {!canPublish && (
-                            <p className="mt-3 flex items-start gap-1.5 text-xs text-amber-700">
+                            <p className="mt-3 flex items-start gap-1.5 text-xs text-crm-warning-text">
                               <Icon name="AlertTriangle" className="mt-0.5 size-3 shrink-0" />
                               <span>No partner social-account connection or publishing service is configured. Approval or package settings alone will not publish anything.</span>
                             </p>
                           )}
                           {currentRequest.assetUrl && (
-                            <p className="mt-3 flex items-center gap-1.5 text-xs text-emerald-700">
+                            <p className="mt-3 flex items-center gap-1.5 text-xs text-crm-success-text">
                               <Icon name="CheckCircle2" className="size-3" />
                               <span>Generated media asset: <code className="font-mono break-all">{currentRequest.assetUrl}</code></span>
                             </p>
                           )}
                           {currentRequest.publishedUrl && (
-                            <p className="mt-2 flex items-center gap-1.5 text-xs text-[#0057B8]">
+                            <p className="mt-2 flex items-center gap-1.5 text-xs text-[var(--alo-brand)]">
                               <Icon name="ExternalLink" className="size-3" />
                               <span>Published at <code className="font-mono">{currentRequest.publishedUrl}</code></span>
                             </p>
@@ -1106,7 +1106,7 @@ export function PartnerMarketingStudio() {
                     ? 'Submitted partner campaigns that require ALO review will appear here.'
                     : 'Generate your first marketing campaign in the Create Campaign tab.'}
                   action={!isAloReviewMode ? (
-                    <Button className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90 h-12" onClick={() => setTab("create")}>
+                    <Button className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90 h-12" onClick={() => setTab("create")}>
                       <Icon name="Sparkles" className="size-4" />
                       Create Campaign
                     </Button>
@@ -1137,12 +1137,12 @@ export function PartnerMarketingStudio() {
                             ) : null}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="border-[#0057B8]/20 text-[#0057B8]">
+                            <Badge variant="outline" className="border-[var(--alo-brand)]/20 text-[var(--alo-brand)]">
                               {PLATFORM_LABELS[r.platform] ?? r.platform}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge className={MARKETING_STATUS_COLORS[r.approvalStatus] ?? "bg-slate-100 text-slate-700"}>
+                            <Badge className={MARKETING_STATUS_COLORS[r.approvalStatus] ?? "bg-[var(--alo-surface-muted)] text-[var(--alo-body)]"}>
                               {STATUS_LABELS[r.approvalStatus] ?? r.approvalStatus}
                             </Badge>
                           </TableCell>
@@ -1160,7 +1160,7 @@ export function PartnerMarketingStudio() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="border-rose-200 text-rose-700 hover:bg-rose-50"
+                                className="border-crm-warning-border text-crm-warning-text hover:bg-crm-warning-bg"
                                 disabled={!isPartnerSuperAdmin || workflowLoading === "archive" || r.approvalStatus === "ARCHIVED"}
                                 onClick={() => void archiveCampaign(r)}
                                 title={!isPartnerSuperAdmin ? "Partner Super Admin access required." : undefined}
@@ -1186,15 +1186,15 @@ export function PartnerMarketingStudio() {
           <SectionCard title="Social account connections" description="No OAuth connection is available in this deployment" icon="Share2">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {PLATFORMS.map((item) => (
-                <Card key={item.value} className="rounded-2xl border-2 border-slate-200">
+                <Card key={item.value} className="rounded-2xl border-2 border-[var(--alo-border)]">
                   <CardContent className="pt-5">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex size-12 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                        <div className="flex size-12 items-center justify-center rounded-xl bg-[var(--alo-surface-muted)] text-[var(--alo-body)]">
                           <Icon name={item.icon} className="size-6" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-700">{item.label}</p>
+                          <p className="text-sm font-bold text-[var(--alo-body)]">{item.label}</p>
                           <p className="text-xs text-muted-foreground">Not connected</p>
                         </div>
                       </div>
@@ -1211,7 +1211,7 @@ export function PartnerMarketingStudio() {
           </SectionCard>
 
           <SectionCard title="Integration status" description="No social tokens or publishing jobs are configured" icon="ShieldCheck">
-            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <div className="rounded-lg border border-crm-warning-border bg-crm-warning-bg px-4 py-3 text-sm text-crm-warning-text">
               This workspace has no partner-scoped OAuth flow, social-token storage, scheduled publisher, or live publishing endpoint. No token is stored or claimed to be encrypted, and no external post can be sent from this screen. Package approval flags alone do not enable publishing.
             </div>
           </SectionCard>

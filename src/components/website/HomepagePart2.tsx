@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
-  fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
+  BRAND, fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight,
   staggerContainer, staggerItem, staggerItemScale,
   sectionTitle, sectionSubtitle, viewportOnce, gradients,
 } from './animations';
@@ -25,14 +25,7 @@ import {
   BarChart3, Lightbulb, Shield, Handshake, ListChecks,
 } from 'lucide-react';
 
-const C = {
-  blue: '#0057B8',
-  orange: '#E8501A',
-  text: '#0F172A',
-  textSoft: '#64748B',
-  bg: '#F8FAFC',
-  border: '#E2E8F0',
-};
+const C = BRAND;
 
 interface HomeService {
   id: string;
@@ -208,11 +201,11 @@ const SUBJECT_MAP: Record<string, string[]> = {
 
 function levelColor(level: string): string {
   const l = (level || '').toLowerCase();
-  if (l.includes('phd') || l.includes('doctor')) return 'bg-purple-100 text-purple-700';
-  if (l.includes('master') || l.includes('msc') || l.includes('ma ')) return 'bg-blue-100 text-blue-700';
-  if (l.includes('bachelor') || l.includes('bsc') || l.includes('ba ')) return 'bg-green-100 text-green-700';
-  if (l.includes('foundation') || l.includes('diploma') || l.includes('certificate')) return 'bg-amber-100 text-amber-700';
-  return 'bg-slate-100 text-slate-600';
+  if (l.includes('phd') || l.includes('doctor')) return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]';
+  if (l.includes('master') || l.includes('msc') || l.includes('ma ')) return 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]';
+  if (l.includes('bachelor') || l.includes('bsc') || l.includes('ba ')) return 'bg-crm-success-bg text-crm-success-text';
+  if (l.includes('foundation') || l.includes('diploma') || l.includes('certificate')) return 'bg-crm-warning-bg text-crm-warning-text';
+  return 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]';
 }
 
 function SectionLabel({ text, bg, color }: { text: string; bg: string; color: string }) {
@@ -308,7 +301,7 @@ function ServicesSection({ services }: { services: HomeService[] }) {
         {list.length === 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="h-44 rounded-xl bg-slate-100 animate-pulse" />
+              <div key={i} className="h-44 rounded-xl bg-[var(--alo-surface-muted)] animate-pulse" />
             ))}
           </div>
         ) : (
@@ -532,8 +525,8 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filtered.slice(0, 12).map((course) => (
                 <motion.div key={course.id} variants={staggerItemScale} className="h-full">
-                  <Card className="group h-full flex flex-col border hover:shadow-hover hover:border-[#BFDBFE] transition-all duration-300 overflow-hidden" style={{ borderColor: C.border }}>
-                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#F4F8FF]">
+                  <Card className="group h-full flex flex-col border hover:shadow-hover hover:border-[var(--alo-brand-border)] transition-all duration-300 overflow-hidden" style={{ borderColor: C.border }}>
+                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-[var(--alo-brand-pale)]">
                       <Image
                         src={subjectImage(course.subjectArea)}
                         alt={`${course.subjectArea || 'Course'} — ${course.courseTitle}`}
@@ -567,11 +560,11 @@ function PopularCoursesSection({ courses }: { courses: CourseItem[] }) {
                       </div>
                       <div className="flex gap-2 pt-2">
                         <Link href={`/course-finder?search=${encodeURIComponent(course.courseTitle || '')}`}>
-                        <Button variant="outline" className="flex-1 h-12 text-xs rounded-lg" style={{ borderColor: C.border, color: C.text }}>
+                        <Button variant="outline" className="flex-1 h-12 rounded-lg" style={{ borderColor: C.border, color: C.text }}>
                           View Details
                         </Button>
                       </Link>
-                        <Button asChild className="flex-1 h-12 text-xs rounded-lg text-white" style={{ background: C.blue }}><Link href="/book-consultation">
+                        <Button asChild className="flex-1 h-12 rounded-lg text-white" style={{ background: C.blue }}><Link href="/book-consultation">
                           Apply
                         </Link></Button>
                       </div>

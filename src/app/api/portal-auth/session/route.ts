@@ -151,6 +151,13 @@ export async function GET(request: Request) {
         permissions: allPermissions,
         sessionId: auth.sessionId,
         activeSessionCount,
+        actingAs: auth.actingAsSessionId ? {
+          sessionId: auth.actingAsSessionId,
+          effectiveUserId: auth.userId,
+          effectiveRole: auth.actingAsRole || auth.roles[0] || auth.userType,
+          expiresAt: auth.actingAsExpiresAt?.toISOString() || null,
+          realActor: { userId: auth.actorUserId, name: auth.actorName, email: auth.actorEmail },
+        } : null,
       },
     });
   } catch (error) {

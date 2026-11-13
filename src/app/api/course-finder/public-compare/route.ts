@@ -9,8 +9,8 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import {
-  PUBLIC_SCHOLARSHIP_COUNT_FILTER,
   publicCourseIdentifierWhere,
+  publicCrmScholarshipWhere,
   publicIntakeWhere,
   publicRequirementWhere,
   stripInternalFields,
@@ -44,7 +44,7 @@ export async function GET(req: Request) {
           university: { select: { universityId: true, slug: true, name: true, country: true, city: true, campusName: true, officialUrl: true, sourceUrl: true, lastVerifiedAt: true } },
           intakeFees: { where: publicIntakeWhere() as any, orderBy: [{ intakeYear: 'asc' }, { id: 'asc' }], take: 6 },
           requirements: { where: publicRequirementWhere() as any, take: 1 },
-          _count: { select: { scholarshipRecords: { where: PUBLIC_SCHOLARSHIP_COUNT_FILTER as any } } },
+          _count: { select: { scholarshipRecords: { where: publicCrmScholarshipWhere() as any } } },
         },
       });
       return { identifier, course };

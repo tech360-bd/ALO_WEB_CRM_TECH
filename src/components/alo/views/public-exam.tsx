@@ -190,14 +190,14 @@ export function PublicExam({ slug, onNavigate }: PublicExamProps) {
             <div className="flex flex-wrap justify-center gap-2">
               <Button
                 onClick={() => onNavigate("public-exams")}
-                className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
               >
                 <Icon name="ArrowLeft" className="size-4" />
                 All English Tests
               </Button>
               <Button
                 onClick={() => onNavigate("public-exam", "placement-test")}
-                className="bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Compass" className="size-4" />
                 Try Placement Test
@@ -248,7 +248,7 @@ function ExamDetail({
   return (
     <div className="bg-white">
       {/* HERO */}
-      <div className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#e8f0fb] via-white to-white">
+      <div className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-white">
         <div className="mx-auto max-w-[1280px] px-4 py-8 lg:px-6 lg:py-10">
           <Breadcrumb
             items={[
@@ -261,22 +261,22 @@ function ExamDetail({
           <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className="bg-[#0057B8] text-white hover:bg-[#0057B8]">
+                <Badge className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]">
                   <Icon name="GraduationCap" className="mr-1 size-3" />
                   English Test
                 </Badge>
                 {isPlacement && (
-                  <Badge className="bg-[#E8501A] text-white hover:bg-[#E8501A]">
+                  <Badge className="bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]">
                     <Icon name="Compass" className="mr-1 size-3" />
                     Diagnostic Tool
                   </Badge>
                 )}
                 <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                  <Icon name="ShieldCheck" className="size-3 text-emerald-600" />
+                  <Icon name="ShieldCheck" className="size-3 text-crm-success-text" />
                   Last verified {fmtDate(exam.lastVerifiedAt)}
                 </span>
               </div>
-              <h1 className="mt-3 text-3xl font-black tracking-tight text-[#0057B8] sm:text-4xl">
+              <h1 className="mt-3 text-3xl font-black tracking-tight text-[var(--alo-brand)] sm:text-4xl">
                 {exam.name} Mock Test
               </h1>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground sm:text-base">
@@ -289,7 +289,7 @@ function ExamDetail({
             <div className="flex flex-col gap-2 lg:w-72">
               <Button
                 onClick={startMock}
-                className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Play" className="size-4" />
                 Start Free Mock
@@ -297,7 +297,7 @@ function ExamDetail({
               <Button
                 onClick={bookAssessment}
                 variant="outline"
-                className="h-12 border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
+                className="h-12 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
               >
                 <Icon name="CalendarCheck" className="size-4" />
                 Book English Assessment
@@ -306,7 +306,7 @@ function ExamDetail({
                 <Button
                   onClick={() => onNavigate("public-exam", "placement-test")}
                   variant="ghost"
-                  className="h-11 text-[#0057B8] hover:bg-[#e8f0fb]"
+                  className="h-11 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
                 >
                   <Icon name="Compass" className="size-4" />
                   Take Placement Test First
@@ -335,13 +335,13 @@ function ExamDetail({
               {modules.map((m, i) => (
                 <div
                   key={i}
-                  className="rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-4"
+                  className="rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-4"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="flex size-7 items-center justify-center rounded-lg bg-[#0057B8] text-xs font-bold text-white">
+                    <span className="flex size-7 items-center justify-center rounded-lg bg-[var(--alo-brand)] text-xs font-bold text-white">
                       {i + 1}
                     </span>
-                    <p className="font-semibold text-[#0057B8]">{m.name}</p>
+                    <p className="font-semibold text-[var(--alo-brand)]">{m.name}</p>
                   </div>
                   <p className="mt-2 text-sm text-foreground/80">{m.detail}</p>
                 </div>
@@ -360,13 +360,13 @@ function ExamDetail({
             <ul className="space-y-2.5">
               {mockRules.map((rule, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm">
-                  <Icon name="CircleCheck" className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                  <Icon name="CircleCheck" className="mt-0.5 size-4 shrink-0 text-crm-success-text" />
                   <span className="text-foreground/80">{rule}</span>
                 </li>
               ))}
             </ul>
-            <div className="mt-4 rounded-xl border border-[#E8501A]/30 bg-[#fdece4]/50 p-3 text-xs">
-              <p className="flex items-center gap-1.5 font-semibold text-[#E8501A]">
+            <div className="mt-4 rounded-xl border border-[var(--alo-cta)]/30 bg-[var(--alo-cta-soft)]/50 p-3 text-xs">
+              <p className="flex items-center gap-1.5 font-semibold text-[var(--alo-cta)]">
                 <Icon name="Gift" className="size-3.5" />
                 Free quota highlight
               </p>
@@ -414,12 +414,12 @@ function ExamDetail({
               {examExperience.map((item, i) => (
                 <div
                   key={i}
-                  className="rounded-xl border border-[#0057B8]/15 bg-white p-4"
+                  className="rounded-xl border border-[var(--alo-brand)]/15 bg-white p-4"
                 >
-                  <div className="flex size-9 items-center justify-center rounded-lg bg-[#e8f0fb] text-[#0057B8]">
+                  <div className="flex size-9 items-center justify-center rounded-lg bg-[var(--alo-brand-light)] text-[var(--alo-brand)]">
                     <Icon name={pickIcon(item.feature)} className="size-4" />
                   </div>
-                  <p className="mt-3 font-semibold text-[#0057B8]">{item.feature}</p>
+                  <p className="mt-3 font-semibold text-[var(--alo-brand)]">{item.feature}</p>
                   <p className="mt-1 text-xs text-foreground/80">{item.detail}</p>
                 </div>
               ))}
@@ -438,9 +438,9 @@ function ExamDetail({
               {Object.entries(aiScoring).map(([key, val]) => (
                 <div
                   key={key}
-                  className="flex items-start gap-3 rounded-xl border border-[#0057B8]/15 bg-[#f7f9fc] p-3"
+                  className="flex items-start gap-3 rounded-xl border border-[var(--alo-brand)]/15 bg-[var(--alo-page)] p-3"
                 >
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#0057B8]/10 text-[#0057B8]">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[var(--alo-brand)]/10 text-[var(--alo-brand)]">
                     <Icon
                       name={String(val).toLowerCase().includes("auto") ? "Cpu" : "Brain"}
                       className="size-4"
@@ -448,15 +448,15 @@ function ExamDetail({
                   </div>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-semibold text-[#0057B8]">
+                      <p className="font-semibold text-[var(--alo-brand)]">
                         {SECTION_LABELS[key] || key.replace(/_/g, " ")}
                       </p>
                       {String(val).toLowerCase().includes("auto") ? (
-                        <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                        <Badge className="bg-crm-success-bg text-crm-success-text hover:bg-crm-success-bg">
                           Auto-scored
                         </Badge>
                       ) : (
-                        <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">
+                        <Badge className="bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-pale)]">
                           AI-evaluated
                         </Badge>
                       )}
@@ -473,7 +473,7 @@ function ExamDetail({
         {speakingPractice.detail && (
           <SectionCard title="Speaking Practice" icon="Mic">
             <div className="flex items-start gap-4">
-              <div className="hidden size-12 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8] sm:flex">
+              <div className="hidden size-12 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)] sm:flex">
                 <Icon name="Mic" className="size-6" />
               </div>
               <p className="text-sm leading-relaxed text-foreground/80">
@@ -487,7 +487,7 @@ function ExamDetail({
         {writingReview.detail && (
           <SectionCard title="Writing Review" icon="PenLine">
             <div className="flex items-start gap-4">
-              <div className="hidden size-12 shrink-0 items-center justify-center rounded-xl bg-[#e8f0fb] text-[#0057B8] sm:flex">
+              <div className="hidden size-12 shrink-0 items-center justify-center rounded-xl bg-[var(--alo-brand-light)] text-[var(--alo-brand)] sm:flex">
                 <Icon name="PenLine" className="size-6" />
               </div>
               <p className="text-sm leading-relaxed text-foreground/80">
@@ -508,9 +508,9 @@ function ExamDetail({
               {resultReport.map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-2.5 rounded-lg border border-[#0057B8]/10 bg-[#f7f9fc] p-3"
+                  className="flex items-start gap-2.5 rounded-lg border border-[var(--alo-brand)]/10 bg-[var(--alo-page)] p-3"
                 >
-                  <Icon name="CircleCheck" className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                  <Icon name="CircleCheck" className="mt-0.5 size-4 shrink-0 text-crm-success-text" />
                   <span className="text-sm text-foreground/80">{item}</span>
                 </div>
               ))}
@@ -525,19 +525,19 @@ function ExamDetail({
           icon="CreditCard"
         >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50/60 p-5">
+            <div className="rounded-xl border-2 border-crm-success-border bg-crm-success-bg/60 p-5">
               <div className="flex items-center gap-2">
-                <Icon name="Gift" className="size-5 text-emerald-600" />
-                <p className="font-bold text-emerald-700">Free</p>
+                <Icon name="Gift" className="size-5 text-crm-success-text" />
+                <p className="font-bold text-crm-success-text">Free</p>
               </div>
               <p className="mt-2 text-sm text-foreground/80">
                 {pricing.free || `${freeQuota.aloStudents || "3 mocks for ALO students"}, ${freeQuota.guestStudents || "1 for guests"}`}
               </p>
             </div>
-            <div className="rounded-xl border-2 border-[#0057B8]/20 bg-[#e8f0fb]/40 p-5">
+            <div className="rounded-xl border-2 border-[var(--alo-brand)]/20 bg-[var(--alo-brand-light)]/40 p-5">
               <div className="flex items-center gap-2">
-                <Icon name="CreditCard" className="size-5 text-[#0057B8]" />
-                <p className="font-bold text-[#0057B8]">Paid (additional mocks)</p>
+                <Icon name="CreditCard" className="size-5 text-[var(--alo-brand)]" />
+                <p className="font-bold text-[var(--alo-brand)]">Paid (additional mocks)</p>
               </div>
               <p className="mt-2 text-sm text-foreground/80">
                 {pricing.paid || "Affordable per-mock or package rates — contact ALO for details."}
@@ -555,7 +555,7 @@ function ExamDetail({
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, i) => (
                 <AccordionItem key={i} value={`faq-${i}`}>
-                  <AccordionTrigger className="text-left text-sm font-semibold text-[#0057B8] hover:no-underline">
+                  <AccordionTrigger className="text-left text-sm font-semibold text-[var(--alo-brand)] hover:no-underline">
                     {faq.q}
                   </AccordionTrigger>
                   <AccordionContent className="text-sm text-foreground/80">
@@ -568,9 +568,9 @@ function ExamDetail({
         )}
 
         {/* 13. Final CTA */}
-        <div className="rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-br from-[#e8f0fb]/80 to-white p-6 lg:p-8">
+        <div className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-gradient-to-br from-[var(--alo-brand-light)]/80 to-white p-6 lg:p-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-[#0057B8] sm:text-3xl">
+            <h2 className="text-2xl font-bold text-[var(--alo-brand)] sm:text-3xl">
               Ready to practice {exam.name}?
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
@@ -580,7 +580,7 @@ function ExamDetail({
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <Button
                 onClick={startMock}
-                className="h-12 bg-[#E8501A] text-white hover:bg-[#E8501A]/90"
+                className="h-12 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"
               >
                 <Icon name="Play" className="size-4" />
                 Start Free Mock
@@ -588,7 +588,7 @@ function ExamDetail({
               <Button
                 onClick={() => onNavigate("public-exams")}
                 variant="outline"
-                className="h-12 border-[#0057B8] text-[#0057B8] hover:bg-[#e8f0fb]"
+                className="h-12 border-[var(--alo-brand)] text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
               >
                 <Icon name="GraduationCap" className="size-4" />
                 See All English Tests
@@ -637,15 +637,15 @@ function FreeQuotaCard({
 }) {
   const accentCls =
     accent === "blue"
-      ? "border-[#0057B8]/25 bg-[#e8f0fb]/50 text-[#0057B8]"
-      : "border-[#E8501A]/25 bg-[#fdece4]/50 text-[#E8501A]";
+      ? "border-[var(--alo-brand)]/25 bg-[var(--alo-brand-light)]/50 text-[var(--alo-brand)]"
+      : "border-[var(--alo-cta)]/25 bg-[var(--alo-cta-soft)]/50 text-[var(--alo-cta)]";
   return (
     <div className={cn("rounded-xl border-2 p-5", accentCls)}>
       <div className="flex items-center gap-2.5">
         <div
           className={cn(
             "flex size-10 items-center justify-center rounded-lg text-white",
-            accent === "blue" ? "bg-[#0057B8]" : "bg-[#E8501A]"
+            accent === "blue" ? "bg-[var(--alo-brand)]" : "bg-[var(--alo-cta)]"
           )}
         >
           <Icon name={icon} className="size-5" />
@@ -656,7 +656,7 @@ function FreeQuotaCard({
       <ul className="mt-3 space-y-1.5">
         {perks.map((p, i) => (
           <li key={i} className="flex items-start gap-2 text-xs text-foreground/80">
-            <Icon name="Check" className="mt-0.5 size-3 shrink-0 text-emerald-600" />
+            <Icon name="Check" className="mt-0.5 size-3 shrink-0 text-crm-success-text" />
             {p}
           </li>
         ))}

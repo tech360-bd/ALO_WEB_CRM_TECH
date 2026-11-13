@@ -1,0 +1,115 @@
+{
+  "reportFile": "/tmp/vitest.json",
+  "totals": {
+    "testAssertions": 173,
+    "passed": 142,
+    "failedAssertions": 31,
+    "filesWithFailures": 22
+  },
+  "byClassification": {
+    "BLOCKED_PRISMA_CLIENT": 19,
+    "ENVIRONMENT_NO_DATABASE": 3,
+    "ENVIRONMENT_TEST_DOUBLE": 2,
+    "GENUINE_FAILURE": 16
+  },
+  "failedAssertionsByClassification": {
+    "BLOCKED_PRISMA_CLIENT": 10,
+    "ENVIRONMENT_NO_DATABASE": 3,
+    "ENVIRONMENT_TEST_DOUBLE": 2,
+    "GENUINE_FAILURE": 16
+  },
+  "filesFailingToLoad": [
+    "unit/accounting-ledger.test.ts",
+    "unit/application-risk-score.test.ts",
+    "unit/cms-revisions.test.ts",
+    "unit/email-marketing/broadcast-send.test.ts",
+    "unit/erp-routes-authz-regression.test.ts",
+    "unit/journal-integrity.test.ts",
+    "unit/phd/auth-access.test.ts",
+    "unit/phd/storage-security.test.ts",
+    "unit/student-success-score.test.ts"
+  ],
+  "genuineFailuresRequiringTriage": [
+    {
+      "file": "unit/alo-study-steps.test.ts",
+      "test": "builds a country-specific downloadable guide with real ALO contact details",
+      "error": "AssertionError: expected 'ALO Education\\nYour Dream – Our Commi…' to contain 'Step 1: Free Counseling & Profile Ass…'"
+    },
+    {
+      "file": "unit/brand-chrome-partner-footer.test.ts",
+      "test": "has exactly one public footer and one portal footer component",
+      "error": "AssertionError: expected [ 'src/app/dreamframe/page.tsx', …(2) ] to deeply equal [ …(2) ]"
+    },
+    {
+      "file": "unit/employee-access-acceptance.test.ts",
+      "test": "webhook upserts identity on every inbound message and never auto-creates duplicates",
+      "error": "AssertionError: expected 'import type { NextRequest } from \\'ne…' to contain 'whatsAppContact.upsert'"
+    },
+    {
+      "file": "unit/public-brand-guideline.test.ts",
+      "test": "preserves contact details and social platform order",
+      "error": "AssertionError: expected '' to be '+8801805020101' // Object.is equality"
+    },
+    {
+      "file": "unit/ucc-acceptance-steps.test.ts",
+      "test": "(7) unmatched contacts create a review record, NEVER an auto-Student",
+      "error": "AssertionError: expected 'import { NextResponse } from \\'next/s…' to contain 'identity.candidates'"
+    },
+    {
+      "file": "unit/ucc-acceptance-steps.test.ts",
+      "test": "(8) review decisions are OPEN_EXISTING | MERGE_REQUEST | CREATE_NEW, authorized roles only, CREATE_NEW elevated, decidedBy from auth",
+      "error": "AssertionError: expected 'import { NextResponse } from \\'next/s…' to contain 'CREATE_NEW_ROLES'"
+    },
+    {
+      "file": "unit/ucc-acceptance-steps.test.ts",
+      "test": "(16) inbound receivers populate sender/recipient/delivery_status, and require counselor doc-slot review",
+      "error": "AssertionError: expected '// @ts-nocheck - Complex webhook with…' to contain 'senderContact: senderPhone'"
+    },
+    {
+      "file": "unit/whatsapp-employee-communication.test.ts",
+      "test": "official numbers are exactly 20 in range 01805020100-01805020119",
+      "error": "AssertionError: expected [] to have a length of 20 but got +0"
+    },
+    {
+      "file": "unit/whatsapp-employee-communication.test.ts",
+      "test": "seedOfficialNumberPool remains additive and repairs a partial pool even when rows already exist",
+      "error": "AssertionError: expected \"vi.fn()\" to be called with arguments: [ { data: ArrayContaining{…}, …(1) } ]\u001b[90m"
+    },
+    {
+      "file": "unit/whatsapp-employee-communication.test.ts",
+      "test": "routing: explicit number takes precedence",
+      "error": "AssertionError: expected '' to be '01805020105' // Object.is equality"
+    },
+    {
+      "file": "unit/whatsapp-employee-communication.test.ts",
+      "test": "routing: urgent goes to COO 24/7",
+      "error": "AssertionError: expected 'no_configured_sender' to be 'urgent_support' // Object.is equality"
+    },
+    {
+      "file": "unit/whatsapp-employee-communication.test.ts",
+      "test": "routing: defaults to main with fallback flag",
+      "error": "AssertionError: expected 'no_configured_sender' to be 'default_fallback' // Object.is equality"
+    },
+    {
+      "file": "unit/whatsapp-numbers-route.test.ts",
+      "test": "requires Super Admin for Meta identifiers even when an admin may assign numbers",
+      "error": "AssertionError: expected 400 to be 403 // Object.is equality"
+    },
+    {
+      "file": "unit/whatsapp-numbers-route.test.ts",
+      "test": "keeps provider state unverified when a Super Admin changes the Meta ID and audits atomically",
+      "error": "AssertionError: expected 400 to be 200 // Object.is equality"
+    },
+    {
+      "file": "unit/whatsapp-numbers-route.test.ts",
+      "test": "allows explicit Super Admin pool initialization without setting any provider state",
+      "error": "AssertionError: expected { seeded: false, created: +0, …(1) } to match object { created: 20, count: 20 }"
+    },
+    {
+      "file": "unit/whatsapp-webhook-handler.test.ts",
+      "test": "re-exports number-pool and AI helpers",
+      "error": "AssertionError: expected '' to be '01805020100' // Object.is equality"
+    }
+  ],
+  "note": "Only failures whose message is the missing generated Prisma client are attributed to Prisma. The rest are reported with their own cause; none is excused as infrastructure without evidence."
+}

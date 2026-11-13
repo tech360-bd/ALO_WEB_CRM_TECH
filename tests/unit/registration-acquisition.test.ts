@@ -23,7 +23,7 @@ beforeEach(() => {
     lead: { findMany: vi.fn().mockResolvedValue([]), create: vi.fn().mockResolvedValue({ id: 'lead-row' }), update: vi.fn() },
     portalAuditLog: { create: vi.fn() }, studentNotification: { create: vi.fn() }, portalNotification: { create: vi.fn() },
   };
-  m.hash.mockResolvedValue('synthetic-hash'); m.allocate.mockResolvedValue('AE-202600001'); m.issue.mockResolvedValue({ ok: true });
+  m.hash.mockResolvedValue('synthetic-hash'); m.allocate.mockResolvedValue('AE-2026000001'); m.issue.mockResolvedValue({ ok: true });
   m.db.$transaction.mockImplementation(async cb => { const value = await cb(tx); committed = true; return value; });
 });
 describe('canonical registration acquisition contract', () => {

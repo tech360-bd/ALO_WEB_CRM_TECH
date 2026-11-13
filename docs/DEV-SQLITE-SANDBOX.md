@@ -73,3 +73,39 @@ dev-sandbox convenience only.
   run `scripts/dev-sqlite/seed-dev-fixtures.ts` against a production URL
   (it refuses nothing by itself — the guard is the `file:` DATABASE_URL you
   give it).
+
+## Super Admin runtime-proof recipe
+
+Reproduces every claim in `SUPER_ADMIN_MASTER_DASHBOARD_PATCH_REPORT_2026-11-02.md`
+without a MySQL server. All identities are synthetic `@aloeducation.dev` rows.
+
+```bash
+export DATABASE_URL="file:$PWD/prisma/dev.db"
+
+# 1. Super Admin role, 60 permissions, four employees (each mirrored into the
+#    legacy `users` table with the SAME id so a NextAuth cookie authenticates
+#    both halves of the app), a long-lived portal session, and Employee rows
+#    for Acting-As targets (counsellor / marketing / visa).
+npx tsx scripts/dev-sqlite/seed-super-admin-proof.ts
+
+# 2. Materialise the 2000 agents (40 departments x 50), 24 permission groups
+#    and the default system settings. Idempotent.
+npx tsx prisma/seed-super-admin-agent-network.ts
+
+# 3. Mint a NextAuth JWT for a fixture identity (dev-only; refuses anything
+#    that is not a file: URL).
+NEXTAUTH_SECRET=dummy-dev-secret-placeholder-32chars \
+  node scripts/dev-sqlite/mint-dev-jwt.mjs super.admin@aloeducation.dev SUPER_ADMIN > /tmp/sa.jwt
+
+# 4. Probe. Turbopack dev is required on small machines: the webpack dev
+#    server OOMs while compiling the dashboard page routes at ~3.9 GB RAM.
+npx next dev --turbopack -p 3100 -H 0.0.0.0
+curl -s -H "Cookie: next-auth.session-token=$(cat /tmp/sa.jwt)" \
+  http://localhost:3100/api/super-admin/ai/agents/registry
+```
+
+Mutation probes also need `-H "Origin: http://localhost:3100"` — every
+Super Admin write is same-origin checked.
+
+Acting-As probes add a second cookie: `alo_acting_as_session=<sessionId>`
+returned by `POST /api/super-admin/acting-as/start` (`{ targetUserId, reason }`).

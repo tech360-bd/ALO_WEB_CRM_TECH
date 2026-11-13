@@ -37,7 +37,13 @@ export type MatchResult =
   | { kind: 'ambiguous'; tier: 'verified_email' | 'verified_phone' | 'linked_channel' | 'exact_student_id'; studentIds: string[] }
   | { kind: 'none' };
 
-const STUDENT_ID_PATTERN = /^AE-\d{4}\d{5}$/;
+// Student identifiers have shipped in three tail widths over time:
+//   AE-YYYY####   4 digits — current allocator output (`formatIdentifier` pads AE to 4)
+//   AE-YYYYNNNNN  5 digits — the 2026-10-24 target format, still present in data
+//   AE-YYYY###### 6 digits — earliest legacy form
+// Only the 5-digit form was accepted here, so `exact_student_id` could never match an
+// ID produced by the live allocator. All three are accepted; legacy IDs are never rewritten.
+const STUDENT_ID_PATTERN = /^AE-\d{4}\d{4,6}$/;
 
 export function normalizeEmail(raw: string | null | undefined): string | null {
   const value = String(raw || '').trim().toLowerCase();

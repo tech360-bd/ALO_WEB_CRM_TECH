@@ -10,8 +10,11 @@ export async function GET(request: NextRequest) {
       const search = searchParams.get('search') || '';
       const universityId = searchParams.get('universityId') || '';
       const courseId = searchParams.get('courseId') || '';
-      const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-      const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
+      const page = Number(searchParams.get('page') || '1');
+      const limit = Number(searchParams.get('limit') || '20');
+      if (!Number.isSafeInteger(page) || page < 1 || page > 100000 || !Number.isSafeInteger(limit) || limit < 1 || limit > 100 || search.length > 200) {
+        return NextResponse.json({ success: false, error: 'Invalid page, limit or search length' }, { status: 400 });
+      }
       const skip = (page - 1) * limit;
 
       const where: Record<string, unknown> = {};
@@ -55,12 +58,9 @@ export async function GET(request: NextRequest) {
       });
     } catch (error) {
       console.error('Scholarships API error:', error);
-      if (String(error).includes('Unknown table')) {
-        return NextResponse.json({ success: true, data: [], total: 0, page: 1, totalPages: 0 });
-      }
       return NextResponse.json({ success: false, error: 'Failed to load scholarships' }, { status: 500 });
     }
-  })(request);
+  }, { requireUserTypes: ['ADMIN', 'SUPER_ADMIN', 'EMPLOYEE'] })(request);
 }
 
 export async function POST(request: NextRequest) {
@@ -71,8 +71,8 @@ export async function POST(request: NextRequest) {
       // amount typed without a currency was stored as a GBP fact. A currency is
       // now required whenever an amount is supplied; nothing is assumed. The
       // record keeps the schema default verificationStatus (NEEDS_REVIEW), so
-      // it stays out of public listings (publicScholarshipWhere requires
-      // VERIFIED). Clients cannot set verification or publication here.
+      // it stays out of public listings until a reviewer verifies a recent
+      // official source. Clients cannot set verification or publication here.
       const control = presentControlFields(body);
       if (control.length || Object.prototype.hasOwnProperty.call(body, 'status')) {
         return NextResponse.json({ success: false, error: `Field(s) not accepted on create: ${[...control, ...(Object.prototype.hasOwnProperty.call(body, 'status') ? ['status'] : [])].join(', ')}` }, { status: 400 });

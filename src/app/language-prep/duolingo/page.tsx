@@ -1,15 +1,12 @@
-import { Metadata } from 'next';
-import TestDetailView from '@/components/language-prep/TestDetailView';
-import { getTestBySlug } from '@/lib/language-prep/data';
+import LanguageTestPage from '@/components/language-prep/LanguageTestPage';
+import { getLanguagePrepMetadata } from '@/lib/language-prep/metadata';
 
-const test = getTestBySlug('duolingo');
+export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: test?.seoTitle || 'duolingo Preparation | Requirements, Format & Study Abroad Guidance | ALO Education',
-  description: test?.seoDescription || 'Prepare for duolingo with expert guidance from ALO Education.',
-  alternates: { canonical: 'https://aloeducation.com/language-prep/duolingo' },
-};
+export async function generateMetadata() {
+  return getLanguagePrepMetadata('duolingo');
+}
 
 export default function Page() {
-  return <TestDetailView slug="duolingo" />;
+  return <LanguageTestPage slug="duolingo" />;
 }

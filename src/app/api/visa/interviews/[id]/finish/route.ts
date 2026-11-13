@@ -1,72 +1,67 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { loadAuthorizedVisaInterview } from '@/lib/visa/interview-access';
+
+const schema = z.object({
+  overallScore: z.number().min(0).max(100),
+  readiness: z.enum(['ready', 'needs_practice', 'needs_documents', 'high_risk', 'human_review_required']),
+  officerNotes: z.string().trim().max(5000).optional(),
+  finalAssessment: z.string().trim().max(5000).optional(),
+  strengths: z.string().trim().max(3000).optional(),
+  weaknesses: z.string().trim().max(3000).optional(),
+  improvements: z.string().trim().max(3000).optional(),
+  documentsRequired: z.string().trim().max(2000).optional(),
+  secondInterview: z.boolean().optional(),
+  escalation: z.boolean().optional(),
+}).strict();
 
 export const POST = withAuth(async (req: Request, auth: AuthContext, context?: any) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Finish interview requires visa officer — interviews.finish' }, { status: 403 });
-
     const id = context?.params?.id;
-    const existing = await db.visaInterview.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ success: false, error: 'Interview not found' }, { status: 404 });
+    if (typeof id !== 'string' || !id) return NextResponse.json({ success: false, error: 'Interview ID required.' }, { status: 400 });
+    const access = await loadAuthorizedVisaInterview(auth, id, 'visa.interviews.finish');
+    if (!access.ok) return NextResponse.json({ success: false, error: access.error }, { status: access.status });
+    if (String(access.interview.status).toLowerCase() === 'completed') return NextResponse.json({ success: false, error: 'Interview is already completed; use an audited correction workflow.' }, { status: 409 });
+    const parsed = schema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'A human officer score and internal readiness result are required.', details: parsed.error.flatten() }, { status: 400 });
 
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    if (!isSuper) {
-      const visaCase = await db.visaCase.findUnique({ where: { id: existing.caseId } });
-      if (visaCase && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot finish interview for unassigned case — IDOR blocked' }, { status: 403 });
-      }
-    }
-
-    const body = await req.json();
-    const { overallScore, verdict, officerNotes, finalAssessment, strengths, weaknesses, improvements, documentsRequired, secondInterview, escalation, readiness } = body;
-
-    const validVerdicts = ['READY','NEEDS_PRACTICE','NEEDS_DOCUMENTS','HIGH_RISK','HUMAN_REVIEW_REQUIRED','ready','needs_practice','needs_documents','high_risk','human_review_required'];
-    if (readiness && !validVerdicts.includes(readiness)) {
-      return NextResponse.json({ success: false, error: 'Invalid readiness — allowed READY/NEEDS_PRACTICE/NEEDS_DOCUMENTS/HIGH_RISK/HUMAN_REVIEW_REQUIRED internal not visa decision' }, { status: 400 });
-    }
-
-    const updated = await db.visaInterview.update({
-      where: { id },
-      data: {
-        overallScore: overallScore || 0,
-        verdict: verdict || readiness || 'HUMAN_REVIEW_REQUIRED',
-        officerNotes: officerNotes || '',
-        finalAssessment: finalAssessment || '',
-        strengths: strengths || '',
-        weaknesses: weaknesses || '',
-        improvements: improvements || '',
-        documentsRequired: documentsRequired || '',
-        secondInterview: secondInterview || false,
-        escalation: escalation || false,
-        readiness: readiness || verdict || 'HUMAN_REVIEW_REQUIRED',
-        status: 'completed',
-        completedAt: new Date(),
-      } as any,
+    const result = await db.$transaction(async (tx) => {
+      const updated = await tx.visaInterview.update({
+        where: { id },
+        data: {
+          overallScore: parsed.data.overallScore,
+          readiness: parsed.data.readiness,
+          verdict: parsed.data.readiness,
+          officerNotes: parsed.data.officerNotes || '',
+          finalAssessment: parsed.data.finalAssessment || '',
+          strengths: parsed.data.strengths || '',
+          weaknesses: parsed.data.weaknesses || '',
+          improvements: parsed.data.improvements || '',
+          documentsRequired: parsed.data.documentsRequired || '',
+          secondInterview: parsed.data.secondInterview ?? false,
+          escalation: parsed.data.escalation ?? false,
+          status: 'completed',
+          completedAt: new Date(),
+        },
+      });
+      await tx.visaMockResult.upsert({
+        where: { interviewId: id },
+        create: { interviewId: id, caseId: access.visaCase.id, studentId: access.visaCase.studentId, country: access.visaCase.destinationCountry, difficulty: access.interview.difficulty, language: access.interview.language, score: parsed.data.overallScore, verdict: parsed.data.readiness, feedback: '' },
+        update: { score: parsed.data.overallScore, verdict: parsed.data.readiness, feedback: '' },
+      });
+      await tx.portalAuditLog.create({
+        data: { actorUserId: auth.actorUserId, action: 'VISA_INTERVIEW_FINISH', entityType: 'VisaInterview', entityId: id, metadata: JSON.stringify({ caseId: access.visaCase.id, studentId: access.visaCase.studentId, scoreRecorded: true, readiness: parsed.data.readiness }), ipAddress: '', userAgent: '' },
+      });
+      await tx.timelineEvent.create({
+        data: { studentId: access.visaCase.studentId, stage: 'VISA_INTERVIEW_COMPLETED', title: 'Visa preparation interview completed.', description: 'A human officer recorded an internal preparation assessment. This is not an embassy interview or visa decision.', actor: auth.actorUserId },
+      });
+      return updated;
     });
-
-    // Update visa case readiness if score provided
-    if (overallScore) {
-      await db.visaCase.update({
-        where: { id: existing.caseId },
-        data: { readinessScore: overallScore, currentStage: readiness === 'READY' ? 'READY_FOR_SUBMISSION' : existing.caseId ? undefined : undefined },
-      }).catch(() => {});
-    }
-
-    await logAuditAction(auth, 'VISA_INTERVIEW_FINISH', 'VisaInterview', id, { overallScore, verdict, readiness, finalAssessment, studentId: existing.studentId });
-    await db.timelineEvent.create({
-      data: {
-        studentId: existing.studentId,
-        stage: 'VISA_INTERVIEW_COMPLETED',
-        title: `Visa interview completed — score ${overallScore || 0}% — readiness ${readiness || verdict || 'HUMAN_REVIEW_REQUIRED'} — by ${auth.name}`,
-        description: `Final result internal workflow status NOT visa decision — final assessment/strengths/weaknesses/improvements/docs required/second interview/escalation/readiness READY/NEEDS_PRACTICE/NEEDS_DOCUMENTS/HIGH_RISK/HUMAN_REVIEW_REQUIRED — AI preliminary only human final — human responsible — officer ${auth.name}`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ success: true, data: updated, note: 'Final result internal workflow status NOT visa decision — Q. Final Result — final assessment/strengths/weaknesses/improvements/docs required/second interview/escalation/readiness READY/NEEDS_PRACTICE/NEEDS_DOCUMENTS/HIGH_RISK/HUMAN_REVIEW_REQUIRED internal not visa decision — AI preliminary only human final' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    return NextResponse.json({ success: true, data: result, note: 'Human officer assessment saved as internal preparation feedback; not an automated visa decision or guarantee.' }, { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch (error) {
+    console.error('[visa-interview-finish] failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Interview could not be completed; any audit failure rolled back.' }, { status: 503 });
   }
 });

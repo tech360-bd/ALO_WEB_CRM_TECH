@@ -47,12 +47,12 @@ const STATE_WORDS: Record<BadgeState, string> = {
 };
 
 const STATE_CLASSES: Record<BadgeState, string> = {
-  normal: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-  warning: 'bg-amber-50 text-amber-800 border border-amber-300',
-  overdue: 'bg-red-100 text-red-700 border border-red-400',
-  critical: 'bg-red-600 text-white border border-red-700 font-extrabold',
-  responded: 'bg-slate-100 text-slate-600 border border-slate-300',
-  none: 'bg-slate-100 text-slate-500',
+  normal: 'bg-crm-success-bg text-crm-success-text border border-crm-success-border',
+  warning: 'bg-crm-warning-bg text-crm-warning-text border border-crm-warning-border',
+  overdue: 'bg-crm-danger-bg text-crm-danger-text border border-crm-danger-border',
+  critical: 'bg-[var(--alo-error)] text-white border border-crm-danger-border font-extrabold',
+  responded: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border border-[var(--alo-border-strong)]',
+  none: 'bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)]',
 };
 
 function formatDuration(ms: number): string {
@@ -86,14 +86,14 @@ export default function SlaCountdownBadge({
 
   if (!slaDueAt) {
     return (
-      <Badge className={`${STATE_CLASSES.none} text-[10px] font-bold gap-1`}>
+      <Badge className={`${STATE_CLASSES.none} text-[11px] font-bold gap-1`}>
         <Clock className="w-3 h-3" /> NO SLA
       </Badge>
     );
   }
 
   const dueAt = new Date(slaDueAt);
-  const sizeClasses = size === 'sm' ? 'text-[9px] px-1.5 py-0.5' : size === 'lg' ? 'text-xs px-3 py-1' : 'text-[10px] px-2 py-0.5';
+  const sizeClasses = size === 'sm' ? 'text-[11px] px-1.5 py-0.5' : size === 'lg' ? 'text-xs px-3 py-1' : 'text-[11px] px-2 py-0.5';
 
   // A replied conversation shows its frozen outcome, not a live countdown.
   if (responded) {

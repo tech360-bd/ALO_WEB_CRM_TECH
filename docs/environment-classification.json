@@ -1,13 +1,13 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
-  "note": "Application code is authoritative. A variable declared only in a template is UNUSED.",
-  "filesScanned": 2396,
+  "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
+  "filesScanned": 2901,
   "summary": {
-    "UNUSED": 80,
-    "REFERENCED_WITH_FALLBACK": 139,
-    "REFERENCED": 99,
-    "REFERENCED_FAIL_CLOSED": 14,
-    "PUBLIC": 8
+    "UNUSED": 92,
+    "REFERENCED_WITH_FALLBACK": 175,
+    "REFERENCED_FAIL_CLOSED": 22,
+    "REFERENCED": 132,
+    "PUBLIC": 14
   },
   "productionRequired": [
     "DATABASE_URL",
@@ -21,9 +21,26 @@
   "publicSecretSuspects": [],
   "variables": [
     {
+      "name": "AGENTROUTER_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "AGENT_APPROVAL_POLICY",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -39,6 +56,7 @@
       "name": "AGENT_MAX_RUNTIME_MS",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -54,6 +72,7 @@
       "name": "AGENT_MAX_STEPS",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -69,6 +88,7 @@
       "name": "AGENT_MAX_TOOL_CALLS",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -84,6 +104,23 @@
       "name": "AGENT_TOKEN_BUDGET",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "AI21_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -99,6 +136,7 @@
       "name": "AI_AGENT_MODEL",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -114,7 +152,8 @@
       "name": "AI_DEFAULT_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 5,
+      "referencedIndirectly": false,
+      "referenceCount": 6,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -133,6 +172,7 @@
       "name": "AI_FAST_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -148,10 +188,41 @@
       ]
     },
     {
+      "name": "AI_GATEWAY_BASE_URL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "AI_GATEWAY_URL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
       "name": "AI_SMART_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 1,
+      "referencedIndirectly": false,
+      "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -161,14 +232,32 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/enterprise-ai/route.ts"
+        "src/app/api/enterprise-ai/route.ts",
+        "src/lib/phd/ai/client.ts",
+        "src/lib/phd/ai/gateway.ts"
       ]
     },
     {
-      "name": "ALO_24_7_SUPPORT_NUMBER",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "name": "ALLOW_DISPOSABLE_DATABASE_TESTS",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/lib/test-database-safety.mjs"
+      ]
+    },
+    {
+      "name": "ALO_AI_ALLOW_UNOFFICIAL_PROVIDERS",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -177,12 +266,75 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/ai-providers/resolve.ts"
+      ]
+    },
+    {
+      "name": "ALO_ALLOW_DESTRUCTIVE_TEMPLATE_SEED",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "prisma/seed-university-data.ts"
+      ]
+    },
+    {
+      "name": "ALO_ALLOW_SYNTHETIC_AGENT_DATA",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/ai-agents/synthetic-data-guard.ts"
+      ]
+    },
+    {
+      "name": "ALO_API",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/video-engine/n8n/index.ts"
+      ]
+    },
+    {
+      "name": "ALO_APPLICATION_DATABASE_SCHEMA",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/lib/test-database-safety.mjs"
+      ]
     },
     {
       "name": "ALO_APP_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -198,9 +350,25 @@
       ]
     },
     {
+      "name": "ALO_BASE_URL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/super-admin/run-security-tests.ts"
+      ]
+    },
+    {
       "name": "ALO_BUILDER_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -212,39 +380,103 @@
       ]
     },
     {
-      "name": "ALO_COMPLAINT_WHATSAPP_NUMBER",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
+      "name": "ALO_BUSINESS_CLOSE_TIME",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
+    },
+    {
+      "name": "ALO_BUSINESS_HOLIDAYS",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": []
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
+    },
+    {
+      "name": "ALO_BUSINESS_OPEN_TIME",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
+    },
+    {
+      "name": "ALO_BUSINESS_TIMEZONE",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
+    },
+    {
+      "name": "ALO_BUSINESS_WORKING_DAYS",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/communication/business-hours.ts"
+      ]
     },
     {
       "name": "ALO_COO_WHATSAPP_NUMBER",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/whatsapp-number-pool.ts"
+      ]
     },
     {
       "name": "ALO_CRON_SECRET",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -264,6 +496,7 @@
       "name": "ALO_CRON_WORKER",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -278,6 +511,7 @@
       "name": "ALO_DATA_AUDIT_DIR",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -292,7 +526,8 @@
       "name": "ALO_DB_DRIVER",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 2,
+      "referencedIndirectly": false,
+      "referenceCount": 3,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -300,43 +535,33 @@
       "declaredIn": [],
       "sampleReferences": [
         "scripts/ai-workforce/run-verification.ts",
-        "src/lib/db.ts"
+        "src/lib/db.ts",
+        "src/lib/identity/student-create-lock.ts"
       ]
     },
     {
-      "name": "ALO_EMPLOYEE_WHATSAPP_END",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "name": "ALO_EMPLOYEE_WHATSAPP_NUMBERS",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/whatsapp-number-pool.ts"
+      ]
     },
     {
-      "name": "ALO_EMPLOYEE_WHATSAPP_START",
+      "name": "ALO_ENABLE_OPTIONAL_CLOUD_AI",
       "classification": "UNUSED",
       "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "ALO_FOLLOWUP_WHATSAPP_NUMBER",
-      "classification": "UNUSED",
-      "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -352,6 +577,7 @@
       "name": "ALO_LOCAL_AI_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -366,6 +592,7 @@
       "name": "ALO_LOCAL_AI_CONCURRENCY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -380,6 +607,7 @@
       "name": "ALO_LOCAL_AI_CONTEXT",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -394,6 +622,7 @@
       "name": "ALO_LOCAL_AI_FALLBACK_CONCURRENCY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -408,6 +637,7 @@
       "name": "ALO_LOCAL_AI_FALLBACK_CONTEXT",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -422,6 +652,7 @@
       "name": "ALO_LOCAL_AI_FALLBACK_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -436,6 +667,7 @@
       "name": "ALO_LOCAL_AI_FALLBACK_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -451,6 +683,7 @@
       "name": "ALO_LOCAL_AI_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -465,6 +698,7 @@
       "name": "ALO_LOCAL_AI_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -478,23 +712,27 @@
     },
     {
       "name": "ALO_MAIN_WHATSAPP_NUMBER",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/whatsapp-number-pool.ts"
+      ]
     },
     {
       "name": "ALO_NOTIFICATION_RETENTION_DAYS",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -506,9 +744,25 @@
       ]
     },
     {
+      "name": "ALO_SEED_PUBLISH_STORIES",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "prisma/seed-language-prep.ts"
+      ]
+    },
+    {
       "name": "ALO_SEED_UNIVERSITY_CATALOGUE",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -520,9 +774,40 @@
       ]
     },
     {
+      "name": "ALO_SYNTHETIC_OUTPUT_DIR",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/lib/synthetic-output-guard.mjs"
+      ]
+    },
+    {
+      "name": "ALO_USER_COOKIE",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/super-admin/run-security-tests.ts"
+      ]
+    },
+    {
       "name": "ALO_VERIFIED_OUTBOUND_CONNECTOR",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -534,9 +819,45 @@
       ]
     },
     {
+      "name": "ANALYTICS_ALLOW_NON_PRODUCTION",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/analytics/server-conversions.ts",
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
+      "name": "ANALYTICS_CLIENT_ID_SALT",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/analytics/server-conversions.ts"
+      ]
+    },
+    {
       "name": "ANTHROPIC_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -551,6 +872,7 @@
       "name": "APIFY_ACTOR",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -568,6 +890,7 @@
       "name": "APIFY_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -585,6 +908,7 @@
       "name": "APOLLO_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -602,6 +926,7 @@
       "name": "APPLICATIONS_INBOX",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -616,6 +941,7 @@
       "name": "APP_DEBUG",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -628,22 +954,26 @@
     },
     {
       "name": "APP_ENV",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/feature-flags.ts"
+      ]
     },
     {
       "name": "APP_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -658,9 +988,26 @@
       ]
     },
     {
+      "name": "ARCEE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "ASTON_COURSE_LIMIT",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -675,6 +1022,7 @@
       "name": "AUDIT_BASE",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -687,22 +1035,26 @@
     },
     {
       "name": "AUTH_SECRET",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/oauth-state.ts"
+      ]
     },
     {
       "name": "AWF_SECURITY_CANARY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -714,9 +1066,26 @@
       ]
     },
     {
+      "name": "BASETEN_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "BITWARDEN_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -731,9 +1100,42 @@
       ]
     },
     {
+      "name": "BLACKBOX_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "BLUESMINDS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "BRAND_LOGO_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -748,6 +1150,7 @@
       "name": "BRAND_PRIMARY_COLOR",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -762,6 +1165,7 @@
       "name": "BRAND_SECONDARY_COLOR",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -776,6 +1180,7 @@
       "name": "BRAND_WATERMARK_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -790,6 +1195,7 @@
       "name": "BRAND_WATERMARK_POSITION",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -804,6 +1210,7 @@
       "name": "BRIGHTDATA_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -818,9 +1225,26 @@
       ]
     },
     {
+      "name": "BYTEZ_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "CAP_PUBLIC_BASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -832,9 +1256,26 @@
       ]
     },
     {
+      "name": "CEREBRAS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "CHATWOOT_ACCOUNT_ID",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -852,6 +1293,7 @@
       "name": "CHATWOOT_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -866,6 +1308,7 @@
       "name": "CHATWOOT_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -883,6 +1326,7 @@
       "name": "CHATWOOT_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -900,6 +1344,7 @@
       "name": "CHROMIUM_PATH",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -913,9 +1358,46 @@
       ]
     },
     {
+      "name": "CLAMAV_HOST",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/documents/malware-scan.ts"
+      ]
+    },
+    {
+      "name": "CLAMAV_PORT",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/documents/malware-scan.ts"
+      ]
+    },
+    {
       "name": "COGVIDEO_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -930,6 +1412,7 @@
       "name": "COGVIDEO_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -944,6 +1427,7 @@
       "name": "COGVIDEO_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -958,6 +1442,7 @@
       "name": "COGVIDEO_REPLICATE_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -969,9 +1454,26 @@
       ]
     },
     {
+      "name": "COHERE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "COMFYUI_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -988,6 +1490,7 @@
       "name": "COMFYUI_API_URL",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -1004,6 +1507,7 @@
       "name": "COMFYUI_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1018,6 +1522,7 @@
       "name": "COMFYUI_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1032,6 +1537,7 @@
       "name": "COMFYUI_VIDEO_WORKFLOW_JSON",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -1048,6 +1554,7 @@
       "name": "COUNSELING_INBOX",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1063,6 +1570,7 @@
       "name": "CRM_DEV_SEED_PASSWORD",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1077,6 +1585,7 @@
       "name": "CRON_SECRET",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1094,6 +1603,7 @@
       "name": "DASH_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1105,10 +1615,26 @@
       ]
     },
     {
+      "name": "DATABASE_SSL",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/seed-alo-whatsapp-numbers.mjs"
+      ]
+    },
+    {
       "name": "DATABASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 7,
+      "referencedIndirectly": false,
+      "referenceCount": 13,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -1120,118 +1646,38 @@
       "sampleReferences": [
         "prisma/seed-university-data.ts",
         "scripts/db-diagnose.mjs",
-        "scripts/dev-sqlite/preload.cjs"
+        "scripts/dev-sqlite/mint-dev-jwt.mjs"
       ]
     },
     {
-      "name": "DB_CHARSET",
+      "name": "DEEPINFRA_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
-        ".env.example"
+        ".env.example",
+        ".env.production.example"
       ],
       "sampleReferences": []
     },
     {
-      "name": "DB_COLLATION",
+      "name": "DEEPSEEK_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_CONNECTION",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_DATABASE",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_HOST",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_PASSWORD",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_PORT",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
-      ],
-      "sampleReferences": []
-    },
-    {
-      "name": "DB_USERNAME",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example"
+        ".env.example",
+        ".env.production.example"
       ],
       "sampleReferences": []
     },
@@ -1239,6 +1685,7 @@
       "name": "DEVELOPMENT_SAMPLE_PASSWORD",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -1257,6 +1704,7 @@
       "name": "DEV_ADMIN_PASSWORD",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1271,6 +1719,7 @@
       "name": "DEV_SQLITE_PATH",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1282,9 +1731,25 @@
       ]
     },
     {
+      "name": "DEV_SUPER_ADMIN_TOKEN",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/dev-sqlite/seed-super-admin-proof.ts"
+      ]
+    },
+    {
       "name": "DOMOVINA_SMS_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1302,6 +1767,7 @@
       "name": "DOODLE_NOTE_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1319,6 +1785,7 @@
       "name": "DOODLE_NOTE_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1333,10 +1800,26 @@
       ]
     },
     {
+      "name": "DREAMFRAME_PREVIEW",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "next.config.ts"
+      ]
+    },
+    {
       "name": "EMAIL_BATCH_SIZE",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1344,13 +1827,16 @@
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-marketing/config.ts"
+      ]
     },
     {
       "name": "EMAIL_DAILY_CAP",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1358,27 +1844,34 @@
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-marketing/config.ts"
+      ]
     },
     {
       "name": "EMAIL_FROM_NAME",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-marketing/config.ts",
+        "src/lib/email-marketing/transport.ts"
+      ]
     },
     {
       "name": "EMAIL_HOURLY_CAP",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1386,13 +1879,16 @@
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-marketing/config.ts"
+      ]
     },
     {
       "name": "EMAIL_MAX_ATTEMPTS",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1400,12 +1896,15 @@
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-marketing/config.ts"
+      ]
     },
     {
       "name": "EMAIL_PROVIDER_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1419,9 +1918,10 @@
     },
     {
       "name": "EMAIL_SENDING_ENABLED",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1429,13 +1929,16 @@
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-marketing/config.ts"
+      ]
     },
     {
       "name": "EMAIL_TEST_MODE",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1443,13 +1946,16 @@
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-marketing/config.ts"
+      ]
     },
     {
       "name": "EMAIL_TEST_RECIPIENTS",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1457,12 +1963,15 @@
       "declaredIn": [
         ".env.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/email-marketing/config.ts"
+      ]
     },
     {
       "name": "EMAIL_UNSUBSCRIBE_SECRET",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1479,6 +1988,7 @@
       "name": "ENABLE_CRM_DEV_SEED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1493,6 +2003,7 @@
       "name": "ENABLE_DEVELOPMENT_SAMPLE_DATA",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -1510,6 +2021,7 @@
       "name": "ENCRYPTION_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 3,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -1520,30 +2032,17 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/lib/ai-providers/owner-chat.ts",
         "src/lib/hrms/encryption.ts",
-        "src/lib/social/token-encryption.ts",
         "src/lib/token-encryption.ts"
-      ]
-    },
-    {
-      "name": "FACEBOOK_ACCESS_TOKEN",
-      "classification": "REFERENCED_WITH_FALLBACK",
-      "referenced": true,
-      "referenceCount": 1,
-      "failsClosedWhenMissing": false,
-      "hasInlineFallback": true,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [],
-      "sampleReferences": [
-        "src/app/api/crm/communications/social-inbox/route.ts"
       ]
     },
     {
       "name": "FACEBOOK_APP_ID",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 2,
+      "referencedIndirectly": false,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1554,14 +2053,16 @@
       ],
       "sampleReferences": [
         "src/app/api/facebook/auth/route.ts",
-        "src/app/api/facebook/callback/route.ts"
+        "src/app/api/facebook/callback/route.ts",
+        "src/app/api/social/[provider]/auth/route.ts"
       ]
     },
     {
       "name": "FACEBOOK_APP_SECRET",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 3,
+      "referencedIndirectly": false,
+      "referenceCount": 5,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1571,15 +2072,16 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "src/app/api/facebook/auth/route.ts",
         "src/app/api/facebook/callback/route.ts",
-        "src/app/api/facebook/webhook/route.ts",
-        "src/lib/facebook-lead-sync.ts"
+        "src/app/api/facebook/webhook/route.ts"
       ]
     },
     {
       "name": "FACEBOOK_PAGE_ACCESS_TOKEN",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1597,24 +2099,28 @@
       "name": "FACEBOOK_REDIRECT_URI",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 2,
+      "referencedIndirectly": false,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
+        ".env.example",
         ".env.production.example"
       ],
       "sampleReferences": [
         "src/app/api/facebook/auth/route.ts",
-        "src/app/api/facebook/callback/route.ts"
+        "src/app/api/facebook/callback/route.ts",
+        "src/app/api/social/[provider]/auth/route.ts"
       ]
     },
     {
       "name": "FACEBOOK_VERIFY_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1630,9 +2136,26 @@
       ]
     },
     {
+      "name": "FEATHERLESS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "FFMPEG_PATH",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1647,6 +2170,7 @@
       "name": "FILE_SIGN_SECRET",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1662,6 +2186,7 @@
       "name": "FIRECRAWL_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1679,6 +2204,7 @@
       "name": "FIRECRAWL_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1693,6 +2219,7 @@
       "name": "FIRECRAWL_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1707,9 +2234,58 @@
       ]
     },
     {
+      "name": "FIREWORKS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "FREEMODEL_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "FRIENDLIAI_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "GA4_API_SECRET",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1727,6 +2303,7 @@
       "name": "GA4_MEASUREMENT_ID",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1741,9 +2318,44 @@
       ]
     },
     {
+      "name": "GA4_MEASUREMENT_PROTOCOL_SECRET",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/analytics/server-conversions.ts",
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
+      "name": "GEMINI_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "GHOST_ADMIN_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1761,6 +2373,7 @@
       "name": "GHOST_CONTENT_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1778,6 +2391,7 @@
       "name": "GHOST_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1795,6 +2409,7 @@
       "name": "GOOGLE_BUSINESS_ACCOUNT_ID",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1812,12 +2427,15 @@
       "name": "GOOGLE_BUSINESS_WEBHOOK_TOKEN",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [],
+      "declaredIn": [
+        ".env.example"
+      ],
       "sampleReferences": [
         "src/app/api/marketing/webhooks/google-business/route.ts"
       ]
@@ -1826,7 +2444,8 @@
       "name": "GOOGLE_CLIENT_ID",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 2,
+      "referencedIndirectly": false,
+      "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1837,14 +2456,16 @@
       ],
       "sampleReferences": [
         "src/app/api/seo/health/route.ts",
-        "src/lib/doodle-note-engine.ts"
+        "src/lib/doodle-note-engine.ts",
+        "src/lib/social/providers.ts"
       ]
     },
     {
       "name": "GOOGLE_CLIENT_SECRET",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 2,
+      "referencedIndirectly": false,
+      "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -1855,13 +2476,82 @@
       ],
       "sampleReferences": [
         "src/app/api/seo/health/route.ts",
-        "src/lib/doodle-note-engine.ts"
+        "src/lib/doodle-note-engine.ts",
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "GOOGLE_CLOUD_PROJECT_ID",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
+      "name": "GOOGLE_MAPS_API_KEY",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
+      "name": "GOOGLE_OAUTH_ACCESS_TOKEN",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
+      "name": "GOOGLE_OAUTH_REFRESH_TOKEN",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/google/config.ts",
+        "src/lib/google/oauth.ts"
       ]
     },
     {
       "name": "GOOGLE_PUBSUB_AUDIENCE",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -1876,6 +2566,7 @@
       "name": "GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1887,12 +2578,29 @@
       ],
       "sampleReferences": [
         "src/app/api/seo/health/route.ts"
+      ]
+    },
+    {
+      "name": "GOOGLE_SEARCH_CONSOLE_REFRESH_TOKEN",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/google/config.ts",
+        "src/lib/google/oauth.ts"
       ]
     },
     {
       "name": "GOOGLE_SEARCH_CONSOLE_SITE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1907,9 +2615,43 @@
       ]
     },
     {
+      "name": "GOOGLE_SERVICE_ACCOUNT_JSON",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/google/config.ts",
+        "src/lib/google/oauth.ts"
+      ]
+    },
+    {
+      "name": "GOOGLE_SITE_VERIFICATION_TOKEN",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
       "name": "GROQ_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 5,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1929,6 +2671,7 @@
       "name": "GROQ_MAX_CONCURRENCY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1946,6 +2689,7 @@
       "name": "GROQ_MAX_QUEUE",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1963,6 +2707,7 @@
       "name": "GROQ_MODEL_FAST",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1977,6 +2722,7 @@
       "name": "GROQ_MODEL_LARGE",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -1992,6 +2738,7 @@
       "name": "GROQ_PER_MINUTE",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2006,9 +2753,41 @@
       ]
     },
     {
+      "name": "GTM_CONTAINER_ID",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
+      "name": "HACKCLUB_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "HLS_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2023,6 +2802,7 @@
       "name": "HLS_OUTPUT_PATH",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2037,6 +2817,7 @@
       "name": "HLS_SEGMENT_DURATION",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2051,6 +2832,7 @@
       "name": "HOSTNAME",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -2065,6 +2847,7 @@
       "name": "HRMS_ENCRYPTION_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -2079,6 +2862,7 @@
       "name": "HTTPSMS_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2095,6 +2879,7 @@
       "name": "HTTPSMS_BASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2111,6 +2896,7 @@
       "name": "HTTPSMS_FROM",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -2127,6 +2913,7 @@
       "name": "HTTPSMS_PHONE_ID",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -2144,6 +2931,7 @@
       "name": "HTTPSMS_TOKEN",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2161,6 +2949,7 @@
       "name": "HTTPSMS_WEBHOOK_PROVIDER",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2177,6 +2966,7 @@
       "name": "HTTPSMS_WEBHOOK_SIGNING_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2194,6 +2984,7 @@
       "name": "HTTPSMS_WEBHOOK_SUBJECT",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2212,6 +3003,7 @@
       "name": "HTTPSMS_WEBHOOK_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2226,9 +3018,26 @@
       ]
     },
     {
+      "name": "HUGGINGFACE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "HUNYUAN_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2243,6 +3052,7 @@
       "name": "HUNYUAN_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2257,6 +3067,7 @@
       "name": "HUNYUAN_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2268,9 +3079,26 @@
       ]
     },
     {
+      "name": "HYPERBOLIC_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "IMAGE_GEN_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2285,6 +3113,7 @@
       "name": "IMAGE_GEN_PROVIDER",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2302,6 +3131,7 @@
       "name": "IMAP_HOST",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2317,6 +3147,7 @@
       "name": "IMAP_PASSWORD",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2332,6 +3163,7 @@
       "name": "IMAP_PORT",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2347,6 +3179,7 @@
       "name": "IMAP_SECURE",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2362,6 +3195,23 @@
       "name": "IMAP_USERNAME",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "INFERENCE_NET_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2377,6 +3227,7 @@
       "name": "INFINITETALK_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2391,6 +3242,7 @@
       "name": "INFINITETALK_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2405,6 +3257,7 @@
       "name": "INFINITETALK_LOCAL_PATH",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2417,8 +3270,25 @@
     },
     {
       "name": "INSTAGRAM_ACCESS_TOKEN",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "INSTAGRAM_APP_ID",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2429,13 +3299,64 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/communications/social-inbox/route.ts"
+        "src/lib/social/providers.ts"
       ]
     },
     {
-      "name": "INSTAGRAM_APP_ID",
+      "name": "INSTAGRAM_APP_SECRET",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "INSTAGRAM_REDIRECT_URI",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "INTAKE_SESSION_SECRET",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/ai-agents/intake-session.ts"
+      ]
+    },
+    {
+      "name": "INTERNLM_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2448,24 +3369,25 @@
       "sampleReferences": []
     },
     {
-      "name": "INSTAGRAM_APP_SECRET",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "name": "INTERVIEW_PRACTICE_WINDOW_HOURS",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": []
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/interview/practice-window.ts"
+      ]
     },
     {
       "name": "JITSI_APP_ID",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2480,6 +3402,7 @@
       "name": "JITSI_DOMAIN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2494,6 +3417,7 @@
       "name": "JITSI_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2508,6 +3432,7 @@
       "name": "JITSI_JWT_SECRET",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2522,6 +3447,7 @@
       "name": "JWT_SECRET",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2536,6 +3462,7 @@
       "name": "LANGUAGETOOL_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2553,6 +3480,7 @@
       "name": "LANGUAGETOOL_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2570,6 +3498,7 @@
       "name": "LANGUAGETOOL_USERNAME",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2587,6 +3516,7 @@
       "name": "LEADS_INBOX",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2599,39 +3529,80 @@
       ]
     },
     {
-      "name": "LINKEDIN_CLIENT_ID",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "name": "LINKEDIN_API_VERSION",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "LINKEDIN_CLIENT_ID",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
     },
     {
       "name": "LINKEDIN_CLIENT_SECRET",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "LINKEDIN_REDIRECT_URI",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
     },
     {
       "name": "LLM_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2646,6 +3617,7 @@
       "name": "LLM_API_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2660,6 +3632,7 @@
       "name": "LLM_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2674,6 +3647,7 @@
       "name": "LOCAL_AI_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2691,25 +3665,7 @@
       "name": "LOCAL_AI_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 4,
-      "failsClosedWhenMissing": true,
-      "hasInlineFallback": true,
-      "productionRequired": false,
-      "productionRequiredReason": null,
-      "declaredIn": [
-        ".env.example",
-        ".env.production.example"
-      ],
-      "sampleReferences": [
-        "src/app/api/workforce/metrics/route.ts",
-        "src/lib/ai-workforce/runtimes.ts",
-        "src/lib/ai.ts"
-      ]
-    },
-    {
-      "name": "LOCAL_AI_URL",
-      "classification": "REFERENCED_WITH_FALLBACK",
-      "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 7,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -2720,15 +3676,67 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "scripts/ai-workforce/run-verification.ts",
-        "src/app/api/workforce/metrics/route.ts",
-        "src/components/alo/views/ai-command-center.tsx"
+        "src/app/api/admin/ai-chat/route.ts",
+        "src/app/api/admin/ai-command-center/assistant/route.ts",
+        "src/app/api/workforce/metrics/route.ts"
       ]
+    },
+    {
+      "name": "LOCAL_AI_URL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 10,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "scripts/ai-workforce/run-verification.ts",
+        "src/app/api/admin/ai-chat/route.ts",
+        "src/app/api/admin/ai-command-center/assistant/route.ts"
+      ]
+    },
+    {
+      "name": "LOCAL_MODEL_NAME",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "LONGCAT_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
     },
     {
       "name": "LONGCAT_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2743,6 +3751,7 @@
       "name": "LONGCAT_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2757,6 +3766,7 @@
       "name": "LTX_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2771,6 +3781,7 @@
       "name": "LTX_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2785,6 +3796,7 @@
       "name": "LTX_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2799,6 +3811,7 @@
       "name": "LTX_LOCAL_PATH",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2813,6 +3826,7 @@
       "name": "MAIL_FROM_ADDRESS",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2828,6 +3842,7 @@
       "name": "MAIL_FROM_NAME",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2843,6 +3858,7 @@
       "name": "MAIL_HOST",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2858,6 +3874,7 @@
       "name": "MAIL_PASSWORD",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2873,6 +3890,7 @@
       "name": "MAIL_PORT",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2888,6 +3906,7 @@
       "name": "MAIL_SECURE",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2903,6 +3922,7 @@
       "name": "MAIL_USERNAME",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2918,6 +3938,7 @@
       "name": "MANIM_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2932,6 +3953,7 @@
       "name": "MANIM_PATH",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2946,6 +3968,7 @@
       "name": "MANIM_QUALITY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -2960,6 +3983,7 @@
       "name": "META_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2975,6 +3999,7 @@
       "name": "META_APP_ID",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -2989,6 +4014,7 @@
       "name": "META_APP_SECRET",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3003,6 +4029,7 @@
       "name": "META_VERIFY_TOKEN",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3014,9 +4041,42 @@
       "sampleReferences": []
     },
     {
+      "name": "MISTRAL_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "MODELSCOPE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "MOLX_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3034,6 +4094,7 @@
       "name": "MOLX_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3048,9 +4109,26 @@
       ]
     },
     {
+      "name": "MORPH_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "N8N_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3066,6 +4144,7 @@
       "name": "N8N_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3081,6 +4160,7 @@
       "name": "N8N_AUTH_HEADER",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3095,6 +4175,7 @@
       "name": "N8N_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3109,6 +4190,7 @@
       "name": "N8N_VIDEO_EVENTS",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3123,6 +4205,7 @@
       "name": "N8N_WEBHOOK_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3139,6 +4222,7 @@
       "name": "NAME",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3150,10 +4234,43 @@
       ]
     },
     {
+      "name": "NARA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "NEBIUS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "NEXTAUTH_SECRET",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
-      "referenceCount": 5,
+      "referencedIndirectly": false,
+      "referenceCount": 7,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
       "productionRequired": true,
@@ -3163,16 +4280,17 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "scripts/dev-sqlite/mint-dev-jwt.mjs",
         "src/app/api/portal-auth/login/route.ts",
-        "src/app/api/student/auth/login/route.ts",
-        "src/lib/auth/email-otp.ts"
+        "src/app/api/student/auth/login/route.ts"
       ]
     },
     {
       "name": "NEXTAUTH_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 8,
+      "referencedIndirectly": false,
+      "referenceCount": 17,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -3182,15 +4300,16 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/ucc/oauth/callback/route.ts",
-        "src/app/api/portal-auth/login/route.ts",
-        "src/app/api/portal-auth/logout/route.ts"
+        "src/app/api/access-control/route.ts",
+        "src/app/api/admin/ai-chat/route.ts",
+        "src/app/api/admin/ai-command-center/route.ts"
       ]
     },
     {
       "name": "NEXTCLOUD_APP_PASSWORD",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3208,6 +4327,7 @@
       "name": "NEXTCLOUD_APP_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3222,6 +4342,7 @@
       "name": "NEXTCLOUD_PASSWORD",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3236,6 +4357,7 @@
       "name": "NEXTCLOUD_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3253,6 +4375,7 @@
       "name": "NEXTCLOUD_USER",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3270,6 +4393,7 @@
       "name": "NEXTCLOUD_USERNAME",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3284,6 +4408,7 @@
       "name": "NEXT_DEV_ALLOWED_ORIGINS",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3295,10 +4420,47 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_ALO_CONTACT_PHONE",
+      "classification": "PUBLIC",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/alo-site-info.ts"
+      ]
+    },
+    {
+      "name": "NEXT_PUBLIC_ALO_WHATSAPP_NUMBER",
+      "classification": "PUBLIC",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/alo-site-info.ts"
+      ]
+    },
+    {
       "name": "NEXT_PUBLIC_APP_URL",
       "classification": "PUBLIC",
       "referenced": true,
-      "referenceCount": 6,
+      "referencedIndirectly": false,
+      "referenceCount": 7,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -3317,6 +4479,7 @@
       "name": "NEXT_PUBLIC_CONSENT_MODE",
       "classification": "PUBLIC",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3331,9 +4494,28 @@
       ]
     },
     {
-      "name": "NEXT_PUBLIC_FB_CONNECTED",
+      "name": "NEXT_PUBLIC_GA4_ENABLED",
       "classification": "PUBLIC",
       "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/seo/ga4.ts"
+      ]
+    },
+    {
+      "name": "NEXT_PUBLIC_GA_MEASUREMENT_ID",
+      "classification": "PUBLIC",
+      "referenced": true,
+      "referencedIndirectly": true,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3341,30 +4523,48 @@
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/app/crm/communications/social-inbox/page.tsx"
+        "src/lib/google/config.ts"
       ]
     },
     {
-      "name": "NEXT_PUBLIC_GA4_ENABLED",
+      "name": "NEXT_PUBLIC_GTM_ENABLED",
       "classification": "PUBLIC",
       "referenced": true,
+      "referencedIndirectly": true,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
-        ".env.example",
-        ".env.production.example"
+        ".env.example"
       ],
       "sampleReferences": [
-        "src/lib/seo/ga4.ts"
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
+      "name": "NEXT_PUBLIC_GTM_ID",
+      "classification": "PUBLIC",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
       ]
     },
     {
       "name": "NEXT_PUBLIC_MOLX_URL",
       "classification": "PUBLIC",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3382,7 +4582,8 @@
       "name": "NEXT_PUBLIC_SITE_URL",
       "classification": "PUBLIC",
       "referenced": true,
-      "referenceCount": 10,
+      "referencedIndirectly": false,
+      "referenceCount": 11,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -3393,14 +4594,15 @@
       ],
       "sampleReferences": [
         "src/app/api/admin/builder/route.ts",
-        "src/app/api/seo/health/route.ts",
-        "src/app/course/[slug]/page.tsx"
+        "src/app/api/seo/audit/route.ts",
+        "src/app/api/seo/health/route.ts"
       ]
     },
     {
       "name": "NEXT_PUBLIC_UMAMI_URL",
       "classification": "PUBLIC",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3415,6 +4617,7 @@
       "name": "NEXT_PUBLIC_UMAMI_WEBSITE_ID",
       "classification": "PUBLIC",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3426,10 +4629,45 @@
       ]
     },
     {
+      "name": "NEXT_PUBLIC_YOUTUBE_CHANNEL_HANDLE",
+      "classification": "PUBLIC",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
+      "name": "NEXT_PUBLIC_YOUTUBE_CHANNEL_ID",
+      "classification": "PUBLIC",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
       "name": "NODE_ENV",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 27,
+      "referencedIndirectly": false,
+      "referenceCount": 35,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -3445,9 +4683,58 @@
       ]
     },
     {
+      "name": "NOVITA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "NSCALE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "NVIDIA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "OPENAI_API_BASE",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3462,6 +4749,7 @@
       "name": "OPENAI_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3478,6 +4766,7 @@
       "name": "OPENROUTER_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 5,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3497,6 +4786,7 @@
       "name": "OPENROUTER_APP_NAME",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3512,6 +4802,7 @@
       "name": "OPENROUTER_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3531,6 +4822,94 @@
       "name": "OPENROUTER_SITE_URL",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "OPENSMS_API_KEY",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/sms-gateway.ts",
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "OPENSMS_BASE_URL",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/sms-gateway.ts",
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
+      "name": "OPENSMS_FROM",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/sms-gateway.ts"
+      ]
+    },
+    {
+      "name": "OPENSMS_WEBHOOK_SECRET",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/app/api/integrations/opensms/webhook/route.ts",
+        "src/lib/opensms-webhook.ts"
+      ]
+    },
+    {
+      "name": "OPENVECTA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3546,6 +4925,7 @@
       "name": "OTP_PEPPER",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -3558,9 +4938,120 @@
       ]
     },
     {
+      "name": "PAID_AI_API_ALLOWED",
+      "classification": "REFERENCED_FAIL_CLOSED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 8,
+      "failsClosedWhenMissing": true,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/app/api/admin/ai-command-center/assistant/route.ts",
+        "src/app/api/ai-providers/route.ts",
+        "src/lib/ai-providers/resolve.ts"
+      ]
+    },
+    {
+      "name": "PHD_AI_GATEWAY_ENABLED",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "PHD_AI_GATEWAY_MODEL",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "PHD_AI_GATEWAY_TIMEOUT_MS",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "PHD_AI_GATEWAY_TOKEN",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/ai/gateway.ts"
+      ]
+    },
+    {
+      "name": "PHD_STORAGE_ROOT",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/phd/storage.ts"
+      ]
+    },
+    {
+      "name": "PHD_TEST_DB",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/phd/setup-verification-db.mjs"
+      ]
+    },
+    {
       "name": "PINTEREST_APP_ID",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3576,6 +5067,23 @@
       "name": "PINTEREST_APP_SECRET",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "PIONEER_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3591,6 +5099,7 @@
       "name": "PIXELLE_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3605,6 +5114,7 @@
       "name": "PIXELLE_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3616,9 +5126,26 @@
       ]
     },
     {
+      "name": "POLLINATIONS_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "POP3_HOST",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3634,6 +5161,7 @@
       "name": "POP3_PASSWORD",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3649,6 +5177,7 @@
       "name": "POP3_PORT",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3664,6 +5193,7 @@
       "name": "POP3_SECURE",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3679,6 +5209,7 @@
       "name": "POP3_USERNAME",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3694,6 +5225,7 @@
       "name": "PORT",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -3706,9 +5238,40 @@
       ]
     },
     {
+      "name": "PRISMA_QUERY_ENGINE_LIBRARY",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/phd/setup-verification-db.mjs"
+      ]
+    },
+    {
+      "name": "PRISMA_SCHEMA_ENGINE_BINARY",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "scripts/phd/setup-verification-db.mjs"
+      ]
+    },
+    {
       "name": "PUBLIC_WEBSITE_URL",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3720,9 +5283,26 @@
       "sampleReferences": []
     },
     {
+      "name": "PUTER_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "PYTHON_PATH",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3734,9 +5314,26 @@
       ]
     },
     {
+      "name": "QWEN_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "REDDIT_CLIENT_ID",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3751,6 +5348,7 @@
       "name": "REDDIT_CLIENT_SECRET",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3765,6 +5363,7 @@
       "name": "REDDIT_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3779,6 +5378,7 @@
       "name": "REDIS_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3798,6 +5398,7 @@
       "name": "REFERENCE_ARTIFACT_DIR",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3812,6 +5413,7 @@
       "name": "REFERENCE_COMPONENT_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3826,6 +5428,7 @@
       "name": "REGISTRATION_REQUIRE_TERMS",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3840,6 +5443,7 @@
       "name": "REMOTION_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3854,6 +5458,7 @@
       "name": "REMOTION_LAMBDA_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3868,6 +5473,7 @@
       "name": "REMOTION_LAMBDA_FUNCTION",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3882,6 +5488,7 @@
       "name": "REMOTION_LAMBDA_REGION",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3896,6 +5503,7 @@
       "name": "RETALKING_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3910,6 +5518,7 @@
       "name": "RETALKING_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3924,6 +5533,7 @@
       "name": "RETALKING_LOCAL_PATH",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3938,6 +5548,7 @@
       "name": "RTMP_APP",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3952,6 +5563,7 @@
       "name": "RTMP_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -3966,6 +5578,7 @@
       "name": "RTMP_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -3980,6 +5593,7 @@
       "name": "RUNNINGHUB_API_KEY",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -3996,6 +5610,7 @@
       "name": "RUNNINGHUB_API_URL",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -4012,6 +5627,7 @@
       "name": "SALESQL_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4026,9 +5642,58 @@
       ]
     },
     {
+      "name": "SAMBANOVA_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "SCALEWAY_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
+      "name": "SEALION_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "SEED_PORTAL_PASSWORD",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -4043,6 +5708,7 @@
       "name": "SEED_SUPER_ADMIN_EMAIL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 7,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -4062,6 +5728,7 @@
       "name": "SEED_SUPER_ADMIN_PASSWORD",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 6,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -4079,15 +5746,34 @@
     },
     {
       "name": "SESSION_SECRET",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-agents/intake-session.ts"
+      ]
+    },
+    {
+      "name": "SILICONFLOW_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
-        ".env.example"
+        ".env.example",
+        ".env.production.example"
       ],
       "sampleReferences": []
     },
@@ -4095,20 +5781,23 @@
       "name": "SKIP_CMS_DB",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 1,
+      "referencedIndirectly": false,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/cms-managed-content.ts"
+        "src/lib/cms-managed-content.ts",
+        "src/lib/language-prep/service.ts"
       ]
     },
     {
       "name": "SMOKE_BASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4123,6 +5812,7 @@
       "name": "SMS_PROVIDER",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
@@ -4139,6 +5829,7 @@
       "name": "SMS_PROVIDER_API_KEY",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -4156,6 +5847,7 @@
       "name": "SMS_PROVIDER_URL",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -4172,6 +5864,7 @@
       "name": "SMS_SENDER_ID",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4188,6 +5881,7 @@
       "name": "SMTP_FROM",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4205,6 +5899,7 @@
       "name": "SMTP_HOST",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4222,6 +5917,7 @@
       "name": "SMTP_PASSWORD",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4239,6 +5935,7 @@
       "name": "SMTP_PORT",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4256,6 +5953,7 @@
       "name": "SMTP_USER",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4275,6 +5973,7 @@
       "name": "STORAGE_POOL_C",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -4292,6 +5991,7 @@
       "name": "STORAGE_ROOT",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4306,6 +6006,7 @@
       "name": "STUN_SERVERS",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4320,6 +6021,7 @@
       "name": "SUBTITLE_REMOVER_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4334,6 +6036,7 @@
       "name": "SUBTITLE_REMOVER_MODEL_PATH",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4348,6 +6051,7 @@
       "name": "SUPER_RESOLUTION_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4362,6 +6066,7 @@
       "name": "TELEGRAM_BOT_TOKEN",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4380,6 +6085,7 @@
       "name": "TELEGRAM_WEBHOOK_SECRET",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4396,6 +6102,7 @@
       "name": "TELEPHONY_PROVIDER_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4410,6 +6117,7 @@
       "name": "TEST_DATABASE_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4424,6 +6132,7 @@
       "name": "TEST_FIXTURE_PASSWORD",
       "classification": "REFERENCED_FAIL_CLOSED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 2,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": false,
@@ -4439,6 +6148,7 @@
       "name": "THREECX_API_TOKEN",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4454,6 +6164,7 @@
       "name": "THREECX_API_URL",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4469,6 +6180,7 @@
       "name": "TIKTOK_CLIENT_KEY",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4484,6 +6196,7 @@
       "name": "TIKTOK_CLIENT_SECRET",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4499,6 +6212,7 @@
       "name": "TINYFISH_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4513,9 +6227,26 @@
       ]
     },
     {
+      "name": "TOGETHER_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "TRANSLATION_API_KEY",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4530,6 +6261,7 @@
       "name": "TRANSLATION_PROVIDER",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4544,6 +6276,7 @@
       "name": "TURN_CREDENTIAL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4558,6 +6291,7 @@
       "name": "TURN_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4572,6 +6306,7 @@
       "name": "TURN_USERNAME",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4586,6 +6321,7 @@
       "name": "TZ",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4601,6 +6337,7 @@
       "name": "UMAMI_API_KEY",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4615,6 +6352,7 @@
       "name": "UMAMI_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4629,6 +6367,7 @@
       "name": "UMAMI_WEBSITE_ID",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4640,9 +6379,94 @@
       ]
     },
     {
+      "name": "UNOROUTER_ALLOWED_MODELS",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/unorouter.ts"
+      ]
+    },
+    {
+      "name": "UNOROUTER_API_KEY",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/unorouter.ts"
+      ]
+    },
+    {
+      "name": "UNOROUTER_ENABLED",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/unorouter.ts"
+      ]
+    },
+    {
+      "name": "UNOROUTER_MODEL",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/ai-providers/unorouter.ts"
+      ]
+    },
+    {
+      "name": "UPSTAGE_API_KEY",
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": []
+    },
+    {
       "name": "VAULTWARDEN_ADMIN_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4657,6 +6481,7 @@
       "name": "VAULTWARDEN_ORG_ID",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4671,6 +6496,7 @@
       "name": "VAULTWARDEN_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4685,6 +6511,7 @@
       "name": "VAULTWARDEN_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4696,9 +6523,25 @@
       ]
     },
     {
+      "name": "VERCEL_ENV",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
       "name": "VIDEOCAPTIONER_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4713,6 +6556,7 @@
       "name": "VIDEOCAPTIONER_PATH",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4727,6 +6571,7 @@
       "name": "VIDEO_AGENT_API_URL",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4741,6 +6586,7 @@
       "name": "VIDEO_AGENT_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4755,6 +6601,7 @@
       "name": "VIDEO_STORAGE_BASE_URL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4769,6 +6616,7 @@
       "name": "VIDEO_STORAGE_BUCKET",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4783,6 +6631,7 @@
       "name": "VIDEO_STORAGE_PROVIDER",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4797,6 +6646,7 @@
       "name": "VIDEO_STORAGE_REGION",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4811,6 +6661,7 @@
       "name": "VSR_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -4822,9 +6673,28 @@
       ]
     },
     {
+      "name": "WEBHOOK_PRIVATE_HOST_ALLOWLIST",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example",
+        ".env.production.example"
+      ],
+      "sampleReferences": [
+        "src/lib/webhooks/transport.ts"
+      ]
+    },
+    {
       "name": "WEBRTC_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4839,8 +6709,9 @@
       "name": "WHATSAPP_ACCESS_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 6,
-      "failsClosedWhenMissing": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
@@ -4849,15 +6720,14 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-cloud-api.ts",
-        "src/lib/whatsapp-inbound-media.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
       "name": "WHATSAPP_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4873,21 +6743,23 @@
       "name": "WHATSAPP_API_VERSION",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/whatsapp-inbound-media.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
       "name": "WHATSAPP_APP_SECRET",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 5,
+      "referencedIndirectly": false,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -4897,15 +6769,16 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/ucc/webhooks/whatsapp/route.ts",
         "src/app/api/whatsapp/status/route.ts",
-        "src/app/api/whatsapp/webhook/route.ts"
+        "src/app/api/whatsapp/webhook/route.ts",
+        "src/lib/whatsapp-cloud-api.ts"
       ]
     },
     {
       "name": "WHATSAPP_BUSINESS_ACCOUNT_ID",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -4919,9 +6792,10 @@
     },
     {
       "name": "WHATSAPP_BUSINESS_PHONE",
-      "classification": "REFERENCED",
-      "referenced": true,
-      "referenceCount": 1,
+      "classification": "UNUSED",
+      "referenced": false,
+      "referencedIndirectly": false,
+      "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -4930,30 +6804,30 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": [
-        "src/lib/whatsapp-cloud-api.ts"
-      ]
+      "sampleReferences": []
     },
     {
       "name": "WHATSAPP_GRAPH_API_VERSION",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/whatsapp-inbound-media.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
       "name": "WHATSAPP_GRAPH_VERSION",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
-      "failsClosedWhenMissing": true,
+      "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
@@ -4962,14 +6836,15 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/lib/whatsapp-media-ingestion.ts"
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
       "name": "WHATSAPP_PHONE_NUMBER_ID",
       "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 4,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -4979,18 +6854,17 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-cloud-api.ts",
-        "src/lib/whatsapp-media.ts"
+        "src/lib/social/providers.ts"
       ]
     },
     {
       "name": "WHATSAPP_TOKEN",
-      "classification": "REFERENCED_WITH_FALLBACK",
+      "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 6,
-      "failsClosedWhenMissing": true,
-      "hasInlineFallback": true,
+      "referencedIndirectly": false,
+      "referenceCount": 2,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -4998,16 +6872,16 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/whatsapp/webhook/route.ts",
-        "src/lib/whatsapp-cloud-api.ts",
-        "src/lib/whatsapp-inbound-media.ts"
+        "src/lib/social/providers.ts",
+        "src/lib/whatsapp-media.ts"
       ]
     },
     {
       "name": "WHATSAPP_VERIFY_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referenceCount": 4,
+      "referencedIndirectly": false,
+      "referenceCount": 3,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -5017,15 +6891,16 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/app/api/crm/ucc/webhooks/whatsapp/route.ts",
         "src/app/api/whatsapp/status/route.ts",
-        "src/app/api/whatsapp/webhook/route.ts"
+        "src/app/api/whatsapp/webhook/route.ts",
+        "src/lib/whatsapp-webhook-handler.ts"
       ]
     },
     {
       "name": "WHISPER_LOCAL_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -5040,6 +6915,7 @@
       "name": "WHISPER_LOCAL_MODEL_PATH",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -5054,6 +6930,7 @@
       "name": "WHISPER_MODEL",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -5068,6 +6945,7 @@
       "name": "X",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -5082,6 +6960,7 @@
       "name": "X_BEARER_TOKEN",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -5097,6 +6976,7 @@
       "name": "X_CLIENT_ID",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -5112,6 +6992,7 @@
       "name": "X_CLIENT_SECRET",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -5127,6 +7008,7 @@
       "name": "X_CONSUMER_SECRET",
       "classification": "UNUSED",
       "referenced": false,
+      "referencedIndirectly": false,
       "referenceCount": 0,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -5138,10 +7020,28 @@
       "sampleReferences": []
     },
     {
+      "name": "YOUTUBE_API_KEY",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
       "name": "YOUTUBE_CLIENT_ID",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -5150,13 +7050,16 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
     },
     {
       "name": "YOUTUBE_CLIENT_SECRET",
-      "classification": "UNUSED",
-      "referenced": false,
-      "referenceCount": 0,
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
       "productionRequired": false,
@@ -5165,12 +7068,15 @@
         ".env.example",
         ".env.production.example"
       ],
-      "sampleReferences": []
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
     },
     {
       "name": "YOUTUBE_DL_ENABLED",
       "classification": "REFERENCED",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": false,
@@ -5182,9 +7088,27 @@
       ]
     },
     {
+      "name": "YOUTUBE_REDIRECT_URI",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/social/providers.ts"
+      ]
+    },
+    {
       "name": "YTDLP_PATH",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
+      "referencedIndirectly": false,
       "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
@@ -5197,11 +7121,12 @@
     },
     {
       "name": "ZAI_API_KEY",
-      "classification": "REFERENCED_WITH_FALLBACK",
+      "classification": "REFERENCED",
       "referenced": true,
-      "referenceCount": 5,
-      "failsClosedWhenMissing": true,
-      "hasInlineFallback": true,
+      "referencedIndirectly": false,
+      "referenceCount": 4,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -5210,8 +7135,8 @@
       ],
       "sampleReferences": [
         "scripts/ai-workforce/run-verification.ts",
-        "src/app/api/chat/route.ts",
-        "src/app/api/workforce/metrics/route.ts"
+        "src/app/api/workforce/metrics/route.ts",
+        "src/lib/ai.ts"
       ]
     }
   ]

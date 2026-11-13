@@ -17,6 +17,8 @@ export async function GET(request: Request) {
   try {
     const runs = await db.awfRun.findMany({
       where: {
+        // Encrypted owner chat is served only by the owner-only chat endpoint.
+        trigger: { not: 'OWNER_CHAT' },
         ...(seesEverything ? {} : { actorUserId: admission.actor.userId }),
         ...(url.searchParams.get('mode') ? { mode: String(url.searchParams.get('mode')) } : {}),
         ...(url.searchParams.get('status') ? { status: String(url.searchParams.get('status')) } : {}),

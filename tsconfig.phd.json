@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": ".phd-tmp/tsconfig.phd.tsbuildinfo"
+  },
+  "include": ["next-env.d.ts", "src/lib/phd/**/*.ts", "src/lib/db.ts", "src/lib/auth.ts"],
+  "exclude": ["node_modules", ".next", "prisma", "scripts"]
+}

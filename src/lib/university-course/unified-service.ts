@@ -3,7 +3,8 @@
 
 import { db } from '@/lib/db';
 import type { AuthContext } from '@/lib/auth-middleware';
-import { publicUniversityWhere, publicCourseWhere, publicUniversityIdentifierWhere, publicCourseIdentifierWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere, stripInternalFields } from '@/lib/public-catalog';
+import { hasCurrentScholarshipSourceVerification } from '@/lib/scholarships/status-engine';
+import { publicUniversityWhere, publicCourseWhere, publicUniversityIdentifierWhere, publicCourseIdentifierWhere, publicIntakeWhere, publicRequirementWhere, publicScholarshipWhere, publicCrmScholarshipWhere, stripInternalFields } from '@/lib/public-catalog';
 
 // Information not verified message per spec
 export const NOT_VERIFIED_MSG = "Information not currently verified. Please check with an ALO Education counselor.";
@@ -122,8 +123,16 @@ export async function getRelatedContent(
       const where: any = { ...publicScholarshipWhere() };
       if (country) where.country = country;
       if (universityId) where.universityId = universityId;
-      const scholarships = await db.scholarship.findMany({ where, take: 3, select: { id: true, slug: true, name: true, country: true } }).catch(() => []);
-      scholarships.forEach((s: any) => {
+      const scholarships = await db.scholarship.findMany({
+        where,
+        take: 3,
+        select: { id: true, slug: true, name: true, country: true, verificationStatus: true, lastVerifiedAt: true, officialSourceUrl: true },
+      }).catch(() => []);
+      scholarships.filter((s: any) => hasCurrentScholarshipSourceVerification({
+        verificationStatus: s.verificationStatus,
+        lastVerifiedAt: s.lastVerifiedAt,
+        officialSourceUrl: s.officialSourceUrl,
+      })).forEach((s: any) => {
         related.push({ id: s.id, type: 'scholarship', slug: s.slug, title: s.name, subtitle: s.country, relation: country ? 'same_destination' : 'same_tag', score: 0.65 });
       });
     }
@@ -162,7 +171,7 @@ export async function getUniversityBySlugDB(slug: string): Promise<any | null> {
       where,
       include: {
         courses: { where: publicCourseWhere(), take: 20, select: { courseId: true, courseTitle: true, slug: true, studyLevel: true, subjectArea: true, country: true } },
-        scholarshipRecords: { where: publicScholarshipWhere(), take: 10 },
+        scholarshipRecords: { where: publicCrmScholarshipWhere(), take: 10 },
         requirements: { where: publicRequirementWhere(), take: 10 },
         intakeFees: { where: publicIntakeWhere(), take: 20, orderBy: { intakeYear: 'desc' } },
         rankingRecords: { where: { verificationStatus: 'VERIFIED' }, take: 5, orderBy: { rankingYear: 'desc' } },
@@ -185,7 +194,7 @@ export async function getCourseBySlugDB(slug: string): Promise<any | null> {
         university: { select: { universityId: true, name: true, slug: true, country: true, city: true, website: true } },
         intakeFees: { where: publicIntakeWhere(), orderBy: { intakeYear: 'desc' }, take: 20 },
         requirements: { where: publicRequirementWhere(), take: 10 },
-        scholarshipRecords: { where: publicScholarshipWhere(), take: 10 },
+        scholarshipRecords: { where: publicCrmScholarshipWhere(), take: 10 },
       },
     });
     return course ? stripInternalFields(course) : null;
@@ -226,10 +235,14 @@ export async function getFaqsForPage(targetType: string, targetSlug: string, lim
 export async function getScholarshipBySlugDB(slug: string): Promise<any | null> {
   try {
     const scholarship = await db.scholarship.findFirst({
-      where: { slug, status: 'active' },
+      where: { slug, ...publicScholarshipWhere() },
       include: { faqs: { where: { status: 'active' }, orderBy: { sortOrder: 'asc' }, take: 10 } },
     });
-    return scholarship;
+    return scholarship && hasCurrentScholarshipSourceVerification({
+      verificationStatus: scholarship.verificationStatus,
+      lastVerifiedAt: scholarship.lastVerifiedAt,
+      officialSourceUrl: scholarship.officialSourceUrl,
+    }) ? scholarship : null;
   } catch (e) {
     console.error('getScholarshipBySlugDB error', e);
     return null;

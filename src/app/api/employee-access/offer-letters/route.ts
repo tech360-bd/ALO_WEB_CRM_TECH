@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { authenticateRequest, AuthContext, logAuditAction } from '@/lib/auth-middleware';
+import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
 import { analyzePostOfferRequirements, checkPostOfferGate } from '@/lib/applications/post-offer-requirements';
+import { PrivateApplicationDocumentError, resolveApplicationDocumentLink, sanitizeApplicationDocumentLink } from '@/lib/application-manager/private-document-link';
 
 // ============================================================================
 // /api/employee-access/offer-letters
@@ -12,135 +14,154 @@ import { analyzePostOfferRequirements, checkPostOfferGate } from '@/lib/applicat
 // Persists on the REAL schema model `ApplicationOffer` (table: application_offers).
 // ============================================================================
 
-const VALID_SOURCES = ['university_portal', 'university_email', 'agent_portal', 'api', 'upload', 'other_authorized'];
+const VALID_SOURCES = ['university_portal', 'university_email', 'agent_portal', 'api', 'upload', 'other_authorized'] as const;
+
+function isPartner(auth: AuthContext): boolean {
+  return Boolean(auth.partnerId || auth.userType.toLowerCase() === 'partner' || auth.roles.some((role) => role.toLowerCase().startsWith('partner')));
+}
+
+function canReadOfferLetters(auth: AuthContext): boolean {
+  const roles = auth.roles.map((role) => role.toLowerCase());
+  return ['super_admin', 'admin', 'application_manager', 'application_team', 'application_officer', 'visa_officer', 'counselor'].some((role) => roles.includes(role))
+    || auth.permissions.includes('application.view_offer')
+    || auth.permissions.includes('application.manage_offer');
+}
+
+function canManageOfferLetters(auth: AuthContext): boolean {
+  const roles = auth.roles.map((role) => role.toLowerCase());
+  return ['super_admin', 'admin', 'application_manager', 'application_team'].some((role) => roles.includes(role))
+    || auth.permissions.includes('application.manage_offer');
+}
 
 export async function GET(req: NextRequest) {
   try {
-    const authResult = await authenticateRequest(req);
-    if (authResult instanceof NextResponse) return authResult;
+    const auth = await authenticateRequest(req);
+    if (auth instanceof NextResponse) return auth;
+    if (!canReadOfferLetters(auth) || isPartner(auth)) return NextResponse.json({ success: false, error: 'Offer-letter access is not permitted.' }, { status: 403 });
 
-    const { searchParams } = new URL(req.url);
-    const applicationId = searchParams.get('applicationId');
-    // POST-OFFER REQUIREMENT SYSTEM (spec): after offer approval, analyze
-    // conditions and categorize MANDATORY / RECOMMENDED / OPTIONAL requirements.
-    const withRequirements = searchParams.get('withRequirements') === 'true';
-
-    const where: any = {};
-    if (applicationId) where.applicationId = applicationId;
-
-    const offers = await db.applicationOffer.findMany({ where, orderBy: { createdAt: 'desc' } }).catch(() => []);
-
-    if (withRequirements) {
-      const enriched = offers.map((o: any) => {
-        const requirements = analyzePostOfferRequirements(
-          typeof o.conditions === 'string' ? (() => { try { const p = JSON.parse(o.conditions); return Array.isArray(p) ? p : o.conditions; } catch { return o.conditions; } })() : o.conditions,
-        );
-        const completed = Array.isArray(o.conditionsCompleted) ? o.conditionsCompleted : [];
-        return {
-          ...o,
-          postOfferRequirements: requirements,
-          visaGate: checkPostOfferGate(requirements, completed, 'visa'),
-          paymentGate: checkPostOfferGate(requirements, completed, 'payment'),
-        };
-      });
-      return NextResponse.json({ success: true, offers: enriched });
+    const applicationId = req.nextUrl.searchParams.get('applicationId');
+    if (!applicationId) return NextResponse.json({ success: false, error: 'applicationId is required.' }, { status: 400 });
+    const app = await db.application.findUnique({ where: { id: applicationId } });
+    if (!app) return NextResponse.json({ success: false, error: 'Application not found.' }, { status: 404 });
+    const roles = auth.roles.map((role) => role.toLowerCase());
+    if (roles.includes('counselor') && !roles.some((role) => ['super_admin', 'admin', 'application_manager', 'application_team'].includes(role)) && app.counselorId !== auth.userId) {
+      return NextResponse.json({ success: false, error: 'Application is not assigned to this counselor.' }, { status: 403 });
     }
 
+    const withRequirements = req.nextUrl.searchParams.get('withRequirements') === 'true';
+    const records = await db.applicationOffer.findMany({ where: { applicationId }, orderBy: { createdAt: 'desc' } });
+    const offers = await Promise.all(records.map(async (offer) => {
+      const safe = { ...offer, offerLetterUrl: await sanitizeApplicationDocumentLink(db, app.studentId, offer.offerLetterUrl) };
+      if (!withRequirements) return safe;
+      const requirements = analyzePostOfferRequirements(
+        typeof offer.conditions === 'string' ? (() => { try { const parsed = JSON.parse(offer.conditions); return Array.isArray(parsed) ? parsed : offer.conditions; } catch { return offer.conditions; } })() : offer.conditions,
+      );
+      const completed = Array.isArray((offer as any).conditionsCompleted) ? (offer as any).conditionsCompleted : [];
+      return { ...safe, postOfferRequirements: requirements, visaGate: checkPostOfferGate(requirements, completed, 'visa'), paymentGate: checkPostOfferGate(requirements, completed, 'payment') };
+    }));
     return NextResponse.json({ success: true, offers });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (error) {
+    console.error('[employee-offer-letters] read failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Offer letters are temporarily unavailable.' }, { status: 503 });
   }
 }
+
+const offerUploadBodySchema = z.object({
+  applicationId: z.string().trim().min(1).max(191),
+  // Backward-compatible field name; must be a Document ID or the private
+  // /api/documents/:id/download path, never a public URL or filesystem path.
+  filePath: z.string().trim().min(1).max(1000),
+  universityName: z.string().trim().max(191).optional(),
+  courseName: z.string().trim().max(191).optional(),
+  campus: z.string().trim().max(191).optional(),
+  intake: z.string().trim().max(191).optional(),
+  offerType: z.string().trim().max(100).optional(),
+  conditions: z.string().max(10000).optional(),
+  receivedDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  receivedSource: z.enum(VALID_SOURCES).optional(),
+}).strict();
 
 export async function POST(req: NextRequest) {
   try {
     const authResult = await authenticateRequest(req);
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
-
-    const roles = auth.roles.map((r) => r.toLowerCase());
-    const isAppTeam = ['application_team', 'application_manager', 'super_admin'].includes(roles[0] || '') ||
-      roles.includes('application_manager') || roles.includes('application_team') || roles.includes('super_admin');
-    if (!isAppTeam) {
-      return NextResponse.json({ success: false, error: 'Application team/manager required' }, { status: 403 });
+    if (!canManageOfferLetters(auth) || isPartner(auth)) {
+      return NextResponse.json({ success: false, error: 'ALO application-team offer-management permission required.' }, { status: 403 });
     }
 
-    const body = await req.json();
-    const {
-      applicationId, filePath, universityName, courseName, campus, intake,
-      offerType, conditions, receivedDate, receivedSource,
-    } = body;
-    if (!applicationId || !filePath) {
-      return NextResponse.json({ success: false, error: 'applicationId and filePath required' }, { status: 400 });
-    }
-    if (receivedSource && !VALID_SOURCES.includes(receivedSource)) {
-      return NextResponse.json(
-        { success: false, error: `receivedSource must be one of: ${VALID_SOURCES.join(', ')} — provenance is mandatory` },
-        { status: 400 },
-      );
-    }
+    const parsed = offerUploadBodySchema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid offer-letter update.', details: parsed.error.flatten() }, { status: 400 });
+    const body = parsed.data;
 
-    // Version: ApplicationOffer is 1:1 with application; a replacement becomes
-    // the next documentVersion with the previous one kept in audit history.
-    const prior = await db.applicationOffer.findUnique({ where: { applicationId } }).catch(() => null);
-    if (prior && prior.status === 'VERIFIED') {
-      return NextResponse.json(
-        { success: false, code: 'VERIFIED_IMMUTABLE', error: 'A VERIFIED offer exists for this application; supersede it through the review workflow with a recorded reason.' },
-        { status: 409 },
-      );
-    }
-
-    const offer = await db.applicationOffer.upsert({
-      where: { applicationId },
-      create: {
-        applicationId,
-        offerLetterUrl: filePath,
-        universityName: universityName || '',
-        courseName: courseName || '',
-        campus: campus || '',
-        intake: intake || '',
-        offerType: offerType || '',
-        conditions: conditions || '',
-        offerDate: receivedDate || new Date().toISOString().slice(0, 10),
-        receivedSource: receivedSource || '',
-        receivedBy: auth.userId,
-        receivedAt: new Date(),
-        documentVersion: 1,
-        createdBy: auth.userId,
-        status: 'PENDING',
-      },
-      update: {
-        offerLetterUrl: filePath,
-        universityName: universityName || '',
-        courseName: courseName || '',
-        campus: campus || '',
-        intake: intake || '',
-        offerType: offerType || '',
-        conditions: conditions || '',
-        offerDate: receivedDate || new Date().toISOString().slice(0, 10),
-        receivedSource: receivedSource || '',
-        receivedBy: auth.userId,
-        receivedAt: new Date(),
-        documentVersion: (prior?.documentVersion || 0) + 1,
-        status: 'PENDING',
-      },
-    });
-
-    await logAuditAction(auth, prior ? 'OFFER_LETTER_SUPERSEDED' : 'OFFER_LETTER_CREATED', 'ApplicationOffer', offer.id, {
-      applicationId,
-      universityName: universityName || '',
-      documentVersion: offer.documentVersion,
-      receivedSource: receivedSource || '',
+    const result = await db.$transaction(async (tx) => {
+      const app = await tx.application.findUnique({ where: { id: body.applicationId } });
+      if (!app) throw Object.assign(new Error('Application not found.'), { code: 'APPLICATION_NOT_FOUND' });
+      const prior = await tx.applicationOffer.findUnique({ where: { applicationId: body.applicationId } });
+      if (prior?.status === 'VERIFIED') throw Object.assign(new Error('A VERIFIED offer is immutable; use the authorized supersede/review workflow.'), { code: 'VERIFIED_IMMUTABLE' });
+      const privateLink = await resolveApplicationDocumentLink(tx, app.studentId, body.filePath);
+      const documentVersion = (prior?.documentVersion || 0) + 1;
+      const offer = await tx.applicationOffer.upsert({
+        where: { applicationId: body.applicationId },
+        create: {
+          applicationId: body.applicationId,
+          offerLetterUrl: privateLink,
+          universityName: body.universityName || '',
+          courseName: body.courseName || '',
+          campus: body.campus || '',
+          intake: body.intake || '',
+          offerType: body.offerType || '',
+          conditions: body.conditions || '',
+          offerDate: body.receivedDate || new Date().toISOString().slice(0, 10),
+          receivedSource: body.receivedSource || '',
+          receivedBy: auth.userId,
+          receivedAt: new Date(),
+          documentVersion: documentVersion,
+          createdBy: auth.userId,
+          status: 'PENDING',
+        },
+        update: {
+          offerLetterUrl: privateLink,
+          universityName: body.universityName || '',
+          courseName: body.courseName || '',
+          campus: body.campus || '',
+          intake: body.intake || '',
+          offerType: body.offerType || '',
+          conditions: body.conditions || '',
+          offerDate: body.receivedDate || new Date().toISOString().slice(0, 10),
+          receivedSource: body.receivedSource || '',
+          receivedBy: auth.userId,
+          receivedAt: new Date(),
+          documentVersion,
+          status: 'PENDING',
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          userId: auth.userId,
+          action: prior ? 'OFFER_LETTER_SUPERSEDED' : 'OFFER_LETTER_CREATED',
+          resource: 'ApplicationOffer',
+          resourceId: offer.id,
+          studentId: app.studentId,
+          actorRole: auth.roles[0] || '',
+          details: JSON.stringify({ applicationId: body.applicationId, documentVersion, receivedSource: body.receivedSource || '', linkedPrivateDocument: true }),
+        },
+      });
+      return { offer, prior };
     });
 
     return NextResponse.json({
       success: true,
-      data: offer,
-      message: prior
-        ? `Offer re-recorded as v${offer.documentVersion} (previous version kept in audit history) — pending verification`
-        : 'Offer recorded with full provenance — pending verification',
+      data: result.offer,
+      message: result.prior
+        ? `Offer re-recorded as v${result.offer.documentVersion}; previous private document record remains intact — pending verification.`
+        : 'Offer recorded with verified private-document linkage — pending human verification.',
     });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    if (error instanceof PrivateApplicationDocumentError) return NextResponse.json({ success: false, error: error.message, code: 'PRIVATE_DOCUMENT_REQUIRED' }, { status: 400 });
+    if (error?.code === 'APPLICATION_NOT_FOUND') return NextResponse.json({ success: false, error: error.message }, { status: 404 });
+    if (error?.code === 'VERIFIED_IMMUTABLE') return NextResponse.json({ success: false, error: error.message, code: error.code }, { status: 409 });
+    console.error('[employee-offer-letters] update failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Offer letter could not be recorded.' }, { status: 503 });
   }
 }

@@ -7,7 +7,7 @@
  */
 
 export const LEAD_SUBMIT_FAILURE_MESSAGE =
-  'We could not save your request right now. Please try again, or message us on WhatsApp.';
+  'We could not save your request right now. Please try again or use the Contact page.';
 
 export type LeadSubmitResult = { ok: true; message: string } | { ok: false; message: string };
 
@@ -24,7 +24,7 @@ export async function submitLanguagePrepLead(
     const data: unknown = await res.json().catch(() => null);
     const success = typeof data === 'object' && data !== null && (data as { success?: unknown }).success === true;
     if (res.ok && success) {
-      return { ok: true, message: 'Request received. Our team will contact you shortly.' };
+      return { ok: true, message: 'Your enquiry was received for staff review.' };
     }
     return { ok: false, message: LEAD_SUBMIT_FAILURE_MESSAGE };
   } catch {

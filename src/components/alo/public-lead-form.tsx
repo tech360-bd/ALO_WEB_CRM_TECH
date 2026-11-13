@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Icon } from "./shared";
 import { COUNTRIES, LEAD_SOURCES } from "@/lib/alo-types";
+import { trackAnalyticsEvent } from "@/lib/analytics/client";
+import { collectAttributionPayload, rememberEntryAttribution } from "@/lib/analytics/attribution-payload";
+import { ALO_PUBLIC_CONTACT_CTA } from "@/lib/alo-site-info";
 
 interface PublicLeadFormProps {
   sourceTag?: string; // e.g. "UK country page", "University of Manchester page"
@@ -23,7 +27,8 @@ interface PublicLeadFormProps {
 const STUDY_LEVELS = ["Foundation", "Bachelor", "Top-up", "Pre-Masters", "Masters", "MBA", "PhD"];
 const INTAKES = ["January", "February", "April", "May", "July", "September", "October", "November"];
 
-export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, compact = false, title = "Start your journey in 60 seconds", subtitle = "Submit your details and an ALO counselor will reach out within 24 hours." }: PublicLeadFormProps) {
+export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, compact = false, title = "Request study-abroad guidance", subtitle = "Submit your enquiry for staff review. Response timing depends on current service availability." }: PublicLeadFormProps) {
+  const router = useRouter();
   const [form, setForm] = React.useState({
     fullName: "",
     email: "",
@@ -36,16 +41,43 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
     budget: "",
     englishScore: "",
     notes: "",
-    consent: true,
+    // Unchecked by default. A pre-ticked consent box is not consent — the
+    // visitor has to make an affirmative choice for the record to mean
+    // anything. It was previously `true` here AND never sent to the API, so the
+    // checkbox was decorative while appearing to grant permission.
+    consent: false,
   });
   const [loading, setLoading] = React.useState(false);
   const [result, setResult] = React.useState<{ ok: boolean; leadId?: string; duplicate?: boolean; message: string } | null>(null);
+  /**
+   * The attribution the visitor ARRIVED with, captured once. An application or
+   * enquiry journey can move the visitor across SPA routes before they submit;
+   * the campaign that acquired them must not be replaced by the route they
+   * happened to end on.
+   */
+  const entryAttribution = React.useRef(rememberEntryAttribution());
+
+  // `lead_form_start` fires the first time the visitor engages with the form,
+  // not on mount — a rendered form nobody touched is not a started form.
+  const startReported = React.useRef(false);
+  const reportFormStart = React.useCallback(() => {
+    if (startReported.current) return;
+    startReported.current = true;
+    trackAnalyticsEvent('lead_form_start', {
+      form_id: 'public-lead-form',
+      lead_source: sourceTag || 'public_website',
+      destination: preferredCountry || undefined,
+    }, { source: 'public-lead-form' });
+  }, [sourceTag, preferredCountry]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.fullName || !form.phone) return;
     setLoading(true);
     setResult(null);
+    // Prefer the remembered entry attribution; fall back to the current page in
+    // case the visitor deep-linked straight into a later step.
+    const attribution = entryAttribution.current ?? collectAttributionPayload();
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
@@ -64,16 +96,49 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           budget: form.budget,
           englishScore: form.englishScore,
           notes: form.notes,
+          // Only the affirmative opt-in is transmitted. Contact details alone
+          // are not consent, and the server records nothing unless this is true.
+          consent: form.consent,
+          ...(attribution ?? {}),
         }),
       });
       const data = await res.json();
       if (data.error) {
         setResult({ ok: false, message: data.error });
+        // The failure is measured too: a form that silently loses submissions
+        // is invisible in GA4 unless the error is an event.
+        trackAnalyticsEvent('lead_form_submit', {
+          form_id: 'public-lead-form',
+          success: false,
+          error_code: 'api_error',
+        }, { source: 'public-lead-form' });
       } else {
         setResult({ ok: true, leadId: data.lead?.leadId, duplicate: data.duplicate, message: data.message });
+        // `lead_reference` is ALO's own opaque reference code (LEAD-2026-XXXXX),
+        // not a name or contact detail — this is the join that makes the
+        // campaign -> lead -> application funnel traceable in GA4.
+        trackAnalyticsEvent('lead_form_submit', {
+          form_id: 'public-lead-form',
+          success: true,
+          lead_source: sourceTag || 'public_website',
+          lead_reference: data.lead?.leadId || '',
+          destination: form.preferredCountry || undefined,
+        }, { source: 'public-lead-form' });
+        // Submitting this form is a request for a counselor, which is the
+        // business conversion the marketing team actually reports on.
+        trackAnalyticsEvent('counselor_request', {
+          form_id: 'public-lead-form',
+          lead_source: sourceTag || 'public_website',
+          destination: form.preferredCountry || undefined,
+        }, { source: 'public-lead-form' });
       }
     } catch {
-      setResult({ ok: false, message: "Connection issue. Please try again or WhatsApp us at 01805020101." });
+      setResult({ ok: false, message: `Connection issue. Please try again or contact us via ${ALO_PUBLIC_CONTACT_CTA.label}: ${ALO_PUBLIC_CONTACT_CTA.href}.` });
+      trackAnalyticsEvent('lead_form_submit', {
+        form_id: 'public-lead-form',
+        success: false,
+        error_code: 'network',
+      }, { source: 'public-lead-form' });
     } finally {
       setLoading(false);
     }
@@ -81,22 +146,22 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
 
   if (result?.ok) {
     return (
-      <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50 p-6 text-center">
-        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-500 text-white">
+      <div className="rounded-2xl border-2 border-crm-success-border bg-crm-success-bg p-6 text-center">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[var(--alo-success)] text-white">
           <Icon name="Check" className="size-7" />
         </div>
-        <p className="mt-4 text-lg font-bold text-emerald-900">Welcome aboard!</p>
-        <p className="mt-1 text-sm text-emerald-800">{result.message}</p>
+        <p className="mt-4 text-lg font-bold text-crm-success-text">Enquiry received</p>
+        <p className="mt-1 text-sm text-crm-success-text">{result.message}</p>
         {result.leadId && (
-          <p className="mt-3 text-xs text-emerald-700">
+          <p className="mt-3 text-xs text-crm-success-text">
             Lead ID: <span className="font-mono font-bold">{result.leadId}</span>
           </p>
         )}
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-center">
-          <Button className="bg-[#0057B8] text-white hover:bg-[#0057B8]/90" onClick={() => { window.dispatchEvent(new CustomEvent("alo-navigate", { detail: { view: "student-dashboard" } })); }}>
-            Open Student Portal
+          <Button className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90" onClick={() => router.push("/application-process")}>
+            View Application Process
           </Button>
-          <Button variant="outline" className="border-emerald-400 text-emerald-700 hover:bg-emerald-100" onClick={() => setResult(null)}>
+          <Button variant="outline" className="border-[var(--alo-success)] text-crm-success-text hover:bg-crm-success-bg" onClick={() => setResult(null)}>
             Submit another lead
           </Button>
         </div>
@@ -105,20 +170,26 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
   }
 
   return (
-    <div className={cn("rounded-2xl border-2 border-[#0057B8]/20 bg-white p-6 alo-shadow", compact && "p-5")}>
+    <div className={cn("rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-white p-6 alo-shadow", compact && "p-5")}>
       <div className="mb-5">
-        <h3 className="text-lg font-bold text-[#0057B8]">{title}</h3>
+        <h3 className="text-lg font-bold text-[var(--alo-brand)]">{title}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
       </div>
-      <form onSubmit={submit} className="space-y-4">
+      <form
+        onSubmit={submit}
+        onFocus={reportFormStart}
+        // Focus does not bubble in the DOM but React normalises onFocus to a
+        // bubbling focusin, so a single handler covers every field.
+        className="space-y-4"
+      >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <Label className="text-xs font-semibold">Full Name <span className="text-[#E8501A]">*</span></Label>
+            <Label className="text-xs font-semibold">Full Name <span className="text-[var(--alo-cta)]">*</span></Label>
             <Input required value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} className="mt-1 h-10" placeholder="Your full name" />
           </div>
           <div>
-            <Label className="text-xs font-semibold">Mobile <span className="text-[#E8501A]">*</span></Label>
-            <Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-1 h-10" placeholder="+8801805020100" />
+            <Label className="text-xs font-semibold">Mobile <span className="text-[var(--alo-cta)]">*</span></Label>
+            <Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-1 h-10" placeholder="01XXXXXXXXX" />
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -169,18 +240,20 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="mt-1 min-h-[70px]" placeholder="Tell us about your goals, questions, or anything we should know." />
         </div>
         <label className="flex cursor-pointer items-start gap-2.5 text-xs text-muted-foreground">
-          <Checkbox checked={form.consent} onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })} className="mt-0.5 border-[#0057B8]/40 data-[state=checked]:bg-[#0057B8]" />
-          <span>I agree to be contacted by ALO Education via phone, WhatsApp, and email. My data is private, RBAC-protected, and audit-logged.</span>
+          <Checkbox checked={form.consent} onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })} className="mt-0.5 border-[var(--alo-brand)]/40 data-[state=checked]:bg-[var(--alo-brand)]" />
+          <span>
+            Optional: I agree to receive promotional updates from ALO Education by email or WhatsApp. I can withdraw this permission at any time. This choice is separate from the response to my enquiry.
+          </span>
         </label>
-        <Button type="submit" disabled={loading || !form.fullName || !form.phone} className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#E8501A]/90">
+        <Button type="submit" disabled={loading || !form.fullName || !form.phone} className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
           {loading ? (
             <><Icon name="Loader2" className="size-4 animate-spin" /> Submitting...</>
           ) : (
-            <><Icon name="Send" className="size-4" /> Submit & Start Journey</>
+            <><Icon name="Send" className="size-4" /> Submit Enquiry</>
           )}
         </Button>
         {result && !result.ok && (
-          <p className="text-center text-xs font-medium text-red-600">{result.message}</p>
+          <p className="text-center text-xs font-medium text-crm-danger-text">{result.message}</p>
         )}
       </form>
     </div>

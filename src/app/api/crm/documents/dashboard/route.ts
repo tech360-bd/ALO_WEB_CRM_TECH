@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth } from '@/lib/auth-middleware';
+import { canReadDocumentsByRole } from '@/lib/documents/document-access';
 
 export async function GET(request: NextRequest) {
   return withAuth(async (req, auth) => {
     try {
+      // This dashboard aggregates every student's document state; it previously
+      // ran under `withAuth` alone, so any signed-in account (including a student
+      // or partner portal identity) could read the whole platform's document KPIs.
+      if (!canReadDocumentsByRole(auth.roles)) {
+        return NextResponse.json(
+          { success: false, error: 'Your role cannot view the document dashboard.' },
+          { status: 403 },
+        );
+      }
       const documents = await db.portalStudentDocument.findMany({
+        where: { isArchived: false },
         take: 10,
         orderBy: { updatedAt: 'desc' }
       });

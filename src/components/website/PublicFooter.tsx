@@ -10,8 +10,8 @@
  *     (official ALO Education accounts only — see src/lib/alo-site-info.ts)
  *   • Destinations: UK | Australia | Canada | Ireland | New Zealand | USA | Dubai
  *   • Quick Links: Course Finder | Services | Language Prep | Scholarships
- *   • Company: About Us | Contact Us | Code of Conduct | Student Complaint
- *     Policy | AQF Compliance
+ *   • Company: About Us | Contact Us | Global Offices | Code of Conduct |
+ *     Student Complaint Policy | AQF Compliance
  *   • Contact block: Google location link, WhatsApp, Mobile, Email, Address
  *   • Decorative graduation-cap strip with three ALO brand colours, always moving
  *   • Bottom bar in ALO Orange: "© ALO Education. All rights reserved."
@@ -33,17 +33,17 @@ import {
   Youtube,
 } from 'lucide-react';
 import React from 'react';
-import { EnglishExamButton } from '@/components/website/EnglishExamCta';
 import {
   ALO_CONTACT,
   ALO_POLICY_LINKS,
   ALO_SOCIALS,
   ALO_TAGLINE,
 } from '@/lib/alo-site-info';
+import { ALO_BRAND_ALT, ALO_BRAND_ASSETS } from '@/lib/brand/brand-assets';
 
 /* ------------------------------------------------------------------ */
-/*  COLUMN CONTENT (defaults — Destinations/Quick Links/Company are    */
-/*  overridable by the Super Admin Virtual Editor, see useCmsFooter)   */
+/*  REQUIRED COLUMN CONTENT (CMS may append safe internal links after */
+/*  these entries; it cannot replace or reorder the brand requirements) */
 /* ------------------------------------------------------------------ */
 
 // Exact order required by the brand brief.
@@ -84,7 +84,7 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 /*  DECORATIVE CAP-ICON STRIP                                          */
 /*                                                                     */
 /*  Three ALO brand colours — Education Blue #0057B8, ALO Orange        */
-/*  #E8501A and Accent #FFB347 — drifting in opposite directions behind  */
+/*  #E8501A and Accent #C93D13 — drifting in opposite directions behind  */
 /*  the footer. Each row renders the same sequence of graduation caps    */
 /*  four times inside a `width: max-content` track and animates it by    */
 /*  exactly one sequence (-25%), so the loop is seamless and the strip   */
@@ -92,7 +92,7 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
 /*  aria-hidden and every animation stops for prefers-reduced-motion.    */
 /* ------------------------------------------------------------------ */
 
-const CAP_COLORS = ['#0057B8', '#E8501A', '#FFB347'] as const;
+const CAP_COLORS = ['#0057B8', '#E8501A', '#C93D13'] as const;
 
 /** One sequence of caps. Rendered CAP_SEQUENCE_COPIES times per row. */
 const CAP_SEQUENCE = [
@@ -189,12 +189,44 @@ function GraduationCapStrip() {
 
 /* ------------------------------------------------------------------ */
 /*  CMS-managed column content (Virtual Editor)                        */
-/*  /admin/website-cms → footer items override the constants above.    */
-/*  Nothing renders until an item is published, so the compiled         */
-/*  defaults in this file always describe the published footer.        */
+/*  /admin/website-cms → published internal links are appended after   */
+/*  the required entries above; external or unsafe links are rejected.  */
 /* ------------------------------------------------------------------ */
 
 interface FooterLink { label: string; href: string }
+
+const CMS_FOOTER_SECTIONS = ['destinations', 'quickLinks', 'companyLinks'] as const;
+const INTERNAL_LINK_ORIGIN = 'https://aloeducation.com';
+
+function isSafeInternalHref(href: string): boolean {
+  if (!href.startsWith('/') || href.startsWith('//') || href.includes('\\') || /[\u0000-\u001f\u007f]/.test(href)) {
+    return false;
+  }
+  try {
+    const parsed = new URL(href, INTERNAL_LINK_ORIGIN);
+    return parsed.origin === INTERNAL_LINK_ORIGIN && !parsed.username && !parsed.password;
+  } catch {
+    return false;
+  }
+}
+
+/** Required brand links remain first and cannot be replaced by CMS content. */
+function withRequiredLinks(required: FooterLink[], cmsLinks: FooterLink[]): FooterLink[] {
+  const requiredLabels = new Set(required.map((link) => link.label.trim().toLocaleLowerCase()));
+  const requiredHrefs = new Set(required.map((link) => link.href));
+  const seen = new Set<string>();
+  const extras = cmsLinks.filter((link) => {
+    const label = link.label.trim();
+    const href = link.href.trim();
+    const labelKey = label.toLocaleLowerCase();
+    const extraKey = `${labelKey}\u0000${href}`;
+    if (!label || label.length > 100 || href.length > 2048 || !isSafeInternalHref(href)) return false;
+    if (requiredLabels.has(labelKey) || requiredHrefs.has(href) || seen.has(extraKey)) return false;
+    seen.add(extraKey);
+    return true;
+  }).slice(0, 24);
+  return [...required, ...extras];
+}
 
 function useCmsFooterLinks() {
   const [links, setLinks] = React.useState<{
@@ -209,20 +241,26 @@ function useCmsFooterLinks() {
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => {
         if (cancelled || !j?.success || !Array.isArray(j.items) || j.items.length === 0) return;
-        const bySection: Record<string, FooterLink[]> = {};
+        const bySection: Record<(typeof CMS_FOOTER_SECTIONS)[number], FooterLink[]> = {
+          destinations: [],
+          quickLinks: [],
+          companyLinks: [],
+        };
         for (const item of j.items) {
-          const section = String(item.section || '');
-          const label = String(item.label || '');
-          const href = String((item.data as Record<string, unknown>)?.href ?? '');
-          if (!section || !label || !href) continue;
-          (bySection[section] ||= []).push({ label, href });
+          if (!item || typeof item !== 'object') continue;
+          const section = String(item.section || '') as (typeof CMS_FOOTER_SECTIONS)[number];
+          if (!CMS_FOOTER_SECTIONS.includes(section)) continue;
+          const label = String(item.label || '').trim();
+          const data = item.data && typeof item.data === 'object' ? item.data as Record<string, unknown> : {};
+          const href = String(data.href ?? '').trim();
+          if (!label || !href) continue;
+          bySection[section].push({ label, href });
         }
-        if (Object.keys(bySection).length === 0) return;
-        setLinks((prev) => ({
-          destinations: bySection.destinations?.length ? bySection.destinations : prev.destinations,
-          quickLinks: bySection.quickLinks?.length ? bySection.quickLinks : prev.quickLinks,
-          companyLinks: bySection.companyLinks?.length ? bySection.companyLinks : prev.companyLinks,
-        }));
+        setLinks({
+          destinations: withRequiredLinks(destinations, bySection.destinations),
+          quickLinks: withRequiredLinks(quickLinks, bySection.quickLinks),
+          companyLinks: withRequiredLinks(companyLinks, bySection.companyLinks),
+        });
       })
       .catch(() => {
         /* keep the compiled-in defaults */
@@ -243,12 +281,10 @@ function FooterColumn({
   title,
   links,
   className = '',
-  children,
 }: {
   title: string;
   links: FooterLink[];
   className?: string;
-  children?: React.ReactNode;
 }) {
   return (
     <nav aria-label={title} className={className}>
@@ -267,7 +303,6 @@ function FooterColumn({
             </Link>
           </li>
         ))}
-        {children}
       </ul>
     </nav>
   );
@@ -279,7 +314,6 @@ function FooterColumn({
 
 export default function PublicFooter() {
   const { destinations: destLinks, quickLinks: quickL, companyLinks: companyL } = useCmsFooterLinks();
-  const year = new Date().getFullYear();
 
   return (
     <footer id="alo-public-footer" className="mt-auto w-full bg-white">
@@ -292,8 +326,8 @@ export default function PublicFooter() {
           <div className="flex flex-col gap-5 lg:col-span-5">
             <Link href="/" className="flex items-start gap-3" aria-label={`ALO Education — ${ALO_TAGLINE}`}>
               <img
-                src="/images/landing/Copy of logo.webp"
-                alt=""
+                src={ALO_BRAND_ASSETS.logo}
+                alt={ALO_BRAND_ALT.logo}
                 className="h-11 w-auto"
                 width={44}
                 height={44}
@@ -329,29 +363,28 @@ export default function PublicFooter() {
                   </a>
                 </span>
               </li>
-              <li className="flex items-start gap-2.5">
-                <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
-                <span className="text-alo-text-secondary">
-                  <span className="font-semibold text-alo-text">WhatsApp: </span>
-                  <a
-                    href={ALO_CONTACT.whatsappHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-alo-brand hover:text-alo-cta"
-                  >
-                    {ALO_CONTACT.whatsappDisplay}
-                  </a>
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
-                <span className="text-alo-text-secondary">
-                  <span className="font-semibold text-alo-text">Mobile: </span>
-                  <a href={ALO_CONTACT.mobileHref} className="font-medium text-alo-brand hover:text-alo-cta">
-                    {ALO_CONTACT.mobileDisplay}
-                  </a>
-                </span>
-              </li>
+              {ALO_CONTACT.hasWhatsApp && (
+                <li className="flex items-start gap-2.5">
+                  <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                  <span className="text-alo-text-secondary">
+                    <span className="font-semibold text-alo-text">WhatsApp: </span>
+                    <a href={ALO_CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" className="font-medium text-alo-brand hover:text-alo-cta">
+                      {ALO_CONTACT.whatsappDisplay}
+                    </a>
+                  </span>
+                </li>
+              )}
+              {ALO_CONTACT.hasContactPhone && (
+                <li className="flex items-start gap-2.5">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                  <span className="text-alo-text-secondary">
+                    <span className="font-semibold text-alo-text">Mobile: </span>
+                    <a href={ALO_CONTACT.mobileHref} className="font-medium text-alo-brand hover:text-alo-cta">
+                      {ALO_CONTACT.mobileDisplay}
+                    </a>
+                  </span>
+                </li>
+              )}
               <li className="flex items-start gap-2.5">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
                 <span className="text-alo-text-secondary">
@@ -408,15 +441,7 @@ export default function PublicFooter() {
             title="Quick Links"
             links={quickL}
             className="lg:col-span-2"
-          >
-            <li>
-              <EnglishExamButton
-                location="footer"
-                label="English Test"
-                className="text-[13px] font-medium text-alo-text-secondary transition-colors hover:text-alo-brand focus-visible:text-alo-brand focus-visible:outline-none"
-              />
-            </li>
-          </FooterColumn>
+          />
           <FooterColumn
             title="Company"
             links={companyL}
@@ -428,13 +453,10 @@ export default function PublicFooter() {
       {/* Decorative moving cap-icon strip — three ALO brand colours */}
       <GraduationCapStrip />
 
-      {/* Bottom bar — ALO Orange #E8501A.
-          Text is near-black rather than white on purpose: white on #E8501A is
-          2.94:1, which fails WCAG AA for both body and large text, while black
-          on #E8501A is ~7:1. Same brand colour, readable for everyone. */}
-      <div className="bg-alo-cta py-4 text-black">
+      {/* Bottom bar — ALO Orange #E8501A. Black text preserves strong contrast on the required brand orange. */}
+      <div className="bg-alo-cta py-4 text-white">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-xs font-medium sm:flex-row sm:px-6 lg:px-8">
-          <p className="font-heading font-bold tracking-wide">© {year} ALO Education. All rights reserved.</p>
+          <p className="font-heading font-bold tracking-wide">© ALO Education. All rights reserved.</p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 sm:justify-end">
             <Link href="/privacy-policy" className="transition-colors hover:text-black/60">Privacy</Link>
             <span aria-hidden="true">·</span>

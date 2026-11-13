@@ -6,7 +6,7 @@
  * These assertions guard the pure decision functions that every runtime,
  * tool call and memory access depends on.
  */
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // This adversarial suite tests pure permission and input-screening functions;
 // data-backed memory tools are not invoked here.
@@ -14,7 +14,8 @@ vi.mock('@/lib/db', () => ({ db: {} }));
 import { detectInjection, redactDeep, redactSecrets, screenFileInput, screenForInjection, screenToolArguments } from '@/lib/ai-workforce/security';
 import { AWF_CAPABILITIES, SUPER_ADMIN_ONLY, can, capabilitiesFor, normalizeRole, canInvokeAgent } from '@/lib/ai-workforce/rbac';
 import { DEFAULT_MEMORY_POLICY, evaluateMemoryAccess, parseMemoryPolicy } from '@/lib/ai-workforce/memory';
-import type { ActorContext } from '@/lib/ai-workforce/types';
+import type { ActorContext, GatewayRequest } from '@/lib/ai-workforce/types';
+import { executeOnRuntime, isCloudRuntime, type RuntimeDefinition } from '@/lib/ai-workforce/runtimes';
 
 const actor = (role: string, userId = 'u1'): ActorContext => ({ userId, role: role as ActorContext['role'] });
 
@@ -179,5 +180,37 @@ describe('memory policy', () => {
     const otherDecision = evaluateMemoryAccess({ scope: 'USER', ownerKey: 'u1', key: 'k', actor: actor('COUNSELOR', 'u2'), agentSlug: 'a', policy }, 'READ');
     expect(ownDecision.allowed).toBe(true);
     expect(otherDecision.allowed).toBe(false);
+  });
+});
+
+
+afterEach(() => vi.unstubAllEnvs());
+
+describe('AI Workforce cloud-runtime enforcement', () => {
+  const runtime = (overrides: Partial<RuntimeDefinition> = {}): RuntimeDefinition => ({
+    runtimeKey: 'test-runtime', name: 'Test runtime', provider: 'local-openai', model: 'test-model',
+    endpoint: 'https://remote.example.test/v1/chat/completions', tier: 1, kind: 'LOCAL_LLM',
+    contextTokens: 4096, maxConcurrency: 1, requiresApiKey: false, isPaidService: false,
+    enabled: true, notes: '', ...overrides,
+  });
+  const request: GatewayRequest = { task: 'qa.validate', instructions: 'test', input: {}, correlationId: 'test-correlation' };
+
+  it('classifies a public endpoint as cloud even when the caller labels it local and unpaid', async () => {
+    vi.stubEnv('PAID_AI_API_ALLOWED', 'false');
+    const forgedLocal = runtime({ endpoint: 'https://api.groq.com/openai/v1/chat/completions' });
+    expect(isCloudRuntime(forgedLocal)).toBe(true);
+    await expect(executeOnRuntime(forgedLocal, request, 'a JSON object')).rejects.toThrow(/AWF_CLOUD_AI_DISABLED/);
+  });
+
+  it('does not route confidential requests to a cloud runtime even after owner cloud approval', async () => {
+    vi.stubEnv('PAID_AI_API_ALLOWED', 'true');
+    const cloud = runtime({ kind: 'OPTIONAL_CLOUD_LLM', provider: 'groq', isPaidService: true });
+    expect(isCloudRuntime(cloud)).toBe(true);
+    await expect(executeOnRuntime(cloud, { ...request, confidential: true }, 'a JSON object')).rejects.toThrow(/AWF_CONFIDENTIAL_CLOUD_BLOCKED/);
+  });
+
+  it('accepts a configured local loopback endpoint without cloud approval', () => {
+    const local = runtime({ endpoint: 'http://127.0.0.1:11434/v1/chat/completions' });
+    expect(isCloudRuntime(local)).toBe(false);
   });
 });

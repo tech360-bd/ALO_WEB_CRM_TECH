@@ -100,9 +100,9 @@ const KPI_ICONS: Record<string, React.ElementType> = {
 };
 
 const ALERT_STYLES: Record<DashboardAlert['severity'], { border: string; label: string }> = {
-  error: { border: 'border-red-200 bg-red-50', label: 'High' },
-  warning: { border: 'border-amber-200 bg-amber-50', label: 'Medium' },
-  success: { border: 'border-emerald-200 bg-emerald-50', label: 'OK' },
+  error: { border: 'border-crm-danger-border bg-crm-danger-bg', label: 'High' },
+  warning: { border: 'border-crm-warning-border bg-crm-warning-bg', label: 'Medium' },
+  success: { border: 'border-crm-success-border bg-crm-success-bg', label: 'OK' },
 };
 
 function formatTimestamp(value?: string | null): string {
@@ -171,8 +171,8 @@ export default function CrmAdminDashboard() {
       </div>
 
       {state.error && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
               <p className="font-medium">{state.error}</p>
@@ -265,7 +265,7 @@ export default function CrmAdminDashboard() {
             <Card className="border-alo-border bg-white">
               <CardHeader>
                 <CardTitle className="text-alo-text flex items-center gap-2 text-base">
-                  <AlertTriangle className="text-amber-600 h-4 w-4" />
+                  <AlertTriangle className="text-crm-warning-text h-4 w-4" />
                   Alerts
                 </CardTitle>
               </CardHeader>
@@ -281,7 +281,7 @@ export default function CrmAdminDashboard() {
                         className={`flex items-center justify-between rounded-lg border p-3 ${style.border}`}
                       >
                         <p className="text-alo-text truncate text-xs">{alert.message}</p>
-                        <Badge variant="outline" className="ml-2 shrink-0 text-[10px]">
+                        <Badge variant="outline" className="ml-2 shrink-0 text-[11px]">
                           {style.label}
                         </Badge>
                       </div>
@@ -359,7 +359,7 @@ export default function CrmAdminDashboard() {
                       className="border-alo-border flex flex-wrap items-center justify-between gap-2 border-b pb-2 last:border-0"
                     >
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge variant="outline" className="text-[11px]">
                           {entry.action.replace(/_/g, ' ')}
                         </Badge>
                         <span className="text-alo-text-muted text-xs">

@@ -6,10 +6,19 @@ import { getRequestIp, issueEmailOtp } from '@/lib/auth/email-otp';
 import { allocateIdentifier } from '@/lib/identity/student-id';
 import { createRegistrationLead } from '@/lib/crm/registration-lead';
 
+// Acquisition attribution forwarded by the registration form. Bounded to the
+// VARCHAR(191) the migration created, and `.strict()` still rejects every other
+// unknown key, so this cannot be used to set a control field.
+const attributionField = z.string().trim().max(191).optional();
 const schema = z.object({
   name: z.string().trim().min(1).max(191), email: z.string().trim().max(191).pipe(z.email()).transform(s => s.toLowerCase()),
   password: z.string().min(8).max(200), phone: z.string().trim().max(40).optional(),
   portalType: z.enum(['student', 'partner']),
+  attribution: z.object({
+    landingPage: attributionField, referrer: attributionField, visitorId: attributionField,
+    utmSource: attributionField, utmMedium: attributionField, utmCampaign: attributionField,
+    utmContent: attributionField, utmTerm: attributionField, gclid: attributionField, fbclid: attributionField,
+  }).strict().optional(),
 }).strict();
 
 export async function POST(request: Request) {
@@ -32,7 +41,7 @@ export async function POST(request: Request) {
       if (p.portalType === 'student') {
         const studentId = await allocateIdentifier(tx, 'AE');
         const profile = await tx.portalStudentProfile.create({ data: { userId: user.id, studentId, fullName: p.name } });
-        const crm = await createRegistrationLead(tx, { domain: 'portal', userId: user.id, studentId, name: p.name, email: p.email, phone: p.phone || '' });
+        const crm = await createRegistrationLead(tx, { domain: 'portal', userId: user.id, studentId, name: p.name, email: p.email, phone: p.phone || '', attribution: p.attribution ?? null });
         // Lead counselor IDs are User IDs. Do NOT write them into the Portal
         // profile's untyped counselor field as if they were PortalUser IDs.
         await tx.portalNotification.create({ data: { userId: user.id, studentProfileId: profile.id,

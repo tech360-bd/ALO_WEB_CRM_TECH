@@ -1,59 +1,55 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
 import { authenticateStudentRequest } from '@/lib/student-auth';
+
+const schema = z.object({
+  question: z.string().trim().min(5).max(2000),
+  answer: z.string().trim().min(1).max(5000),
+  category: z.string().trim().max(80).optional(),
+}).strict();
 
 export async function POST(req: Request, context?: any) {
   try {
     const auth = await authenticateStudentRequest(req);
     if (auth instanceof NextResponse) return auth;
-
     const sessionId = context?.params?.sessionId;
-    const session = await db.aiInterviewSession.findUnique({ where: { id: sessionId } });
-    if (!session) return NextResponse.json({ success: false, error: 'Session not found' }, { status: 404 });
-    if (session.studentId !== auth.studentId) return NextResponse.json({ success: false, error: 'Cross-student blocked — IDOR blocked' }, { status: 403 });
+    if (typeof sessionId !== 'string' || !sessionId) return NextResponse.json({ success: false, error: 'Session ID required.' }, { status: 400 });
+    const session = await db.aiInterviewSession.findFirst({ where: { id: sessionId, studentId: auth.studentId } });
+    if (!session) return NextResponse.json({ success: false, error: 'Interview practice session not found.' }, { status: 404 });
+    if (session.status !== 'in_progress') return NextResponse.json({ success: false, error: 'Interview practice session is not accepting answers.' }, { status: 409 });
+    const parsed = schema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid interview response.', details: parsed.error.flatten() }, { status: 400 });
 
-    const body = await req.json();
-    const { question, answer, followUp, score, feedback, audioUrl, videoUrl, transcript } = body;
+    const transcriptBase = (() => {
+      try {
+        const value = JSON.parse(session.transcript || '{}');
+        return value && typeof value === 'object' ? value : {};
+      } catch {
+        return {};
+      }
+    })();
+    const answerEntry = { question: parsed.data.question, answer: parsed.data.answer, category: parsed.data.category || 'general', recordedAt: new Date().toISOString() };
+    const transcript = { ...transcriptBase, answers: [...(Array.isArray(transcriptBase.answers) ? transcriptBase.answers : []), answerEntry] };
+    const flags = parsed.data.answer.trim().length < 40 ? ['short_response_for_practice'] : [];
 
-    if (!answer) return NextResponse.json({ success: false, error: 'Answer required — AI must ask naturally one question at a time wait for answer — understand Bangladeshi English accents broken English Banglish pauses incomplete pronunciation non-native patterns — do NOT penalize Bangladeshi accent — evaluate meaning/clarity/consistency/relevance/confidence/understanding rather than accent alone' }, { status: 400 });
-
-    // AI detects incomplete/contradictions/memorized/weak
-    const flags: string[] = [];
-    if (answer.length < 20) flags.push('incomplete');
-    if (answer.toLowerCase().includes('as an ai')) flags.push('memorized suspected');
-    if (answer.split(' ').length < 8) flags.push('weak explanation');
-
-    const recorded = await db.aiInterviewAnswer.create({
-      data: {
-        sessionId,
-        question: question || '',
-        answer: answer || '',
-        followUp: followUp || '',
-        score: score || 0,
-        feedback: feedback || '',
-        audioUrl: audioUrl || '',
-        videoUrl: videoUrl || '',
-        transcript: transcript || answer,
-      } as any,
+    const saved = await db.$transaction(async (tx) => {
+      const recorded = await tx.aiInterviewAnswer.create({
+        data: { sessionId, question: parsed.data.question, answer: parsed.data.answer, transcript: parsed.data.answer, score: 0, feedback: 'Automated assessment is not enabled; ask an officer to review this practice response.', followUp: '' },
+        select: { id: true, sessionId: true, question: true, answer: true, createdAt: true },
+      });
+      await tx.aiInterviewSession.update({ where: { id: sessionId }, data: { transcript: JSON.stringify(transcript) } });
+      await tx.studentEvent.create({
+        data: { studentId: auth.studentId, eventType: 'VISA_AI_INTERVIEW_ANSWER', payload: JSON.stringify({ sessionId, answerId: recorded.id, category: answerEntry.category, answerLength: parsed.data.answer.length, flags }) },
+      });
+      await tx.timelineEvent.create({
+        data: { studentId: auth.studentId, stage: 'VISA_AI_INTERVIEW_ANSWER', title: 'Interview practice response saved.', description: 'Response saved privately for the student. No automated assessment was generated.', actor: auth.studentId },
+      });
+      return recorded;
     });
 
-    await db.timelineEvent.create({
-      data: {
-        studentId: auth.studentId,
-        stage: 'VISA_AI_INTERVIEW_ANSWER',
-        title: `AI interview answer recorded — session ${sessionId} — flags ${flags.join(', ') || 'none'}`,
-        description: `Q: ${question || ''} — A: ${answer.substring(0, 200)} — Student practice AI Q-by-Q voice/text follow-up history feedback retry progress understand non-native no accent penalty — reuse existing video/voice store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({
-      success: true,
-      data: recorded,
-      flags,
-      nextQuestionHint: 'AI must ask naturally one question at a time wait for answer ask relevant follow-up detect incomplete answers identify contradictions memorized answers weak explanations unclear funding weak course/university/future plan refusal gaps',
-      note: 'AI must ask naturally one question at a time wait for answer ask relevant follow-up detect incomplete answers identify contradictions memorized answers weak explanations — understand Bangladeshi English accents broken English Banglish pauses incomplete pronunciation — do NOT penalize Bangladeshi accent — evaluate meaning/clarity/consistency/relevance/confidence',
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    return NextResponse.json({ success: true, data: saved, flags, assessmentStatus: 'human_review_required' }, { status: 201, headers: { 'Cache-Control': 'private, no-store' } });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Interview response could not be saved.' }, { status: 503 });
   }
 }

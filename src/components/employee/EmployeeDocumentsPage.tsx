@@ -47,16 +47,16 @@ interface LoadState {
 }
 
 const STATUS_META: Record<string, { label: string; cls: string }> = {
-  pending: { label: 'Pending review', cls: 'bg-amber-100 text-amber-800 border-amber-200' },
-  pending_review: { label: 'Pending review', cls: 'bg-amber-100 text-amber-800 border-amber-200' },
-  approved: { label: 'Approved', cls: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
-  rejected: { label: 'Rejected', cls: 'bg-red-100 text-red-700 border-red-200' },
+  pending: { label: 'Pending review', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  pending_review: { label: 'Pending review', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  approved: { label: 'Approved', cls: 'bg-crm-success-bg text-crm-success-text border-crm-success-border' },
+  rejected: { label: 'Rejected', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
   needs_update: { label: 'Needs update', cls: 'bg-sky-100 text-sky-700 border-sky-200' },
 };
 
 function statusBadge(status: string) {
-  const meta = STATUS_META[status] || { label: status || 'Unknown', cls: 'bg-slate-100 text-slate-600' };
-  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+  const meta = STATUS_META[status] || { label: status || 'Unknown', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
+  return <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>{meta.label}</Badge>;
 }
 
 function formatBytes(size?: number): string {
@@ -185,8 +185,8 @@ export default function EmployeeDocumentsPage() {
   };
 
   const errorBlock = (state: LoadState, onRetry: () => void) => (
-    <Card className="border-red-200 bg-red-50">
-      <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+    <Card className="border-crm-danger-border bg-crm-danger-bg">
+      <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
         <div>
           <p className="font-medium">{state.error}</p>
@@ -229,8 +229,8 @@ export default function EmployeeDocumentsPage() {
       </div>
 
       {actionError && (
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-red-700">
+        <Card className="border-crm-danger-border bg-crm-danger-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-danger-text">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <p className="font-medium">{actionError}</p>
           </CardContent>
@@ -293,7 +293,7 @@ export default function EmployeeDocumentsPage() {
                             ) : null}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-[11px]">
                               {document.category || 'uncategorised'}
                             </Badge>
                           </TableCell>

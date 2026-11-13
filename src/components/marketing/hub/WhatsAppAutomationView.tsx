@@ -105,18 +105,18 @@ interface LoadState {
 const ALL = '__all__';
 
 const PRIORITY_CONFIG: Record<string, { label: string; cls: string }> = {
-  high: { label: 'High', cls: 'bg-red-100 text-red-700 border-red-200' },
-  medium: { label: 'Medium', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
-  low: { label: 'Low', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
-  normal: { label: 'Normal', cls: 'bg-gray-100 text-gray-600 border-gray-200' },
-  urgent: { label: 'Urgent', cls: 'bg-red-100 text-red-700 border-red-200' },
+  high: { label: 'High', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
+  medium: { label: 'Medium', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  low: { label: 'Low', cls: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]' },
+  normal: { label: 'Normal', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]' },
+  urgent: { label: 'Urgent', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
 };
 
 const DOC_STATUS: Record<string, { label: string; cls: string }> = {
-  verified: { label: 'Verified', cls: 'bg-green-100 text-green-700 border-green-200' },
-  approved: { label: 'Approved', cls: 'bg-green-100 text-green-700 border-green-200' },
-  pending: { label: 'Pending review', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
-  rejected: { label: 'Rejected', cls: 'bg-red-100 text-red-700 border-red-200' },
+  verified: { label: 'Verified', cls: 'bg-crm-success-bg text-crm-success-text border-crm-success-border' },
+  approved: { label: 'Approved', cls: 'bg-crm-success-bg text-crm-success-text border-crm-success-border' },
+  pending: { label: 'Pending review', cls: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border' },
+  rejected: { label: 'Rejected', cls: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border' },
 };
 
 const INTEGRATION_LABELS: Record<string, string> = {
@@ -128,13 +128,13 @@ const INTEGRATION_LABELS: Record<string, string> = {
 function priorityBadge(priority?: string) {
   const key = (priority || 'normal').toLowerCase();
   const meta = PRIORITY_CONFIG[key] || PRIORITY_CONFIG.normal;
-  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+  return <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>{meta.label}</Badge>;
 }
 
 function docStatusBadge(status: string) {
   const key = (status || '').toLowerCase();
-  const meta = DOC_STATUS[key] || { label: status || 'Unknown', cls: 'bg-gray-100 text-gray-600' };
-  return <Badge variant="outline" className={`text-[10px] ${meta.cls}`}>{meta.label}</Badge>;
+  const meta = DOC_STATUS[key] || { label: status || 'Unknown', cls: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]' };
+  return <Badge variant="outline" className={`text-[11px] ${meta.cls}`}>{meta.label}</Badge>;
 }
 
 function formatTimestamp(value?: string | null): string {
@@ -445,7 +445,7 @@ export default function WhatsAppAutomationView() {
               <p className="text-muted-foreground text-xs">SLA overdue</p>
               <p className="text-2xl font-bold">{overdueCount}</p>
             </div>
-            <Clock className={`h-5 w-5 ${overdueCount > 0 ? 'text-red-600' : 'text-muted-foreground'}`} />
+            <Clock className={`h-5 w-5 ${overdueCount > 0 ? 'text-crm-danger-text' : 'text-muted-foreground'}`} />
           </CardContent>
         </Card>
       </div>
@@ -551,7 +551,7 @@ export default function WhatsAppAutomationView() {
                             </TableCell>
                             <TableCell>{priorityBadge(thread.priority)}</TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="text-[10px]">
+                              <Badge variant="outline" className="text-[11px]">
                                 {thread.status || 'unknown'}
                               </Badge>
                             </TableCell>
@@ -700,7 +700,7 @@ export default function WhatsAppAutomationView() {
                               ) : null}
                             </TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="text-[10px]">
+                              <Badge variant="outline" className="text-[11px]">
                                 {document.category || 'uncategorised'}
                               </Badge>
                             </TableCell>
@@ -713,7 +713,7 @@ export default function WhatsAppAutomationView() {
                             <TableCell>
                               {docStatusBadge(document.status)}
                               {document.rejectionReason ? (
-                                <p className="text-muted-foreground mt-1 text-[10px]">
+                                <p className="text-muted-foreground mt-1 text-[11px]">
                                   {document.rejectionReason}
                                 </p>
                               ) : null}
@@ -797,7 +797,7 @@ export default function WhatsAppAutomationView() {
                                 </p>
                               </TableCell>
                               <TableCell>
-                                <Badge variant="outline" className="text-[10px]">
+                                <Badge variant="outline" className="text-[11px]">
                                   {conversation.status || 'unknown'}
                                 </Badge>
                               </TableCell>
@@ -874,7 +874,7 @@ export default function WhatsAppAutomationView() {
                   ).map(([key, label]) => (
                     <div key={key} className="flex items-center justify-between gap-2">
                       <span className="text-sm">{label}</span>
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-[11px]">
                         {INTEGRATION_LABELS[integration[key] || ''] || integration[key] || 'Unknown'}
                       </Badge>
                     </div>

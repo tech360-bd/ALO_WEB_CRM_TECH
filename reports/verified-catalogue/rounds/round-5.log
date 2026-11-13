@@ -1,0 +1,222 @@
+=== ROUND 5 (2026-10-29T03:24:39Z) ===
+Dataset: /home/user/ALO_WEB_CRM_TECH/data/verified-2027/dataset.json
+  id: alo-verified-2027-2028-cycle-2026-10-29
+  evidence: 30  universities: 10  courses: 8  course-months: 104
+  traversals: 10  research queue: 17
+  errors: 0  warnings: 0
+
+DATASET VALID — safe to stage for Super Admin approval.
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:5:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/home/user/ALO_WEB_CRM_TECH[39m
+
+ [32m✓[39m tests/unit/verified-catalogue.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 51[2mms[22m[39m
+ [32m✓[39m tests/unit/verified-catalogue-monitoring.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m27 passed[39m[22m[90m (27)[39m
+[2m   Start at [22m 03:24:40
+[2m   Duration [22m 633ms[2m (transform 174ms, setup 65ms, import 173ms, tests 61ms, environment 0ms)[22m
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:5:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/home/user/ALO_WEB_CRM_TECH[39m
+
+ [32m✓[39m tests/unit/mysql-migration-compat.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m7 passed[39m[22m[90m (7)[39m
+[2m   Start at [22m 03:24:42
+[2m   Duration [22m 240ms[2m (transform 40ms, setup 34ms, import 27ms, tests 26ms, environment 0ms)[22m
+
+✔ dataset-validation: 30 evidence records, 104 course-months, 0 errors, 0 warnings
+✔ dry-run-writes-nothing: coverage rows before=0 after=0 (planned 104)
+✔ ingest-applied: created 104 course-months, 30 evidence rows, batch cmvszchww00ar3gnznmyyef8q
+✔ db-populated: 104 coverage rows persisted
+✔ nothing-auto-published: 104/104 rows staged as PENDING
+✔ approval-queue-integrated: 104 Super Admin queue items linked to course-months
+✔ evidence-hashes: 30 evidence rows with SHA-256 content hashes and HTTPS source URLs
+✔ idempotent-reingest: second run created 0, unchanged 104, total rows 104
+✔ rbac-denies-student: student actor cannot approve catalogue data
+✔ rbac-denial-wrote-nothing: 0 rows published after denied attempt
+✔ super-admin-approval: 104 approved, 104 published rows, 8 courses published
+✔ crm-intake-fees-written: 104 CrmCourseIntakeFee rows now serve the Course Finder
+✔ verified-available-fees: 15 intake rows marked VERIFIED (matches 15 verified available months)
+✔ published-fee-amounts: 5 published fees persisted verbatim, 0 mismatched
+✔ no-invented-fees: 10 verified intake(s) publish no fee; 0 were given a fee no official source states
+✔ courses-published: 7 courses published (only those with at least one VERIFIED_AVAILABLE month)
+✔ unverified-month-courses-stay-draft: 1 course(s) with no verified available month remain unpublished (monash-master-of-business)
+✔ requirements-written: 7 CrmCourseRequirement rows created
+✔ revision-history: 208 revision-log entries preserved
+✔ conflict-protection: monitor found 1 conflict(s); approved fee 39700 was NOT overwritten by 40700
+✔ conflict-queued: 1 CONFLICT item(s) waiting for Super Admin review
+✔ coverage-matrix-from-db: 8 courses × 13 months, available=15, not-offered=52, not-published=37, missing=0
+
+ALL CHECKS PASSED — 22 steps
+{
+  "generatedAt": "2026-10-29T03:24:50.074Z",
+  "steps": [
+    {
+      "step": "dataset-validation",
+      "status": "PASS",
+      "detail": "30 evidence records, 104 course-months, 0 errors, 0 warnings"
+    },
+    {
+      "step": "dry-run-writes-nothing",
+      "status": "PASS",
+      "detail": "coverage rows before=0 after=0 (planned 104)"
+    },
+    {
+      "step": "ingest-applied",
+      "status": "PASS",
+      "detail": "created 104 course-months, 30 evidence rows, batch cmvszchww00ar3gnznmyyef8q",
+      "data": {
+        "evidenceCreated": 30,
+        "evidenceUpdated": 0,
+        "universitiesUpserted": 10,
+        "coursesUpserted": 8,
+        "coverageCreated": 104,
+        "coverageUpdated": 0,
+        "coverageUnchanged": 0,
+        "traversalsUpserted": 10,
+        "queueUpserted": 17,
+        "approvalItemsCreated": 104,
+        "applied": true
+      }
+    },
+    {
+      "step": "db-populated",
+      "status": "PASS",
+      "detail": "104 coverage rows persisted"
+    },
+    {
+      "step": "nothing-auto-published",
+      "status": "PASS",
+      "detail": "104/104 rows staged as PENDING"
+    },
+    {
+      "step": "approval-queue-integrated",
+      "status": "PASS",
+      "detail": "104 Super Admin queue items linked to course-months"
+    },
+    {
+      "step": "evidence-hashes",
+      "status": "PASS",
+      "detail": "30 evidence rows with SHA-256 content hashes and HTTPS source URLs"
+    },
+    {
+      "step": "idempotent-reingest",
+      "status": "PASS",
+      "detail": "second run created 0, unchanged 104, total rows 104"
+    },
+    {
+      "step": "rbac-denies-student",
+      "status": "PASS",
+      "detail": "student actor cannot approve catalogue data"
+    },
+    {
+      "step": "rbac-denial-wrote-nothing",
+      "status": "PASS",
+      "detail": "0 rows published after denied attempt"
+    },
+    {
+      "step": "super-admin-approval",
+      "status": "PASS",
+      "detail": "104 approved, 104 published rows, 8 courses published"
+    },
+    {
+      "step": "crm-intake-fees-written",
+      "status": "PASS",
+      "detail": "104 CrmCourseIntakeFee rows now serve the Course Finder"
+    },
+    {
+      "step": "verified-available-fees",
+      "status": "PASS",
+      "detail": "15 intake rows marked VERIFIED (matches 15 verified available months)"
+    },
+    {
+      "step": "published-fee-amounts",
+      "status": "PASS",
+      "detail": "5 published fees persisted verbatim, 0 mismatched"
+    },
+    {
+      "step": "no-invented-fees",
+      "status": "PASS",
+      "detail": "10 verified intake(s) publish no fee; 0 were given a fee no official source states"
+    },
+    {
+      "step": "courses-published",
+      "status": "PASS",
+      "detail": "7 courses published (only those with at least one VERIFIED_AVAILABLE month)"
+    },
+    {
+      "step": "unverified-month-courses-stay-draft",
+      "status": "PASS",
+      "detail": "1 course(s) with no verified available month remain unpublished (monash-master-of-business)"
+    },
+    {
+      "step": "requirements-written",
+      "status": "PASS",
+      "detail": "7 CrmCourseRequirement rows created"
+    },
+    {
+      "step": "revision-history",
+      "status": "PASS",
+      "detail": "208 revision-log entries preserved"
+    },
+    {
+      "step": "conflict-protection",
+      "status": "PASS",
+      "detail": "monitor found 1 conflict(s); approved fee 39700 was NOT overwritten by 40700"
+    },
+    {
+      "step": "conflict-queued",
+      "status": "PASS",
+      "detail": "1 CONFLICT item(s) waiting for Super Admin review"
+    },
+    {
+      "step": "coverage-matrix-from-db",
+      "status": "PASS",
+      "detail": "8 courses × 13 months, available=15, not-offered=52, not-published=37, missing=0",
+      "data": {
+        "totals": {
+          "VERIFIED_AVAILABLE": 15,
+          "VERIFIED_NOT_OFFERED": 52,
+          "NOT_PUBLISHED": 37,
+          "VERIFICATION_PENDING": 0,
+          "SOURCE_UNAVAILABLE": 0,
+          "CONFLICT_REQUIRES_REVIEW": 0,
+          "MISSING": 0
+        },
+        "availableMonths": [
+          "2027-01",
+          "2027-03",
+          "2027-04",
+          "2027-05",
+          "2027-07",
+          "2027-09",
+          "2027-10",
+          "2028-01"
+        ]
+      }
+    }
+  ]
+}
+{
+  "outDir": "/home/user/ALO_WEB_CRM_TECH/reports/verified-catalogue",
+  "publishedRows": 104,
+  "totals": {
+    "VERIFIED_AVAILABLE": 15,
+    "VERIFIED_NOT_OFFERED": 52,
+    "NOT_PUBLISHED": 37,
+    "VERIFICATION_PENDING": 0,
+    "SOURCE_UNAVAILABLE": 0,
+    "CONFLICT_REQUIRES_REVIEW": 0,
+    "MISSING": 0
+  },
+  "courses": 8
+}

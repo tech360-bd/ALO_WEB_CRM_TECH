@@ -34,10 +34,10 @@ interface Lead {
 }
 
 const statusColors: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-700',
-  hot: 'bg-orange-100 text-orange-700',
-  converted: 'bg-emerald-100 text-emerald-700',
-  lost: 'bg-red-100 text-red-700',
+  new: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+  hot: 'bg-[var(--alo-cta-soft)] text-[var(--alo-cta-active)]',
+  converted: 'bg-crm-success-bg text-crm-success-text',
+  lost: 'bg-crm-danger-bg text-crm-danger-text',
 };
 
 export default function CrmLeadsPage() {
@@ -146,7 +146,7 @@ export default function CrmLeadsPage() {
       </div>
 
       <p className="text-sm text-alo-text-muted">Persisted records only. Consent is not assumed. Assignment and student conversion require separate verified services; hard deletion is unavailable until retention rules are approved.</p>
-      {error && <div role="alert" className="rounded border border-red-200 p-3 text-red-700">{error} <Button variant="outline" onClick={() => void loadLeads()}>Retry</Button></div>}
+      {error && <div role="alert" className="rounded border border-crm-danger-border p-3 text-crm-danger-text">{error} <Button variant="outline" onClick={() => void loadLeads()}>Retry</Button></div>}
       {loading && <p role="status">Loading leads…</p>}
       {showCreateDialog && (
         <Card className="bg-white rounded-xl border border-alo-border">
@@ -228,13 +228,13 @@ export default function CrmLeadsPage() {
                     {leads.map((lead) => {
                       const status = lead.hotLead && !['converted', 'lost'].includes(lead.status) ? 'hot' : lead.status;
                       return (
-                        <tr key={lead.id} className="border-b border-alo-border/50 hover:bg-gray-50">
+                        <tr key={lead.id} className="border-b border-alo-border/50 hover:bg-[var(--alo-page)]">
                           <td className="py-3 font-medium text-alo-text">{lead.name}</td>
                           <td className="py-3 text-alo-text-secondary">{lead.phone}</td>
                           <td className="py-3 text-alo-text-secondary">{lead.email}</td>
                           <td className="py-3 text-alo-text-secondary">{lead.source}</td>
                           <td className="py-3 text-alo-text-secondary">{lead.destination}</td>
-                          <td className="py-3"><Badge className={statusColors[status] || 'bg-gray-100 text-gray-700'}>{status}</Badge></td>
+                          <td className="py-3"><Badge className={statusColors[status] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}>{status}</Badge></td>
                           <td className="py-3 text-alo-text-secondary">{lead.counselorName}</td>
                           <td className="py-3 text-alo-text-muted">{lead.createdAt?.substring(0, 10)}</td>
                           <td className="py-3 text-right">
@@ -273,7 +273,7 @@ export default function CrmLeadsPage() {
             </label>
             <Button variant="outline" disabled={updating || loading || !capabilities.update || !['new', 'contacted', 'qualified'].includes(selectedLead.status)} onClick={() => void updateLead(selectedLead.id, { hotLead: !selectedLead.hotLead }).catch(() => {})}>{selectedLead.hotLead ? 'Remove hot flag' : 'Mark hot'}</Button>
             {selectedLead.followUpDueAt && <Button variant="outline" disabled={updating || loading || !capabilities.update || !['new', 'contacted', 'qualified'].includes(selectedLead.status)} onClick={() => void updateLead(selectedLead.id, { followUpDone: !selectedLead.followUpDone }).catch(() => {})}>{selectedLead.followUpDone ? 'Reopen follow-up' : 'Complete follow-up'}</Button>}
-            {error && <p role="alert" className="text-red-700">{error}</p>}
+            {error && <p role="alert" className="text-crm-danger-text">{error}</p>}
           </div>}
         </DialogContent>
       </Dialog>

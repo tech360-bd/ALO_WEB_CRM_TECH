@@ -90,7 +90,7 @@ const INITIAL_SHORTLIST: ShortlistedCourse[] = [
     accommodationEst: '£6,000 - £8,000/yr',
     level: 'Masters',
     subject: 'Computer Science',
-    logoColor: 'bg-[#003F87]',
+    logoColor: 'bg-[var(--alo-brand-hover)]',
     matchScore: 92,
   },
   {
@@ -116,7 +116,7 @@ const INITIAL_SHORTLIST: ShortlistedCourse[] = [
     accommodationEst: '£7,000 - £9,000/yr',
     level: 'Masters',
     subject: 'Computer Science',
-    logoColor: 'bg-[#6B2D5B]',
+    logoColor: 'bg-alo-brand',
     matchScore: 90,
   },
   {
@@ -142,7 +142,7 @@ const INITIAL_SHORTLIST: ShortlistedCourse[] = [
     accommodationEst: '£5,500 - £7,000/yr',
     level: 'Masters',
     subject: 'Business',
-    logoColor: 'bg-[#8B0000]',
+    logoColor: 'bg-alo-error',
     matchScore: 82,
   },
 ];
@@ -219,15 +219,15 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
   onRemove: () => void;
 }) {
   return (
-    <div className={`group relative bg-white rounded-xl border p-4 hover:shadow-md transition-all duration-200 flex flex-col gap-3 ${isSelected ? 'border-[#0057B8] ring-2 ring-[#0057B8]/20' : 'border-slate-200'}`}>
+    <div className={`group relative bg-white rounded-xl border p-4 hover:shadow-md transition-all duration-200 flex flex-col gap-3 ${isSelected ? 'border-[var(--alo-brand)] ring-2 ring-[var(--alo-brand)]/20' : 'border-[var(--alo-border)]'}`}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3 min-w-0">
           <div className={`shrink-0 size-10 rounded-lg ${course.logoColor} flex items-center justify-center text-white font-bold text-sm`}>
             {course.university.charAt(0)}
           </div>
           <div className="min-w-0">
-            <h3 className="font-semibold text-slate-900 text-sm line-clamp-1">{course.name}</h3>
-            <p className="text-xs text-slate-500 mt-0.5">{course.university}</p>
+            <h3 className="font-semibold text-[var(--alo-text)] text-sm line-clamp-1">{course.name}</h3>
+            <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{course.university}</p>
           </div>
         </div>
         <div className="shrink-0 flex items-center gap-2">
@@ -235,49 +235,49 @@ function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
             <Checkbox
               checked={isSelected}
               onCheckedChange={onToggleSelect}
-              className="data-[state=checked]:bg-[#0057B8] data-[state=checked]:border-[#0057B8]"
+              className="data-[state=checked]:bg-[var(--alo-brand)] data-[state=checked]:border-[var(--alo-brand)]"
             />
           </label>
-          <Button variant="ghost" size="icon-sm" className="text-slate-400 hover:text-red-500 h-7 w-7" onClick={onRemove}>
+          <Button variant="ghost" size="icon-sm" className="text-[var(--alo-text-muted)] hover:text-crm-danger-text h-7 w-7" onClick={onRemove}>
             <Trash2 className="size-3.5" />
           </Button>
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 text-xs text-slate-500">
+      <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)]">
         <span className="text-sm">{course.flag}</span>
         <span>{course.city}</span>
-        <span className="text-slate-300">•</span>
+        <span className="text-[var(--alo-placeholder)]">•</span>
         <span>{course.country}</span>
       </div>
 
       <div className="flex flex-wrap gap-1.5">
-        <Badge variant="outline" className="text-[11px] px-2 py-0 border-slate-200 text-slate-600">
+        <Badge variant="outline" className="text-[11px] px-2 py-0 border-[var(--alo-border)] text-[var(--alo-body)]">
           <Calendar className="size-3 mr-1" /> {course.intake}
         </Badge>
-        <Badge variant="outline" className="text-[11px] px-2 py-0 border-slate-200 text-slate-600">
+        <Badge variant="outline" className="text-[11px] px-2 py-0 border-[var(--alo-border)] text-[var(--alo-body)]">
           <Clock className="size-3 mr-1" /> {course.duration}
         </Badge>
       </div>
 
       <div className="flex items-baseline gap-2">
-        <span className="text-lg font-bold text-slate-900">{course.tuition}</span>
+        <span className="text-lg font-bold text-[var(--alo-text)]">{course.tuition}</span>
         {course.scholarship && (
-          <span className="text-xs font-semibold text-emerald-600">Scholarship {course.scholarship}</span>
+          <span className="text-xs font-semibold text-crm-success-text">Scholarship {course.scholarship}</span>
         )}
       </div>
 
-      <div className="flex items-center gap-3 text-xs text-slate-500">
+      <div className="flex items-center gap-3 text-xs text-[var(--alo-text-muted)]">
         <span className="flex items-center gap-1"><Languages className="size-3" /> {course.ieltsReq.split(' ')[0]}</span>
         <span className="flex items-center gap-1"><GraduationCap className="size-3" /> {course.academicReq}</span>
       </div>
 
       <div className="flex items-center gap-2 pt-1 mt-auto">
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 h-8 text-xs">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 ">
           Apply
         </Button>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className="h-8 text-xs">
-          <Bookmark className="size-3 fill-amber-500 text-amber-500 mr-1" />
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className=" ">
+          <Bookmark className="size-3 fill-amber-500 text-crm-warning-text mr-1" />
           Saved
         </Button>
       </div>
@@ -322,12 +322,15 @@ export default function StudentCompare() {
   return (
     <div className="min-h-screen bg-white">
       {/* ─── Header ───────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-r from-slate-900 to-[#0a1628] px-4 py-8 md:py-10">
+      {/* Master §08-E inner-page hero: pale-blue band, breadcrumb-free,
+          navy title + secondary deck. No dark block, no photo scrim. */}
+      <section className="border-b border-[var(--alo-border)] bg-alo-hero px-4 py-8 md:py-10">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-            Shortlist & Compare
+          <p className="caption-text mb-2">Course shortlist</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--alo-text)] mb-2">
+            Shortlist &amp; Compare
           </h1>
-          <p className="text-slate-400 text-sm md:text-base max-w-xl">
+          <p className="text-[var(--alo-text-secondary)] text-sm md:text-base max-w-xl">
             Save your favorite courses and compare them side by side to make the best decision for your future.
           </p>
         </div>
@@ -343,7 +346,7 @@ export default function StudentCompare() {
                   <Bookmark className="size-4" />
                   My Shortlist
                   {shortlist.length > 0 && (
-                    <span className="ml-1 size-5 rounded-full bg-[#0057B8] text-white text-[10px] flex items-center justify-center font-bold">
+                    <span className="ml-1 size-5 rounded-full bg-[var(--alo-brand)] text-white text-[11px] flex items-center justify-center font-bold">
                       {shortlist.length}
                     </span>
                   )}
@@ -352,7 +355,7 @@ export default function StudentCompare() {
                   <GitCompareArrows className="size-4" />
                   Compare
                   {selectedCourses.length > 0 && (
-                    <span className="ml-1 size-5 rounded-full bg-[#C93D13] text-white text-[10px] flex items-center justify-center font-bold">
+                    <span className="ml-1 size-5 rounded-full bg-[var(--alo-cta-hover)] text-white text-[11px] flex items-center justify-center font-bold">
                       {selectedCourses.length}
                     </span>
                   )}
@@ -372,9 +375,9 @@ export default function StudentCompare() {
             <TabsContent value="shortlist">
               {shortlist.length === 0 ? (
                 <div className="text-center py-20">
-                  <BookmarkX className="size-16 text-slate-200 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-slate-700 mb-2">No courses shortlisted yet</h3>
-                  <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
+                  <BookmarkX className="size-16 text-[var(--alo-text-muted)] mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">No courses shortlisted yet</h3>
+                  <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto mb-6">
                     Browse courses and click Shortlist to save them here. You can compare up to 5 courses side by side.
                   </p>
                   <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" className="gap-2">
@@ -384,7 +387,7 @@ export default function StudentCompare() {
                 </div>
               ) : (
                 <>
-                  <p className="text-sm text-slate-500 mb-4">
+                  <p className="text-sm text-[var(--alo-text-muted)] mb-4">
                     Select courses to compare (2-5) by checking the boxes
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -406,13 +409,13 @@ export default function StudentCompare() {
             <TabsContent value="compare">
               {selectedCourses.length < 2 ? (
                 <div className="text-center py-20">
-                  <GitCompareArrows className="size-16 text-slate-200 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-slate-700 mb-2">
+                  <GitCompareArrows className="size-16 text-[var(--alo-text-muted)] mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">
                     {selectedCourses.length === 0
                       ? 'No courses selected for comparison'
                       : 'Select at least 2 courses'}
                   </h3>
-                  <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
+                  <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto mb-6">
                     Go to the Shortlist tab, select 2-5 courses using the checkboxes, and click &quot;Compare Selected&quot; to see them side by side.
                   </p>
                   <Button variant="outline" onClick={() => setActiveTab('shortlist')} className="gap-2">
@@ -423,8 +426,8 @@ export default function StudentCompare() {
               ) : (
                 <>
                   <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm text-slate-500">
-                      Comparing <span className="font-semibold text-slate-800">{selectedCourses.length}</span> courses
+                    <p className="text-sm text-[var(--alo-text-muted)]">
+                      Comparing <span className="font-semibold text-[var(--alo-text)]">{selectedCourses.length}</span> courses
                     </p>
                     <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
                       variant="cta"
@@ -436,12 +439,12 @@ export default function StudentCompare() {
                     </Button>
                   </div>
 
-                  <div className="rounded-xl border border-slate-200 overflow-hidden">
+                  <div className="rounded-xl border border-[var(--alo-border)] overflow-hidden">
                     <div className="overflow-x-auto custom-scrollbar">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="w-[180px] sticky left-0 bg-slate-50 z-10 min-w-[180px]">
+                            <TableHead className="w-[180px] sticky left-0 bg-[var(--alo-page)] z-10 min-w-[180px]">
                               Attribute
                             </TableHead>
                             {selectedCourses.map((course) => (
@@ -450,13 +453,13 @@ export default function StudentCompare() {
                                   <div className={`size-10 rounded-lg ${course.logoColor} flex items-center justify-center text-white font-bold text-sm`}>
                                     {course.university.charAt(0)}
                                   </div>
-                                  <span className="font-semibold text-slate-800 text-xs leading-tight">
+                                  <span className="font-semibold text-[var(--alo-text)] text-xs leading-tight">
                                     {course.university}
                                   </span>
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="text-red-500 hover:text-red-600 hover:bg-red-50 h-7 text-[11px] gap-1"
+                                    className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg h-7 text-[11px] gap-1"
                                     onClick={() => removeCourse(course.id)}
                                   >
                                     <Trash2 className="size-3" />
@@ -471,10 +474,10 @@ export default function StudentCompare() {
                           {COMPARE_ROWS.map((row, idx) => {
                             const Icon = row.icon;
                             return (
-                              <TableRow key={row.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
-                                <TableCell className="sticky left-0 bg-inherit z-10 font-medium text-slate-700 text-xs">
+                              <TableRow key={row.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--alo-page)]/50'}>
+                                <TableCell className="sticky left-0 bg-inherit z-10 font-medium text-[var(--alo-body)] text-xs">
                                   <span className="flex items-center gap-2">
-                                    <Icon className="size-3.5 text-slate-400" />
+                                    <Icon className="size-3.5 text-[var(--alo-text-muted)]" />
                                     {row.label}
                                   </span>
                                 </TableCell>
@@ -484,7 +487,7 @@ export default function StudentCompare() {
                                   return (
                                     <TableCell
                                       key={course.id}
-                                      className={`text-center text-sm ${isBest ? 'bg-emerald-50 font-semibold text-emerald-800' : 'text-slate-600'}`}
+                                      className={`text-center text-sm ${isBest ? 'bg-crm-success-bg font-semibold text-crm-success-text' : 'text-[var(--alo-body)]'}`}
                                     >
                                       {row.type === 'visa-risk' ? (
                                         visaRiskBadge(value as string)
@@ -492,17 +495,17 @@ export default function StudentCompare() {
                                         <div className="flex flex-col items-center">
                                           <span>{String(value)}</span>
                                           {isBest && (
-                                            <span className="text-[10px] text-emerald-600 font-medium">Best Ranking</span>
+                                            <span className="text-[11px] text-crm-success-text font-medium">Best Ranking</span>
                                           )}
                                         </div>
                                       ) : row.type === 'currency' && isBest ? (
                                         <div className="flex flex-col items-center">
                                           <span>{String(value)}</span>
-                                          <span className="text-[10px] text-emerald-600 font-medium">Lowest</span>
+                                          <span className="text-[11px] text-crm-success-text font-medium">Lowest</span>
                                         </div>
                                       ) : (
                                         <span>{value === null ? (
-                                          <span className="text-slate-400 italic">None</span>
+                                          <span className="text-[var(--alo-text-muted)] italic">None</span>
                                         ) : String(value)}</span>
                                       )}
                                     </TableCell>
@@ -513,10 +516,10 @@ export default function StudentCompare() {
                           })}
 
                           {/* Match Score Row */}
-                          <TableRow className="bg-slate-50/50">
-                            <TableCell className="sticky left-0 bg-inherit z-10 font-medium text-slate-700 text-xs">
+                          <TableRow className="bg-[var(--alo-page)]/50">
+                            <TableCell className="sticky left-0 bg-inherit z-10 font-medium text-[var(--alo-body)] text-xs">
                               <span className="flex items-center gap-2">
-                                <CheckCircle2 className="size-3.5 text-slate-400" />
+                                <CheckCircle2 className="size-3.5 text-[var(--alo-text-muted)]" />
                                 Match Score
                               </span>
                             </TableCell>
@@ -526,12 +529,12 @@ export default function StudentCompare() {
                               return (
                                 <TableCell
                                   key={course.id}
-                                  className={`text-center ${isBest ? 'bg-emerald-50' : ''}`}
+                                  className={`text-center ${isBest ? 'bg-crm-success-bg' : ''}`}
                                 >
                                   <div className={`inline-flex size-12 rounded-full items-center justify-center text-sm font-bold ${
-                                    course.matchScore >= 90 ? 'bg-emerald-500 text-white' :
-                                    course.matchScore >= 80 ? 'bg-[#0057B8] text-white' :
-                                    'bg-amber-500 text-white'
+                                    course.matchScore >= 90 ? 'bg-[var(--alo-success)] text-white' :
+                                    course.matchScore >= 80 ? 'bg-[var(--alo-brand)] text-white' :
+                                    'bg-[var(--alo-warning)] text-white'
                                   }`}>
                                     {course.matchScore}%
                                   </div>

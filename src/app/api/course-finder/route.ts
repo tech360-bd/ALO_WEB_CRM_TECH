@@ -7,8 +7,8 @@ import {
   buildPublicIntakeInclude,
   parseCourseFinderParams,
   publicRequirementWhere,
+  publicCrmScholarshipWhere,
   toPublicCourseRow,
-  PUBLIC_SCHOLARSHIP_COUNT_FILTER,
 } from '@/lib/public-catalog';
 
 // ============================================================
@@ -22,54 +22,10 @@ import {
 //         database failures → 500 with a generic message (never an empty list).
 // ============================================================
 
-const MONTH_NAMES = [
-  'january', 'february', 'march', 'april', 'may', 'june',
-  'july', 'august', 'september', 'october', 'november', 'december',
-];
-
-/**
- * Multi-month intake selection from the Course Finder tab UI:
- *   ?intakeMonth=1&intakeMonth=5&intakeMonth=9  (repeated)
- *   ?intakeMonth=1,5,9                          (comma separated)
- *   ?intakeMonth=Jan,May,Sep                    (names accepted too)
- * Month numbers are validated against 1-12; unknown values are ignored rather
- * than silently filtering on nothing.
- */
-function parseIntakeMonths(sp: URLSearchParams): number[] {
-  const raw = [...sp.getAll('intakeMonth'), ...sp.getAll('intakeMonths')]
-    .flatMap((value) => value.split(','))
-    .map((value) => value.trim().toLowerCase())
-    .filter(Boolean);
-  const months = new Set<number>();
-  for (const value of raw) {
-    if (/^\d{1,2}$/.test(value)) {
-      const month = Number(value);
-      if (month >= 1 && month <= 12) months.add(month);
-      continue;
-    }
-    const index = MONTH_NAMES.findIndex((name) => name.startsWith(value.slice(0, 3)));
-    if (index >= 0) months.add(index + 1);
-  }
-  return [...months].sort((a, b) => a - b);
-}
-
 export async function GET(req: Request) {
   let filters;
   try {
-    const sp = new URL(req.url).searchParams;
-    filters = parseCourseFinderParams(sp);
-    // Year-qualified months (2027-01, "Jan 2028") were already parsed into
-    // filters.intakePeriods by parseCourseFinderParams; only fall back to the
-    // bare-month parser when no year-qualified token was supplied.
-    if (!filters.intakePeriods) {
-      const intakeMonths = parseIntakeMonths(sp);
-      if (intakeMonths.length) {
-        filters.intakeMonths = intakeMonths;
-        // The repeated months are the selection; a single-month param would
-        // otherwise contradict them.
-        filters.intakeMonth = undefined;
-      }
-    }
+    filters = parseCourseFinderParams(new URL(req.url).searchParams);
   } catch (error) {
     if (error instanceof PublicQueryError) {
       return NextResponse.json({ success: false, error: error.message }, { status: 400 });
@@ -149,7 +105,7 @@ export async function GET(req: Request) {
               officialRequirementUrl: true,
             },
           },
-          _count: { select: { scholarshipRecords: { where: PUBLIC_SCHOLARSHIP_COUNT_FILTER as any } } },
+          _count: { select: { scholarshipRecords: { where: publicCrmScholarshipWhere() as any } } },
         },
       }),
     ]);

@@ -1,5 +1,6 @@
 "use client";
 
+import { ALO_CONTACT, ALO_PUBLIC_CONTACT_CTA, ALO_SOCIALS } from '@/lib/alo-site-info';
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,7 @@ interface PublicContactProps {
 }
 
 const SUBJECTS = [
-  "Free Counseling Request",
+  "Counseling Request",
   "Application Support",
   "Visa & Immigration Question",
   "Scholarship Inquiry",
@@ -45,44 +46,39 @@ const CONTACT_INFO = [
   {
     icon: "MapPin",
     label: "Office Address",
-    value: "House 25, Road 11\nBanani, Dhaka 1213\nBangladesh",
+    value: ALO_CONTACT.address,
     accent: "blue" as const,
   },
-  {
+  ...(ALO_CONTACT.hasContactPhone ? [{
     icon: "Phone",
     label: "Phone",
-    value: "+880 1805 020101",
-    href: "tel:+8801805020101",
+    value: ALO_CONTACT.mobileDisplay,
+    href: ALO_CONTACT.mobileHref,
     accent: "orange" as const,
-  },
-  {
+  }] : []),
+  ...(ALO_CONTACT.hasWhatsApp ? [{
     icon: "MessageCircle",
     label: "WhatsApp",
-    value: "+880 1805 020101",
-    href: "https://wa.me/8801805020101",
+    value: ALO_CONTACT.whatsappDisplay,
+    href: ALO_CONTACT.whatsappHref,
     accent: "emerald" as const,
-  },
+  }] : []),
   {
     icon: "Mail",
     label: "Email",
-    value: "hello@aloeducation.com",
-    href: "mailto:hello@aloeducation.com",
+    value: ALO_CONTACT.email,
+    href: ALO_CONTACT.emailHref,
     accent: "blue" as const,
   },
 ];
 
 const HOURS = [
-  { day: "Saturday – Thursday", time: "10:00 AM – 7:00 PM (BST)" },
+  { day: "Saturday – Thursday", time: "9:00 AM – 6:00 PM (Asia/Dhaka)" },
   { day: "Friday", time: "Closed" },
   { day: "Public Holidays", time: "By appointment only" },
 ];
 
-const SOCIAL_LINKS = [
-  { label: "Facebook", icon: "Facebook", href: "https://www.facebook.com/aloeducation" },
-  { label: "Instagram", icon: "Instagram", href: "https://www.instagram.com/aloeducation" },
-  { label: "LinkedIn", icon: "Linkedin", href: "https://www.linkedin.com/company/aloeducation" },
-  { label: "YouTube", icon: "Youtube", href: "https://www.youtube.com/@aloeducation" },
-];
+const SOCIAL_LINKS = ALO_SOCIALS.map((social) => ({ label: social.label, href: social.href, icon: ({facebook:'Facebook',instagram:'Instagram',linkedin:'Linkedin',youtube:'Youtube'} as const)[social.id] }));
 
 export function PublicContact({ onNavigate }: PublicContactProps) {
   const { toast } = useToast();
@@ -90,9 +86,9 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
     fullName: "",
     phone: "",
     email: "",
-    subject: "Free Counseling Request",
+    subject: "Counseling Request",
     message: "",
-    consent: true,
+    consent: false,
   });
   const [loading, setLoading] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
@@ -127,14 +123,14 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
       } else {
         setSubmitted(true);
         toast({
-          title: "Message sent!",
-          description: data.message || "An ALO counselor will reach out within 24 hours.",
+          title: "Enquiry received",
+          description: data.message || "Your enquiry has been submitted for staff review.",
         });
       }
     } catch {
       toast({
         title: "Network error",
-        description: "Please try again or call us at 01805020101.",
+        description: `Please try again or contact us via ${ALO_PUBLIC_CONTACT_CTA.label}.`,
         variant: "destructive",
       });
     } finally {
@@ -145,7 +141,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="border-b border-[#0057B8]/10 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+      <section className="border-b border-[var(--alo-brand)]/10 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
         <div className="mx-auto max-w-[1280px] px-4 py-12 lg:px-6 lg:py-16">
           <Breadcrumb
             items={[
@@ -154,14 +150,14 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
             ]}
           />
           <div className="mt-6 max-w-3xl">
-            <Badge className="bg-[#FFF3EA] text-[#E8501A] border border-[#E8501A]/20 hover:bg-[#FFF3EA]">
+            <Badge className="bg-[var(--alo-cta-soft)] text-[var(--alo-cta)] border border-[var(--alo-cta)]/20 hover:bg-[var(--alo-cta-soft)]">
               <Icon name="Phone" className="mr-1 size-3" />
               24-Hour Response Promise
             </Badge>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-[#0B2447] sm:text-5xl">
-              Contact <span className="text-[#0057B8]">ALO Education</span>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-[var(--alo-text)] sm:text-5xl">
+              Contact <span className="text-[var(--alo-brand)]">ALO Education</span>
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-[#5A7299] sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-[var(--alo-text-muted)] sm:text-lg">
               Have a question, want to book a consultation, or just need someone to talk to about studying abroad?
               We respond to every inquiry within 24 hours — guaranteed in writing.
             </p>
@@ -177,31 +173,31 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
               <div className="space-y-3">
                 {CONTACT_INFO.map((info) => {
                   const accentColors = {
-                    blue: "bg-[#EAF3FF] text-[#0057B8]",
-                    orange: "bg-[#FFF3EA] text-[#E8501A]",
-                    emerald: "bg-emerald-50 text-emerald-600",
+                    blue: "bg-[var(--alo-brand-light)] text-[var(--alo-brand)]",
+                    orange: "bg-[var(--alo-cta-soft)] text-[var(--alo-cta)]",
+                    emerald: "bg-crm-success-bg text-crm-success-text",
                   };
                   return (
                     <div
                       key={info.label}
-                      className="flex items-start gap-3 rounded-xl border border-[#E2E8F0] bg-white p-4 transition-colors hover:border-[#0057B8]/30"
+                      className="flex items-start gap-3 rounded-xl border border-[var(--alo-border)] bg-white p-4 transition-colors hover:border-[var(--alo-brand)]/30"
                     >
                       <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl", accentColors[info.accent])}>
                         <Icon name={info.icon} className="size-5" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold uppercase tracking-wide text-[#5A7299]">{info.label}</p>
+                        <p className="text-xs font-bold uppercase tracking-wide text-[var(--alo-text-muted)]">{info.label}</p>
                         {info.href ? (
                           <a
                             href={info.href}
                             target={info.href.startsWith("http") ? "_blank" : undefined}
                             rel={info.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                            className="mt-0.5 block whitespace-pre-line text-sm font-semibold text-[#0B2447] transition-colors hover:text-[#0057B8]"
+                            className="mt-0.5 block whitespace-pre-line text-sm font-semibold text-[var(--alo-text)] transition-colors hover:text-[var(--alo-brand)]"
                           >
                             {info.value}
                           </a>
                         ) : (
-                          <p className="mt-0.5 whitespace-pre-line text-sm font-semibold text-[#0B2447]">{info.value}</p>
+                          <p className="mt-0.5 whitespace-pre-line text-sm font-semibold text-[var(--alo-text)]">{info.value}</p>
                         )}
                       </div>
                     </div>
@@ -214,9 +210,9 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
             <SectionCard title="Office hours" icon="Clock">
               <div className="space-y-2">
                 {HOURS.map((h) => (
-                  <div key={h.day} className="flex items-center justify-between border-b border-[#E2E8F0] py-2 last:border-0">
-                    <span className="text-sm font-medium text-[#0B2447]">{h.day}</span>
-                    <span className="text-sm text-[#5A7299]">{h.time}</span>
+                  <div key={h.day} className="flex items-center justify-between border-b border-[var(--alo-border)] py-2 last:border-0">
+                    <span className="text-sm font-medium text-[var(--alo-text)]">{h.day}</span>
+                    <span className="text-sm text-[var(--alo-text-muted)]">{h.time}</span>
                   </div>
                 ))}
               </div>
@@ -231,10 +227,10 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-xl border border-[#0057B8]/15 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-[#0057B8]/30 hover:bg-[#EAF3FF]/30"
+                    className="flex items-center gap-2 rounded-xl border border-[var(--alo-brand)]/15 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-[var(--alo-brand)]/30 hover:bg-[var(--alo-brand-light)]/30"
                   >
-                    <Icon name={s.icon} className="size-5 text-[#0057B8]" />
-                    <span className="text-sm font-semibold text-[#0B2447]">{s.label}</span>
+                    <Icon name={s.icon} className="size-5 text-[var(--alo-brand)]" />
+                    <span className="text-sm font-semibold text-[var(--alo-text)]">{s.label}</span>
                   </a>
                 ))}
               </div>
@@ -242,19 +238,19 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
 
             {/* Map placeholder */}
             <SectionCard title="Visit our office" description="Banani, Dhaka" icon="MapPin">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-[#0057B8]/15 bg-gradient-to-br from-[#EAF3FF] via-white to-[#FFF3EA]">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-[var(--alo-brand)]/15 bg-gradient-to-br from-[var(--alo-brand-light)] via-white to-[var(--alo-cta-soft)]">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
                     <div className="flex size-14 items-center justify-center rounded-2xl bg-alo-gradient text-white alo-shadow">
                       <Icon name="MapPin" className="size-7" />
                     </div>
-                    <p className="mt-3 text-sm font-bold text-[#0B2447]">House 25, Road 11, Banani</p>
-                    <p className="text-xs text-[#5A7299]">Dhaka 1213, Bangladesh</p>
+                    <p className="mt-3 text-sm font-bold text-[var(--alo-text)]">House 25, Road 11, Banani</p>
+                    <p className="text-xs text-[var(--alo-text-muted)]">Dhaka 1213, Bangladesh</p>
                     <a
                       href="https://www.google.com/maps/search/?api=1&query=Banani+Dhaka+Bangladesh"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#0057B8] hover:underline"
+                      className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[var(--alo-brand)] hover:underline"
                     >
                       Open in Google Maps
                       <Icon name="ExternalLink" className="size-3" />
@@ -268,20 +264,19 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
           {/* RIGHT — Contact form */}
           <div>
             {submitted ? (
-              <Card className="rounded-2xl border-2 border-emerald-300 bg-emerald-50">
+              <Card className="rounded-2xl border-2 border-crm-success-border bg-crm-success-bg">
                 <CardContent className="p-8 text-center">
-                  <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-500 text-white">
+                  <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[var(--alo-success)] text-white">
                     <Icon name="Check" className="size-8" />
                   </div>
-                  <p className="mt-5 text-xl font-black text-emerald-900">Message received!</p>
-                  <p className="mt-2 text-sm leading-relaxed text-emerald-800">
-                    Thank you for contacting ALO Education. One of our counselors will reach out within 24 hours via
-                    phone or WhatsApp. For urgent matters, call us at <span className="font-semibold">01805020101</span>.
+                  <p className="mt-5 text-xl font-black text-crm-success-text">Message received!</p>
+                  <p className="mt-2 text-sm leading-relaxed text-crm-success-text">
+                    Thank you for contacting ALO Education. Your enquiry has been received. Our team will respond according to current service hours and availability. For urgent matters, use <a className="font-semibold underline" href={ALO_PUBLIC_CONTACT_CTA.href}>{ALO_PUBLIC_CONTACT_CTA.label}</a>.
                   </p>
                   <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
                     <Button
                       onClick={() => onNavigate("public-home")}
-                      className="h-11 bg-[#0057B8] text-white hover:bg-[#0057B8]/90"
+                      className="h-11 bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90"
                     >
                       <Icon name="Home" className="size-4" />
                       Back to Home
@@ -289,10 +284,10 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                     <Button
                       onClick={() => {
                         setSubmitted(false);
-                        setForm({ fullName: "", phone: "", email: "", subject: "Free Counseling Request", message: "", consent: true });
+                        setForm({ fullName: "", phone: "", email: "", subject: "Counseling Request", message: "", consent: false });
                       }}
                       variant="outline"
-                      className="h-11 border-emerald-400 text-emerald-700 hover:bg-emerald-100"
+                      className="h-11 border-[var(--alo-success)] text-crm-success-text hover:bg-crm-success-bg"
                     >
                       Send another message
                     </Button>
@@ -300,16 +295,16 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="rounded-2xl border-2 border-[#0057B8]/15 bg-white alo-shadow">
+              <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/15 bg-white alo-shadow">
                 <CardContent className="p-6">
                   <div className="mb-5">
-                    <h3 className="text-lg font-bold text-[#0057B8]">Send us a message</h3>
-                    <p className="mt-1 text-sm text-[#5A7299]">We respond within 24 hours.</p>
+                    <h3 className="text-lg font-bold text-[var(--alo-brand)]">Send us a message</h3>
+                    <p className="mt-1 text-sm text-[var(--alo-text-muted)]">We respond within 24 hours.</p>
                   </div>
                   <form onSubmit={submit} className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div>
-                        <Label className="text-xs font-semibold">Full Name <span className="text-[#E8501A]">*</span></Label>
+                        <Label className="text-xs font-semibold">Full Name <span className="text-[var(--alo-cta)]">*</span></Label>
                         <Input
                           required
                           value={form.fullName}
@@ -319,13 +314,13 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs font-semibold">Phone <span className="text-[#E8501A]">*</span></Label>
+                        <Label className="text-xs font-semibold">Phone <span className="text-[var(--alo-cta)]">*</span></Label>
                         <Input
                           required
                           value={form.phone}
                           onChange={(e) => setForm({ ...form, phone: e.target.value })}
                           className="mt-1 h-11"
-                          placeholder="+8801805020100"
+                          placeholder="01XXXXXXXXX"
                         />
                       </div>
                     </div>
@@ -359,21 +354,21 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                         placeholder="Tell us about your goals, questions, or anything we should know."
                       />
                     </div>
-                    <label className="flex cursor-pointer items-start gap-2.5 text-xs text-[#5A7299]">
+                    <label className="flex cursor-pointer items-start gap-2.5 text-xs text-[var(--alo-text-muted)]">
                       <Checkbox
                         checked={form.consent}
                         onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })}
-                        className="mt-0.5 border-[#0057B8]/40 data-[state=checked]:bg-[#0057B8]"
+                        className="mt-0.5 border-[var(--alo-brand)]/40 data-[state=checked]:bg-[var(--alo-brand)]"
                       />
                       <span>
                         I agree to be contacted by ALO Education via phone, WhatsApp, and email about my inquiry.
-                        My data is private, RBAC-protected, and audit-logged. <span className="text-[#E8501A]">*</span>
+                        My data is private, RBAC-protected, and audit-logged. <span className="text-[var(--alo-cta)]">*</span>
                       </span>
                     </label>
                     <Button
                       type="submit"
                       disabled={loading || !form.fullName || !form.phone || !form.consent}
-                      className="h-12 w-full bg-[#E8501A] text-white hover:bg-[#c8451a]"
+                      className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)]"
                     >
                       {loading ? (
                         <><Icon name="Loader2" className="size-4 animate-spin" /> Sending...</>
@@ -381,7 +376,7 @@ export function PublicContact({ onNavigate }: PublicContactProps) {
                         <><Icon name="Send" className="size-4" /> Send Message</>
                       )}
                     </Button>
-                    <p className="text-center text-xs text-[#5A7299]">
+                    <p className="text-center text-xs text-[var(--alo-text-muted)]">
                       <Icon name="ShieldCheck" className="mr-1 inline size-3" />
                       Your data is encrypted and never shared without consent.
                     </p>

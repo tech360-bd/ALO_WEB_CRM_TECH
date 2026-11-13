@@ -2,7 +2,7 @@ import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 const { db, getServerSession } = vi.hoisted(() => ({
   getServerSession: vi.fn(),
-  db: { user: { findUnique: vi.fn() }, student: { findFirst: vi.fn(), findUnique: vi.fn() }, studentSession: { findUnique: vi.fn(), update: vi.fn() }, document: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn() }, timelineEvent: { create: vi.fn() }, auditLog: { create: vi.fn() }, $transaction: vi.fn() },
+  db: { employee: { findFirst: vi.fn() }, user: { findUnique: vi.fn() }, student: { findFirst: vi.fn(), findUnique: vi.fn() }, studentSession: { findUnique: vi.fn(), update: vi.fn() }, document: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn() }, timelineEvent: { create: vi.fn() }, auditLog: { create: vi.fn() }, $transaction: vi.fn() },
 }));
 vi.mock('@/lib/db', () => ({ db }));
 vi.mock('next-auth', () => ({ getServerSession }));

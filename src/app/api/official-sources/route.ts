@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { POST as registerMonitoringSource } from '@/app/api/university-monitoring/sources/route';
+import { requireMonitoringAdmin } from '@/lib/university-monitoring-auth';
+import { mutationOriginAllowed } from '@/lib/request-origin';
 import { db } from '@/lib/db';
 import { authenticateRequest } from '@/lib/auth-middleware';
 
@@ -25,7 +28,9 @@ export async function GET(req: NextRequest) {
     const sourceType = req.nextUrl.searchParams.get('sourceType');
     const dataSection = req.nextUrl.searchParams.get('dataSection');
     const verificationStatus = req.nextUrl.searchParams.get('verificationStatus');
-    const limit = Math.min(parseInt(req.nextUrl.searchParams.get('limit') || '50', 10), 200);
+    const parsedLimit = Number(req.nextUrl.searchParams.get('limit') || '50');
+    if (!Number.isInteger(parsedLimit) || parsedLimit < 1 || parsedLimit > 200) return NextResponse.json({ error: 'limit must be an integer from 1 to 200' }, { status: 400 });
+    const limit = parsedLimit;
 
     const where: any = {};
     if (targetType) where.targetType = targetType;
@@ -71,41 +76,30 @@ export async function GET(req: NextRequest) {
     });
   } catch (err: any) {
     console.error('[official-sources] error', err);
-    return NextResponse.json({ error: 'Failed to fetch official sources', detail: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch official sources' }, { status: 500 });
   }
 }
 
-// POST /api/official-sources — create official source (admin)
+// Compatibility entry point: never allow legacy callers to self-verify a source.
+// Use the same Super Admin guard, URL policy, dedupe and pending-only creation
+// as the monitoring registry rather than maintaining a second mutation path.
 export async function POST(req: NextRequest) {
-  const auth = await requireSourceManager(req);
-  if (auth instanceof NextResponse) return auth;
-  try {
-    const body = await req.json();
-    const { sourceUrl, sourceType = 'official_university', sourceTitle = '', targetType = '', targetId = '', targetSlug = '', dataSection = '', verificationStatus = 'pending', notes = '' } = body;
-
-    if (!sourceUrl) return NextResponse.json({ error: 'sourceUrl required' }, { status: 400 });
-
-    const source = await db.officialSource.create({
-      data: {
-        sourceUrl,
-        sourceType,
-        sourceTitle,
-        targetType,
-        targetId,
-        targetSlug,
-        dataSection,
-        verificationStatus,
-        verifiedBy: auth.userId,
-        lastVerifiedAt: verificationStatus === 'verified' ? new Date() : null,
-        notes,
-        entityType: String(targetType || 'OTHER').toUpperCase(),
-        sourceName: sourceTitle || sourceUrl,
-      },
-    });
-
-    return NextResponse.json({ source, success: true }, { status: 201 });
-  } catch (err: any) {
-    console.error('[official-sources.create] error', err);
-    return NextResponse.json({ error: 'Failed to create official source', detail: err.message }, { status: 500 });
-  }
+  const guard = await requireMonitoringAdmin(req);
+  if (!guard.ok) return guard.response;
+  if (!mutationOriginAllowed(req, guard.actor.auth)) return NextResponse.json({ error: 'Cross-origin source changes are not allowed' }, { status: 403 });
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ error: 'A JSON object is required' }, { status: 400 });
+  const entityType = String(body.entityType || body.targetType || '').toUpperCase();
+  const mapped = {
+    sourceUrl: body.sourceUrl,
+    sourceName: body.sourceName || body.sourceTitle || body.sourceUrl,
+    sourceType: body.sourceType || 'official_university',
+    entityType,
+    universitySlug: body.universitySlug || (entityType === 'UNIVERSITY' ? body.targetSlug : undefined),
+    courseSlug: body.courseSlug || (entityType === 'COURSE' ? body.targetSlug : undefined),
+    countrySlug: body.countrySlug || (['COUNTRY', 'GOVERNMENT', 'AUTHORITY'].includes(entityType) ? body.targetSlug : undefined),
+    category: body.category || body.dataSection || undefined,
+    checkFrequencyDays: body.checkFrequencyDays,
+  };
+  return registerMonitoringSource(new NextRequest(req.url, { method: 'POST', headers: req.headers, body: JSON.stringify(mapped) }));
 }

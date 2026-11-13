@@ -1,0 +1,553 @@
+{
+  "documentsWithClaims": 74,
+  "claims": [
+    {
+      "path": "imports/legacy-branch-references/other-ai-builder/worklog.md.txt",
+      "hits": 31,
+      "sample": [
+        "- Two production-ready CRM view components shipped: CrmDashboard (with inline Student360 Sheet) and Student360 (full multi-tab mission-control).",
+        "- Two production-ready dashboards delivered with full fetch/PATCH wiring, real Bangladeshi copy, orange CTAs, blue/orange brand palette, responsive mobile-first layout, loading + e",
+        "- Delivered 3 production-ready view components: LandingView, DocumentHub, ApplicationsView."
+      ]
+    },
+    {
+      "path": "CLAUDE.md",
+      "hits": 19,
+      "sample": [
+        "modules, test everything, and leave the project genuinely production-ready.",
+        "Every course must have a complete dynamic course page.",
+        "PRODUCTION READY"
+      ]
+    },
+    {
+      "path": "ALO_FINAL_MASTER_PRODUCTION_READY.md",
+      "hits": 3,
+      "sample": [
+        "- `src/app/admin/courses/create/page.tsx` \u2014 12 tabs per spec Basic Information (course_code, name, slug, description, study_level Foundation/International Year One/Bachelor/Top-up/",
+        "- `src/app/admin/import-center/courses/page.tsx` \u2014 CSV import center courses with CSV columns per spec every course must have country_id/university_id/campus_id/study_level_id/stud",
+        "- Enhanced `CrmCourse` with courseCode/campusId/countryId/studyLevelId/studyAreaId/disciplineId/name/description/degreeType/workPlacementAvailable/internshipAvailable/coOpAvailable"
+      ]
+    },
+    {
+      "path": "ALO_SUPER_ADMIN_CONTROL_CENTER_READY.md",
+      "hits": 3,
+      "sample": [
+        "### Super Admin Control Center \u2014 Why Missing: Existing MasterSuperAdminDashboard had hardcoded mock metrics/employees/fake employees/fake approvals/fake AI jobs/fake integration he",
+        "- **Business rules:** Business rules per all specs: university must always connect to country_id do not duplicate universities, every course must have country_id/university_id/camp",
+        "Every critical requirement has passed its applicable frontend, API, database, authentication, RBAC, business logic, audit, and test requirements per Sections A-X \u2014 plus previous sy"
+      ]
+    },
+    {
+      "path": "FINAL-VERIFICATION-REPORT.md",
+      "hits": 3,
+      "sample": [
+        "described as production-ready.**",
+        "> **This system is NOT production-ready.**",
+        "### Minimum path to a production-ready claim"
+      ]
+    },
+    {
+      "path": "IMPLEMENTATION_REPORT_20260915.md",
+      "hits": 3,
+      "sample": [
+        "- **Document:** `StudentDocument` + `Document`/`DocumentVersion`/`DocumentAudit`/`DocumentSecurityIncident` \u2014 private `STORAGE_POOL_C` not `public/`, HMAC `FILE_SIGN_SECRET` SEC-02",
+        "## 12) Remaining Blockers (must fix before claiming production-ready)",
+        "**Do not claim entire system production-ready if any required integration remains unconfigured** \u2014 currently `ALO_CRON_SECRET` must be set on VPS and workflow patch applied manuall"
+      ]
+    },
+    {
+      "path": "PORTAL_FEATURES_COMPLETE_REPORT.md",
+      "hits": 3,
+      "sample": [
+        "- ScholarshipsListing ScholarshipDetailHub fetches /api/scholarships fallback MASTER_SCHOLARSHIPS_DATA coverageType country flag provider awardAmount eligibility deadline 100% veri",
+        "- Application Manager Portal B2B Ready \u2014 Complete Application Manager Portal + Direct/Partner/B2B + Offer/CAS-I20-COE + Document Review + Visa Handover + Confidential B2B Security ",
+        "- **Application Manager:** 17 pages \u2014 dashboard, applications, application/[id], b2b, b2b/create, b2b/provider/[id], b2b/providers, cas-i20-coe, comments, create, deadlines, direct"
+      ]
+    },
+    {
+      "path": "docs/OLD_CRM_MIGRATION_IMPLEMENTATION_REPORT.md",
+      "hits": 3,
+      "sample": [
+        "These items are **not hidden**; the system is not claimed \u201cPRODUCTION READY\u201d.",
+        "**NOT** reporting \u201cCOMPLETE\u201d / \u201cIMPLEMENTED\u201d / \u201cPRODUCTION READY\u201d. The import pipeline, normalization, duplicate-weighted, merge-safety, source-evidence, weekly-update, publish-ato"
+      ]
+    },
+    {
+      "path": "docs/baseline/PHASE-0-BASELINE-2026-11-02.md",
+      "hits": 3,
+      "sample": [
+        "| Every course in `courses.csv` labelled `VERIFIED_OFFICIAL` | A generated label, not a verification act \u2014 must not be treated as verified |",
+        "**Coverage claim: 0 of 6 destinations have a completed institution inventory. Course coverage against official catalogues: 0 measured.** No \"all courses collected\" claim is made or",
+        "- Not claimed: complete coverage, verified fees, verified deadlines, scholarship values, or \"all courses collected\"."
+      ]
+    },
+    {
+      "path": "ALO_COUNTRY_PAGES_10X_READY.md",
+      "hits": 2,
+      "sample": [
+        "- Do NOT report complete just because files exist \u2014 actually test every country URL, every hero CTA, every course card, every university card, every scholarship card, every city ca",
+        "**ALO_COUNTRY_PAGES_10X_READY \u2014 PRODUCTION READY \u2014 10x Better Than Current Shared Format**"
+      ]
+    },
+    {
+      "path": "ALO_EMPLOYEE_ACCESS_SYSTEM_CHECK_REPORT_20260914.md",
+      "hits": 2,
+      "sample": [
+        "**\u2705 ALO_EMPLOYEE_ACCESS_SYSTEM \u2014 Production Ready \u2014 Centralized RBAC+ABAC+Scope+Object+Field+Workflow+Approval+Quota+Temporary+Audit \u2014 Least Privilege \u2014 No Frontend-Only Authorizat",
+        "**Status:** **COMPLETE \u2014 Production Ready pending live DB/email creds & migration deploy.** All code, engine, UI, audit, security, workflow, quota, temporary, break-glass, AI, comm"
+      ]
+    },
+    {
+      "path": "ALO_STUDENT_JOURNEY_PORTAL_READY.md",
+      "hits": 2,
+      "sample": [
+        "- Every course result should show per spec 16: 95% AI Match, 92% Eligibility, Scholarship Possible, Budget Fit, English Requirement Met \u2014 then WHY THIS COURSE MATCHES YOU (Your GPA",
+        "- [x] **Course Match** \u2014 Course Finder uses actual profile calculates eligibility score via calculateEligibilityScore + AI match score via calculateMatchScore + scholarship match +"
+      ]
+    },
+    {
+      "path": "ALO_UNIVERSITY_COURSE_SERVICES_READY.md",
+      "hits": 2,
+      "sample": [
+        "## Y. Database Relationship \u2014 Every Course Connects",
+        "- **Every course connects to country, university, campus, study_level, study_area, discipline**: CrmCourse has universityId FK to CrmUniversity, country, city, campus, studyLevel, "
+      ]
+    },
+    {
+      "path": "AUDIT/external-repository-review-2026-09-21.md",
+      "hits": 2,
+      "sample": [
+        "| [`workwithlos-ui/dave`](https://github.com/workwithlos-ui/dave) | PASS | DAVE \u2014 Data Acquisition and Validation Engine. Production-ready AI-powered scraping: URL to clean, valida",
+        "- This review does not claim that native operating systems, mobile softphones, desktop agent hosts, 3D painting, arbitrary third-party CRMs, or media render farms are installed or "
+      ]
+    },
+    {
+      "path": "AUDIT/repository-readme-review-2026-10-10.md",
+      "hits": 2,
+      "sample": [
+        "- Description: DAVE \u2014 Data Acquisition and Validation Engine. Production-ready AI-powered scraping: URL to clean, validated, structured data.",
+        "- Feature/use-case evidence: Frappe CRM | Frappe CRM is a simple, affordable, open-source CRM tool designed for modern sales teams with unlimited users. Frappe CRM is crafted for p"
+      ]
+    },
+    {
+      "path": "REFERENCE-FUNCTION-AUDIT.md",
+      "hits": 2,
+      "sample": [
+        "> Unsupported claims in this file: 'production-ready implementation' and the 'certifies that' statements are self-declarations with no test, review or deployment evidence attached.",
+        "This document provides a comprehensive audit comparing functional concepts analyzed from three industry reference platforms against ALO Education's original, production-ready imple"
+      ]
+    },
+    {
+      "path": "alo-education-web-crm-final/REFERENCE-FUNCTION-AUDIT.md",
+      "hits": 2,
+      "sample": [
+        "> Unsupported claims in this file: 'production-ready implementation' and the 'certifies that' statements are self-declarations with no test, review or deployment evidence attached.",
+        "This document provides a comprehensive audit comparing functional concepts analyzed from three industry reference platforms against ALO Education's original, production-ready imple"
+      ]
+    },
+    {
+      "path": "docs/ALO-EDUCATION-END-TO-END-WORKFLOW-PLAN.md",
+      "hits": 2,
+      "sample": [
+        "4. **Production-ready:** every critical gate in auth/RBAC, database/migrations, document authorization/storage, communications/webhook security, runtime, CI, and actual smoke tests",
+        "**This plan is a draft. It intentionally does not declare any listed feature deployed or production-ready.**"
+      ]
+    },
+    {
+      "path": "docs/BRANCH-MERGE-CHANGELOG.md",
+      "hits": 2,
+      "sample": [
+        "- Final Master Production Ready (WhatsApp AI Automation, Employee RBAC, CRM Communication, Student Automation, SLA, Document Security, AI Assistance, Audit, Notification, Task, Ana",
+        "- etc (3938132 Fix deployment config \u2014 3044 / /root/alo-github-main-new, 9860415 ALO WhatsApp AI + RBAC cPanel \u2014 production-ready merge)"
+      ]
+    },
+    {
+      "path": "docs/final-master/FINAL_PRODUCTION_READINESS_REPORT.md",
+      "hits": 2,
+      "sample": [
+        "## 2. Critical gating (must be PASS before production-ready = PROHIBITED now)",
+        "**Therefore: platform is NOT production-ready at this commit. Declaration prohibited per \u00a721.**"
+      ]
+    },
+    {
+      "path": "docs/final-master/README.md",
+      "hits": 2,
+      "sample": [
+        "12. `FINAL_PRODUCTION_READINESS_REPORT.md` \u2014 totals PASS 12 / FAIL 27 / BLOCKED 31 / NOT_TESTED 76 \u2192 **NOT production-ready** (gate closed)",
+        "Production-ready declaration **PROHIBITED** while FAIL/BLOCKED remain (see \u00a721). Evidence files live here; run P0\u2192P5 fixes then re-issue."
+      ]
+    },
+    {
+      "path": "documentation/FINAL-AUDIT-REPORT.md",
+      "hits": 2,
+      "sample": [
+        "**Status:** IMPLEMENTATION COMPLETE \u2014 PRODUCTION READY (within sandbox constraints)",
+        "**The project is production-ready within the constraints of the development sandbox.**"
+      ]
+    },
+    {
+      "path": "ALO_APPLICATION_MANAGER_PORTAL_B2B_READY.md",
+      "hits": 1,
+      "sample": [
+        "# ALO EDUCATION APPLICATION MANAGER PORTAL + B2B CONFIDENTIAL \u2014 PRODUCTION READY"
+      ]
+    },
+    {
+      "path": "ALO_EMPLOYEE_ACCESS_SYSTEM_EVIDENCE_REPORT.md",
+      "hits": 1,
+      "sample": [
+        "## Status: COMPLETE \u2014 Production Ready"
+      ]
+    },
+    {
+      "path": "ALO_LANGUAGE_PREPARATION_10X_READY.md",
+      "hits": 1,
+      "sample": [
+        "System is production-ready for ALO Education Bangladesh \u2014 white-first premium design, DB-driven with fallback, no fake data, source verification, RBAC, CRM integration, SEO, intern"
+      ]
+    },
+    {
+      "path": "ALO_PLATFORM_AUDIT_2026-10-24.md",
+      "hits": 1,
+      "sample": [
+        "production-ready."
+      ]
+    },
+    {
+      "path": "ALO_UNIFIED_UNIVERSITY_COURSE_SYSTEM_READY.md",
+      "hits": 1,
+      "sample": [
+        "- [x] **No orphan courses** \u2014 Validation in create API: every course must have country_id, university_id, campus_id when applicable, study_level_id, study_area_id, discipline_id \u2014 "
+      ]
+    },
+    {
+      "path": "AUDIT/ALO_COMPREHENSIVE_REPOSITORY_AUDIT_2026-10-28.md",
+      "hits": 1,
+      "sample": [
+        "**The repository is not yet verified as production-ready.** The existing Next.js/Prisma/MySQL architecture is intact, and static checks confirm substantial protections are present."
+      ]
+    },
+    {
+      "path": "AUDIT/historical-catalogue-reports-2026-10-12/FINAL-AUDIT-REPORT.md",
+      "hits": 1,
+      "sample": [
+        "**Final Verdict:** **PASS (PRODUCTION READY \u2014 EXTERNAL CREDENTIALS REQUIRED)**"
+      ]
+    },
+    {
+      "path": "AUDIT/historical-catalogue-reports-2026-10-12/PRODUCTION-DELIVERY-REPORT.md",
+      "hits": 1,
+      "sample": [
+        "Next.js 16 (App Router) + TypeScript + Prisma (SQLite sandbox / MySQL production-ready) + NextAuth + shadcn/ui"
+      ]
+    },
+    {
+      "path": "AUDIT/link-completion-matrix-2026-09-27.md",
+      "hits": 1,
+      "sample": [
+        "| 10 | Initial list | `harry0703/MoneyPrinterTurbo` | 200 | PARTIAL \u2014 ALO video engine and marketing-video workflows exist; external video automation is not imported or claimed pro"
+      ]
+    },
+    {
+      "path": "AUDIT/phase0-master-instruction-2026-10-12/01-EXISTING-SYSTEM-AUDIT.md",
+      "hits": 1,
+      "sample": [
+        "**Bottom line:** the platform is substantially implemented and actively tested; the critical path to \"production ready\" under this Master Instruction is consolidation, the \u00a77/\u00a710/\u00a7"
+      ]
+    },
+    {
+      "path": "AUDIT/phase2-gates-2026-10-11/before/MASTER-REQUIREMENT-REGISTER.md",
+      "hits": 1,
+      "sample": [
+        "\"production ready\" without evidence. Anything unverifiable is marked `NOT VERIFIED`."
+      ]
+    },
+    {
+      "path": "AUDIT/post-audit-2026-10-11/baseline-report.md",
+      "hits": 1,
+      "sample": [
+        "**Overall: NOT production-ready.** Existing implementation continued, not a new CRM build. PASS below applies only to the stated test scope. No real provider messages, fake product"
+      ]
+    },
+    {
+      "path": "AUDIT/production-audit-2026-09-21.md",
+      "hits": 1,
+      "sample": [
+        "- External projects were used as evidence/reference patterns only. No untrusted plugin, native desktop/mobile application, third-party CRM, media renderer, or incompatible license/"
+      ]
+    },
+    {
+      "path": "AUDIT/supplied-reference-implementation-2026-10-10.md",
+      "hits": 1,
+      "sample": [
+        "## Explicit remaining work \u2014 no \u201c100% complete\u201d claim"
+      ]
+    },
+    {
+      "path": "FINAL-AUDIT-REPORT.md",
+      "hits": 1,
+      "sample": [
+        "**Final Verdict:** **PASS (PRODUCTION READY \u2014 EXTERNAL CREDENTIALS REQUIRED)**"
+      ]
+    },
+    {
+      "path": "FINAL_DEPLOYMENT_REPORT.md",
+      "hits": 1,
+      "sample": [
+        "**Honest status:** Codebase is production-ready after fixes, but live deployment is BLOCKED pending GitHub secrets and VPS access \u2014 cannot claim live until workflow succeeds and he"
+      ]
+    },
+    {
+      "path": "FINAL_EMPLOYEE_ACCESS_SYSTEM_DELIVERY_REPORT.md",
+      "hits": 1,
+      "sample": [
+        "**Status:** \u2705 PRODUCTION READY \u2014 40/40 Self-Audit PASS"
+      ]
+    },
+    {
+      "path": "FINAL_EVIDENCE_BACKED_REPORT_2026-09-15.md",
+      "hits": 1,
+      "sample": [
+        "**Do not say all done, live, or production-ready unless checks actually passed \u2014 verified blocked for deployment, workflow push, VPS, public domains**"
+      ]
+    },
+    {
+      "path": "FULL_PROJECT_REPORT.md",
+      "hits": 1,
+      "sample": [
+        "- **Scholarships (`/scholarships`):** `ScholarshipsListing` + `ScholarshipDetailHub`, fetches `/api/scholarships`, fallback `MASTER_SCHOLARSHIPS_DATA`, displays coverageType, count"
+      ]
+    },
+    {
+      "path": "MASTER-REQUIREMENT-REGISTER.md",
+      "hits": 1,
+      "sample": [
+        "\"production ready\" without evidence. Anything unverifiable is marked `NOT VERIFIED`."
+      ]
+    },
+    {
+      "path": "PAGE_VERIFICATION_REPORT.md",
+      "hits": 1,
+      "sample": [
+        "`mapRows(databaseEntries.crmCourses, '/course')` \u2014 so every course URL in the"
+      ]
+    },
+    {
+      "path": "PRODUCTION-DELIVERY-REPORT.md",
+      "hits": 1,
+      "sample": [
+        "Next.js 16 (App Router) + TypeScript + Prisma (SQLite sandbox / MySQL production-ready) + NextAuth + shadcn/ui"
+      ]
+    },
+    {
+      "path": "agent-ctx/13-home-full-stack-developer.md",
+      "hits": 1,
+      "sample": [
+        "- Delivered a 2049-line production-ready `PublicHome` component with all 24 sections (Section 1 = PublicShell header; Sections 2-23 = rendered in this file; Section 24 = PublicShel"
+      ]
+    },
+    {
+      "path": "agent-ctx/18-omni-full-stack-developer.md",
+      "hits": 1,
+      "sample": [
+        "- Production-ready `OmnichannelCommunicationCenter` view delivered with 12 stat cards, 8 fully-wired tabs, 4 dialogs (Connect Account, Log Call, Send SMS, Update Consent, Run AI Cl"
+      ]
+    },
+    {
+      "path": "agent-ctx/4-b-full-stack-developer.md",
+      "hits": 1,
+      "sample": [
+        "- Two production-ready views shipped: StudentDashboard (mission-control portal) and StudentProfileForm (4-step / 11-section comprehensive form)."
+      ]
+    },
+    {
+      "path": "agent-ctx/4-f-full-stack-developer.md",
+      "hits": 1,
+      "sample": [
+        "Two production-ready view components for the ALO Education system:"
+      ]
+    },
+    {
+      "path": "agent-ctx/9-mega-main.md",
+      "hits": 1,
+      "sample": [
+        "2. **Orphan university check** \u2014 every course's `universitySlug` must match a known university slug (this seed + seed-public + seed-expanded slugs \u2014 hardcoded list of 61 prior slug"
+      ]
+    },
+    {
+      "path": "alo-education-web-crm-final/FINAL-AUDIT-REPORT.md",
+      "hits": 1,
+      "sample": [
+        "**Final Verdict:** **PASS (PRODUCTION READY \u2014 EXTERNAL CREDENTIALS REQUIRED)**"
+      ]
+    },
+    {
+      "path": "audit/AGENTOS-COMPLETE-GAP-AUDIT.md",
+      "hits": 1,
+      "sample": [
+        "## Status: PRODUCTION-READY"
+      ]
+    },
+    {
+      "path": "data/verified-2027/README.md",
+      "hits": 1,
+      "sample": [
+        "* Every course has exactly 13 rows (January 2027 \u2026 January 2028)."
+      ]
+    },
+    {
+      "path": "docs/ALO-PLATFORM-CURRENT-GAP-AUDIT.md",
+      "hits": 1,
+      "sample": [
+        "- Treat all migration behavior as **NOT PRODUCTION READY / NOT LIVE VERIFIED**. Never execute against a real database until schema/client validation, transaction/retry tests, opera"
+      ]
+    },
+    {
+      "path": "docs/CONTINUATION-READINESS.md",
+      "hits": 1,
+      "sample": [
+        "| Stub/unsafe worker execution | cron-definitions.ts, worker.ts | All 15 unverified jobs disabled; worker honors flag | Quarantined, not implemented or production-ready |"
+      ]
+    },
+    {
+      "path": "docs/FINAL_MASTER_REPORT_2026-09-15.md",
+      "hits": 1,
+      "sample": [
+        "- 7 INTEGRATED: n8n (automation, 7 workflows), Remotion (programmatic, most controllable, 0GB), wtz2017/VideoMaker, viniciusenari/slideshow-videomaker, shubhamdevhouse/Animated-Vid"
+      ]
+    },
+    {
+      "path": "docs/LINK-AUDIT-2026-10-08.md",
+      "hits": 1,
+      "sample": [
+        "| [workwithlos-ui/dave](https://github.com/workwithlos-ui/dave) | \u2705 OK | Python | 0 | DAVE \u2014 Data Acquisition and Validation Engine. Production-ready AI-powered scraping: URL to cl"
+      ]
+    },
+    {
+      "path": "docs/MASTER_AUDIT_20260915_CONSOLIDATED.md",
+      "hits": 1,
+      "sample": [
+        "Production-ready: YES for https://aloeducation.com"
+      ]
+    },
+    {
+      "path": "docs/PRODUCTION_SETUP.md",
+      "hits": 1,
+      "sample": [
+        "## 10) Checklist before claiming production-ready"
+      ]
+    },
+    {
+      "path": "docs/PUBLIC-CATALOGUE-VISIBILITY.md",
+      "hits": 1,
+      "sample": [
+        "`publicCourseWhere()` requires a public university \u2014 so every course of that university"
+      ]
+    },
+    {
+      "path": "docs/UNIFIED_PROJECT_BASELINE_AUDIT.md",
+      "hits": 1,
+      "sample": [
+        "**Overall status: NOT production-ready.** The application is a very large, feature-rich"
+      ]
+    },
+    {
+      "path": "docs/UNIFIED_PROJECT_DEPLOYMENT_AND_ROLLBACK.md",
+      "hits": 1,
+      "sample": [
+        "**Do not label this project production-ready** until: (a) `prisma generate` succeeds on the"
+      ]
+    },
+    {
+      "path": "docs/VIDEO_INTEGRATION_MATRIX.md",
+      "hits": 1,
+      "sample": [
+        "- These are core, production-ready, low VRAM, MIT or fair-code compliant, and directly solve ALO use cases: university promo, course explainer, slideshow, animated text, automation"
+      ]
+    },
+    {
+      "path": "docs/ai-gateway/final-report.md",
+      "hits": 1,
+      "sample": [
+        "credential and one approved provider. **Not** production-ready, and not described as"
+      ]
+    },
+    {
+      "path": "docs/audit/course-university-data-reconciliation-2026-10-09.md",
+      "hits": 1,
+      "sample": [
+        "Each university information page must ultimately include **every course offered to international students, from Foundation through PhD, with an intake from January 2027 through Jan"
+      ]
+    },
+    {
+      "path": "docs/audits/MASTER_INTAKE_AUDIT.md",
+      "hits": 1,
+      "sample": [
+        "| Every course has an intake status | \u2705 YES (all have intake text) |"
+      ]
+    },
+    {
+      "path": "docs/email-marketing/README.md",
+      "hits": 1,
+      "sample": [
+        "Status: **build in progress, not production-ready.** Sending is OFF by default."
+      ]
+    },
+    {
+      "path": "docs/final-master/ENV_AUDIT_LIVE_READINESS_REPORT.md",
+      "hits": 1,
+      "sample": [
+        "**Do NOT deploy** until blockers and \u00a74 answers are addressed. The project is **not live** and was **not deployed** in this audit (read-only). Nothing claims \u201czero errors\u201d or \u201cprod"
+      ]
+    },
+    {
+      "path": "docs/final-master/FINAL_REQUIREMENTS_TRACEABILITY.md",
+      "hits": 1,
+      "sample": [
+        "**Totals:** 146 critical | **PASS:** 12 | **FAIL:** 27 | **BLOCKED:** 31 | **NOT_TESTED:** 76 \u2014 *critical FAIL/BLOCKED exist \u2192 not production-ready (see readiness).*"
+      ]
+    },
+    {
+      "path": "docs/official-data-integration/RESEARCH-STATUS-2026-10-29.md",
+      "hits": 1,
+      "sample": [
+        "| Institutions with complete catalogue traversal | 0 |"
+      ]
+    },
+    {
+      "path": "docs/testing/ACCEPTANCE_TEST_PLAN.md",
+      "hits": 1,
+      "sample": [
+        "**Rule:** F11 is the gate for any \"self-hosted\" claim. Until F1\u2013F11 pass on the target hardware, the platform is *not* production-ready and this document must say so."
+      ]
+    },
+    {
+      "path": "documentation/FINAL-DELIVERY-REPORT.md",
+      "hits": 1,
+      "sample": [
+        "- Production ready: \u23f3 Pending provider authorization and production deployment"
+      ]
+    },
+    {
+      "path": "imports/alo-education-full/worklog.md",
+      "hits": 1,
+      "sample": [
+        "- 4 major new pages created totaling ~1500 lines of production-ready React/TypeScript code"
+      ]
+    },
+    {
+      "path": "imports/alo-education-source/worklog.md",
+      "hits": 1,
+      "sample": [
+        "- 4 major new pages created totaling ~1500 lines of production-ready React/TypeScript code"
+      ]
+    },
+    {
+      "path": "imports/legacy-branch-references/ai-builder-full/worklog.md.txt",
+      "hits": 1,
+      "sample": [
+        "- 4 major new pages created totaling ~1500 lines of production-ready React/TypeScript code"
+      ]
+    }
+  ]
+}

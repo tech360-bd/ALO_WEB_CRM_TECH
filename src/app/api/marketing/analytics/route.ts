@@ -1,17 +1,13 @@
 import { leadAccess } from '@/lib/crm/lead-access';
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { withAuth, AuthContext } from "@/lib/auth-middleware";
-
-const MARKETING_AUTH = {
-  requireUserTypes: ['MARKETING', 'MARKETING_MANAGER', 'SUPER_ADMIN', 'ADMIN'],
-};
+import { withMarketingAccess } from "@/lib/marketing/access";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // GET — unified analytics across all marketing channels + CRM pipeline
-export const GET = withAuth(async (_req: Request, _auth: AuthContext) => {
+export const GET = withMarketingAccess(async (_req: Request, _auth) => {
   const leadScope = leadAccess(_auth);
   if (!leadScope) return NextResponse.json({ error: 'Verified User lead access required' }, { status: 403 });
   const [
@@ -160,4 +156,4 @@ export const GET = withAuth(async (_req: Request, _auth: AuthContext) => {
       createdAt: a.createdAt,
     })),
   } as any);
-}, MARKETING_AUTH);
+}, 'manager');

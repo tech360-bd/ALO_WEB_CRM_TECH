@@ -31,8 +31,8 @@ const iconMap: Record<string, any> = {
 };
 
 function SeverityBadge({ severity }: { severity: string }) {
-  if (severity === 'high') return <Badge variant="danger" className="text-[10px]">Critical</Badge>;
-  return <Badge variant="warning" className="text-[10px]">Warning</Badge>;
+  if (severity === 'high') return <Badge variant="danger" className="text-[11px]">Critical</Badge>;
+  return <Badge variant="warning" className="text-[11px]">Warning</Badge>;
 }
 
 export default function CeoDashboard() {
@@ -103,7 +103,7 @@ export default function CeoDashboard() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <Icon className="w-5 h-5 text-alo-brand" />
-                {kpi.change != null && <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-emerald-600' : 'text-red-600'}`}>
+                {kpi.change != null && <span className={`inline-flex items-center text-[11px] font-medium ${kpi.up ? 'text-crm-success-text' : 'text-crm-danger-text'}`}>
                   {kpi.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}{kpi.change}
                 </span>}
               </div>
@@ -175,7 +175,7 @@ export default function CeoDashboard() {
                       <span className="text-xs text-alo-text-muted">Leads: {m.leads}</span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <Badge variant={m.trend === 'up' ? 'success' : 'danger'} className="text-[10px]">
+                      <Badge variant={m.trend === 'up' ? 'success' : 'danger'} className="text-[11px]">
                         {m.trend === 'up' ? <ArrowUpRight className="w-3 h-3 mr-0.5" /> : <ArrowDownRight className="w-3 h-3 mr-0.5" />}{m.roi}
                       </Badge>
                     </div>
@@ -222,7 +222,7 @@ export default function CeoDashboard() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base font-semibold text-alo-text flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" /> High-Risk Cases
+                  <AlertTriangle className="w-4 h-4 text-crm-warning-text" /> High-Risk Cases
                 </CardTitle>
                 <Badge variant="danger" className="text-[11px]">{highRiskCases.length}</Badge>
               </div>
@@ -230,7 +230,7 @@ export default function CeoDashboard() {
             <CardContent>
               <div className="space-y-3">
                 {highRiskCases.map((c) => (
-                  <div key={c.student} className={`p-3 rounded-lg border ${c.severity === 'high' ? 'border-red-200 bg-red-50' : 'border-amber-200 bg-amber-50'}`}>
+                  <div key={c.student} className={`p-3 rounded-lg border ${c.severity === 'high' ? 'border-crm-danger-border bg-crm-danger-bg' : 'border-crm-warning-border bg-crm-warning-bg'}`}>
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-sm font-medium text-alo-text">{c.student}</p>
                       <SeverityBadge severity={c.severity} />

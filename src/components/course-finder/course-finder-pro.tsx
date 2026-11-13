@@ -90,7 +90,7 @@ function EligibilityIndicator({ course, student }: { course: Course; student: ty
 
   if (ieltsOk && pteOk) {
     return (
-      <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md text-xs font-medium">
+      <div className="flex items-center gap-1.5 text-crm-success-text bg-crm-success-bg px-2.5 py-1 rounded-md text-xs font-medium">
         <UserCheck className="size-3.5" />
         Eligible
       </div>
@@ -101,7 +101,7 @@ function EligibilityIndicator({ course, student }: { course: Course; student: ty
   if (!pteOk) issues.push(`PTE ${course.pteMin} req.`);
 
   return (
-    <div className="flex items-center gap-1.5 text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md text-xs font-medium">
+    <div className="flex items-center gap-1.5 text-crm-warning-text bg-crm-warning-bg px-2.5 py-1 rounded-md text-xs font-medium">
       <UserX className="size-3.5" />
       {issues.join(', ')}
     </div>
@@ -112,22 +112,22 @@ function CommissionPanel({ course, canView }: { course: Course; canView: boolean
   if (!canView) return null;
 
   return (
-    <div className="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-slate-100">
+    <div className="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-[var(--alo-border)]">
       <div className="text-center">
-        <p className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Expected</p>
-        <p className="text-sm font-semibold text-slate-800 mt-0.5">
+        <p className="text-[11px] uppercase tracking-wider text-[var(--alo-text-muted)] font-medium">Expected</p>
+        <p className="text-sm font-semibold text-[var(--alo-text)] mt-0.5">
           {course.commissionExpected != null ? `${course.commissionExpected}%` : '—'}
         </p>
       </div>
       <div className="text-center">
-        <p className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Increased</p>
-        <p className="text-sm font-semibold text-emerald-600 mt-0.5">
+        <p className="text-[11px] uppercase tracking-wider text-[var(--alo-text-muted)] font-medium">Increased</p>
+        <p className="text-sm font-semibold text-crm-success-text mt-0.5">
           {course.commissionIncreased != null ? `${course.commissionIncreased}%` : '—'}
         </p>
       </div>
       <div className="text-center">
-        <p className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Partner</p>
-        <p className="text-sm font-semibold text-slate-800 mt-0.5">
+        <p className="text-[11px] uppercase tracking-wider text-[var(--alo-text-muted)] font-medium">Partner</p>
+        <p className="text-sm font-semibold text-[var(--alo-text)] mt-0.5">
           {course.commissionPartner != null ? `${course.commissionPartner}%` : '—'}
         </p>
       </div>
@@ -144,7 +144,7 @@ function NotesPanel({ course, canView }: { course: Course; canView: boolean }) {
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger asChild>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-xs text-slate-500 hover:text-slate-700 h-7">
+        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] h-7">
           <StickyNote className="size-3.5 mr-1.5" />
           Internal Notes
           {open ? <ChevronUp className="size-3 ml-auto" /> : <ChevronDown className="size-3 ml-auto" />}
@@ -152,7 +152,7 @@ function NotesPanel({ course, canView }: { course: Course; canView: boolean }) {
       </CollapsibleTrigger>
       <CollapsibleContent>
         <textarea
-          className="w-full mt-1 text-xs border border-slate-200 rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 min-h-[60px]"
+          className="w-full mt-1 text-xs border border-[var(--alo-border)] rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-crm-success-border min-h-[60px]"
           placeholder="Add internal notes about this course..."
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -176,42 +176,42 @@ function ProCourseCard({
   onApply: (c: Course) => void;
 }) {
   const levelColors: Record<string, string> = {
-    Undergraduate: 'bg-emerald-100 text-emerald-800',
-    Postgraduate: 'bg-amber-100 text-amber-800',
+    Undergraduate: 'bg-crm-success-bg text-crm-success-text',
+    Postgraduate: 'bg-crm-warning-bg text-crm-warning-text',
     Foundation: 'bg-sky-100 text-sky-800',
-    Diploma: 'bg-violet-100 text-violet-800',
-    PhD: 'bg-rose-100 text-rose-800',
+    Diploma: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)]',
+    PhD: 'bg-crm-warning-bg text-crm-warning-text',
   };
 
   const canViewCommission = role === 'admin' || role === 'manager';
   const canViewNotes = role === 'admin' || role === 'manager' || role === 'counselor';
 
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow border-slate-200">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow border-[var(--alo-border)]">
       <CardContent className="p-4 flex flex-col gap-3">
         {/* Top Row: University + Verified Badge */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-emerald-600 truncate">
+            <p className="text-sm font-medium text-crm-success-text truncate">
               {COUNTRY_FLAGS[course.country]} {course.universityName}
             </p>
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             {/* Verification Badge */}
             {course.sourceVerified ? (
-              <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 text-[10px] gap-1 px-1.5">
+              <Badge variant="secondary" className="bg-crm-success-bg text-crm-success-text text-[11px] gap-1 px-1.5">
                 <ShieldCheck className="size-3" />
                 Verified
               </Badge>
             ) : (
-              <Badge variant="secondary" className="bg-slate-100 text-slate-500 text-[10px] gap-1 px-1.5">
+              <Badge variant="secondary" className="bg-[var(--alo-surface-muted)] text-[var(--alo-text-muted)] text-[11px] gap-1 px-1.5">
                 <ShieldX className="size-3" />
                 Unverified
               </Badge>
             )}
             <Badge
               variant="secondary"
-              className={levelColors[course.studyLevel] || 'bg-slate-100 text-slate-700'}
+              className={levelColors[course.studyLevel] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}
             >
               {course.studyLevel}
             </Badge>
@@ -219,48 +219,48 @@ function ProCourseCard({
         </div>
 
         {/* Course Title */}
-        <h3 className="font-semibold text-slate-900 leading-snug line-clamp-2 text-sm min-h-[2.5rem]">
+        <h3 className="font-semibold text-[var(--alo-text)] leading-snug line-clamp-2 text-sm min-h-[2.5rem]">
           {course.courseTitle}
         </h3>
 
         {/* Details Grid */}
-        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
+        <div className="grid grid-cols-2 gap-2 text-xs text-[var(--alo-body)]">
           <div className="flex items-center gap-1.5">
-            <Clock className="size-3.5 text-slate-400" />
+            <Clock className="size-3.5 text-[var(--alo-text-muted)]" />
             <span>{course.duration}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <DollarSign className="size-3.5 text-slate-400" />
+            <DollarSign className="size-3.5 text-[var(--alo-text-muted)]" />
             <span>{course.tuitionCurrency} {course.tuitionFee.toLocaleString()}/yr</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Globe className="size-3.5 text-slate-400" />
+            <Globe className="size-3.5 text-[var(--alo-text-muted)]" />
             <span>{course.country}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Award className="size-3.5 text-slate-400" />
+            <Award className="size-3.5 text-[var(--alo-text-muted)]" />
             <span>Intake: {course.intake}</span>
           </div>
         </div>
 
         {/* Scholarship */}
         {course.hasScholarship && (
-          <Badge className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs w-fit">
+          <Badge className="bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)] text-xs w-fit">
             <Award className="size-3" />
             Scholarship Available
           </Badge>
         )}
 
         {/* Requirements */}
-        <div className="flex gap-3 text-xs text-slate-500">
+        <div className="flex gap-3 text-xs text-[var(--alo-text-muted)]">
           {course.ieltsMin && (
             <span className="flex items-center gap-1">
-              <span className="font-medium text-slate-700">IELTS:</span> {course.ieltsMin}
+              <span className="font-medium text-[var(--alo-body)]">IELTS:</span> {course.ieltsMin}
             </span>
           )}
           {course.pteMin && (
             <span className="flex items-center gap-1">
-              <span className="font-medium text-slate-700">PTE:</span> {course.pteMin}
+              <span className="font-medium text-[var(--alo-body)]">PTE:</span> {course.pteMin}
             </span>
           )}
         </div>
@@ -272,7 +272,7 @@ function ProCourseCard({
         {canViewCommission && (
           <Collapsible>
             <CollapsibleTrigger asChild>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-xs text-slate-500 hover:text-slate-700 h-7 -mt-1">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="ghost" size="sm" className="w-full text-[var(--alo-text-muted)] hover:text-[var(--alo-body)] h-7 -mt-1">
                 <DollarSign className="size-3.5 mr-1.5" />
                 Commission Details
                 <ChevronDown className="size-3 ml-auto" />
@@ -290,26 +290,26 @@ function ProCourseCard({
         {/* Pro Actions */}
         <div className="flex gap-2 pt-1">
           <Button
-            size="sm"
-            className="flex-1 h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={() => onShortlist(course)}
+ size="sm"
+ className="flex-1 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
+ onClick={() => onShortlist(course)}
           >
             <ListPlus className="size-3 mr-1" />
             Shortlist
           </Button>
           <Button
-            size="sm"
-            className="flex-1 h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={() => onApply(course)}
+ size="sm"
+ className="flex-1 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
+ onClick={() => onApply(course)}
           >
             <FilePlus2 className="size-3 mr-1" />
             Apply
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-xs"
-            onClick={() => {
+ variant="outline"
+ size="sm"
+ className=" "
+ onClick={() => {
               if (course.sourceUrl) window.open(course.sourceUrl, '_blank');
             }}
             disabled={!course.sourceUrl}
@@ -438,46 +438,46 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
   const filterSidebar = (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-sm text-slate-900">Filters</h3>
-        <Button variant="ghost" size="sm" onClick={handleResetFilters} className="text-xs text-slate-500 h-7">
+        <h3 className="font-semibold text-sm text-[var(--alo-text)]">Filters</h3>
+        <Button variant="ghost" size="sm" onClick={handleResetFilters} className=" text-[var(--alo-text-muted)] h-7">
           Reset
         </Button>
       </div>
       <Separator />
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Country</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Country</h4>
         <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
           {COUNTRIES.map((country) => (
             <label key={country} className="flex items-center gap-2 cursor-pointer">
               <Checkbox
                 checked={filters.countries.includes(country)}
                 onCheckedChange={() => toggleCountry(country)}
-                className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                className="data-[state=checked]:bg-[var(--alo-success-dark)] data-[state=checked]:border-crm-success-border"
               />
-              <span className="text-sm text-slate-600">{COUNTRY_FLAGS[country]} {country}</span>
+              <span className="text-sm text-[var(--alo-body)]">{COUNTRY_FLAGS[country]} {country}</span>
             </label>
           ))}
         </div>
       </div>
       <Separator />
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Study Level</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Study Level</h4>
         <div className="space-y-2">
           {STUDY_LEVELS.map((level) => (
             <label key={level} className="flex items-center gap-2 cursor-pointer">
               <Checkbox
                 checked={filters.studyLevels.includes(level)}
                 onCheckedChange={() => toggleLevel(level)}
-                className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                className="data-[state=checked]:bg-[var(--alo-success-dark)] data-[state=checked]:border-crm-success-border"
               />
-              <span className="text-sm text-slate-600">{level}</span>
+              <span className="text-sm text-[var(--alo-body)]">{level}</span>
             </label>
           ))}
         </div>
       </div>
       <Separator />
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Subject Area</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Subject Area</h4>
         <Select value={filters.subjectArea} onValueChange={(v) => setFilters({ ...filters, subjectArea: v })}>
           <SelectTrigger className="w-full"><SelectValue placeholder="All subjects" /></SelectTrigger>
           <SelectContent>
@@ -489,40 +489,40 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
       </div>
       <Separator />
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Tuition Range</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Tuition Range</h4>
         <Slider
           min={0} max={100000} step={5000}
           value={filters.tuitionRange}
           onValueChange={(v) => setFilters({ ...filters, tuitionRange: v as [number, number] })}
-          className="[&_[data-slot=slider-range]]:bg-emerald-600 [&_[data-slot=slider-thumb]]:border-emerald-600"
+          className="[&_[data-slot=slider-range]]:bg-[var(--alo-success-dark)] [&_[data-slot=slider-thumb]]:border-crm-success-border"
         />
-        <div className="flex justify-between text-xs text-slate-500">
+        <div className="flex justify-between text-xs text-[var(--alo-text-muted)]">
           <span>${(filters.tuitionRange[0] / 1000).toFixed(0)}k</span>
           <span>${(filters.tuitionRange[1] / 1000).toFixed(0)}k</span>
         </div>
       </div>
       <Separator />
       <div className="space-y-2">
-        <h4 className="text-sm font-medium text-slate-700">Min IELTS</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Min IELTS</h4>
         <Slider
           min={0} max={9} step={0.5}
           value={[filters.ieltsMin]}
           onValueChange={(v) => setFilters({ ...filters, ieltsMin: v[0] })}
-          className="[&_[data-slot=slider-range]]:bg-emerald-600 [&_[data-slot=slider-thumb]]:border-emerald-600"
+          className="[&_[data-slot=slider-range]]:bg-[var(--alo-success-dark)] [&_[data-slot=slider-thumb]]:border-crm-success-border"
         />
-        <div className="flex justify-between text-xs text-slate-500">
+        <div className="flex justify-between text-xs text-[var(--alo-text-muted)]">
           <span>0</span>
-          <span className="font-medium text-slate-700">{filters.ieltsMin.toFixed(1)}</span>
+          <span className="font-medium text-[var(--alo-body)]">{filters.ieltsMin.toFixed(1)}</span>
           <span>9.0</span>
         </div>
       </div>
       <Separator />
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium text-slate-700">Scholarship Only</h4>
+        <h4 className="text-sm font-medium text-[var(--alo-body)]">Scholarship Only</h4>
         <Switch
           checked={filters.scholarshipOnly}
           onCheckedChange={(v) => setFilters({ ...filters, scholarshipOnly: v })}
-          className="data-[state=checked]:bg-emerald-600"
+          className="data-[state=checked]:bg-[var(--alo-success-dark)]"
         />
       </div>
     </div>
@@ -545,14 +545,14 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
         </Button>
         {pages.map((page, idx) =>
           typeof page === 'string' ? (
-            <span key={`e-${idx}`} className="px-2 text-sm text-slate-400">...</span>
+            <span key={`e-${idx}`} className="px-2 text-sm text-[var(--alo-text-muted)]">...</span>
           ) : (
             <Button
               key={page}
               variant={currentPage === page ? 'default' : 'outline'}
               size="sm"
               onClick={() => setCurrentPage(page)}
-              className={currentPage === page ? 'h-8 w-8 p-0 bg-emerald-600 hover:bg-emerald-700 text-white' : 'h-8 w-8 p-0'}
+              className={currentPage === page ? 'h-8 w-8 p-0 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white' : 'h-8 w-8 p-0'}
             >
               {page}
             </Button>
@@ -568,31 +568,31 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
   return (
     <div className="min-h-screen bg-white">
       {/* Pro Header */}
-      <div className="bg-slate-900 text-white">
+      <div className="border-b border-[var(--alo-border)] bg-[var(--alo-blue-soft)] text-[var(--alo-text)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <div className="flex items-center gap-2 mb-1">
-            <Badge className="bg-emerald-600 text-white text-[10px] uppercase tracking-wider">
+            <Badge className="bg-[var(--alo-success-dark)] text-white text-[11px] uppercase tracking-wider">
               CRM Pro
             </Badge>
-            <span className="text-xs text-slate-400">Role: {role}</span>
+            <span className="text-xs text-[var(--alo-text-muted)]">Role: {role}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold">Course Finder Pro</h1>
-          <p className="text-slate-400 mt-1 text-sm">
+          <p className="text-[var(--alo-text-muted)] mt-1 text-sm">
             Advanced course search with commission data and student matching
           </p>
 
           <div className="mt-4 flex flex-col sm:flex-row gap-3">
             {/* Search */}
             <div className="relative flex-1 max-w-xl">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--alo-text-muted)]" />
               <Input
                 placeholder="Search courses..."
                 value={filters.search}
                 onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
-                className="pl-10 h-10 bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-emerald-500"
+                className="pl-10 h-10 bg-[var(--alo-page)] border-[var(--alo-border)] text-white placeholder:text-[var(--alo-text-muted)] focus-visible:ring-emerald-500"
               />
               {filters.search && (
-                <button onClick={() => setFilters((prev) => ({ ...prev, search: '' }))} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                <button onClick={() => setFilters((prev) => ({ ...prev, search: '' }))} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--alo-text-muted)] hover:text-[var(--alo-placeholder)]">
                   <X className="size-4" />
                 </button>
               )}
@@ -600,7 +600,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
 
             {/* Student Selector */}
             <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
-              <SelectTrigger className="w-full sm:w-64 bg-slate-800 border-slate-700 text-white">
+              <SelectTrigger className="w-full sm:w-64 bg-[var(--alo-page)] border-[var(--alo-border)] text-white">
                 <SelectValue placeholder="Select student..." />
               </SelectTrigger>
               <SelectContent>
@@ -608,7 +608,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
                   <SelectItem key={s.id} value={s.id}>
                     <div className="flex items-center gap-2">
                       <span>{s.name}</span>
-                      <span className="text-xs text-slate-400">IELTS {s.ieltsScore}</span>
+                      <span className="text-xs text-[var(--alo-text-muted)]">IELTS {s.ieltsScore}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -619,11 +619,11 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
           {/* Pro Action Bar */}
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
-              size="sm"
-              variant="outline"
-              className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white h-8"
-              onClick={handleExport}
-            >
+ size="sm"
+ variant="outline"
+ className="border-[var(--alo-border)] text-[var(--alo-placeholder)] hover:bg-[var(--alo-page)] hover:text-white "
+ onClick={handleExport}
+ >
               <Download className="size-3.5 mr-1.5" />
               Export Results
             </Button>
@@ -635,7 +635,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
         <div className="flex gap-6">
           {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-72 shrink-0">
-            <div className="sticky top-6 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div className="sticky top-6 bg-white border border-[var(--alo-border)] rounded-xl p-5 shadow-sm">
               {filterSidebar}
             </div>
           </aside>
@@ -643,7 +643,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
           {/* Mobile Filter Sheet */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white">
+              <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" className="lg:hidden fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full shadow-lg bg-[var(--alo-success-dark)] text-white border-crm-success-border hover:bg-[var(--alo-success-dark)] hover:text-white">
                 <SlidersHorizontal className="size-5" />
               </Button>
             </SheetTrigger>
@@ -655,15 +655,15 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
 
           <main className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-[var(--alo-text-muted)]">
                 {loading ? <Skeleton className="h-4 w-32" /> : (
                   <>
-                    <span className="font-medium text-slate-700">{totalResults}</span> results
+                    <span className="font-medium text-[var(--alo-body)]">{totalResults}</span> results
                   </>
                 )}
               </p>
               {selectedStudent && (
-                <Badge variant="outline" className="text-xs border-emerald-200 text-emerald-700 bg-emerald-50">
+                <Badge variant="outline" className="text-xs border-crm-success-border text-crm-success-text bg-crm-success-bg">
                   <UserCheck className="size-3 mr-1" />
                   {selectedStudent.name} — IELTS {selectedStudent.ieltsScore}
                 </Badge>
@@ -678,12 +678,12 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
 
             {!loading && courses.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                  <SearchX className="size-10 text-slate-300" />
+                <div className="w-20 h-20 rounded-full bg-[var(--alo-surface-muted)] flex items-center justify-center mb-4">
+                  <SearchX className="size-10 text-[var(--alo-placeholder)]" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-700">No courses found</h3>
-                <p className="text-sm text-slate-500 mt-1">Try adjusting your filters.</p>
-                <Button variant="outline" onClick={handleResetFilters} className="mt-4 text-emerald-600 border-emerald-600 hover:bg-emerald-50">
+                <h3 className="text-lg font-semibold text-[var(--alo-body)]">No courses found</h3>
+                <p className="text-sm text-[var(--alo-text-muted)] mt-1">Try adjusting your filters.</p>
+                <Button variant="outline" onClick={handleResetFilters} className="mt-4 text-crm-success-text border-crm-success-border hover:bg-crm-success-bg">
                   Clear filters
                 </Button>
               </div>

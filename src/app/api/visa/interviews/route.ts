@@ -1,100 +1,94 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
-import { withAuth, AuthContext } from '@/lib/auth-middleware';
-import { logAuditAction } from '@/lib/auth-middleware';
+import { withAuth, type AuthContext } from '@/lib/auth-middleware';
+import { hasVisaPermission, visaCaseListScope, visaCaseViewScope } from '@/lib/visa/access';
+
+const interviewTypes = ['embassy_mock', 'credibility', 'pre_cas', 'university', 'sponsor', 'study_gap', 'refusal', 'english', 'final_readiness'] as const;
+const schema = z.object({
+  caseId: z.string().trim().min(1).max(191),
+  interviewType: z.enum(interviewTypes).default('embassy_mock'),
+  difficulty: z.enum(['basic', 'standard', 'strict', 'high_risk_review']).default('standard'),
+  language: z.enum(['english', 'bangla', 'banglish']).default('english'),
+  scheduledAt: z.string().datetime().optional(),
+}).strict();
+
+function auditData(auth: AuthContext, action: string, entityType: string, entityId: string, metadata: Record<string, unknown>) {
+  return { actorUserId: auth.actorUserId, action, entityType, entityId, metadata: JSON.stringify(metadata), ipAddress: '', userAgent: '' };
+}
 
 export const GET = withAuth(async (req: Request, auth: AuthContext) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER') || auth.roles.includes('counselor') || auth.roles.includes('COUNSELOR') || auth.roles.includes('student') || auth.roles.includes('STUDENT');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Interview view permission required — interviews.view' }, { status: 403 });
-
+    if (!hasVisaPermission(auth, 'visa.interviews.view')) return NextResponse.json({ success: false, error: 'visa.interviews.view permission required.' }, { status: 403 });
+    const scope = visaCaseListScope(auth);
+    if (!scope || scope.viewScope !== 'full') return NextResponse.json({ success: false, error: 'Interview transcripts are limited to authorized visa staff and administrators.' }, { status: 403 });
     const { searchParams } = new URL(req.url);
     const caseId = searchParams.get('caseId');
-    const studentId = searchParams.get('studentId');
+    const requestedStudentId = searchParams.get('studentId');
     const status = searchParams.get('status');
+    let caseIds: string[];
+    if (caseId) {
+      const visaCase = await db.visaCase.findUnique({ where: { id: caseId }, select: { id: true, studentId: true, visaOfficerId: true, counselorId: true, applicationOfficerId: true } });
+      if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
+      if (visaCaseViewScope(auth, visaCase) !== 'full') return NextResponse.json({ success: false, error: 'Visa case is outside this account’s assigned scope.' }, { status: 403 });
+      caseIds = [visaCase.id];
+    } else {
+      const cases = await db.visaCase.findMany({
+        where: { ...scope.where, ...(requestedStudentId ? { studentId: requestedStudentId } : {}) },
+        select: { id: true },
+      });
+      caseIds = cases.map((visaCase) => visaCase.id);
+      if (requestedStudentId && !caseIds.length) return NextResponse.json({ success: false, error: 'No assigned visa case found for this student.' }, { status: 404 });
+    }
 
-    const where: any = {};
-    if (caseId) where.caseId = caseId;
-    if (studentId) where.studentId = studentId;
+    const where: any = { caseId: { in: caseIds } };
     if (status) where.status = status;
-
-    const isStudent = auth.roles.includes('student') || auth.roles.includes('STUDENT');
-    if (isStudent) {
-      if (studentId && studentId !== auth.userId) return NextResponse.json({ success: false, error: 'Cross-student blocked — IDOR blocked' }, { status: 403 });
-      where.studentId = auth.userId;
+    const interviews = caseIds.length ? await db.visaInterview.findMany({ where, orderBy: { scheduledAt: 'desc' }, include: { answers: true, questions: true } }) : [];
+    try {
+      await db.portalAuditLog.create({ data: auditData(auth, 'VISA_INTERVIEWS_VIEW', 'VisaInterview', caseId || 'assigned-list', { count: interviews.length, caseCount: caseIds.length }) });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Interview view could not be audited.' }, { status: 503 });
     }
-
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    const isVisa = auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isSuper && isVisa && caseId) {
-      const visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
-      if (visaCase && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-        return NextResponse.json({ success: false, error: 'Cannot view interviews for unassigned case — IDOR blocked' }, { status: 403 });
-      }
-    }
-
-    const interviews = await db.visaInterview.findMany({ where, orderBy: { scheduledAt: 'desc' }, include: { answers: true } });
-
-    await logAuditAction(auth, 'VISA_INTERVIEWS_VIEW', 'VisaInterview', caseId || studentId || 'list', { count: interviews.length });
-
-    return NextResponse.json({
-      success: true,
-      data: interviews,
-      emptyState: interviews.length === 0 ? 'No interviews — proper empty state — AI interview 9 types Embassy/Credibility/Pre-CAS/University/Sponsor/Study Gap/Refusal/English/Final Readiness one Q at a time detect incomplete/contradictions/memorized/weak — real DB' : null,
-    });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    return NextResponse.json({ success: true, data: interviews, emptyState: interviews.length ? null : 'No assigned visa interviews.' }, { headers: { 'Cache-Control': 'private, no-store', 'Vary': 'Cookie, Authorization' } });
+  } catch (error) {
+    console.error('[visa-interviews] list failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to fetch visa interviews.' }, { status: 500 });
   }
 });
 
 export const POST = withAuth(async (req: Request, auth: AuthContext) => {
   try {
-    const isAuthorized = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN') || auth.roles.includes('admin') || auth.roles.includes('visa_officer') || auth.roles.includes('visa_interview_officer') || auth.roles.includes('VISA_OFFICER') || auth.roles.includes('VISA_INTERVIEW_OFFICER');
-    if (!isAuthorized) return NextResponse.json({ success: false, error: 'Interview create requires visa officer — interviews.create' }, { status: 403 });
+    if (!hasVisaPermission(auth, 'visa.interviews.create')) return NextResponse.json({ success: false, error: 'visa.interviews.create permission required.' }, { status: 403 });
+    const parsed = schema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ success: false, error: 'Invalid visa interview request.', details: parsed.error.flatten() }, { status: 400 });
 
-    const body = await req.json();
-    const { caseId, studentId, interviewType, difficulty, language, scheduledAt } = body;
+    const visaCase = await db.visaCase.findUnique({ where: { id: parsed.data.caseId } });
+    if (!visaCase) return NextResponse.json({ success: false, error: 'Visa case not found.' }, { status: 404 });
+    if (visaCaseViewScope(auth, visaCase) !== 'full') return NextResponse.json({ success: false, error: 'Interview can only be scheduled for an assigned visa case.' }, { status: 403 });
 
-    if (!caseId) return NextResponse.json({ success: false, error: 'caseId required — route /employee/visa-interviews/:caseId' }, { status: 400 });
-
-    const visaCase = await db.visaCase.findUnique({ where: { id: caseId } });
-    if (!visaCase) return NextResponse.json({ success: false, error: 'Case not found' }, { status: 404 });
-
-    const isSuper = auth.roles.includes('super_admin') || auth.roles.includes('SUPER_ADMIN');
-    if (!isSuper && visaCase.visaOfficerId && visaCase.visaOfficerId !== auth.userId) {
-      return NextResponse.json({ success: false, error: 'Cannot create interview for unassigned case — IDOR blocked' }, { status: 403 });
-    }
-
-    const validTypes = ['embassy_mock','credibility','pre_cas','university','sponsor','study_gap','refusal','english','final_readiness'];
-    if (interviewType && !validTypes.includes(interviewType)) {
-      return NextResponse.json({ success: false, error: `Invalid interview type — allowed ${validTypes.join(', ')} — AI interview 9 types Embassy/Credibility/Pre-CAS/University/Sponsor/Study Gap/Refusal/English/Final Readiness` }, { status: 400 });
-    }
-
-    const interview = await db.visaInterview.create({
-      data: {
-        caseId: caseId || '',
-        studentId: studentId || visaCase.studentId,
-        interviewType: interviewType || 'embassy_mock',
-        difficulty: difficulty || 'standard',
-        language: language || 'english',
-        status: 'scheduled',
-        scheduledAt: scheduledAt ? new Date(scheduledAt) : new Date(),
-        officerId: auth.userId,
-      },
+    const scheduledAt = parsed.data.scheduledAt ? new Date(parsed.data.scheduledAt) : new Date();
+    const interview = await db.$transaction(async (tx) => {
+      const created = await tx.visaInterview.create({
+        data: {
+          caseId: visaCase.id,
+          studentId: visaCase.studentId,
+          interviewType: parsed.data.interviewType,
+          difficulty: parsed.data.difficulty,
+          language: parsed.data.language,
+          status: 'scheduled',
+          scheduledAt,
+          officerId: auth.userId,
+        },
+      });
+      await tx.portalAuditLog.create({ data: auditData(auth, 'VISA_INTERVIEW_CREATE', 'VisaInterview', created.id, { caseId: visaCase.id, studentId: visaCase.studentId, interviewType: created.interviewType, scheduledAt: created.scheduledAt }) });
+      await tx.timelineEvent.create({
+        data: { studentId: visaCase.studentId, stage: 'VISA_INTERVIEW_SCHEDULED', title: 'Visa preparation interview scheduled.', description: `Interview type ${created.interviewType}; a preparation session, not an embassy interview or visa decision.`, actor: auth.actorUserId },
+      });
+      return created;
     });
-
-    await logAuditAction(auth, 'VISA_INTERVIEW_CREATE', 'VisaInterview', interview.id, { caseId, studentId: studentId || visaCase.studentId, interviewType });
-    await db.timelineEvent.create({
-      data: {
-        studentId: studentId || visaCase.studentId,
-        stage: 'VISA_INTERVIEW_SCHEDULED',
-        title: `Visa interview scheduled — type ${interviewType || 'embassy_mock'} — difficulty ${difficulty || 'standard'} — by ${auth.name}`,
-        description: `AI interview 9 types Embassy/Credibility/Pre-CAS/University/Sponsor/Study Gap/Refusal/English/Final Readiness one Q at a time detect incomplete/contradictions/memorized/weak`,
-      },
-    }).catch(() => {});
-
-    return NextResponse.json({ success: true, data: interview, note: 'AI interview 9 types Embassy/Credibility/Pre-CAS/University/Sponsor/Study Gap/Refusal/English/Final Readiness one Q at a time — reuse existing video/voice store session/timestamp/transcript/audio/video ref/AI analysis/human review explicit consent no secret recording' });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Failed' }, { status: 500 });
+    return NextResponse.json({ success: true, data: interview }, { status: 201, headers: { 'Cache-Control': 'private, no-store' } });
+  } catch (error) {
+    console.error('[visa-interviews] create failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+    return NextResponse.json({ success: false, error: 'Unable to schedule visa interview.' }, { status: 500 });
   }
 });

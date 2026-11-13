@@ -932,7 +932,7 @@ export const POST = withAuth(async (request: Request, auth: AuthContext) => {
       language: cleanText(rawInput.language, 50) || 'English',
       tone: cleanText(rawInput.tone, 80) || 'Professional and encouraging',
       seoTarget: cleanText(rawInput.seoTarget, 180),
-      cta: cleanText(rawInput.cta, 160) || 'Book a free counselling session',
+      cta: cleanText(rawInput.cta, 160) || 'Book a counselling session',
       publishingStatus: rawInput.publishingStatus === 'REQUEST_REVIEW' ? 'REQUEST_REVIEW' : 'DRAFT',
     };
     const input = parseBuilderPrompt(prompt, baseInput);

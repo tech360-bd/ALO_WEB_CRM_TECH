@@ -1,27 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { authenticateRequest, AuthContext } from '@/lib/auth-middleware';
+import { hasMarketingAccess, isMarketingManager, isMarketingSuperAdmin } from '@/lib/marketing/access';
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Unknown error';
-}
-
-function hasRole(auth: AuthContext, acceptedRoles: string[]): boolean {
-  const normalized = new Set((auth.roles || []).map((role) => role.toUpperCase()));
-  return acceptedRoles.some((role) => normalized.has(role.toUpperCase()));
-}
-
-function getMarketingAccess(auth: AuthContext) {
-  const isSuperAdmin = hasRole(auth, ['SUPER_ADMIN', 'ADMIN']) || auth.userType.toUpperCase() === 'ADMIN';
-  const isMarketingManager = hasRole(auth, ['MARKETING_MANAGER']);
-  const isApprovedMarketingUser = hasRole(auth, ['MARKETING_STAFF', 'MARKETING']);
-
-  return {
-    isSuperAdmin,
-    isMarketingManager,
-    isApprovedMarketingUser,
-    roleLabel: isSuperAdmin ? 'SUPER_ADMIN' : isMarketingManager ? 'MARKETING_MANAGER' : 'MARKETING_STAFF',
-  };
 }
 
 function providerStatusLabel(input: {
@@ -49,10 +32,11 @@ export async function GET(req: NextRequest) {
     if (authResult instanceof NextResponse) return authResult;
     const auth = authResult as AuthContext;
 
-    const access = getMarketingAccess(auth);
-
-    if (!access.isSuperAdmin && !access.isMarketingManager && !access.isApprovedMarketingUser) {
-      return NextResponse.json({ error: 'Forbidden. Marketing Manager or approved marketing role required.' }, { status: 403 });
+    const manager = isMarketingManager(auth);
+    const superAdmin = isMarketingSuperAdmin(auth);
+    const approvedLimitedUser = await hasMarketingAccess(auth, 'workspace');
+    if (!manager && !approvedLimitedUser) {
+      return NextResponse.json({ success: false, error: 'Marketing Manager, Super Admin, or approved limited marketing access is required.' }, { status: 403 });
     }
 
     const [
@@ -112,12 +96,12 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      userRole: access.roleLabel,
+      userRole: superAdmin ? 'SUPER_ADMIN' : manager ? 'MARKETING_MANAGER' : 'MARKETING_STAFF',
       permissions: {
-        canPublishSocial: access.isSuperAdmin || access.isMarketingManager,
-        canApproveDrafts: access.isSuperAdmin || access.isMarketingManager,
-        canCreateDrafts: true,
-        canManageN8n: access.isSuperAdmin || access.isMarketingManager,
+        canPublishSocial: false,
+        canApproveDrafts: manager,
+        canCreateDrafts: manager || approvedLimitedUser,
+        canManageN8n: false,
       },
       metrics: {
         activeCampaigns,
@@ -167,9 +151,8 @@ export async function POST(req: NextRequest) {
     const auth = authResult as AuthContext;
 
     const roles = auth.roles || [];
-    const access = getMarketingAccess(auth);
 
-    if (!access.isSuperAdmin && !access.isMarketingManager) {
+    if (!isMarketingManager(auth)) {
       return NextResponse.json({ error: 'Forbidden. Marketing Manager or Super Admin approval required for automation actions.' }, { status: 403 });
     }
 
@@ -200,22 +183,25 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === 'UPLOAD_BRAND_LOGO') {
-      if (!payload?.fileUrl || typeof payload.fileUrl !== 'string') {
-        return NextResponse.json({ success: false, error: 'A validated uploaded file URL is required.' }, { status: 400 });
+      const fileUrl = typeof payload?.fileUrl === 'string' ? payload.fileUrl.trim() : '';
+      let parsedUrl: URL | null = null;
+      try { parsedUrl = new URL(fileUrl); } catch { parsedUrl = null; }
+      if (!parsedUrl || parsedUrl.protocol !== 'https:' || parsedUrl.username || parsedUrl.password || fileUrl.length > 2048) {
+        return NextResponse.json({ success: false, error: 'A valid HTTPS file URL is required.' }, { status: 400 });
       }
-
+      const title = typeof payload?.title === 'string' ? payload.title.trim().slice(0, 120) : 'Official ALO Education Logo';
       const asset = await db.marketingAsset.create({
         data: {
-          name: payload?.title || 'Official ALO Education Logo',
+          name: title || 'Official ALO Education Logo',
           type: 'logo',
-          url: payload.fileUrl,
+          url: fileUrl,
           platform: 'brand',
           category: 'logo',
           createdById: auth.userId,
         },
       });
-
-      return NextResponse.json({ success: true, asset, message: 'Brand logo uploaded and configured.' });
+      await db.integrationAuditLog.create({ data: { actorId: auth.userId, actorName: auth.name || auth.email, actorRole: roles.join(','), action: 'BRAND_LOGO_REFERENCE_CREATED', resourceType: 'MarketingAsset', resourceId: asset.id, newState: JSON.stringify({ url: fileUrl }), result: 'success' } });
+      return NextResponse.json({ success: true, asset, message: 'Brand asset reference saved. This does not verify provider upload or publication.' }, { status: 201 });
     }
 
     if (action === 'TRIGGER_COMMENT_AUTOMATION') {
@@ -223,15 +209,6 @@ export async function POST(req: NextRequest) {
       if (!keyword) {
         return NextResponse.json({ success: false, error: 'Keyword is required.' }, { status: 400 });
       }
-
-      const providerCount = await db.socialIntegration.count({
-        where: {
-          provider: { in: ['meta_business', 'facebook_page', 'instagram'] },
-          status: 'connected',
-          webhookStatus: 'active',
-          lastSyncAt: { not: null },
-        },
-      });
 
       const draft = await db.marketingGeneratedContent.create({
         data: {
@@ -247,29 +224,38 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      const approval = await db.marketingApproval.create({
+        data: {
+          itemType: 'MarketingGeneratedContent', itemId: draft.id,
+          title: draft.title, description: 'Reply template for inbound social comments; draft only.',
+          status: 'pending', requestedById: auth.userId,
+        },
+      });
       const audit = await db.integrationAuditLog.create({
         data: {
           actorId: auth.userId,
           actorName: auth.name || auth.email,
           actorRole: roles.join(','),
-          action: providerCount > 0 ? 'COMMENT_AUTOMATION_DRAFT_CREATED' : 'COMMENT_AUTOMATION_DRAFT_CREATED_PROVIDER_PENDING',
+          action: 'COMMENT_AUTOMATION_DRAFT_CREATED',
           resourceType: 'MarketingGeneratedContent',
           resourceId: draft.id,
           provider: 'meta',
           channel: 'facebook_comment',
-          metadata: JSON.stringify({ keyword, providerReady: providerCount > 0 }),
+          metadata: JSON.stringify({ keyword, approvalId: approval.id, externalAction: 'NOT_RUN' }),
           result: 'success',
         },
       });
 
       return NextResponse.json({
         success: true,
-        status: providerCount > 0 ? 'DRAFT_CREATED_PENDING_APPROVAL' : 'DRAFT_CREATED_PROVIDER_CONFIGURATION_REQUIRED',
+        status: 'DRAFT_CREATED_PENDING_APPROVAL',
         keywordMatched: keyword,
         draftId: draft.id,
+        approvalId: approval.id,
         auditId: audit.id,
         leadCreated: false,
-        actionTaken: 'Created an approval-required reply draft only. No public comment, DM, or CRM lead was created.',
+        externalAction: 'NOT_RUN',
+        actionTaken: 'Created an approval-required reply draft only. No public comment, DM, or CRM lead was created.'
       });
     }
 

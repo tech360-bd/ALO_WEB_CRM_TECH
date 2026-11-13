@@ -72,7 +72,7 @@ export default async function ScholarshipDetailPage({
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, "\\u003c") }} />
       ))}
       <main className="flex-1 pt-20 pb-20">
-        <Suspense fallback={<div className="p-12 text-center text-gray-500">Loading scholarship details…</div>}>
+        <Suspense fallback={<div className="p-12 text-center text-[var(--alo-text-muted)]">Loading scholarship details…</div>}>
           <ScholarshipDetailHub slug={slug} />
         </Suspense>
       </main>

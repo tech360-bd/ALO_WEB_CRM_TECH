@@ -63,6 +63,9 @@ interface AiStats {
   byRiskLevel: Array<{ riskLevel: string; count: number }>;
   summary?: {
     pending?: number;
+    approved?: number;
+    executing?: number;
+    rejected?: number;
     executed?: number;
     failed?: number;
     rolledBack?: number;
@@ -87,23 +90,25 @@ interface LoadState {
 }
 
 const STATUS_CLS: Record<string, string> = {
-  EXECUTED: 'bg-green-100 text-green-700 border-green-200',
+  EXECUTED: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
   APPROVED: 'bg-sky-100 text-sky-700 border-sky-200',
-  PENDING: 'bg-amber-100 text-amber-700 border-amber-200',
-  FAILED: 'bg-red-100 text-red-700 border-red-200',
-  ROLLED_BACK: 'bg-gray-100 text-gray-600 border-gray-200',
-  ACTIVE: 'bg-green-100 text-green-700 border-green-200',
+  EXECUTING: 'bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] border-[var(--alo-border)]',
+  REJECTED: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
+  PENDING: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+  FAILED: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+  ROLLED_BACK: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
+  ACTIVE: 'bg-crm-success-bg text-crm-success-text border-crm-success-border',
 };
 
 const RISK_CLS: Record<string, string> = {
-  HIGH: 'bg-red-100 text-red-700 border-red-200',
-  MEDIUM: 'bg-amber-100 text-amber-700 border-amber-200',
-  LOW: 'bg-gray-100 text-gray-600 border-gray-200',
+  HIGH: 'bg-crm-danger-bg text-crm-danger-text border-crm-danger-border',
+  MEDIUM: 'bg-crm-warning-bg text-crm-warning-text border-crm-warning-border',
+  LOW: 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)] border-[var(--alo-border)]',
 };
 
 function statusBadge(status: string) {
   return (
-    <Badge variant="outline" className={`text-[10px] ${STATUS_CLS[status] || 'bg-gray-100 text-gray-600'}`}>
+    <Badge variant="outline" className={`text-[11px] ${STATUS_CLS[status] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>
       {status || 'UNKNOWN'}
     </Badge>
   );
@@ -111,7 +116,7 @@ function statusBadge(status: string) {
 
 function riskBadge(riskLevel: string) {
   return (
-    <Badge variant="outline" className={`text-[10px] ${RISK_CLS[riskLevel] || 'bg-gray-100 text-gray-600'}`}>
+    <Badge variant="outline" className={`text-[11px] ${RISK_CLS[riskLevel] || 'bg-[var(--alo-surface-muted)] text-[var(--alo-body)]'}`}>
       {riskLevel || 'UNRATED'}
     </Badge>
   );
@@ -234,8 +239,8 @@ export default function CrmAgentOperationsPage() {
       </div>
 
       {stats?.globalAiPaused && (
-        <Card className="border-amber-200 bg-amber-50">
-          <CardContent className="flex items-start gap-2 p-4 text-sm text-amber-800">
+        <Card className="border-crm-warning-border bg-crm-warning-bg">
+          <CardContent className="flex items-start gap-2 p-4 text-sm text-crm-warning-text">
             <Pause className="mt-0.5 h-4 w-4 shrink-0" />
             <p className="font-medium">
               Global AI execution is paused. Requested actions will queue but not run.
@@ -278,7 +283,7 @@ export default function CrmAgentOperationsPage() {
               <p className="text-muted-foreground text-xs">Failed</p>
               <p className="text-2xl font-bold">{failedCount}</p>
             </div>
-            <AlertTriangle className={`h-5 w-5 ${failedCount > 0 ? 'text-red-600' : 'text-muted-foreground'}`} />
+            <AlertTriangle className={`h-5 w-5 ${failedCount > 0 ? 'text-crm-danger-text' : 'text-muted-foreground'}`} />
           </CardContent>
         </Card>
       </div>
@@ -383,13 +388,13 @@ export default function CrmAgentOperationsPage() {
                           <TableCell className="text-xs">
                             {agent.generation}
                             {agent.isTwoLoopModel ? (
-                              <Badge variant="outline" className="ml-1 text-[10px]">Two-loop</Badge>
+                              <Badge variant="outline" className="ml-1 text-[11px]">Two-loop</Badge>
                             ) : null}
                           </TableCell>
                           <TableCell className="text-xs">
                             {agent.cyclesCompleted} completed
                             {agent.hasActiveCycle ? (
-                              <Badge variant="outline" className="ml-1 bg-sky-100 text-sky-700 text-[10px]">
+                              <Badge variant="outline" className="ml-1 bg-sky-100 text-sky-700 text-[11px]">
                                 Active
                               </Badge>
                             ) : null}
@@ -464,7 +469,7 @@ export default function CrmAgentOperationsPage() {
                               {action.targetId ? ` · ${action.targetId}` : ''}
                             </p>
                             {action.lastError ? (
-                              <p className="mt-1 text-[10px] text-red-600">{action.lastError}</p>
+                              <p className="mt-1 text-[11px] text-crm-danger-text">{action.lastError}</p>
                             ) : null}
                           </TableCell>
                           <TableCell>{riskBadge(action.riskLevel)}</TableCell>
@@ -561,7 +566,7 @@ export default function CrmAgentOperationsPage() {
                           {failure.retryCount ? ` · ${failure.retryCount} retries` : ''}
                         </p>
                         {failure.lastError ? (
-                          <p className="mt-0.5 text-[10px] text-red-600">{failure.lastError}</p>
+                          <p className="mt-0.5 text-[11px] text-crm-danger-text">{failure.lastError}</p>
                         ) : null}
                       </div>
                       <span className="text-muted-foreground text-xs">

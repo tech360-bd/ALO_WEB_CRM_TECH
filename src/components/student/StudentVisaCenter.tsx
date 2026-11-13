@@ -10,7 +10,7 @@ export default function StudentVisaCenter() {
     <div className="space-y-4">
       <StudentVisaReadiness />
       <div className="flex justify-end">
-        <Button asChild variant="outline" className="border-slate-200 bg-white">
+        <Button asChild variant="outline" className="border-[var(--alo-border)] bg-white">
           <Link href="/student/visa-interview-practice">Open visa interview practice</Link>
         </Button>
       </div>

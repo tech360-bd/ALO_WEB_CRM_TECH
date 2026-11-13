@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { publicScholarshipWhere } from "@/lib/public-catalog";
+import { hasCurrentScholarshipSourceVerification } from "@/lib/scholarships/status-engine";
 import {
   loadOpenConflicts,
   passesPublicCoursePagePolicy,
@@ -35,7 +37,7 @@ export async function GET(req: NextRequest) {
     countries,
     exams,
     services,
-    scholarships,
+    scholarshipsRaw,
     resources,
     faqs,
   ] = await Promise.all([
@@ -181,7 +183,7 @@ export async function GET(req: NextRequest) {
     }),
     db.scholarship.findMany({
       where: {
-        status: "active",
+        ...publicScholarshipWhere(),
         OR: [
           { name: { contains: q } },
           { university: { contains: q } },
@@ -189,7 +191,7 @@ export async function GET(req: NextRequest) {
         ],
       },
       take: 6,
-      select: { slug: true, name: true, university: true, country: true, fundingAmount: true, deadline: true },
+      select: { slug: true, name: true, university: true, country: true, fundingAmount: true, deadline: true, officialSourceUrl: true, verificationStatus: true, lastVerifiedAt: true },
     }).catch(() => [] as any[]),
     db.resource.findMany({
       where: {
@@ -217,6 +219,11 @@ export async function GET(req: NextRequest) {
   ]);
   const universities = universitiesRaw.filter((u) => passesPublicPagePolicy(u, conflicts.universitySlugs));
   const courses = coursesRaw.filter((c) => passesPublicCoursePagePolicy(c, conflicts));
+  const scholarships = scholarshipsRaw.filter((row) => hasCurrentScholarshipSourceVerification({
+    verificationStatus: row.verificationStatus,
+    lastVerifiedAt: row.lastVerifiedAt,
+    officialSourceUrl: row.officialSourceUrl,
+  }));
 
   const total =
     universities.length +
@@ -240,7 +247,7 @@ export async function GET(req: NextRequest) {
     countries,
     exams,
     services,
-    scholarships,
+    scholarshipsRaw,
     resources,
     faqs,
     total,

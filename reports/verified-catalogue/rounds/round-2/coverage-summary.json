@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-10-29T03:09:36.735Z",
+  "source": "database",
+  "publishedRowCount": 52,
+  "window": [
+    "2027-01",
+    "2027-02",
+    "2027-03",
+    "2027-04",
+    "2027-05",
+    "2027-06",
+    "2027-07",
+    "2027-08",
+    "2027-09",
+    "2027-10",
+    "2027-11",
+    "2027-12",
+    "2028-01"
+  ],
+  "totals": {
+    "VERIFIED_AVAILABLE": 9,
+    "VERIFIED_NOT_OFFERED": 18,
+    "NOT_PUBLISHED": 25,
+    "VERIFICATION_PENDING": 0,
+    "SOURCE_UNAVAILABLE": 0,
+    "CONFLICT_REQUIRES_REVIEW": 0,
+    "MISSING": 0
+  },
+  "courses": [
+    {
+      "courseSlug": "manchester-msc-accounting",
+      "title": "MSc Accounting",
+      "university": "The University of Manchester",
+      "country": "United Kingdom",
+      "availableMonths": [
+        "2027-09"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "centennial-biotechnology-fast-track",
+      "title": "Biotechnology (Fast-Track)",
+      "university": "Centennial College",
+      "country": "Canada",
+      "availableMonths": [
+        "2027-01",
+        "2027-05",
+        "2027-09",
+        "2028-01"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "centennial-construction-project-management",
+      "title": "Construction Project Management",
+      "university": "Centennial College",
+      "country": "Canada",
+      "availableMonths": [
+        "2027-01",
+        "2027-05",
+        "2027-09",
+        "2028-01"
+      ],
+      "missingMonths": []
+    },
+    {
+      "courseSlug": "monash-master-of-business",
+      "title": "Master of Business",
+      "university": "Monash University",
+      "country": "Australia",
+      "availableMonths": [],
+      "missingMonths": []
+    }
+  ],
+  "summary": {
+    "totalCourseMonths": 52,
+    "byStatus": {
+      "VERIFIED_AVAILABLE": 9,
+      "VERIFIED_NOT_OFFERED": 18,
+      "NOT_PUBLISHED": 25,
+      "VERIFICATION_PENDING": 0,
+      "SOURCE_UNAVAILABLE": 0,
+      "CONFLICT_REQUIRES_REVIEW": 0,
+      "MISSING": 0
+    },
+    "availableMonths": [
+      "2027-01",
+      "2027-05",
+      "2027-09",
+      "2028-01"
+    ],
+    "coursesWithNoVerifiedMonth": [
+      "monash-master-of-business"
+    ],
+    "coursesFullyCovered": [
+      "manchester-msc-accounting",
+      "centennial-biotechnology-fast-track",
+      "centennial-construction-project-management",
+      "monash-master-of-business"
+    ]
+  }
+}

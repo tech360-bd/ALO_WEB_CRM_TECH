@@ -133,15 +133,15 @@ export default function FlowDiagram({
   const byId = new Map(nodes.map((n) => [n.id, n]));
 
   return (
-    <figure className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+    <figure className="rounded-2xl border border-[var(--alo-border)] bg-white p-4 sm:p-6">
       <figcaption className="mb-4 flex items-start justify-between gap-4">
         <div>
           {eyebrow ? (
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#0057B8]">{eyebrow}</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--alo-brand)]">{eyebrow}</p>
           ) : null}
-          <h2 className="mt-1 text-base font-bold text-slate-900">{title}</h2>
+          <h2 className="mt-1 text-base font-bold text-[var(--alo-text)]">{title}</h2>
         </div>
-        <span className="rounded-full border border-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-500">
+        <span className="rounded-full border border-[var(--alo-border)] px-2 py-1 text-[11px] font-semibold text-[var(--alo-text-muted)]">
           decision logic
         </span>
       </figcaption>
@@ -239,7 +239,7 @@ export default function FlowDiagram({
                     x={cx}
                     y={rect.y + rect.h - 8}
                     textAnchor="middle"
-                    className="font-mono text-[8px]"
+                    className="font-mono text-[11px]"
                     fill={T.muted}
                   >
                     {node.sub}

@@ -221,7 +221,7 @@ npx prisma validate
 ### OOM (Out of Memory)
 - Ensure 8GB+ RAM in production
 - Set `PRISMA_CLIENT_ENGINE_TYPE=binary`
-- Build uses `NODE_OPTIONS='--max-old-space-size=4096'` (already in package.json)
+- Build uses a 4096 MB heap by default (`NODE_OPTIONS=--max-old-space-size=4096`, set in package.json). Override it with `ALO_BUILD_HEAP_MB=6144 npm run build` on a machine with swap or more than 8 GB RAM — CI does this because the full build no longer fits in 4096 MB.
 - Runtime uses `['error']` log level only (fixed in src/lib/db.ts)
 
 ### Caddy / SSL

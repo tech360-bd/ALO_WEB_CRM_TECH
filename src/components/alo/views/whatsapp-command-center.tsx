@@ -96,6 +96,15 @@ interface Conversation {
   lastMessageAt: string;
 }
 
+interface ContactMatchCandidate {
+  kind: 'student' | 'lead' | 'partner_contact' | 'unknown';
+  id: string;
+  reference?: string | null;
+  name?: string | null;
+  phone?: string | null;
+  email?: string | null;
+}
+
 interface InboxResponse {
   conversations: Conversation[];
   totalMessages: number;
@@ -333,6 +342,7 @@ export function WhatsAppCommandCenter() {
   const [studentLoading, setStudentLoading] = React.useState(false);
   const [studentError, setStudentError] = React.useState<string | null>(null);
   const [contactMatchId, setContactMatchId] = React.useState<string | null>(null);
+  const [contactMatchCandidates, setContactMatchCandidates] = React.useState<ContactMatchCandidate[]>([]);
 
   // AI draft
   const [aiDraft, setAiDraft] = React.useState<string | null>(null);
@@ -439,8 +449,11 @@ export function WhatsAppCommandCenter() {
     if (!selected) {
       setStudent(null);
       setContactMatchId(null);
+      setContactMatchCandidates([]);
       return;
     }
+    setContactMatchId(null);
+    setContactMatchCandidates([]);
     if (selected.studentId) {
       setStudentLoading(true);
       setStudentError(null);
@@ -464,13 +477,20 @@ export function WhatsAppCommandCenter() {
         fetch("/api/communications/contacts/match", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone: selected.fromPhone }),
+          body: JSON.stringify({
+            phone: selected.fromPhone,
+            name: selected.studentName,
+            conversationId: selected.source === 'ucc_conversation' ? selected.key.replace(/^ucc_conversation:/, '') : undefined,
+          }),
         })
           .then(async (r) => {
             if (!r.ok) return null;
             const data = await r.json();
-            // The endpoint returns the review record id (if any)
             if (data?.review?.id) setContactMatchId(data.review.id);
+            const matches = Array.isArray(data?.candidates) ? data.candidates : data?.existingRecord ? [data.existingRecord] : [];
+            setContactMatchCandidates(matches.filter((item: unknown): item is ContactMatchCandidate =>
+              !!item && typeof item === 'object' && typeof (item as ContactMatchCandidate).id === 'string'
+            ));
           })
           .catch(() => {
             // ignore — UI gracefully falls back to NEW CONTACT view
@@ -704,7 +724,7 @@ export function WhatsAppCommandCenter() {
   }
 
   // ── Resolve contact match (Open Existing / Merge / Create New) ──────────
-  async function resolveContact(decision: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW") {
+  async function resolveContact(decision: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW", candidate?: ContactMatchCandidate) {
     if (!contactMatchId) {
       toast({
         title: "No review record",
@@ -717,7 +737,10 @@ export function WhatsAppCommandCenter() {
       const res = await fetch(`/api/communications/contacts/match/${contactMatchId}/resolve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ decision, decidedBy: currentUserId }),
+        body: JSON.stringify({
+          decision,
+          candidate: candidate ? { kind: candidate.kind, id: candidate.id } : undefined,
+        }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -728,6 +751,7 @@ export function WhatsAppCommandCenter() {
         description: `Contact resolution: ${decision.replace(/_/g, " ").toLowerCase()}`,
       });
       setContactMatchId(null);
+      setContactMatchCandidates([]);
       // Refetch inbox so the conversation is re-grouped correctly
       fetchInbox();
     } catch (e) {
@@ -883,7 +907,7 @@ export function WhatsAppCommandCenter() {
                               <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
                                 {conv.studentName || conv.fromPhone || "Unknown"}
                               </p>
-                              <span className="shrink-0 text-[10px] text-[var(--alo-muted)]">
+                              <span className="shrink-0 text-[11px] text-[var(--alo-muted)]">
                                 {timeAgo(conv.lastMessageAt)}
                               </span>
                             </div>
@@ -898,11 +922,11 @@ export function WhatsAppCommandCenter() {
                                   sev !== "NORMAL" && "pulse-dot"
                                 )}
                               />
-                              <span className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
+                              <span className="text-[11px] uppercase tracking-wide text-[var(--alo-muted)]">
                                 {SEVERITY_LABEL[sev]}
                               </span>
                               {conv.unread > 0 && (
-                                <Badge variant="warning" className="ml-auto h-4 px-1 text-[10px]">
+                                <Badge variant="warning" className="ml-auto h-4 px-1 text-[11px]">
                                   {conv.unread}
                                 </Badge>
                               )}
@@ -944,7 +968,7 @@ export function WhatsAppCommandCenter() {
                       <p className="truncate text-sm font-semibold text-[var(--alo-text)]">
                         {selected.studentName || selected.fromPhone || "Unknown contact"}
                       </p>
-                      <Badge variant="success" className="gap-1 text-[10px]">
+                      <Badge variant="success" className="gap-1 text-[11px]">
                         <Icon name="MessageCircle" className="size-2.5" /> WhatsApp
                       </Badge>
                     </div>
@@ -967,14 +991,14 @@ export function WhatsAppCommandCenter() {
                 <div className="flex flex-wrap items-center gap-2 border-b border-[var(--alo-border)] bg-[var(--alo-blue-soft)]/40 px-3 py-2 text-xs">
                   <Icon name="Orbit" className="size-3.5 text-[var(--alo-blue)]" />
                   <span className="font-semibold text-[var(--alo-blue-strong)]">Student</span>
-                  <Badge variant="blue" className="text-[10px]">{student.studentId}</Badge>
+                  <Badge variant="blue" className="text-[11px]">{student.studentId}</Badge>
                   {student.counselor?.name && (
                     <span className="text-[var(--alo-text-secondary)]">
                       Counselor: <span className="font-medium">{student.counselor.name}</span>
                     </span>
                   )}
                   {activeApplications[0]?.stage && (
-                    <Badge variant="warning" className="text-[10px]">
+                    <Badge variant="warning" className="text-[11px]">
                       Stage: {activeApplications[0].stage.replace(/_/g, " ").toLowerCase()}
                     </Badge>
                   )}
@@ -1005,7 +1029,7 @@ export function WhatsAppCommandCenter() {
                           >
                             {!isOutbound && (
                               <Avatar className="size-7">
-                                <AvatarFallback className="bg-[var(--alo-surface-muted)] text-[10px] font-semibold text-[var(--alo-text-secondary)]">
+                                <AvatarFallback className="bg-[var(--alo-surface-muted)] text-[11px] font-semibold text-[var(--alo-text-secondary)]">
                                   {initials(selected.studentName || selected.fromPhone)}
                                 </AvatarFallback>
                               </Avatar>
@@ -1019,7 +1043,7 @@ export function WhatsAppCommandCenter() {
                               )}
                             >
                               {m.aiAssisted && (
-                                <span className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--alo-blue-strong)]">
+                                <span className="mb-1 flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--alo-blue-strong)]">
                                   <Icon name="Sparkles" className="size-2.5" />
                                   AI-assisted
                                 </span>
@@ -1038,14 +1062,14 @@ export function WhatsAppCommandCenter() {
                                     >
                                       <Icon name={fileTypeIcon(a.name)} className="size-3.5 text-[var(--alo-blue)]" />
                                       <span className="max-w-[120px] truncate" title={a.name}>{a.name}</span>
-                                      <span className="text-[10px] text-[var(--alo-muted)]">{fileSizeLabel(a.size)}</span>
+                                      <span className="text-[11px] text-[var(--alo-muted)]">{fileSizeLabel(a.size)}</span>
                                     </a>
                                   ))}
                                 </div>
                               )}
                               <div
                                 className={cn(
-                                  "mt-1 flex items-center gap-1 text-[10px] text-[var(--alo-muted)]",
+                                  "mt-1 flex items-center gap-1 text-[11px] text-[var(--alo-muted)]",
                                   isOutbound ? "justify-end" : "justify-start"
                                 )}
                               >
@@ -1204,10 +1228,10 @@ export function WhatsAppCommandCenter() {
                     </div>
                   )}
                   {attachments.length > 0 && student?.hasB2bConfidentialApplications && !student.canManageB2bDocuments && (
-                    <p role="status" className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">This student has B2B-confidential applications. Media sending is blocked until an authorized B2B user handles the file.</p>
+                    <p role="status" className="rounded-md border border-crm-warning-border bg-crm-warning-bg px-2 py-1.5 text-xs text-crm-warning-text">This student has B2B-confidential applications. Media sending is blocked until an authorized B2B user handles the file.</p>
                   )}
                   {attachments.length > 0 && student?.hasB2bConfidentialApplications && student.canManageB2bDocuments && !outboundApplicationId && (
-                    <p role="status" className="rounded-md border border-amber-200 bg-amber-50 px-2 py-1.5 text-xs text-amber-900">Select the relevant application before uploading this media.</p>
+                    <p role="status" className="rounded-md border border-crm-warning-border bg-crm-warning-bg px-2 py-1.5 text-xs text-crm-warning-text">Select the relevant application before uploading this media.</p>
                   )}
                   <Textarea
                     placeholder="Type your reply…"
@@ -1225,7 +1249,7 @@ export function WhatsAppCommandCenter() {
                         >
                           <Icon name={fileTypeIcon(f.name)} className="size-3.5 text-[var(--alo-blue)]" />
                           <span className="truncate max-w-[120px]" title={f.name}>{f.name}</span>
-                          <span className="text-[10px] text-[var(--alo-muted)]">{fileSizeLabel(f.size)}</span>
+                          <span className="text-[11px] text-[var(--alo-muted)]">{fileSizeLabel(f.size)}</span>
                           <button
                             type="button"
                             onClick={() => setAttachments((a) => a.filter((_, idx) => idx !== i))}
@@ -1283,7 +1307,7 @@ export function WhatsAppCommandCenter() {
                 </div>
 
                 {/* Status bar */}
-                <div className="mt-3 flex items-center justify-between border-t border-[var(--alo-border)] pt-2 text-[10px] text-[var(--alo-muted)]">
+                <div className="mt-3 flex items-center justify-between border-t border-[var(--alo-border)] pt-2 text-[11px] text-[var(--alo-muted)]">
                   <span className="flex items-center gap-1">
                     <Icon name="Check" className="size-2.5" /> Sent
                   </span>
@@ -1330,6 +1354,7 @@ export function WhatsAppCommandCenter() {
             <NewContactPanel
               phone={selected.fromPhone || selected.fromEmail || "—"}
               contactMatchId={contactMatchId}
+              candidates={contactMatchCandidates}
               onResolve={resolveContact}
             />
           )}
@@ -1436,7 +1461,7 @@ function StudentContextPanel({
                 <p className="text-[var(--alo-muted)]">
                   {a.courseName || "—"}
                 </p>
-                <Badge variant="warning" className="mt-1 text-[10px]">
+                <Badge variant="warning" className="mt-1 text-[11px]">
                   {a.stage.replace(/_/g, " ").toLowerCase()}
                 </Badge>
               </div>
@@ -1450,7 +1475,7 @@ function StudentContextPanel({
           <p className="caption-text text-[var(--alo-muted)]">Missing documents</p>
           <div className="mt-1.5 flex flex-wrap gap-1">
             {missingDocuments.slice(0, 6).map((d) => (
-              <Badge key={d.id} variant="danger" className="text-[10px]">
+              <Badge key={d.id} variant="danger" className="text-[11px]">
                 {d.name}
               </Badge>
             ))}
@@ -1512,7 +1537,7 @@ function suggestNextBestAction(
     return `Request the ${missingDocs} missing document${missingDocs > 1 ? "s" : ""} from the student. Send a friendly checklist via WhatsApp and offer upload assistance.`;
   }
   if (activeApps.length === 0) {
-    return "No active applications. Recommend booking a free consultation to shortlist universities and programs.";
+    return "No active applications. Recommend booking a consultation to shortlist universities and programs.";
   }
   const latestStage = activeApps[0]?.stage;
   if (latestStage === "APPLICATION_SUBMITTED") {
@@ -1530,24 +1555,46 @@ function suggestNextBestAction(
 function NewContactPanel({
   phone,
   contactMatchId,
+  candidates,
   onResolve,
 }: {
   phone: string;
   contactMatchId: string | null;
-  onResolve: (d: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW") => void;
+  candidates: ContactMatchCandidate[];
+  onResolve: (d: "OPEN_EXISTING" | "MERGE_REQUEST" | "CREATE_NEW", candidate?: ContactMatchCandidate) => void;
 }) {
+  const linkableCandidates = candidates.filter((candidate) => candidate.kind !== 'unknown');
   return (
     <>
-      <SectionCard title="New Contact" icon="UserPlus" accent="orange">
+      <SectionCard title={linkableCandidates.length ? "Identity Review" : "Unlinked Contact"} icon="UserPlus" accent="orange">
         <div className="space-y-2">
           <div className="flex items-center gap-2 rounded-md bg-[var(--alo-orange-soft)] px-3 py-2 text-sm">
             <Icon name="Phone" className="size-4 text-[var(--alo-orange-strong)]" />
             <span className="font-mono font-semibold text-[var(--alo-orange-strong)]">{phone}</span>
           </div>
           <p className="body-text text-[var(--alo-text-secondary)]">
-            This phone number is not linked to an existing student or lead.
-            Send a welcome message and triage the contact below.
+            An inbound message is not promotional consent. Verify identity and capture separate channel- and purpose-specific consent before marketing outreach.
           </p>
+          {linkableCandidates.length > 0 ? (
+            <div className="space-y-2 pt-1">
+              <p className="text-xs font-medium text-[var(--alo-text-secondary)]">Possible existing records (review before linking):</p>
+              {linkableCandidates.map((candidate) => (
+                <div key={`${candidate.kind}:${candidate.id}`} className="flex items-center justify-between gap-2 rounded-md border border-[var(--alo-border)] p-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-semibold">{candidate.name || candidate.reference || candidate.kind}</p>
+                    <p className="truncate text-[11px] text-[var(--alo-muted)]">
+                      {candidate.kind.replace('_', ' ')}{candidate.reference ? ` · ${candidate.reference}` : ''}{candidate.phone ? ` · ${candidate.phone}` : ''}
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" disabled={!contactMatchId} onClick={() => onResolve("OPEN_EXISTING", candidate)}>
+                    <Icon name="FolderOpen" className="size-3.5" /> Open Existing
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-[var(--alo-muted)]">No in-scope CRM candidate is confirmed. The contact remains unlinked until reviewed.</p>
+          )}
         </div>
       </SectionCard>
 
@@ -1555,39 +1602,27 @@ function NewContactPanel({
         title="Contact Match Review"
         icon="Shuffle"
         accent="amber"
-        description="Possible existing contact detected. Choose how to resolve this match."
+        description="A human decision is required. Merge requests are queued; this screen never merges student records."
       >
         {!contactMatchId ? (
-          <p className="text-xs text-[var(--alo-muted)]">
-            No automated review record found. Use the actions below to triage manually.
-          </p>
+          <p className="text-xs text-[var(--alo-muted)]">A review record is unavailable. No identity link or new contact was created.</p>
         ) : (
           <p className="text-xs text-[var(--alo-muted)]">
             Review ID: <span className="font-mono">{contactMatchId.slice(0, 12)}…</span>
           </p>
         )}
         <div className="mt-3 flex flex-col gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onResolve("OPEN_EXISTING")}
-          >
-            <Icon name="FolderOpen" className="size-3.5" /> Open Existing
+          <Button variant="outline" size="sm" disabled={!contactMatchId} onClick={() => onResolve("MERGE_REQUEST")}>
+            <Icon name="GitMerge" className="size-3.5" /> Request Human Merge Review
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onResolve("MERGE_REQUEST")}
-          >
-            <Icon name="GitMerge" className="size-3.5" /> Merge Request
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
+            disabled={!contactMatchId}
             onClick={() => onResolve("CREATE_NEW")}
             className="text-[var(--alo-orange-strong)] border-[var(--alo-orange)]/40 hover:bg-[var(--alo-orange-soft)]"
           >
-            <Icon name="UserPlus" className="size-3.5" /> Create New (Authorized Role Only)
+            <Icon name="UserPlus" className="size-3.5" /> Create Unlinked Contact (Authorized Role Only)
           </Button>
         </div>
       </SectionCard>
@@ -1630,7 +1665,7 @@ function AiClassificationPanel({
   return (
     <SectionCard title="AI Message Classification" icon="BrainCircuit" accent="violet">
       <div className="space-y-2">
-        <InfoRow label="Detected intent" value={<Badge variant="info" className="text-[10px]">{intent.replace(/_/g, " ")}</Badge>} />
+        <InfoRow label="Detected intent" value={<Badge variant="info" className="text-[11px]">{intent.replace(/_/g, " ")}</Badge>} />
         <InfoRow label="Linked application" value={linkedApp} />
       </div>
       <div className="mt-3">
@@ -1698,7 +1733,7 @@ function DocumentReceiptPanel({
                 <>
                   {activeApplications.length > 0 ? (
                     <div>
-                      <Label className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
+                      <Label className="text-[11px] uppercase tracking-wide text-[var(--alo-muted)]">
                         Match to application
                       </Label>
                       <Select value={selectedAppId} onValueChange={setSelectedAppId}>
@@ -1718,7 +1753,7 @@ function DocumentReceiptPanel({
                     <p className="text-xs text-[var(--alo-muted)]">No active application is available; you can still link this file to the student profile.</p>
                   )}
                   <div>
-                    <Label className="text-[10px] uppercase tracking-wide text-[var(--alo-muted)]">
+                    <Label className="text-[11px] uppercase tracking-wide text-[var(--alo-muted)]">
                       Match to document requirement
                     </Label>
                     <Select value={selectedDocRequirement} onValueChange={setSelectedDocRequirement}>

@@ -1,3 +1,4 @@
+import { reportServerEvent } from '@/lib/analytics/server-conversions';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { withAuth, logAuditAction } from '@/lib/auth-middleware';
@@ -162,6 +163,20 @@ export async function POST(request: Request) {
       await logAuditAction(auth, 'MOCK_TEST_STARTED', 'TestSession', session.id, {
         testId,
         testType,
+      });
+
+      // `english_test_start`. ALO's real in-product English test is the mock
+      // test session, so this is where the event belongs — measured on the
+      // server, where the session was actually created and a credit was
+      // actually consumed. No student identity is sent: the client id is
+      // derived from the opaque session id.
+      reportServerEvent({
+        event: 'english_test_start',
+        reference: session.id,
+        params: {
+          test_type: typeof testType === 'string' ? testType : '',
+          test_session_id: session.id,
+        },
       });
 
       return NextResponse.json({ success: true, data: session }, { status: 201 });

@@ -61,9 +61,9 @@ const DEPT_ICONS: Record<string, string> = {
 const DEPT_ORDER = Object.keys(DEPT_ICONS);
 
 const AGENT_STATUS_COLORS: Record<string, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-700",
-  IDLE: "bg-amber-100 text-amber-700",
-  PAUSED: "bg-slate-200 text-slate-700",
+  ACTIVE: "bg-crm-success-bg text-crm-success-text",
+  IDLE: "bg-crm-warning-bg text-crm-warning-text",
+  PAUSED: "bg-[var(--alo-page)] text-[var(--alo-body)]",
 };
 
 const AI_MUST_NOT = [
@@ -279,7 +279,7 @@ export function AiCommandCenter() {
             variant="outline"
             onClick={() => fetchAgents(true)}
             disabled={refreshing}
-            className="h-12 border-[#0057B8]/30 text-[#0057B8] hover:bg-[#e8f0fb]"
+            className="h-12 border-[var(--alo-brand)]/30 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
           >
             <Icon name={refreshing ? "Loader2" : "RefreshCw"} className={cn("size-4", refreshing && "animate-spin")} />
             Refresh
@@ -288,14 +288,14 @@ export function AiCommandCenter() {
       />
 
       {/* AI Safety Rules Banner */}
-      <Card className="rounded-2xl border-2 border-[#E8501A]/40 bg-orange-50/40">
+      <Card className="rounded-2xl border-2 border-[var(--alo-cta)]/40 bg-[var(--alo-cta-soft)]/40">
         <CardHeader>
           <div className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-[#E8501A] text-white">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--alo-cta)] text-white">
               <Icon name="ShieldAlert" className="size-5" />
             </div>
             <div>
-              <CardTitle className="text-base text-[#E8501A]">
+              <CardTitle className="text-base text-[var(--alo-cta)]">
                 AI Safety Rules — Non-Negotiable
               </CardTitle>
               <CardDescription className="text-xs">
@@ -307,26 +307,26 @@ export function AiCommandCenter() {
         <CardContent>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-red-700">
+              <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-crm-danger-text">
                 <Icon name="XCircle" className="size-4" /> AI MUST NOT
               </p>
               <ul className="space-y-2">
                 {AI_MUST_NOT.map((rule) => (
                   <li key={rule} className="flex items-start gap-2 text-sm text-foreground">
-                    <Icon name="X" className="mt-0.5 size-3.5 shrink-0 text-red-600" />
+                    <Icon name="X" className="mt-0.5 size-3.5 shrink-0 text-crm-danger-text" />
                     <span>{rule}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="md:border-l md:border-[#E8501A]/20 md:pl-6">
-              <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-700">
+            <div className="md:border-l md:border-[var(--alo-cta)]/20 md:pl-6">
+              <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-crm-success-text">
                 <Icon name="CheckCircle2" className="size-4" /> AI MUST
               </p>
               <ul className="space-y-2">
                 {AI_MUST.map((rule) => (
                   <li key={rule} className="flex items-start gap-2 text-sm text-foreground">
-                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+                    <Icon name="Check" className="mt-0.5 size-3.5 shrink-0 text-crm-success-text" />
                     <span>{rule}</span>
                   </li>
                 ))}
@@ -337,10 +337,10 @@ export function AiCommandCenter() {
       </Card>
 
       {/* §30 TOP KPIs — real automation from DB + workforce + Groq */}
-      <Card className="rounded-2xl border-2 border-[#0057B8]/20 bg-gradient-to-br from-blue-50/80 to-slate-50">
+      <Card className="rounded-2xl border-2 border-[var(--alo-brand)]/20 bg-gradient-to-br from-blue-50/80 to-slate-50">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm tracking-wide text-[#0057B8]">Automation measurement — database events · 70% target, not a guarantee</CardTitle>
+            <CardTitle className="text-sm tracking-wide text-[var(--alo-brand)]">Automation measurement — database events · 70% target, not a guarantee</CardTitle>
             <Badge variant="outline" className="text-[11px]">{metrics?.automation?.period?.label ?? "Last 30d"} · {metrics ? "live" : metricsErr ? "auth/empty" : "loading"}</Badge>
           </div>
           <CardDescription className="text-xs">AUTOMATION_RATE = AI_AUTOMATED / TOTAL_ELIGIBLE ×100 · TARGET 70% · VARIANCE = ACTUAL−TARGET · Source: AutomationEvent table</CardDescription>
@@ -349,7 +349,7 @@ export function AiCommandCenter() {
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
             <div className="rounded-xl border bg-white p-3">
               <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Automation Rate</div>
-              <div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-bold text-[#0057B8]">{metrics?.automation.hasData ? `${metrics.automation.automationRate.toFixed(2)}%` : "—"}</span><span className={`text-xs ${metrics && metrics.automation.variance >= -5 && metrics.automation.variance <= 10 ? "text-emerald-600" : metrics && metrics.automation.variance < -5 ? "text-amber-600" : "text-slate-500"}`}>{metrics?.automation.hasData ? `Δ ${metrics.automation.variance >=0?"+":""}${metrics.automation.variance.toFixed(2)}%` : ""}</span></div>
+              <div className="mt-1 flex items-baseline gap-2"><span className="text-2xl font-bold text-[var(--alo-brand)]">{metrics?.automation.hasData ? `${metrics.automation.automationRate.toFixed(2)}%` : "—"}</span><span className={`text-xs ${metrics && metrics.automation.variance >= -5 && metrics.automation.variance <= 10 ? "text-crm-success-text" : metrics && metrics.automation.variance < -5 ? "text-crm-warning-text" : "text-[var(--alo-text-muted)]"}`}>{metrics?.automation.hasData ? `Δ ${metrics.automation.variance >=0?"+":""}${metrics.automation.variance.toFixed(2)}%` : ""}</span></div>
               <div className="mt-1 text-[11px] text-muted-foreground">TARGET 70% · {metrics?.automation.verdict ?? ""}</div>
             </div>
             <div className="rounded-xl border bg-white p-3">
@@ -378,7 +378,7 @@ export function AiCommandCenter() {
               <div className="mt-1 text-[11px] text-muted-foreground">{metrics ? `${metrics.groq.perMinute.count}/${metrics.groq.perMinute.limit}/min · q ${metrics.groq.queueLength}${metrics.groq.circuitOpen ? " · CIRCUIT OPEN" : ""}` : "limit 6 conc / 30 req/min / queue 200"}</div>
             </div>
           </div>
-          {(metricsErr || !metrics) && <p className="mt-2 text-[11px] text-amber-700">Metrics need admin session (DB is source of truth). Login as admin to see live counts. Empty DB → rate 0% (not fabricated) — seed AutomationEvent via workflows.</p>}
+          {(metricsErr || !metrics) && <p className="mt-2 text-[11px] text-crm-warning-text">Metrics need admin session (DB is source of truth). Login as admin to see live counts. Empty DB → rate 0% (not fabricated) — seed AutomationEvent via workflows.</p>}
           <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-3 text-xs">
             <div className="rounded-lg bg-white border p-2.5"><div className="font-semibold">Classification</div><div className="text-muted-foreground mt-1">AI_AUTOMATABLE → auto · AI_ASSISTED → draft+human review · HUMAN_REQUIRED → block · HUMAN_APPROVAL_REQUIRED → queue · ESCALATED → senior</div></div>
             <div className="rounded-lg bg-white border p-2.5"><div className="font-semibold">Guardrails</div><div className="text-muted-foreground mt-1">maxSteps 12 · maxRuntime 120s · maxToolCalls 8 · tokenBudget 12k · depth 10 · never guarantee visa/admission</div></div>
@@ -411,7 +411,7 @@ export function AiCommandCenter() {
             value={jobsProcessed.toLocaleString()}
             icon="Zap"
             accent="orange"
-            hint="sum AiAgent.jobsProcessed (real DB)"
+            hint="sum AiAgent.jobsProcessed"
           />
           <StatCard
             label="Pending Approvals"
@@ -457,9 +457,9 @@ export function AiCommandCenter() {
                     action={
                       <div className="flex items-center gap-1.5">
                         {pending > 0 && (
-                          <Badge className="bg-red-100 text-red-700">{pending} pending</Badge>
+                          <Badge className="bg-crm-danger-bg text-crm-danger-text">{pending} pending</Badge>
                         )}
-                        <Badge variant="outline" className="text-[10px] tabular-nums">
+                        <Badge variant="outline" className="text-[11px] tabular-nums">
                           {totalJobs.toLocaleString()} jobs
                         </Badge>
                       </div>
@@ -474,7 +474,7 @@ export function AiCommandCenter() {
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
                               <div className="flex flex-wrap items-center gap-1.5">
-                                <span className="font-mono text-[10px] text-muted-foreground">
+                                <span className="font-mono text-[11px] text-muted-foreground">
                                   {agent.agentCode}
                                 </span>
                                 <span className="text-sm font-semibold text-foreground">
@@ -498,13 +498,13 @@ export function AiCommandCenter() {
                               {agent.jobsProcessed.toLocaleString()} jobs
                             </span>
                             {agent.pendingApprovals > 0 ? (
-                              <span className="inline-flex items-center gap-1 rounded-md bg-red-50 px-1.5 py-0.5 font-medium text-red-700">
+                              <span className="inline-flex items-center gap-1 rounded-md bg-crm-danger-bg px-1.5 py-0.5 font-medium text-crm-danger-text">
                                 <Icon name="Clock" className="size-3" />
                                 {agent.pendingApprovals} pending
                               </span>
                             ) : (
                               <span className="inline-flex items-center gap-1">
-                                <Icon name="CheckCircle2" className="size-3 text-emerald-600" />
+                                <Icon name="CheckCircle2" className="size-3 text-crm-success-text" />
                                 no pending
                               </span>
                             )}
@@ -515,37 +515,37 @@ export function AiCommandCenter() {
                           </div>
                           <div className="mt-2 flex items-center gap-1.5">
                             <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 px-2 text-xs text-[#0057B8] hover:bg-[#e8f0fb]"
-                              onClick={() => handleAgentAction(agent, "run")}
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+ onClick={() => handleAgentAction(agent, "run")}
                             >
                               <Icon name="Play" className="size-3" /> Run
                             </Button>
                             {agent.status === "ACTIVE" ? (
                               <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-xs text-amber-700 hover:bg-amber-50"
-                                onClick={() => handleAgentAction(agent, "pause")}
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 text-crm-warning-text hover:bg-crm-warning-bg"
+ onClick={() => handleAgentAction(agent, "pause")}
                               >
                                 <Icon name="Pause" className="size-3" /> Pause
                               </Button>
                             ) : (
                               <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-xs text-emerald-700 hover:bg-emerald-50"
-                                onClick={() => handleAgentAction(agent, "resume")}
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 text-crm-success-text hover:bg-crm-success-bg"
+ onClick={() => handleAgentAction(agent, "resume")}
                               >
                                 <Icon name="PlayCircle" className="size-3" /> Resume
                               </Button>
                             )}
                             <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 px-2 text-xs"
-                              onClick={() =>
+ size="sm"
+ variant="ghost"
+ className="h-7 px-2 "
+ onClick={() =>
                                 toast({
                                   title: "Agent details",
                                   description: `${agent.agentName} · ${agent.department} · ${agent.status}`,
@@ -569,9 +569,9 @@ export function AiCommandCenter() {
       {/* Sections 7-11: Health, Model Router, Tool Gateway, RAG/Memory, Collaboration */}
       {!loading && metrics && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Health & Concurrency</CardTitle><CardDescription className="text-xs">GroqGuard + queue + circuit (real)</CardDescription></CardHeader><CardContent className="text-xs space-y-1"><div className="flex justify-between"><span>Concurrency</span><span className="font-mono">{metrics.groq.concurrency.current}/{metrics.groq.concurrency.max}</span></div><div className="flex justify-between"><span>Per-minute</span><span className="font-mono">{metrics.groq.perMinute.count}/{metrics.groq.perMinute.limit}</span></div><div className="flex justify-between"><span>Queue</span><span className="font-mono">{metrics.groq.queueLength} / 200</span></div><div className="flex justify-between"><span>Circuit</span><span className={metrics.groq.circuitOpen? "text-red-600 font-bold":"text-emerald-600"}>{metrics.groq.circuitOpen? "OPEN":"CLOSED"}</span></div><div className="flex justify-between"><span>Total requests / fallbacks</span><span className="font-mono">{metrics.groq.totalRequests} / {metrics.groq.totalFallbacks}</span></div></CardContent></Card>
+          <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Health & Concurrency</CardTitle><CardDescription className="text-xs">GroqGuard + queue + circuit (real)</CardDescription></CardHeader><CardContent className="text-xs space-y-1"><div className="flex justify-between"><span>Concurrency</span><span className="font-mono">{metrics.groq.concurrency.current}/{metrics.groq.concurrency.max}</span></div><div className="flex justify-between"><span>Per-minute</span><span className="font-mono">{metrics.groq.perMinute.count}/{metrics.groq.perMinute.limit}</span></div><div className="flex justify-between"><span>Queue</span><span className="font-mono">{metrics.groq.queueLength} / 200</span></div><div className="flex justify-between"><span>Circuit</span><span className={metrics.groq.circuitOpen? "text-crm-danger-text font-bold":"text-crm-success-text"}>{metrics.groq.circuitOpen? "OPEN":"CLOSED"}</span></div><div className="flex justify-between"><span>Total requests / fallbacks</span><span className="font-mono">{metrics.groq.totalRequests} / {metrics.groq.totalFallbacks}</span></div></CardContent></Card>
           <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Model Router</CardTitle><CardDescription className="text-xs">FAST/COMPLEX/PRIVATE (Groq→fallback)</CardDescription></CardHeader><CardContent className="text-xs space-y-1"><div>GROQ_FAST → llama-3.1-8b-instant (6 conc, 30/min)</div><div>GROQ_LARGE → llama-3.3-70b-versatile (complex/reasoning)</div><div>LOCAL → {`process.env.LOCAL_AI_URL || fallback`}</div><div className="text-muted-foreground">Gateway: generateText/Structured/classify/summarize/chat/stream + audit to AgentAuditLog</div></CardContent></Card>
-          <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Human↔AI Collaboration (real TimelineEvent)</CardTitle><CardDescription className="text-xs">Last 8 events · automated vs human</CardDescription></CardHeader><CardContent>{metrics.collaboration.length===0? <p className="text-xs text-muted-foreground">No timeline rows yet — run any workflow (leadWelcome/scoring/SLA) to populate.</p> : <ul className="space-y-1.5 text-xs">{metrics.collaboration.slice(0,8).map(c=> <li key={c.id} className="flex justify-between border-b py-1"><span className={c.automated?"text-[#0057B8]":"text-amber-700"}>{c.actor.slice(0,18)}</span><span className="text-muted-foreground">{c.action.slice(0,28)}</span><span className="font-mono text-[11px]">{c.target}</span></li>)}</ul>}</CardContent></Card>
+          <Card className="rounded-2xl"><CardHeader className="pb-2"><CardTitle className="text-sm">Human↔AI Collaboration (real TimelineEvent)</CardTitle><CardDescription className="text-xs">Last 8 events · automated vs human</CardDescription></CardHeader><CardContent>{metrics.collaboration.length===0? <p className="text-xs text-muted-foreground">No timeline rows yet — run any workflow (leadWelcome/scoring/SLA) to populate.</p> : <ul className="space-y-1.5 text-xs">{metrics.collaboration.slice(0,8).map(c=> <li key={c.id} className="flex justify-between border-b py-1"><span className={c.automated?"text-[var(--alo-brand)]":"text-crm-warning-text"}>{c.actor.slice(0,18)}</span><span className="text-muted-foreground">{c.action.slice(0,28)}</span><span className="font-mono text-[11px]">{c.target}</span></li>)}</ul>}</CardContent></Card>
         </div>
       )}
 
@@ -601,14 +601,14 @@ export function AiCommandCenter() {
                         <span className="text-sm font-semibold text-foreground">
                           {item.agentName}
                         </span>
-                        <Badge variant="outline" className="font-mono text-[10px]">
+                        <Badge variant="outline" className="font-mono text-[11px]">
                           {item.agentCode}
                         </Badge>
                         <span className="text-xs text-muted-foreground">{item.department}</span>
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">{item.approvalText}</p>
                       <div className="mt-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
-                        <Badge className="bg-red-100 text-red-700">
+                        <Badge className="bg-crm-danger-bg text-crm-danger-text">
                           {item.pendingApprovals} item{item.pendingApprovals > 1 ? "s" : ""}
                         </Badge>
                         <span>last run {item.lastRunAt ? timeAgo(item.lastRunAt) : "never"}</span>
@@ -617,7 +617,7 @@ export function AiCommandCenter() {
                     <div className="flex shrink-0 gap-2">
                       <Button
                         size="sm"
-                        className="bg-emerald-600 text-white hover:bg-emerald-600/90"
+                        className="bg-[var(--alo-success-dark)] text-white hover:bg-[var(--alo-success-dark)]/90"
                         onClick={() => handleApprove(item)}
                       >
                         <Icon name="Check" className="size-3.5" /> Approve
@@ -625,7 +625,7 @@ export function AiCommandCenter() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="border-red-300 text-red-700 hover:bg-red-50"
+                        className="border-crm-danger-border text-crm-danger-text hover:bg-crm-danger-bg"
                         onClick={() => handleReject(item)}
                       >
                         <Icon name="X" className="size-3.5" /> Reject
@@ -649,16 +649,16 @@ export function AiCommandCenter() {
                   className={cn(
                     "flex items-start gap-3 rounded-xl border p-3",
                     alert.severity === "high"
-                      ? "border-red-200 bg-red-50/50"
-                      : "border-amber-200 bg-amber-50/50"
+                      ? "border-crm-danger-border bg-crm-danger-bg/50"
+                      : "border-crm-warning-border bg-crm-warning-bg/50"
                   )}
                 >
                   <div
                     className={cn(
                       "flex size-8 shrink-0 items-center justify-center rounded-lg",
                       alert.severity === "high"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-amber-100 text-amber-700"
+                        ? "bg-crm-danger-bg text-crm-danger-text"
+                        : "bg-crm-warning-bg text-crm-warning-text"
                     )}
                   >
                     <Icon
@@ -673,8 +673,8 @@ export function AiCommandCenter() {
                         className={cn(
                           "capitalize",
                           alert.severity === "high"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-amber-100 text-amber-700"
+                            ? "bg-crm-danger-bg text-crm-danger-text"
+                            : "bg-crm-warning-bg text-crm-warning-text"
                         )}
                       >
                         {alert.severity}
@@ -682,10 +682,10 @@ export function AiCommandCenter() {
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">{alert.description}</p>
                     <Button
-                      size="sm"
-                      variant="link"
-                      className="mt-1 h-auto p-0 text-xs text-[#0057B8]"
-                      onClick={() =>
+ size="sm"
+ variant="link"
+ className="mt-1 h-auto p-0 text-[var(--alo-brand)]"
+ onClick={() =>
                         toast({
                           title: "Alert acknowledged",
                           description: `${alert.title} — assigned to a human reviewer.`,

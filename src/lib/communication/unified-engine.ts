@@ -13,6 +13,8 @@
 
 import { db } from '@/lib/db';
 import { calculateSlaDueAt } from '@/lib/sla-engine';
+import { dayScheduleAt, defaultBusinessHoursConfig, isAfterBusinessHours, nextBusinessOpening } from './business-hours';
+import { loadBusinessHoursPolicy } from './business-hours-store';
 import crypto from 'crypto';
 
 // Visibility levels per spec (11)
@@ -96,16 +98,13 @@ export function detectIntent(text: string): string {
   return 'general';
 }
 
-// After-hours detection: Bangladesh 18:00 to 10:00
+// Synchronous policy view for agents; queue consumers load the persisted
+// schedule and HRM holidays asynchronously before creating callback tasks.
 export function isAfterHours(date = new Date()): boolean {
-  // Convert to Asia/Dhaka (UTC+6, no DST)
-  const dhaka = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
-  const hour = dhaka.getHours();
-  // 18:00-23:59 OR 00:00-10:00 => after hours. 10:00-18:00 is office
-  return hour >= 18 || hour < 10;
+  return isAfterBusinessHours(date, defaultBusinessHoursConfig());
 }
 
-export const AFTER_HOURS_MESSAGE = `Thanks for contacting ALO Education. Our team is currently outside office hours. Please share your name, phone number, preferred country, study level, and intake. Our counselor will contact you as soon as possible.`;
+export const AFTER_HOURS_MESSAGE = `Thanks for contacting ALO Education. Our team is outside office hours and a counselor follow-up has been queued for the next opening. For account-specific help, sign in to the secure Student Portal. Do not share passwords, OTPs, bank/card details, or private documents in this chat.`;
 
 // Generate communication code AE-COMM-YYYY000001 style
 export function genCommunicationCode(): string {
@@ -166,10 +165,14 @@ export async function createCommunication(params: {
   const priority = params.priority || 'normal';
   const status = params.status || 'new';
 
-  // After-hours auto reply check — don't send private data, just queue auto reply
-  const afterHours = isAfterHours(new Date());
+  const now = new Date();
+  const businessHoursPolicy = await loadBusinessHoursPolicy(tx);
+  const businessHours = businessHoursPolicy.config;
+  const afterHours = isAfterBusinessHours(now, businessHours);
+  const afterHoursAckEnabled = businessHoursPolicy.scheduleReadAvailable && businessHoursPolicy.hasPersistedSchedule && dayScheduleAt(now, businessHours).afterHoursAiAuto;
 
-  // Determine SLA due
+  // Determine the response deadline using the same persisted schedule as
+  // counselor callbacks. Student replies remain accepted at every hour.
   let slaDueAt: Date | null = null;
   // Default SLA rules per spec
   const slaMap: Record<string, number> = {
@@ -183,8 +186,10 @@ export async function createCommunication(params: {
   };
   const slaMinutes = slaMap[channel] || 30;
   try {
-    slaDueAt = calculateSlaDueAt(new Date(), slaMinutes, true);
-  } catch {}
+    slaDueAt = calculateSlaDueAt(now, slaMinutes, true, businessHours);
+  } catch (error) {
+    console.error('[communication] business-hour SLA calculation failed', { error: error instanceof Error ? error.name : 'UnknownError' });
+  }
 
   // Find or create thread
   const threadWhere: any = { channel, visibility, b2bProviderId: params.b2bProviderId || '' };
@@ -329,13 +334,10 @@ export async function createCommunication(params: {
   // After-hours automation: create lead if new contact gives phone/email, assign follow-up for next working hour
   let afterHoursReply: string | null = null;
   if (afterHours && params.direction !== 'outbound' && ['whatsapp','sms','facebook_messenger','instagram_dm','website_chat'].includes(channel)) {
-    afterHoursReply = AFTER_HOURS_MESSAGE;
-    // Create counselor task for next working hour (next day 10:00 Dhaka)
-    const nextWorking = new Date();
-    const dhakaHour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Dhaka', hour: 'numeric', hourCycle: 'h23' }).format(nextWorking));
-    if (dhakaHour >= 18) nextWorking.setUTCDate(nextWorking.getUTCDate() + 1);
-    // 10:00 Dhaka = 04:00 UTC
-    nextWorking.setUTCHours(4, 0, 0, 0);
+    if (afterHoursAckEnabled) afterHoursReply = AFTER_HOURS_MESSAGE;
+    // Human callback waits for the actual next opening; an optional immediate
+    // acknowledgement is separate and does not defer other inbound handling.
+    const nextWorking = nextBusinessOpening(now, businessHours);
     await tx.counselorTask.create({
       data: {
         employeeId: params.assignedTo || '',
@@ -355,38 +357,20 @@ export async function createCommunication(params: {
   });
 }
 
-// WhatsApp Student ID flow helper
+// Legacy compatibility only: a WhatsApp phone number or typed Student ID does
+// not authenticate an account. Keep the old export shape without performing a
+// student lookup or returning profile details.
 export async function handleWhatsAppStudentIdFlow(params: {
   phone: string;
   message: string;
   senderName?: string;
 }): Promise<{ needsStudentId: boolean; prompt: string; studentFound?: boolean; studentId?: string }> {
-  const { phone, message } = params;
-  const normalizedPhone = phone.replace(/[^0-9]/g,'');
-  // Try to find existing student by phone
-  let student: any = null;
-  try {
-    student = await db.student.findFirst({ where: { phone: { contains: normalizedPhone } } });
-    if (!student) student = await db.portalStudentProfile.findFirst({ where: { user: { phone: { contains: normalizedPhone } } } });
-  } catch {}
-
-  if (student) {
-    // Ask for Student ID verification
-    return {
-      needsStudentId: true,
-      prompt: `Welcome back! Please share your ALO Student ID (e.g., AE-2026XXXXXX) to verify your profile. Your phone ${phone} is linked to ${student.name || student.fullName}. Before showing private data, we will send an OTP to verify.`,
-      studentFound: true,
-      studentId: student.studentId || student.id,
-    };
-  }
-  // New contact — ask for details
-  const asksId = message.toLowerCase().includes('student id') || message.toLowerCase().includes('alo id');
-  if (!asksId) {
-    return {
-      needsStudentId: true,
-      prompt: `Thanks for contacting ALO Education! Do you already have an ALO Student ID? If yes, please share your Student ID. If no, please share: full name, phone, preferred country, study level, and intake — we will create your profile, generate ID (AE-YYYYXXXXXX), and assign a counselor.`,
-      studentFound: false,
-    };
-  }
-  return { needsStudentId: true, prompt: `Please provide your ALO Student ID to verify.`, studentFound: false };
+  const bangla = /[\u0980-\u09FF]/.test(params.message);
+  return {
+    needsStudentId: false,
+    prompt: bangla
+      ? 'WhatsApp নম্বর বা Student ID দিয়ে পরিচয় যাচাই করা হয় না। ব্যক্তিগত সহায়তার জন্য নিরাপদ Student Portal-এ সাইন ইন করুন। এই চ্যাটে OTP, পাসওয়ার্ড, ব্যাংক/কার্ড তথ্য বা ব্যক্তিগত নথি পাঠাবেন না। সাধারণ প্রশ্নে পছন্দের দেশ ও পড়াশোনার স্তর জানাতে পারেন।'
+      : 'A WhatsApp number or Student ID does not verify identity. Sign in to the secure Student Portal for account-specific help. Do not share an OTP, password, bank/card details, or private documents in this chat. For general guidance, you may share your preferred destination and study level.',
+    studentFound: false,
+  };
 }

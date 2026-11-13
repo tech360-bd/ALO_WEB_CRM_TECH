@@ -180,7 +180,7 @@ export default function CrmCourseFinderPage() {
                           <span className="text-xs text-alo-text-muted">
                             {countryFlag(course.university.country)} {course.university.name}
                             {course.university.worldRanking > 0 && (
-                              <Badge variant="muted" className="ml-1 text-[10px]">QS #{course.university.worldRanking}</Badge>
+                              <Badge variant="muted" className="ml-1 text-[11px]">QS #{course.university.worldRanking}</Badge>
                             )}
                           </span>
                         )}
@@ -217,7 +217,7 @@ export default function CrmCourseFinderPage() {
                         <div className="text-center">
                           <p className="text-xs text-alo-text-muted">IELTS</p>
                           <p className="text-sm font-bold text-alo-text">{course.ieltsRequired}</p>
-                          <p className="text-[10px] text-alo-text-muted">min {course.ieltsMinBand}/band</p>
+                          <p className="text-[11px] text-alo-text-muted">min {course.ieltsMinBand}/band</p>
                         </div>
                       )}
                       {course.tuition > 0 && (

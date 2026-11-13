@@ -30,7 +30,7 @@ export default function CoursesIndexPage() {
       <main className="flex-1 pb-16 pt-24">
         <Suspense
           fallback={
-            <div className="p-12 text-center font-medium text-gray-500">Loading courses…</div>
+            <div className="p-12 text-center font-medium text-[var(--alo-text-muted)]">Loading courses…</div>
           }
         >
           <AllCoursesListing />

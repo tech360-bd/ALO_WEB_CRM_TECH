@@ -11,15 +11,15 @@ export function AccountSuspended() {
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md text-center">
         {/* Icon */}
-        <div className="mx-auto w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-6">
-          <XCircle className="w-8 h-8 text-red-500" />
+        <div className="mx-auto w-16 h-16 rounded-full bg-crm-danger-bg flex items-center justify-center mb-6">
+          <XCircle className="w-8 h-8 text-crm-danger-text" />
         </div>
 
         {/* Heading */}
-        <h2 className="text-2xl font-bold text-slate-900 mb-3">Account Suspended</h2>
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-3">Account Suspended</h2>
 
         {/* Message */}
-        <p className="text-sm text-slate-500 leading-relaxed mb-8">
+        <p className="text-sm text-[var(--alo-text-muted)] leading-relaxed mb-8">
           {authMessage ||
             'Your account has been suspended. Please contact ALO Education support for assistance.'}
         </p>
@@ -66,17 +66,17 @@ export function AccountPending() {
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md text-center">
         {/* Icon */}
-        <div className="mx-auto w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mb-6">
-          <Clock className="w-8 h-8 text-amber-500" />
+        <div className="mx-auto w-16 h-16 rounded-full bg-crm-warning-bg flex items-center justify-center mb-6">
+          <Clock className="w-8 h-8 text-crm-warning-text" />
         </div>
 
         {/* Heading */}
-        <h2 className="text-2xl font-bold text-slate-900 mb-3">
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-3">
           Account Pending Approval
         </h2>
 
         {/* Message */}
-        <p className="text-sm text-slate-500 leading-relaxed mb-8">
+        <p className="text-sm text-[var(--alo-text-muted)] leading-relaxed mb-8">
           Your account is currently under review. You will be notified once your
           account is approved and ready to use.
         </p>
@@ -112,15 +112,15 @@ export function Unauthorized() {
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md text-center">
         {/* Icon */}
-        <div className="mx-auto w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-6">
-          <ShieldOff className="w-8 h-8 text-red-500" />
+        <div className="mx-auto w-16 h-16 rounded-full bg-crm-danger-bg flex items-center justify-center mb-6">
+          <ShieldOff className="w-8 h-8 text-crm-danger-text" />
         </div>
 
         {/* Heading */}
-        <h2 className="text-2xl font-bold text-slate-900 mb-3">Access Denied</h2>
+        <h2 className="text-2xl font-bold text-[var(--alo-text)] mb-3">Access Denied</h2>
 
         {/* Message */}
-        <p className="text-sm text-slate-500 leading-relaxed mb-8">
+        <p className="text-sm text-[var(--alo-text-muted)] leading-relaxed mb-8">
           You do not have permission to access this resource. If you believe this
           is an error, contact your administrator.
         </p>
