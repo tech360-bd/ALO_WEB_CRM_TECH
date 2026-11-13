@@ -69,6 +69,7 @@ export function monthKey(year: number, month: number): string {
 }
 
 export function buildCoverageMatrix(courses: MatrixInputCourse[], rows: MatrixInputRow[]): CoverageMatrix {
+  const uniqueCourses = [...new Map(courses.map((course) => [course.slug, course])).values()];
   const months = windowMonths().map(({ year, month }) => monthKey(year, month));
   const totals = Object.fromEntries(
     [...COVERAGE_STATUSES, 'MISSING'].map((status) => [status, 0]),
@@ -77,7 +78,7 @@ export function buildCoverageMatrix(courses: MatrixInputCourse[], rows: MatrixIn
   const rowsByKey = new Map<string, MatrixInputRow>();
   for (const row of rows) rowsByKey.set(buildCoverageKey(row.courseSlug, row.year, row.month), row);
 
-  const matrixCourses: MatrixCourse[] = courses.map((course) => {
+  const matrixCourses: MatrixCourse[] = uniqueCourses.map((course) => {
     const cells: Record<string, MatrixCell> = {};
     const missingMonths: string[] = [];
     const availableMonths: string[] = [];
