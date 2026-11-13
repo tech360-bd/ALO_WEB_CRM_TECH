@@ -16,7 +16,18 @@ suite('migrated real language preparation catalogue', () => {
   it('queries and filters real stored requirements through the public API', async () => {
     const test = await prisma.englishPrepTest.findUniqueOrThrow({ where: { slug: 'pte-academic' } });
     const unique = `Disposable integration fixture ${randomUUID()}`;
-    const fixture = await prisma.englishPrepRequirement.create({ data: { testId: test.id, universityName: unique, countryName: 'Canada', courseName: 'Integration fixture course', minimumScore: '70', sourceUrl: 'https://example.org/test-fixture-only', status: 'active' } });
+    const fixture = await prisma.englishPrepRequirement.create({
+      data: {
+        testId: test.id,
+        universityName: unique,
+        countryName: 'Canada',
+        courseName: 'Integration fixture course',
+        minimumScore: '70',
+        sourceUrl: 'https://example.org/test-fixture-only',
+        lastVerifiedAt: new Date(),
+        status: 'active',
+      },
+    });
     fixtureIds.push(fixture.id);
     // The API receives a real Prisma client pinned to the safety-validated disposable database.
     vi.doMock('@/lib/db', () => ({ db: prisma }));
