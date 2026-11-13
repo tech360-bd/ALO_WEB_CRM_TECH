@@ -236,4 +236,17 @@ describe('coverage matrix reporting', () => {
     expect(matrix.courses[0].cells['2027-02'].status).toBe('MISSING');
     expect(matrix.totals.MISSING).toBe(12);
   });
+
+  it('deduplicates repeated course descriptors by slug so joined coverage rows never inflate totals', () => {
+    const repeatedCourses = dataset.coverage.map((row) => {
+      const course = dataset.courses.find((c) => c.slug === row.courseSlug)!;
+      return { slug: course.slug, title: course.title, universitySlug: course.universitySlug };
+    });
+    const matrix = buildCoverageMatrix(repeatedCourses, dataset.coverage);
+    expect(matrix.courses).toHaveLength(dataset.courses.length);
+    expect(matrix.totals.MISSING).toBe(0);
+    expect(matrix.totals.VERIFIED_AVAILABLE).toBe(
+      dataset.coverage.filter((row) => row.status === 'VERIFIED_AVAILABLE').length,
+    );
+  });
 });

@@ -306,8 +306,13 @@ export async function approveCoverage(
       actorRole,
       action: 'VERIFIED_CATALOGUE_APPROVE',
       targetCollection: 'CrmCourseMonthlyCoverage',
-      targetId: approvedKeys.join(',').slice(0, 500),
-      afterData: JSON.stringify({ approved: approvedKeys.length, skipped: skippedKeys.length, note: options.note ?? '' }),
+      targetId: approvedKeys.join(',').slice(0, 191),
+      afterData: JSON.stringify({
+        approved: approvedKeys.length,
+        skipped: skippedKeys.length,
+        approvedKeys,
+        note: options.note ?? '',
+      }),
     },
   });
 
@@ -368,9 +373,17 @@ export async function rejectCoverage(
 
   await prisma.crmAuditLog.create({
     data: {
-      actorUserId: options.actorUserId, actorRole, action: 'VERIFIED_CATALOGUE_REJECT',
-      targetCollection: 'CrmCourseMonthlyCoverage', targetId: rejectedKeys.join(',').slice(0, 500),
-      afterData: JSON.stringify({ rejected: rejectedKeys.length, skipped: skippedKeys.length, reason: options.reason }),
+      actorUserId: options.actorUserId,
+      actorRole,
+      action: 'VERIFIED_CATALOGUE_REJECT',
+      targetCollection: 'CrmCourseMonthlyCoverage',
+      targetId: rejectedKeys.join(',').slice(0, 191),
+      afterData: JSON.stringify({
+        rejected: rejectedKeys.length,
+        skipped: skippedKeys.length,
+        rejectedKeys,
+        reason: options.reason,
+      }),
     },
   });
 

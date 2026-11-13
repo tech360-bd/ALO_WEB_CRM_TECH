@@ -2,7 +2,7 @@
  * Dev-only helper: mint a NextAuth session JWT for a fixture identity so the
  * HTTP probes can authenticate without driving the login form.
  *
- *   NEXTAUTH_SECRET=dev-secret-please-change \
+ *   NEXTAUTH_SECRET=dummy-dev-secret-placeholder-32chars \
  *     node scripts/dev-sqlite/mint-dev-jwt.mjs super.admin@aloeducation.dev SUPER_ADMIN
  *
  * Prints the raw JWT on stdout. The probes pass it as
