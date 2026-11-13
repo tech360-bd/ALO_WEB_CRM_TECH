@@ -14235,8 +14235,8 @@ model StudentChannelIdentity {
 /// approval. Max depth configurable (default: MODEL → AGENT → LOOP_AGENT).
 model LoopAgent {
   id                String   @id @default(cuid())
-  agentId           String   // parent AiAgent.agentId
-  parentAgentId     String   // FK to AiAgent
+  agentId           String   // parent AiAgent.id (loose reference)
+  parentAgentId     String   // parent AiAgent.id (loose reference)
   name              String
   purpose           String   @default("")
   specialization    String   @default("")

@@ -149,13 +149,12 @@ async function main() {
   let deptCount = 0;
   for (const dept of DEPARTMENTS) {
     await db.department.upsert({
-      where: { id: dept.code },
+      where: { code: dept.code },
       update: { name: dept.name, description: dept.mission },
       create: {
-        id: dept.code,
+        code: dept.code,
         name: dept.name,
         description: dept.mission,
-        mission: dept.mission,
         status: "ACTIVE",
       },
     }).catch(() => {});
@@ -170,15 +169,14 @@ async function main() {
     const category = RULE_CATEGORIES[i];
     const ruleId = `RULE-CAT-${String(i + 1).padStart(3, "0")}`;
     await db.constitutionalRule.upsert({
-      where: { id: ruleId },
+      where: { ruleCode: ruleId },
       update: {},
       create: {
-        id: ruleId,
+        ruleCode: ruleId,
         category,
         title: `${category} Rules Framework`,
         description: `Constitutional rules governing ${category.toLowerCase()} for all AI agents.`,
         status: "ACTIVE",
-        version: 1,
       },
     }).catch(() => {});
     ruleCount++;
@@ -200,15 +198,14 @@ async function main() {
     const category = SOP_CATEGORIES[i];
     const sopId = `SOP-CAT-${String(i + 1).padStart(3, "0")}`;
     await db.aiSop.upsert({
-      where: { id: sopId },
+      where: { sopCode: sopId },
       update: {},
       create: {
-        id: sopId,
-        name: `${category} SOP Framework`,
+        sopCode: sopId,
+        title: `${category} SOP Framework`,
         departmentId: "DEPT-100", // Executive Office owns framework SOPs
-        purpose: `Standard operating procedures for ${category.toLowerCase()}`,
+        description: `Standard operating procedures for ${category.toLowerCase()}`,
         status: "ACTIVE",
-        version: 1,
       },
     }).catch(() => {});
     sopCount++;

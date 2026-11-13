@@ -39,12 +39,12 @@ export class EvaluationEngine {
 
     // Query test results
     const testResults = await db.awfTestResult.findMany({
-      where: { agentId },
-      select: { status: true },
+      where: { versionId: agentId },
+      select: { passed: true },
     }).catch(() => []);
 
     const testTotal = testResults.length;
-    const testPassed = testResults.filter((t: any) => t.status === "PASS").length;
+    const testPassed = testResults.filter((t: any) => t.passed).length;
     const accuracy = testTotal > 0 ? testPassed / testTotal : 0;
 
     // Self-recovery from audit events
@@ -72,8 +72,9 @@ export class EvaluationEngine {
     failed: number;
     passRate: number;
   }> {
+    // AwfTestCase uses agentId, not testSuiteId — query by agent
     const testCases = await db.awfTestCase.findMany({
-      where: { testSuiteId },
+      where: { agentId },
     }).catch(() => []);
 
     const total = testCases.length;

@@ -31,11 +31,11 @@ export class KnowledgeGraphEngine {
     }
 
     // Add AI agents as nodes + edges to departments
-    const agents = await db.aiAgent.findMany({ take: 200, select: { agentId: true, name: true, departmentId: true } }).catch(() => []);
+    const agents = await db.aiAgent.findMany({ take: 200, select: { id: true, agentName: true, department: true } }).catch(() => []);
     for (const agent of agents) {
-      nodes.push({ id: agent.agentId, type: "AGENT", label: agent.name });
-      if (agent.departmentId) {
-        edges.push({ source: agent.agentId, target: agent.departmentId, relationship: "belongs_to" });
+      nodes.push({ id: agent.id, type: "AGENT", label: agent.agentName });
+      if (agent.department) {
+        edges.push({ source: agent.id, target: agent.department, relationship: "belongs_to" });
       }
     }
 
@@ -52,9 +52,9 @@ export class KnowledgeGraphEngine {
     }
 
     // Add SOPs as nodes
-    const sops = await db.aiSop.findMany({ take: 100, select: { id: true, name: true } }).catch(() => []);
+    const sops = await db.aiSop.findMany({ take: 100, select: { id: true, title: true } }).catch(() => []);
     for (const sop of sops) {
-      nodes.push({ id: sop.id, type: "SOP", label: sop.name });
+      nodes.push({ id: sop.id, type: "SOP", label: sop.title });
     }
 
     // Add agent relationships from AgentRelationship table

@@ -65,13 +65,13 @@ export class SelfOptimizationEngine {
 
   /** Get active agents list */
   private static async getActiveAgents(): Promise<{ agentId: string }[]> {
-    // Use existing AiAgent model
+    // Use existing AiAgent model — field is 'id' (cuid), 'agentName', 'department'
     const agents = await db.aiAgent.findMany({
       where: { status: "ACTIVE" },
-      select: { agentId: true },
+      select: { id: true },
       take: 200,
     }).catch(() => []);
-    return agents.map((a: any) => ({ agentId: a.agentId }));
+    return agents.map((a: any) => ({ agentId: a.id }));
   }
 
   /** Get optimization events count */

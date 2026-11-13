@@ -160,7 +160,7 @@ export class DCCEngine {
       auditEvents,
     ] = await Promise.all([
       db.aiSop.count({ where: { departmentId } }).catch(() => 0),
-      db.awfKnowledgeSource.count({ where: { departmentId } }).catch(() => 0),
+      db.awfKnowledgeSource.count({ where: { department: departmentId } }).catch(() => 0),
       db.aiSkill.count().catch(() => 0),
       db.awfTestResult.count().catch(() => 0),
       db.complianceCheck.count({
@@ -178,7 +178,7 @@ export class DCCEngine {
 
     // Test pass rate — query AwfTestResult for pass/fail
     const passedTests = await db.awfTestResult.count({
-      where: { status: "PASS" },
+      where: { passed: true },
     }).catch(() => 0);
     const testPassRate = testResults > 0 ? passedTests / testResults : 0;
 

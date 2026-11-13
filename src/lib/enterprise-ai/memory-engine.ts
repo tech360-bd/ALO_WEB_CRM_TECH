@@ -21,13 +21,12 @@ export class MemoryEngine {
   static async store(record: MemoryRecord): Promise<string> {
     const mem = await db.awfMemory.create({
       data: {
-        // Map to existing AwfMemory fields — use upsert pattern
-        agentId: record.ownerId,
         scope: record.scope,
+        ownerKey: record.ownerId,
+        agentSlug: record.scope === "AGENT" || record.scope === "SHORT_TERM" || record.scope === "TASK" ? record.ownerId : "",
         key: record.key,
         value: record.value,
-        ttl: record.ttlSeconds || 0,
-        accessLevel: record.accessLevel || "AGENT",
+        confidentiality: record.accessLevel === "PUBLIC" ? "PUBLIC" : record.accessLevel === "DEPARTMENT" ? "INTERNAL" : "CONFIDENTIAL",
       },
     }).catch(() => ({ id: `mem-${Date.now()}` }));
     return mem.id;
@@ -36,7 +35,7 @@ export class MemoryEngine {
   /** Retrieve a memory record */
   static async retrieve(scope: MemoryScope, ownerId: string, key: string): Promise<string | null> {
     const mem = await db.awfMemory.findFirst({
-      where: { scope, agentId: ownerId, key },
+      where: { scope, ownerKey: ownerId, key },
       orderBy: { createdAt: "desc" },
     }).catch(() => null);
     return mem?.value || null;
@@ -45,7 +44,7 @@ export class MemoryEngine {
   /** Retrieve all memory for an agent (within permission scope) */
   static async getAgentMemory(agentId: string, limit = 50): Promise<any[]> {
     return db.awfMemory.findMany({
-      where: { agentId },
+      where: { agentSlug: agentId },
       orderBy: { createdAt: "desc" },
       take: limit,
     }).catch(() => []);
@@ -55,8 +54,7 @@ export class MemoryEngine {
   static async clearExpired(): Promise<number> {
     const result = await db.awfMemory.deleteMany({
       where: {
-        ttl: { gt: 0 },
-        createdAt: { lt: new Date(Date.now() - 3600 * 1000) }, // older than 1 hour
+        expiresAt: { lt: new Date() },
       },
     }).catch(() => ({ count: 0 }));
     return result.count;
