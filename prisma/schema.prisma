@@ -14218,3 +14218,317 @@ model StudentChannelIdentity {
   @@index([studentId])
   @@index([active])
 }
+
+// ============================================================================
+// SUPER ADMIN AI COMMAND CENTER — Enterprise AI Workforce models
+// Task ID: SUPER-ADMIN-AI-COMMAND-CENTER
+// Added: 2026-11-14 (feat/super-admin-ai-command-center branch)
+//
+// These models extend the existing AiAgent / AiModel / Awf* infrastructure
+// with the missing enterprise governance, certification, and engine models
+// required by the 100-Department / 2000-AI-Employee / DCC architecture.
+// ============================================================================
+
+/// Loop Agent — specialized sub-agent created by a parent agent for narrow
+/// recurring tasks. Inherits parent permissions, constitutional rules, and
+/// department policy. Creation requires parent certification + governance
+/// approval. Max depth configurable (default: MODEL → AGENT → LOOP_AGENT).
+model LoopAgent {
+  id                String   @id @default(cuid())
+  agentId           String   // parent AiAgent.id (loose reference)
+  parentAgentId     String   // parent AiAgent.id (loose reference)
+  name              String
+  purpose           String   @default("")
+  specialization    String   @default("")
+  status            String   @default("PROPOSED") // PROPOSED | APPROVED | ACTIVE | PAUSED | RETIRED | REJECTED
+  depth             Int      @default(2) // MODEL=0, AGENT=1, LOOP_AGENT=2
+  expectedKpi       Float    @default(0)
+  requiredSkills    String   @default("[]") // JSON array of skill IDs
+  requiredKnowledge String   @default("[]") // JSON array of knowledge source IDs
+  requiredTools     String   @default("[]") // JSON array of tool IDs
+  securityPolicy    String   @default("") // inherited + restricted
+  sopId             String   @default("")
+  testSuiteId       String   @default("")
+  budgetTokens      Int      @default(0)
+  budgetCallsPerDay Int      @default(0)
+  governanceApprovalId String @default("")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([agentId])
+  @@index([parentAgentId])
+  @@index([status])
+  @@index([depth])
+}
+
+/// Agent Relationship — tracks parent-child and collaboration relationships
+/// between agents. Supports the enterprise AI workforce hierarchy.
+model AgentRelationship {
+  id              String   @id @default(cuid())
+  parentAgentId   String
+  childAgentId    String
+  relationshipType String  @default("parent_child") // parent_child | collaborator | delegate | supervisor
+  permissions     String   @default("[]") // JSON: inherited permission scope
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([parentAgentId, childAgentId, relationshipType])
+  @@index([parentAgentId])
+  @@index([childAgentId])
+}
+
+/// RAG Collection — enterprise RAG source registry. Tracks which knowledge
+/// sources are available to which agents/departments with access control.
+model RAGCollection {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @default("")
+  departmentId    String   @default("")
+  sourceType      String   @default("database") // database | documents | university_info | course_info | sop | rules | knowledge_base | crm
+  status          String   @default("ACTIVE") // ACTIVE | PAUSED | REBUILDING | FAILED
+  documentCount   Int      @default(0)
+  chunkCount      Int      @default(0)
+  embeddingModel  String   @default("")
+  freshnessHours  Int      @default(24)
+  accessPolicy    String   @default("DEPARTMENT_SCOPED") // PUBLIC | DEPARTMENT_SCOPED | AGENT_SCOPED | RBAC
+  allowedAgentIds String   @default("[]") // JSON array
+  allowedDeptIds  String   @default("[]") // JSON array
+  lastRefreshedAt DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([departmentId])
+  @@index([status])
+  @@index([sourceType])
+}
+
+/// Plan — agent planning engine records. Tracks objective breakdown into
+/// tasks, assignment, execution monitoring, and replanning.
+model Plan {
+  id              String   @id @default(cuid())
+  agentId         String
+  departmentId    String   @default("")
+  objective       String   @db.Text
+  objectiveType   String   @default("task") // task | workflow | investigation | recommendation
+  status          String   @default("DRAFT") // DRAFT | APPROVED | EXECUTING | COMPLETED | FAILED | ESCALATED
+  tasksJson       String   @default("[]") @db.Text // JSON: [{taskId, description, assignedAgentId, status, dependencies}]
+  taskCount       Int      @default(0)
+  completedTasks  Int      @default(0)
+  failedTasks     Int      @default(0)
+  replanCount     Int      @default(0)
+  escalationReason String  @default("")
+  approvedBy      String   @default("")
+  approvedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([agentId])
+  @@index([departmentId])
+  @@index([status])
+}
+
+/// Reflection — post-task reflection engine records. Evaluates output,
+/// identifies mistakes, checks SOP/rule compliance, generates improvements.
+model Reflection {
+  id              String   @id @default(cuid())
+  agentId         String
+  taskId          String   @default("")
+  planId          String   @default("")
+  outputQuality   Float    @default(0) // 0-1
+  sopCompliance   Float    @default(0) // 0-1
+  ruleCompliance  Float    @default(0) // 0-1
+  kpiAchieved     Float    @default(0) // 0-1
+  mistakesIdentified String @default("[]") @db.Text // JSON array
+  improvements    String   @default("[]") @db.Text // JSON array of recommendations
+  escalatedToHuman Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([agentId])
+  @@index([taskId])
+}
+
+/// Certification — agent and department certification records. DCC results.
+model Certification {
+  id              String   @id @default(cuid())
+  targetType      String   // DEPARTMENT | AGENT | MODEL
+  targetId        String
+  certificationType String  @default("DCC") // DCC | AGENT_CERT | MODEL_CERT
+  status          String   @default("PENDING") // PENDING | CERTIFIED | CONDITIONALLY_CERTIFIED | FAILED | EXPIRED | UNDER_REVIEW
+  validFrom       DateTime?
+  validUntil      DateTime?
+  certifiedBy     String   @default("")
+  certifiedAt     DateTime?
+  notes           String   @default(dbgenerated("(_utf8mb4'')")) @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([targetType, targetId])
+  @@index([status])
+}
+
+/// DCC Assessment — Department Capability Certification assessment record.
+/// A department cannot create agents unless DCC is CERTIFIED.
+model DCCAssessment {
+  id              String   @id @default(cuid())
+  departmentId    String
+  assessmentDate  DateTime @default(now())
+  status          String   @default("PENDING") // PENDING | CERTIFIED | CONDITIONALLY_CERTIFIED | FAILED | EXPIRED | UNDER_REVIEW
+  sopCoverage     Float    @default(0) // target >= 0.95
+  knowledgeCoverage Float   @default(0) // target >= 0.95
+  skillCoverage   Float    @default(0) // target >= 0.95
+  testPassRate    Float    @default(0) // target >= 0.95
+  kpiAchievement  Float    @default(0) // target >= 0.90
+  securityCompliance Float  @default(0) // target = 1.00
+  auditCompliance Float    @default(0) // target = 1.00
+  selfRecoverySuccess Float @default(0) // target >= 0.90
+  humanEscalationRate Float @default(0) // target <= 0.10
+  overallScore    Float    @default(0)
+  failureReasons  String   @default("[]") @db.Text // JSON array of failed criteria
+  assessedBy      String   @default("")
+  assessedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([departmentId])
+  @@index([status])
+}
+
+/// Governance Action — records every governance decision (agent creation,
+/// deletion, promotion, model changes, prompt changes, etc.)
+model GovernanceAction {
+  id              String   @id @default(cuid())
+  actionType      String   // CREATE_AGENT | DELETE_AGENT | PROMOTE_AGENT | DEPLOY_AGENT | MODEL_CHANGE | PROMPT_CHANGE | SKILL_CHANGE | SOP_CHANGE | RULE_CHANGE
+  targetType      String   @default("AGENT") // AGENT | DEPARTMENT | MODEL | PROMPT | SKILL | SOP | RULE
+  targetId        String   @default("")
+  requestedBy     String   @default("")
+  approvedBy      String   @default("")
+  status          String   @default("PENDING") // PENDING | APPROVED | REJECTED | EXECUTED | ROLLED_BACK
+  reason          String   @default("")
+  impactAssessment String  @default("")
+  approvedAt      DateTime?
+  executedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([actionType])
+  @@index([targetType, targetId])
+  @@index([status])
+}
+
+/// Security Policy — RBAC/ABAC policies for AI agents. Least privilege.
+model SecurityPolicy {
+  id              String   @id @default(cuid())
+  name            String
+  policyType      String   @default("RBAC") // RBAC | ABAC | LEAST_PRIVILEGE | DEPARTMENT_ISOLATION
+  targetType      String   @default("AGENT") // AGENT | DEPARTMENT | MODEL | TOOL
+  targetId        String   @default("")
+  permissions     String   @default("[]") @db.Text // JSON array of permission strings
+  dataAccessScope String   @default("[]") @db.Text // JSON: tables/fields allowed
+  toolAccessScope String   @default("[]") @db.Text // JSON: tool IDs allowed
+  constraints     String   @default("{}") @db.Text // JSON: rate limits, time windows, etc.
+  status          String   @default("ACTIVE") // ACTIVE | PAUSED | DEPRECATED
+  version         Int      @default(1)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([policyType])
+  @@index([targetType, targetId])
+  @@index([status])
+}
+
+/// Compliance Check — continuous compliance monitoring results.
+model ComplianceCheck {
+  id              String   @id @default(cuid())
+  checkType       String   // POLICY | SECURITY | SOP | DATA_ACCESS | AI_GOVERNANCE | HUMAN_APPROVAL
+  targetType      String   @default("AGENT") // AGENT | DEPARTMENT | MODEL | WORKFLOW
+  targetId        String   @default("")
+  status          String   @default("PASS") // PASS | FAIL | WARNING
+  violationDetail String   @default("") @db.Text
+  severity        String   @default("LOW") // LOW | MEDIUM | HIGH | CRITICAL
+  checkedAt       DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  @@index([checkType])
+  @@index([targetType, targetId])
+  @@index([status])
+  @@index([severity])
+}
+
+/// Audit Event — immutable tamper-evident audit log for all AI operations.
+model AuditEvent {
+  id              String   @id @default(cuid())
+  actorType       String   @default("HUMAN") // HUMAN | AI_AGENT | SYSTEM
+  actorId         String   @default("")
+  action          String   // e.g. CREATE_AGENT, EXECUTE_TASK, ACCESS_DATA
+  targetType      String   @default("")
+  targetId        String   @default("")
+  agentId         String   @default("")
+  modelId         String   @default("")
+  promptId        String   @default("")
+  skillId         String   @default("")
+  sopId           String   @default("")
+  ruleId          String   @default("")
+  toolId          String   @default("")
+  result          String   @default("SUCCESS") // SUCCESS | FAILURE | ESCALATED
+  approved        Boolean  @default(false)
+  failureReason   String   @default("")
+  escalationReason String  @default("")
+  ipAddress       String   @default("")
+  userAgent       String   @default("")
+  metadata        String   @default("{}") @db.Text // JSON
+  hash            String   @default("") // tamper-evident hash chain
+  previousHash    String   @default("")
+  createdAt       DateTime @default(now())
+
+  @@index([actorType, actorId])
+  @@index([action])
+  @@index([targetType, targetId])
+  @@index([agentId])
+  @@index([result])
+  @@index([createdAt])
+}
+
+/// MCP Tool — Model Context Protocol tool registry. Controlled integration.
+model MCPTool {
+  id              String   @id @default(cuid())
+  toolId          String   @unique
+  name            String
+  description     String   @default("")
+  owner           String   @default("")
+  endpointUrl     String   @default("")
+  authType        String   @default("API_KEY") // API_KEY | OAUTH | BEARER | NONE
+  permissions     String   @default("[]") @db.Text // JSON: required permissions
+  allowedAgents   String   @default("[]") @db.Text // JSON: agent IDs
+  allowedDepartments String @default("[]") @db.Text // JSON: department IDs
+  securityPolicy  String   @default("")
+  status          String   @default("ACTIVE") // ACTIVE | PAUSED | RETIRED | BROKEN
+  lastHealthCheck DateTime?
+  consecutiveFailures Int   @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([owner])
+}
+
+/// Agent Resource Quota — per-agent resource limits (CPU, RAM, queue, API).
+model AgentResourceQuota {
+  id              String   @id @default(cuid())
+  agentId         String   @unique
+  maxConcurrency  Int      @default(5)
+  maxCallsPerHour Int      @default(100)
+  maxCallsPerDay  Int      @default(1000)
+  maxTokensPerDay Int      @default(100000)
+  maxMemoryMb     Int      @default(512)
+  maxCpuPercent   Int      @default(25)
+  queuePriority   Int      @default(5) // 1=highest, 10=lowest
+  currentConcurrency Int   @default(0)
+  currentCallsToday Int    @default(0)
+  currentTokensToday Int   @default(0)
+  quotaExceeded   Boolean  @default(false)
+  lastResetAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([agentId])
+}

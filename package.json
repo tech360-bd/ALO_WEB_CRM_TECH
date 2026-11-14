@@ -28,6 +28,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:reset": "prisma migrate reset",
     "db:seed": "prisma db seed",
+    "seed:100-departments": "tsx prisma/seed-100-departments.ts",
     "video:clone": "bash external/video-repos/clone-all.sh",
     "video:health": "tsx scripts/video-health-check.ts",
     "video:templates": "tsx scripts/list-video-templates.ts",
