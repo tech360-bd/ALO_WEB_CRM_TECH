@@ -234,7 +234,35 @@ jobs:
           exit 1
 
       - name: Tests (blocking; DB-integration files skip-with-reason when no test DATABASE_URL)
-        run: npm test
+        id: tests
+        continue-on-error: true
+        run: npm test 2>&1 | tee /tmp/tests.txt
+
+      # TEMPORARY (removed once the failing file is known): see the typecheck
+      # diagnostics note above — job logs are not downloadable here.
+      - name: Publish test diagnostics
+        if: steps.tests.outcome == 'failure'
+        run: |
+          {
+            echo "=== failing lines ==="
+            grep -aE 'FAIL |✖|×|AssertionError|Error:|expected|Expected' /tmp/tests.txt | head -200 || true
+            echo
+            echo "=== tail ==="
+            tail -80 /tmp/tests.txt
+          } > /tmp/test-summary.txt
+          head -c 60000 /tmp/test-summary.txt > /tmp/test-trunc.txt
+          jq -Rs --arg sha "${{ github.sha }}" \
+            '{name:"test-report", head_sha:$sha, status:"completed", conclusion:"neutral",
+              output:{title:"Failing tests", summary:.}}' \
+            /tmp/test-trunc.txt > /tmp/test-payload.json
+          gh api "repos/${{ github.repository }}/check-runs" --method POST --input /tmp/test-payload.json >/dev/null
+          echo published
+
+      - name: Fail on test failures
+        if: steps.tests.outcome == 'failure'
+        run: |
+          echo "::error::Tests failed — details in the test-report check run"
+          exit 1
 
       - name: Optional integration tests (requires an explicitly configured disposable TEST_DATABASE_URL)
         if: ${{ env.TEST_DATABASE_URL != '' }}
