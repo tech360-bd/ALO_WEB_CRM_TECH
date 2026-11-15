@@ -52,6 +52,7 @@ import {
   SCOPE_CONTACTS_READONLY,
 } from './oauth';
 import { normalizePhone } from '@/lib/phone-normalization';
+import { googleAliases, parseTags } from '@/lib/contacts/merge';
 import { phoneVariants, isPlausiblePhone } from '@/lib/communications/contact-identity';
 
 /**
@@ -255,6 +256,12 @@ export interface ExistingRegistryRow {
   leadId: string;
   isBlocked: boolean;
   isOptedOut: boolean;
+  /**
+   * Registry tags. Needed because one contact can hold several Google resource
+   * names: after a contact merge the extra names live in `google_alias:` tags.
+   * Without them the next sync would re-create the contact that was just merged.
+   */
+  tags?: string[];
 }
 
 export type ImportAction =
@@ -335,6 +342,9 @@ export function planContactImport(input: {
       byEmail.set(email, group);
     }
     if (row.externalContactId) byResource.set(row.externalContactId, row);
+    for (const alias of googleAliases(row.tags ?? parseTags(row.tags as unknown as string))) {
+      if (!byResource.has(alias)) byResource.set(alias, row);
+    }
   }
 
   const decisions: ImportDecision[] = [];

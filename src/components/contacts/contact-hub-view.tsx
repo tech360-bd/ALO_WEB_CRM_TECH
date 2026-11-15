@@ -12,10 +12,11 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-type View = 'list' | 'detail' | 'import' | 'duplicates' | 'consent' | 'segments' | 'audit' | 'identify';
+type View = 'list' | 'detail' | 'import' | 'duplicates' | 'consent' | 'segments' | 'audit' | 'identify' | 'dashboard';
 
 const NAV: Array<{ href: string; label: string; view: View }> = [
   { href: '/crm/contacts', label: 'Contacts', view: 'list' },
+  { href: '/crm/contacts/dashboard', label: 'Dashboard', view: 'dashboard' },
   { href: '/crm/contacts/import', label: 'Import', view: 'import' },
   { href: '/crm/contacts/duplicates', label: 'Duplicates', view: 'duplicates' },
   { href: '/crm/contacts/consent', label: 'Consent', view: 'consent' },
@@ -81,6 +82,7 @@ export default function ContactHubView({ view, contactId }: { view: View; contac
       // Identify takes its input from the form, so the hub has no default list call
       // for it; the mapping exists only to keep the record exhaustive.
       identify: '/api/crm/contacts',
+      dashboard: '/api/crm/contacts/dashboard',
     };
     let target = url || fallback[view];
     if (view === 'list' && !url) {
@@ -104,7 +106,7 @@ export default function ContactHubView({ view, contactId }: { view: View; contac
   useEffect(() => {
     // The identify view fetches only when a number is submitted, so the hub's
     // list load is skipped rather than fired and ignored.
-    if (view === 'identify') return;
+    if (view === 'identify' || view === 'dashboard') return;
     void load();
   }, [load, view]);
 
@@ -146,6 +148,7 @@ export default function ContactHubView({ view, contactId }: { view: View; contac
         {view === 'segments' && <SegmentsView data={data} loading={loading} error={error} />}
         {view === 'audit' && <AuditView data={data} loading={loading} error={error} />}
         {view === 'identify' && <IdentifyView />}
+        {view === 'dashboard' && <DashboardView />}
       </div>
     </main>
   );
@@ -472,6 +475,151 @@ function SegmentsView({ data, loading, error }: { data: Record<string, unknown> 
   );
 }
 
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dashboard — the sixteen contact metrics
+// ─────────────────────────────────────────────────────────────────────────────
+// Every number is a live database reading. A metric whose query failed renders as
+// "unavailable" with its reason — never as 0, because an empty registry and a broken
+// query must not look the same. Each card states how the number is calculated.
+
+interface DashboardMetric {
+  key: string;
+  label: string;
+  definition: string;
+  source: string;
+  unit: 'count' | 'percent';
+  rangeScoped: boolean;
+  branchScoped: boolean;
+  value: number | null;
+  status: 'OK' | 'UNAVAILABLE';
+  reason?: string;
+}
+
+interface DashboardResponse {
+  success: boolean;
+  error?: string;
+  generatedAt?: string;
+  range?: { from: string; to: string; days: number; defaulted: boolean; adjustment: string | null };
+  branch?: { branch: string | null; applied: boolean; forced: boolean; reason: string };
+  metrics?: DashboardMetric[];
+  caveats?: string[];
+  scope?: string;
+  dataSource?: string;
+  mergedTagHandling?: string;
+}
+
+function DashboardView() {
+  const [data, setData] = useState<DashboardResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [branch, setBranch] = useState('');
+  const [showDefinitions, setShowDefinitions] = useState(false);
+
+  const submit = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    const params = new URLSearchParams();
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+    if (branch.trim()) params.set('branch', branch.trim());
+    const response = await api<DashboardResponse>(`/api/crm/contacts/dashboard${params.toString() ? `?${params.toString()}` : ''}`);
+    setLoading(false);
+    if (!response.ok) {
+      setData(null);
+      setError(response.data.error || `Dashboard unavailable (HTTP ${response.status}).`);
+      return;
+    }
+    setData(response.data);
+  }, [from, to, branch]);
+
+  useEffect(() => { void submit(); }, [submit]);
+
+  const metrics = data?.metrics || [];
+
+  return (
+    <>
+      <div style={card}>
+        <strong style={{ fontSize: 13 }}>Contact metrics</strong>
+        <p style={{ color: MUTED, fontSize: 12, marginTop: 6 }}>
+          Live database readings within your authorized scope. Metrics marked “current” are present-state
+          counts, not period counts. Nothing on this page is estimated.
+        </p>
+        <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <label style={{ fontSize: 12, color: MUTED }}>
+            From{' '}
+            <input type="date" value={from} onChange={(event) => setFrom(event.target.value)} style={{ ...input, width: 160 }} />
+          </label>
+          <label style={{ fontSize: 12, color: MUTED }}>
+            To{' '}
+            <input type="date" value={to} onChange={(event) => setTo(event.target.value)} style={{ ...input, width: 160 }} />
+          </label>
+          <input
+            value={branch}
+            onChange={(event) => setBranch(event.target.value)}
+            placeholder="Branch (company-wide roles only)"
+            style={{ ...input, maxWidth: 240 }}
+            aria-label="Branch filter"
+          />
+          <button style={button} onClick={() => void submit()} disabled={loading}>{loading ? 'Loading…' : 'Refresh'}</button>
+          <button style={secondary} onClick={() => setShowDefinitions((value) => !value)}>
+            {showDefinitions ? 'Hide definitions' : 'Show definitions'}
+          </button>
+        </div>
+        {data?.range ? (
+          <p style={{ color: MUTED, fontSize: 11, marginTop: 8 }}>
+            Range {new Date(data.range.from).toLocaleDateString()} → {new Date(data.range.to).toLocaleDateString()} ({data.range.days} days{data.range.defaulted ? ', default window' : ''}).
+            {data.range.adjustment ? ` ${data.range.adjustment}` : ''}
+          </p>
+        ) : null}
+        {data?.branch ? <p style={{ color: MUTED, fontSize: 11 }}>{data.branch.reason}</p> : null}
+      </div>
+
+      {error ? <p style={{ color: '#b42318', fontSize: 13, marginTop: 12 }}>{error}</p> : null}
+      {loading && metrics.length === 0 ? <p style={{ color: MUTED, fontSize: 13, marginTop: 12 }}>Loading live metrics…</p> : null}
+
+      {metrics.length > 0 ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginTop: 16 }}>
+          {metrics.map((metric) => (
+            <div key={metric.key} style={{ ...card, opacity: metric.status === 'OK' ? 1 : 0.85 }}>
+              <p style={{ margin: 0, fontSize: 11, color: MUTED, textTransform: 'uppercase', letterSpacing: 0.4 }}>{metric.label}</p>
+              <p style={{ margin: '6px 0 2px', fontSize: 24, fontWeight: 700 }}>
+                {metric.value === null ? 'Unavailable' : metric.unit === 'percent' ? `${metric.value}%` : metric.value.toLocaleString()}
+              </p>
+              <p style={{ margin: 0, fontSize: 11, color: MUTED }}>
+                {metric.rangeScoped ? 'Range-scoped' : 'Current state'}{metric.branchScoped ? ' · branch-scoped' : ''}
+              </p>
+              {metric.reason ? <p style={{ margin: '6px 0 0', fontSize: 11, color: '#b42318' }}>{metric.reason}</p> : null}
+              {showDefinitions ? (
+                <p style={{ margin: '8px 0 0', fontSize: 11, color: MUTED }}>
+                  {metric.definition}<br /><em>Source: {metric.source}</em>
+                </p>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {!loading && !error && metrics.length === 0 ? (
+        <p style={{ color: MUTED, fontSize: 13, marginTop: 12 }}>No metrics were returned. That is a failure, not an empty registry.</p>
+      ) : null}
+
+      {data?.caveats?.length ? (
+        <div style={{ ...card, marginTop: 16 }}>
+          <strong style={{ fontSize: 13 }}>How to read this</strong>
+          {data.caveats.map((caveat) => (
+            <p key={caveat} style={{ fontSize: 12, margin: '6px 0 0', color: MUTED }}>• {caveat}</p>
+          ))}
+          {data.dataSource ? <p style={{ fontSize: 11, margin: '8px 0 0', color: MUTED }}>Data source: {data.dataSource}</p> : null}
+          {data.mergedTagHandling ? <p style={{ fontSize: 11, margin: '4px 0 0', color: MUTED }}>{data.mergedTagHandling}</p> : null}
+        </div>
+      ) : null}
+    </>
+  );
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Identify — "who is this number?"

@@ -36,6 +36,7 @@ import {
   type ImportDecision,
 } from '@/lib/google/contacts';
 import { phoneVariants } from '@/lib/communications/contact-identity';
+import { parseTags } from '@/lib/contacts/merge';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -149,9 +150,12 @@ export async function POST(request: Request) {
         leadId: true,
         isBlocked: true,
         isOptedOut: true,
+        tags: true,
       },
-    })) as unknown as ExistingRegistryRow[];
-    existing.push(...rows);
+    })) as unknown as (Omit<ExistingRegistryRow, 'tags'> & { tags: string })[];
+    // Tags are parsed here so the planner can see `google_alias:` entries created by
+    // a contact merge; a merged resource name must not be re-created as a new contact.
+    existing.push(...rows.map((row) => ({ ...row, tags: parseTags(row.tags) })));
   }
 
   const plan = planContactImport({ people, existing });

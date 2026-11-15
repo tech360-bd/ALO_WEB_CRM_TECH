@@ -45,6 +45,9 @@ export type PermissionAction =
   | "send"
   | "generate"
   | "finish"
+  // Destructive, confirmation-based operations whose separate grant matters
+  // (e.g. executing a contact merge rather than only reviewing one).
+  | "execute"
   // Student module — scoped view/update
   | "view_assigned"
   | "view_all"
@@ -209,6 +212,9 @@ export const PERMISSION_CATALOG: Permission[] = [
   { id: "contacts.view", module: "contacts", feature: "contacts", action: "view_assigned", description: "View contact records within assigned, branch, or partner scope" },
   { id: "contacts.manage", module: "contacts", feature: "contacts", action: "manage", description: "Create or update contacts within authorized scope" },
   { id: "contacts.merge_review", module: "contacts", feature: "contacts.merge_review", action: "review", description: "Review and decide a contact-match request; never silently merge" },
+  // Executing a merge is separated from reviewing one on purpose: reviewing is
+  // routine triage, executing rewrites the registry and must be an explicit grant.
+  { id: "contacts.merge_execute", module: "contacts", feature: "contacts.merge_execute", action: "execute", description: "Execute a confirmed contact merge within authorized scope; reversible, never automatic" },
   { id: "contacts.consent.manage", module: "contacts", feature: "contacts.consent", action: "manage", description: "Record purpose-specific consent or withdrawal evidence" },
   { id: "contacts.import", module: "contacts", feature: "contacts.import", action: "import", description: "Import authorized contacts after identity and consent checks" },
   { id: "contacts.consent.view", module: "contacts", feature: "contacts.consent", action: "view", description: "View purpose-specific consent and suppression evidence for authorized contacts" },
