@@ -45,6 +45,9 @@ import {
   TrendingUp,
   ShieldCheck,
   Banknote,
+  Users,
+  UploadCloud,
+  Eye,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -282,6 +285,242 @@ function verdictBadge(verdict: Verdict) {
 function percent(value: number | null): string {
   if (value === null) return '—';
   return `${(value * 100).toFixed(2)}%`;
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GOOGLE CONTACTS (People API)
+// ─────────────────────────────────────────────────────────────────────────────
+// The contacts integration is deliberately its own panel rather than a row in the
+// services table, because it does something the other services do not: it WRITES to
+// the CRM. The UI therefore shows a dry run before it offers an import, and it
+// states the source-of-truth rule on screen (Google may fill empty fields and add
+// contacts; it may never overwrite a CRM value or touch a Student).
+
+interface ContactsStatus {
+  account: string;
+  scope: string;
+  configured: boolean;
+  authMode: string;
+  note: string;
+  verdict: 'PASS' | 'NOT_CONFIGURED' | 'NOT_VERIFIED' | 'FAILED';
+  liveVerified: boolean;
+  live: { status: string; reachable: boolean; reason: string | null } | null;
+  syncedAt: string | null;
+  incrementalReady: boolean;
+  importedContacts: number;
+  pendingReviews: number;
+  lastBatch: { ranAt: string; status: string; found: number; created: number; linkedOrFilled: number; duplicates: number; errors: number } | null;
+  nextSteps: string[];
+}
+
+interface ContactsPlan {
+  mode: string;
+  wroteNothing: boolean;
+  incremental: boolean;
+  truncated: boolean;
+  counters?: { found: number; create: number; linkExisting: number; fillBlank: number; conflictReview: number; duplicate: number; skipped: number };
+  written?: { created: number; linkedOrFilled: number; reviewQueued: number; duplicates: number; errors: number };
+  samples?: Array<{ action: string; name: string; phone: string; reason: string }>;
+  notice?: string;
+  nextStep?: string;
+}
+
+function GoogleContactsPanel() {
+  const [status, setStatus] = useState<ContactsStatus | null>(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState<'check' | 'preview' | 'apply' | null>(null);
+  const [plan, setPlan] = useState<ContactsPlan | null>(null);
+
+  const loadStatus = useCallback(async (live: boolean) => {
+    setBusy('check');
+    setError('');
+    try {
+      const response = await fetch(`/api/google/contacts/status?live=${live ? 'true' : 'false'}`, { credentials: 'same-origin' });
+      const data = (await response.json()) as ContactsStatus & { error?: string };
+      if (!response.ok) throw new Error(data.error || `Status failed (HTTP ${response.status}).`);
+      setStatus(data);
+      if (live) {
+        toast[data.liveVerified ? 'success' : 'error'](
+          data.liveVerified
+            ? 'Google answered the People API for the contacts account.'
+            : data.live?.reason || 'Google did not confirm access to contacts.',
+        );
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Contacts status unavailable.');
+    } finally {
+      setBusy(null);
+    }
+  }, []);
+
+  const runSync = useCallback(async (mode: 'dry-run' | 'apply') => {
+    setBusy(mode === 'dry-run' ? 'preview' : 'apply');
+    setError('');
+    try {
+      const response = await fetch('/api/google/contacts/sync', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode }),
+      });
+      const data = (await response.json()) as ContactsPlan & { error?: string };
+      if (!response.ok) throw new Error(data.error || `Sync failed (HTTP ${response.status}).`);
+      setPlan({ ...data, mode });
+      toast.success(mode === 'dry-run' ? 'Preview complete — nothing was written.' : 'Import complete.');
+      if (mode === 'apply') await loadStatus(false);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Contacts sync failed.');
+    } finally {
+      setBusy(null);
+    }
+  }, [loadStatus]);
+
+  useEffect(() => {
+    void loadStatus(false);
+  }, [loadStatus]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Users className="size-4" /> Google Contacts → central contact registry
+        </CardTitle>
+        <CardDescription>
+          Imports the ALO Google Contacts account into the one contact registry the CRM already
+          uses. Google may add contacts and fill fields ALO left empty; it never overwrites a CRM
+          value, never touches a Student or Student ID, and never merges records automatically.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {error ? (
+          <div className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        ) : null}
+
+        {status ? (
+          <>
+            <div className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-lg border border-[var(--alo-border)] p-3">
+                <p className="text-xs uppercase text-[var(--alo-text-muted)]">Account</p>
+                <p className="truncate font-medium">{status.account}</p>
+              </div>
+              <div className="rounded-lg border border-[var(--alo-border)] p-3">
+                <p className="text-xs uppercase text-[var(--alo-text-muted)]">Credential</p>
+                <p className="font-medium">{status.configured ? 'OAuth refresh token present' : 'Not configured'}</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">mode: {status.authMode}</p>
+              </div>
+              <div className="rounded-lg border border-[var(--alo-border)] p-3">
+                <p className="text-xs uppercase text-[var(--alo-text-muted)]">Live verification</p>
+                <p className="font-medium">
+                  {status.liveVerified ? 'Verified by a real API call' : status.live ? 'Failed' : 'Not verified'}
+                </p>
+                <p className="text-xs text-[var(--alo-text-muted)]">Configuration alone is never reported as working.</p>
+              </div>
+              <div className="rounded-lg border border-[var(--alo-border)] p-3">
+                <p className="text-xs uppercase text-[var(--alo-text-muted)]">Last sync</p>
+                <p className="font-medium">{status.syncedAt ? new Date(status.syncedAt).toLocaleString() : 'Never run'}</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">
+                  {status.importedContacts} imported · {status.pendingReviews} awaiting review
+                </p>
+              </div>
+            </div>
+
+            <p className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs text-[var(--alo-body)]">
+              {status.note}
+            </p>
+
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={() => void loadStatus(true)} disabled={busy !== null}>
+                <ShieldCheck className="mr-2 size-4" />
+                {busy === 'check' ? 'Calling Google…' : 'Verify access (live call)'}
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => void runSync('dry-run')} disabled={busy !== null || !status.configured}>
+                <Eye className="mr-2 size-4" />
+                {busy === 'preview' ? 'Reading contacts…' : 'Preview import (writes nothing)'}
+              </Button>
+              <Button size="sm" onClick={() => void runSync('apply')} disabled={busy !== null || !status.configured}>
+                <UploadCloud className="mr-2 size-4" />
+                {busy === 'apply' ? 'Importing…' : 'Import into registry'}
+              </Button>
+            </div>
+
+            {!status.configured ? (
+              <ul className="list-disc space-y-1 pl-5 text-xs text-[var(--alo-body)]">
+                {status.nextSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ul>
+            ) : null}
+
+            {status.lastBatch ? (
+              <div className="rounded-lg border border-[var(--alo-border)] p-3 text-xs">
+                <p className="font-semibold">Last run · {new Date(status.lastBatch.ranAt).toLocaleString()} ({status.lastBatch.status})</p>
+                <p className="text-[var(--alo-text-muted)]">
+                  found {status.lastBatch.found} · created {status.lastBatch.created} · linked/filled{' '}
+                  {status.lastBatch.linkedOrFilled} · duplicates {status.lastBatch.duplicates} · errors{' '}
+                  {status.lastBatch.errors}
+                </p>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <p className="text-sm text-[var(--alo-text-muted)]">Loading Google Contacts status…</p>
+        )}
+
+        {plan ? (
+          <div className="space-y-2 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs">
+            <p className="font-semibold">
+              {plan.mode === 'dry-run' ? 'Preview (nothing written)' : 'Import result'}
+              {plan.truncated ? ' — page ceiling reached, run again to continue' : ''}
+            </p>
+            {plan.counters ? (
+              <p>
+                found {plan.counters.found} · new {plan.counters.create} · link {plan.counters.linkExisting} ·
+                fill blanks {plan.counters.fillBlank} · review {plan.counters.conflictReview} · skipped{' '}
+                {plan.counters.skipped + plan.counters.duplicate}
+              </p>
+            ) : null}
+            {plan.written ? (
+              <p>
+                written: created {plan.written.created} · linked/filled {plan.written.linkedOrFilled} · queued
+                for review {plan.written.reviewQueued} · duplicates {plan.written.duplicates} · errors{' '}
+                {plan.written.errors}
+              </p>
+            ) : null}
+            {plan.notice ? <p className="text-[var(--alo-text-muted)]">{plan.notice}</p> : null}
+            {plan.nextStep ? <p className="text-[var(--alo-text-muted)]">{plan.nextStep}</p> : null}
+            {plan.samples && plan.samples.length > 0 ? (
+              <div className="max-h-56 overflow-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="text-[var(--alo-text-muted)]">
+                      <th className="p-1">Action</th>
+                      <th className="p-1">Name</th>
+                      <th className="p-1">Number</th>
+                      <th className="p-1">Why</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {plan.samples.map((sample, index) => (
+                      <tr key={`${sample.name}-${index}`} className="border-t border-[var(--alo-border)]">
+                        <td className="p-1 font-mono">{sample.action}</td>
+                        <td className="p-1">{sample.name}</td>
+                        <td className="p-1 font-mono">{sample.phone}</td>
+                        <td className="p-1 text-[var(--alo-text-muted)]">{sample.reason}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function GoogleStackAdminPage() {
@@ -1028,6 +1267,8 @@ export default function GoogleStackAdminPage() {
           ) : null}
         </CardContent>
       </Card>
+
+      <GoogleContactsPanel />
 
       {/* ── Links to the existing SEO surfaces (never forked) ───────── */}
       <Card>
