@@ -131,7 +131,7 @@ export async function identifyByPhone(phone: string): Promise<IdentificationCard
     }),
     db.lead.findMany({
       where: { OR: [{ phone: { in: variants } }, { altPhone: { in: variants } }] },
-      select: { id: true, name: true, phone: true, altPhone: true, email: true, status: true, counselorId: true, studentId: true },
+      select: { id: true, fullName: true, phone: true, altPhone: true, email: true, status: true, counselorId: true, studentId: true },
       take: MAX_CANDIDATES,
     }),
     db.parentGuardian.findMany({
@@ -147,7 +147,7 @@ export async function identifyByPhone(phone: string): Promise<IdentificationCard
   // contract; these aliases make it explicit and keep the file error-free.
   type RegistryRow = { id: string; displayName: string; phone: string; normalizedPhone: string; email: string; studentId: string; leadId: string; assignedCounselorId: string | null; branch: string };
   type StudentRow = { id: string; studentId: string; name: string; email: string; phone: string; status: string; journeyStage: string; counselorId: string | null; counselorName: string };
-  type LeadRow = { id: string; name: string; phone: string; altPhone: string | null; email: string; status: string; counselorId: string | null; studentId: string | null };
+  type LeadRow = { id: string; fullName: string; phone: string; altPhone: string | null; email: string; status: string; counselorId: string | null; studentId: string | null };
   type GuardianRow = { id: string; studentId: string; fullName: string; relationship: string; phone: string; whatsapp: string; isPrimaryContact: boolean; isFinancialSponsor: boolean; status: string };
 
   const registryRows = registryRowsRaw as unknown as RegistryRow[];
@@ -206,7 +206,7 @@ export async function identifyByPhone(phone: string): Promise<IdentificationCard
       kind: 'lead',
       id: lead.id,
       reference: lead.id,
-      name: lead.name,
+      name: lead.fullName,
       phone: lead.phone,
       altPhone: lead.altPhone,
       email: lead.email,
