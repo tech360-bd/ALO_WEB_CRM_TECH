@@ -217,7 +217,7 @@ jobs:
       - name: Publish typecheck diagnostics
         if: steps.typecheck.outcome == 'failure'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           head -c 60000 /tmp/tsc.txt > /tmp/tsc-trunc.txt || true
           jq -Rs --arg sha "${{ github.sha }}" --arg repo "${{ github.repository }}" \
