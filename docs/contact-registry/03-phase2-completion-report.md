@@ -220,49 +220,77 @@ schema but not executed.
 Not tested here: TLS termination, WAF/rate limits at the edge, and anything requiring a
 running server.
 
-## 10. Complete test results — PASS (no regressions)
+## 10. Complete test results — PASS (no regressions; the suite passes in CI)
 
 | Command | Result |
 | --- | --- |
-| `npx vitest run tests/unit` (whole suite) | **352 files · 3820 tests · 3793 passed · 27 failed** |
-| failing files | **13 — the identical set that fails at pristine baseline** (accounting-ledger, ai-security-remediation, application-risk-score, business-hours-policy, cms-revisions, critical-safety-remediation, design-tokens, journal-integrity, migration-order, phd/auth-access, phd/storage-security, student-success-score, visual-system-redesign) |
+| `npm test` in CI (`vitest run`, unit + integration) | **PASS** — this is the first time the Tests step has ever completed green on this branch |
+| `npx vitest run tests/unit` locally | 352 files · 3820 tests · **3796 passed · 24 failed** |
+| failing files locally | **10** — all environment-only (they import the real Prisma client, which cannot be generated here): accounting-ledger, ai-security-remediation, application-risk-score, business-hours-policy, cms-revisions, critical-safety-remediation, journal-integrity, phd/auth-access, phd/storage-security, student-success-score. Down from 13. |
 | new Phase 2 tests | **78** — merge 24, dashboard 21, phone pool 15, security 18 |
 | Phase 1 tests | 27 (unchanged) |
-| `npx eslint` on every touched file | **0 problems** |
-| `npm run audit:env -- --check` | **PASS** after regenerating `docs/environment-classification.json` (CI caught this; it was stale for the whole branch) |
-| `node scripts/verify-contact-registry.mjs` | runs; correctly reports `BLOCKED` for database and Google |
-| `npm run build` / `npm run typecheck` / `prisma validate` | **BLOCKED locally** — `prisma generate` cannot run (`binaries.prisma.sh` unreachable). CI runs these with a real client; see §15. |
+| `npx eslint` on every touched file | **0 problems** (CI Lint step: success) |
+| `npm run audit:env -- --check` | **PASS** (CI step: success) |
+| `prisma validate` / `prisma generate` / `verify generated client` | **PASS** in CI |
+| `npm run build` | **PASS** in CI (Production build step: success) |
+| `node --test tests/deployment-ownership.test.mjs tests/runtime-standard.test.mjs` | **PASS** (11 tests) |
 
-## 11. TypeScript baseline comparison — PASS (no new errors), with the root cause identified
+### Three inherited test failures, fixed rather than excused
 
-`NODE_OPTIONS="--max-old-space-size=7000" npx tsc --noEmit` → **104 errors, the same
-count as before Phase 2, none in a touched file.**
+The CI job could not previously get past its first failure, so these had never been
+seen. All three came from the base commit (`e9ccd3bd`), not from Phase 2:
 
-Investigation of the 104 (asked for explicitly):
+1. **`migration-order` — 13 phantom tables.** The simulator applied *commented-out*
+   `-- DROP TABLE …` rollback statements as if they were SQL, then reported the 13
+   tables that same migration had just created as missing. `applySql` now strips
+   `--` and `/* */` comments before parsing; the real drift checks (duplicate
+   columns, ALTER-before-create, schema reproduction) are unchanged and green.
+2. **`design-tokens` / `visual-system-redesign`.** The AI Command Center pages
+   rendered `text-[10px]` (below the documented 11px floor) and Tailwind grey text
+   instead of `alo` tokens. Replaced with `text-[11px]`, `text-alo-text`,
+   `text-alo-text-muted`, `bg-alo-surface-muted`.
+3. **Fresh-database migration (`migrate deploy` on empty MySQL 8) — P3018 / MySQL
+   1059.** One migration declared the unique index
+   `AgentRelationship_parentAgentId_childAgentId_relationshipType_key`: 65
+   characters, one over MySQL's 64-character identifier limit, so the table could
+   never be created on an empty database. Renamed to
+   `AgentRelationship_parent_child_type_key` and pinned with `map:` in the schema.
+   **The step now passes for the first time on this branch.**
+
+## 11. TypeScript baseline comparison — PASS (no new errors), root cause proven
+
+`NODE_OPTIONS="--max-old-space-size=7000" npx tsc --noEmit` → **102 errors**, down
+from 104 at the start of Phase 2, **zero in a file this branch touches**. CI's
+Typecheck step is green with a real generated client.
+
+The two that were removed were both genuine defects, not baseline noise:
+
+* `src/lib/contacts/identification.ts` selected `name` from `Lead`, which has no
+  such column — it is `fullName`. Prisma rejects an unknown select key at runtime as
+  well as at compile time, so identification would have thrown on the first lead
+  match. This was found by diffing every `select`/`data` key in the files this
+  branch touches against `prisma/schema.prisma` (a scripted check, because the stub
+  client here types every model as `any`).
+* `src/lib/enterprise-ai/rag-engine.ts` (pre-existing) built its result array from an
+  unannotated `[]` — `never[]` — so the push and the `.map` were errors. Annotated
+  as `RAGResult["chunks"]`.
+
+Investigation of the remaining 102 (asked for explicitly):
 
 | Code | Count | Meaning |
 | --- | --- | --- |
-| TS2339 | 50 | property does not exist on `{}` — a `db.*` result typed as `{}` |
-| TS2694 | 23 | `Prisma` namespace has no exported member — generated types absent |
-| TS2322 / TS2345 / TS2347 | 19 | `{}` passed where a concrete row type is expected |
-| TS2365 / TS2362 / TS18048 / TS18046 | 10 | arithmetic/comparison on `{}` / possibly-undefined |
-| TS2559 / TS2305 | 2 | misc, same source |
+| TS2339 | ~50 | property does not exist on `{}` — a `db.*` result typed as `{}` |
+| TS2694 | ~23 | `Prisma` namespace has no exported member — generated types absent |
+| TS2322 / TS2345 / TS2347 | ~19 | `{}` passed where a concrete row type is expected |
+| TS2365 / TS2362 / TS18048 / TS18046 | ~10 | arithmetic/comparison on `{}` / possibly-undefined |
 
 Root cause, proven rather than assumed: `node_modules/.prisma/client/index.d.ts` is a
-3.9 KB **placeholder** (`export declare const PrismaClient: any`), so every model result
-degrades to `{}`. The repository's own guard says it best —
+3.9 KB **placeholder** (`export declare const PrismaClient: any`), so every model
+result degrades to `{}`. The repository's own guard says it best —
 `node scripts/verify-prisma-client.mjs` → *"Prisma model metadata is missing … A
-placeholder client is not type safety."*
-
-Consequence, stated plainly: this environment cannot typecheck Prisma code at all. The
-errors are **environmental** (top-12 files: ai-workforce/telemetry 13, accounting/ledger
-11, rules/active 8, super-admin/agent-network 6…), **pre-existing**, and **not suppressed**
-— no `@ts-expect-error`, no config loosening, no `any` casts added to hide them. New code
-uses `as unknown as` only where rows are read from the stub client, with the row type
-declared explicitly next to the `select`.
-
-CI is the real check: on the previous commit, CI's lint and typecheck steps passed with a
-generated client (the job failed later, at env classification).
+placeholder client is not type safety."* These errors are **environmental and
+pre-existing** and are **not suppressed** — no `@ts-expect-error`, no config
+loosening, no `any` added to hide them.
 
 ## 12. Changed files — 18
 
@@ -313,23 +341,42 @@ branch and is listed in the PR comment.
 
 Open, not merged.
 
-## 16. CI workflow URL and result
+## 16. CI workflow URL and result — PARTIAL (main job green, one inherited blocker)
 
-* CI — Pull Request Validation:
-  https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/43715930663
-* CodeQL Advanced: passed (actions, javascript-typescript, python).
+Run: https://github.com/tech360-bd/ALO_WEB_CRM_TECH/actions/runs/43721747193
+(commit `c2df1b06`), plus CodeQL Advanced (actions, javascript-typescript, python) — **success**.
 
-Two CI jobs were failing **before** Phase 2:
+**`Lint · Typecheck · Tests · Prisma · Build` → SUCCESS.** Every step, for the first
+time on this branch: dependency audit, secret-leak scan, deployment-ownership
+safety tests, environment-variable classification, Prisma validate, Prisma
+generate, client verification, Lint, Typecheck, the full `vitest run` suite and the
+production build.
 
-1. **"Environment variable classification is current"** — real, and caused by this
-   branch: `.env.example` gained `GOOGLE_CONTACTS_ACCOUNT` / `GOOGLE_CONTACTS_REFRESH_TOKEN`
-   without regenerating the derived file. **Fixed** by running
-   `npm run audit:env`; `--check` now passes locally and CI should go green.
-2. **"Fresh-database migration (migrate deploy on empty MySQL 8)"** — **pre-existing on
-   `main`** (run 43571147948 on 2026-11-14 fails the same step). Not caused by this work:
-   no migration was added. The job log could not be downloaded from this environment
-   (the log host is outside the permitted network), so the cause is **not diagnosed here**
-   and is reported as an open blocker rather than guessed at.
+**`MySQL 8 · Migrate · Integrate · Boot` → FAILURE**, at one step, and not from this
+work:
+
+| Step | Result |
+| --- | --- |
+| Fresh-database migration (`migrate deploy` on empty MySQL 8) | **success** — first time (the 65-character index fix) |
+| Migration status must report up to date | **success** |
+| No drift between migrations and schema.prisma (authoritative diff) | **failure — 12 of 128 statements are real** |
+
+All 12 drifts are in `prisma/migrations/20261114020000_super_admin_ai_command_center`
+(the base commit's AI Command Center migration), which declares `LONGTEXT`/`TEXT`
+columns without the `@default(...)` values that `schema.prisma` declares for the same
+fields — e.g. `AgentRelationship.permissions` is `LONGTEXT NOT NULL` in the migration
+but `String @default("[]")` in the schema, and MySQL cannot express a plain default on
+a LOB column, which is why the author left them out. The same 12 groups touch
+`AuditEvent`, `ComplianceCheck`, `DCCAssessment`, `GovernanceAction`, `LoopAgent`,
+`MCPTool`, `Plan`, `RAGCollection`, `Reflection`, `SecurityPolicy` and
+`AgentResourceQuota`.
+
+Fixing it means either aligning those columns with the schema (VARCHAR(191) + default)
+or declaring `@db.Text`/`@db.LongText` plus dropping the defaults in the schema. Both
+change another feature's data model, neither can be validated here (no MySQL, no
+Prisma engine), and a wrong guess turns a drift warning into a failed migration. It is
+reported with the full list rather than guessed at. Every step the fix needs is
+available in CI's own MySQL job, so the owner can resolve it in one pass.
 
 ## 17. Merge SHA — NOT MERGED
 
@@ -350,9 +397,9 @@ using it requires the authorisation in §17.
 | B2 | No Google OAuth credential (`GOOGLE_CONTACTS_REFRESH_TOKEN`) | Task 2 in full | `docs/contact-registry/02-google-contacts-setup.md` |
 | B3 | `prisma generate` impossible here (`binaries.prisma.sh` unreachable) | local build/typecheck; any Prisma-booting suite | run in CI or a developer machine |
 | B4 | No Meta/WhatsApp credential | number-pool ownership verification; live sending | Meta Business verification per number |
-| B5 | Fresh-DB migration failure in CI, pre-existing on `main` | green CI | needs the job log/server access; not diagnosable from here |
+| B5 | Drift between `20261114020000_super_admin_ai_command_center` and `schema.prisma` (12 real statements, all pre-existing in the base commit) | the MySQL CI job going green | the full list is in §16; align LOB columns/defaults in that migration + schema, then re-run CI |
 | B6 | Merge UI not built | operator flow | endpoint is complete; a UI is the next increment |
-| B7 | 13 unit suites fail at baseline | full green suite | unrelated to this work; each needs its own fix |
+| B7 | 10 unit suites fail locally (real-client dependency) but pass in CI | nothing, in CI | they need `prisma generate`; CI proves them |
 | B8 | Merge/dashboard SQL never executed | confidence in live behaviour | covered by B1 |
 
 Nothing in this report is claimed as tested unless a command produced the result quoted.
