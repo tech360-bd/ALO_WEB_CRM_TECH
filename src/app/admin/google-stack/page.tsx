@@ -173,6 +173,47 @@ interface IngestResponse {
   error?: string;
 }
 
+/** One row from the GA4 Analytics Data API report endpoint. */
+interface Ga4ReportRow {
+  dimensions: Record<string, string>;
+  metrics: Record<string, number>;
+}
+
+interface Ga4ReportResponse {
+  success: boolean;
+  status: string;
+  configured: boolean;
+  propertyId: string | null;
+  preset: string;
+  label: string;
+  rows: Ga4ReportRow[];
+  totals: Record<string, number>;
+  rowCount: number;
+  sampled: boolean | null;
+  dataFreshness: string | null;
+  period: { startDate: string; endDate: string };
+  fetchedAt: string | null;
+  reason?: string;
+  note: string;
+  error?: string;
+}
+
+/**
+ * Acquisition reports the specification requires, mapped to the named presets the
+ * API exposes. Traffic source, the organic/referral/direct split, campaigns and
+ * landing pages are the four that matter for recruitment reporting.
+ */
+const GA4_PRESETS = [
+  { value: 'acquisition', label: 'Source / medium' },
+  { value: 'channels', label: 'Channel group (organic, referral, direct)' },
+  { value: 'campaigns', label: 'Campaigns' },
+  { value: 'landingPages', label: 'Landing pages' },
+  { value: 'daily', label: 'Sessions per day' },
+  { value: 'events', label: 'Events received' },
+  { value: 'countries', label: 'Countries' },
+  { value: 'devices', label: 'Devices' },
+] as const;
+
 const GROUP_OPTIONS = [
   { value: 'channel', label: 'Channel (source / medium)' },
   { value: 'source', label: 'Source' },
@@ -184,6 +225,7 @@ const GROUP_OPTIONS = [
 
 const SERVICE_LABELS: Record<string, string> = {
   GA4: 'Google Analytics 4',
+  GA4_DATA_API: 'GA4 Analytics Data API (reporting)',
   GTM: 'Google Tag Manager',
   SEARCH_CONSOLE: 'Search Console',
   BUSINESS_PROFILE: 'Google Business Profile',
@@ -265,6 +307,11 @@ export default function GoogleStackAdminPage() {
 
   const [ingesting, setIngesting] = useState(false);
 
+  const [ga4Report, setGa4Report] = useState<Ga4ReportResponse | null>(null);
+  const [ga4Error, setGa4Error] = useState('');
+  const [ga4Loading, setGa4Loading] = useState(false);
+  const [ga4Preset, setGa4Preset] = useState<string>('acquisition');
+
   const loadStatus = useCallback(async (live: boolean) => {
     setLoadingStatus(true);
     setStatusError('');
@@ -302,6 +349,35 @@ export default function GoogleStackAdminPage() {
       setFunnelError(error instanceof Error ? error.message : 'Conversion funnel unavailable.');
     } finally {
       setLoadingFunnel(false);
+    }
+  }, []);
+
+  /**
+   * GA4 acquisition report.
+   *
+   * Deliberately NOT part of the initial load: every call costs a Google API
+   * round-trip against a shared property quota, and an operator should ask for it.
+   * The response carries its own `status`, so a NOT_CONFIGURED answer is shown as
+   * "not connected" rather than as a table of zeroes.
+   */
+  const loadGa4 = useCallback(async (preset: string) => {
+    setGa4Loading(true);
+    setGa4Error('');
+    try {
+      const response = await fetch(
+        `/api/google/analytics/report?preset=${encodeURIComponent(preset)}&startDate=28daysAgo&endDate=yesterday`,
+        { credentials: 'same-origin' },
+      );
+      const data = (await response.json()) as Ga4ReportResponse;
+      if (!response.ok) throw new Error(data.error || `GA4 report failed (HTTP ${response.status}).`);
+      setGa4Report(data);
+      if (data.status !== 'READY') {
+        toast.warning(data.reason || `GA4 reporting is ${data.status}.`);
+      }
+    } catch (error) {
+      setGa4Error(error instanceof Error ? error.message : 'GA4 reporting unavailable.');
+    } finally {
+      setGa4Loading(false);
     }
   }, []);
 
@@ -683,6 +759,153 @@ export default function GoogleStackAdminPage() {
           </CardContent>
         </Card>
       ) : null}
+
+      {/* ── GA4 acquisition reporting (Analytics Data API) ─────────── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Acquisition — GA4 (Analytics Data API)</CardTitle>
+          <CardDescription>
+            Live figures read from the configured GA4 property. This panel never substitutes a zero
+            for a failed Google request: if reporting is not connected, or Google refuses, it says so
+            and shows nothing.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 text-sm">
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="ga4-preset" className="text-xs">Report</Label>
+              <select
+                id="ga4-preset"
+                value={ga4Preset}
+                onChange={(event) => setGa4Preset(event.target.value)}
+                className="h-9 rounded-md border border-[var(--alo-border)] bg-white px-2 text-sm"
+              >
+                {GA4_PRESETS.map((preset) => (
+                  <option key={preset.value} value={preset.value}>{preset.label}</option>
+                ))}
+              </select>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={ga4Loading}
+              onClick={() => void loadGa4(ga4Preset)}
+            >
+              <RefreshCw className={`mr-1 size-3 ${ga4Loading ? 'animate-spin' : ''}`} />
+              {ga4Loading ? 'Reading GA4…' : 'Load report'}
+            </Button>
+            <span className="text-xs text-[var(--alo-text-muted)]">
+              Last 28 complete days (GA4 lags up to 48h).
+            </span>
+          </div>
+
+          {ga4Error ? (
+            <p className="rounded-md border border-crm-danger-border bg-crm-danger-bg p-2 text-crm-danger-text">
+              {ga4Error}
+            </p>
+          ) : null}
+
+          {!ga4Report && !ga4Error ? (
+            <p className="text-[var(--alo-text-muted)]">
+              Load a report to read acquisition data from GA4. Nothing is fetched automatically,
+              because each call consumes the property&apos;s reporting quota.
+            </p>
+          ) : null}
+
+          {ga4Report ? (
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                {ga4Report.status === 'READY' ? (
+                  <Badge className="border-crm-success-border bg-crm-success-bg text-crm-success-text">
+                    <CheckCircle2 className="mr-1 size-3" /> READY — {ga4Report.rowCount} rows
+                  </Badge>
+                ) : (
+                  <Badge className="border-crm-danger-border bg-crm-danger-bg text-crm-danger-text">
+                    <AlertTriangle className="mr-1 size-3" /> {ga4Report.status}
+                  </Badge>
+                )}
+                {ga4Report.propertyId ? (
+                  <Badge variant="outline">property {ga4Report.propertyId}</Badge>
+                ) : null}
+                <Badge variant="outline">
+                  {ga4Report.period.startDate} → {ga4Report.period.endDate}
+                </Badge>
+                {ga4Report.sampled ? <Badge variant="outline">sampled / (other) row present</Badge> : null}
+                {ga4Report.fetchedAt ? (
+                  <span className="text-xs text-[var(--alo-text-muted)]">
+                    fetched {new Date(ga4Report.fetchedAt).toLocaleString()}
+                  </span>
+                ) : null}
+              </div>
+
+              {ga4Report.reason ? (
+                <p className="rounded-md border border-crm-warning-border bg-crm-warning-bg p-2 text-crm-warning-text">
+                  {ga4Report.reason}
+                </p>
+              ) : null}
+
+              {ga4Report.status === 'READY' && ga4Report.rows.length === 0 ? (
+                <p className="text-[var(--alo-text-muted)]">
+                  GA4 answered and the property has no rows for this period. That is a real result, not
+                  a configuration error — a new property or a period before tagging started looks exactly
+                  like this.
+                </p>
+              ) : null}
+
+              {ga4Report.rows.length > 0 ? (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-[var(--alo-border)] text-left">
+                          {Object.keys(ga4Report.rows[0].dimensions).map((dimension) => (
+                            <th key={dimension} className="px-2 py-1 font-semibold">{dimension}</th>
+                          ))}
+                          {Object.keys(ga4Report.rows[0].metrics).map((metric) => (
+                            <th key={metric} className="px-2 py-1 text-right font-semibold">{metric}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ga4Report.rows.slice(0, 50).map((row, index) => (
+                          <tr key={`${index}-${Object.values(row.dimensions).join('-')}`} className="border-b border-[var(--alo-border)]/50">
+                            {Object.keys(ga4Report.rows[0].dimensions).map((dimension) => (
+                              <td key={dimension} className="px-2 py-1">{row.dimensions[dimension] || '(not set)'}</td>
+                            ))}
+                            {Object.keys(ga4Report.rows[0].metrics).map((metric) => (
+                              <td key={metric} className="px-2 py-1 text-right tabular-nums">
+                                {Number.isFinite(row.metrics[metric])
+                                  ? row.metrics[metric].toLocaleString(undefined, { maximumFractionDigits: 2 })
+                                  : '—'}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {ga4Report.rows.length > 50 ? (
+                    <p className="text-xs text-[var(--alo-text-muted)]">
+                      Showing the top 50 of {ga4Report.rows.length} rows (sorted by the report&apos;s
+                      primary metric).
+                    </p>
+                  ) : null}
+                  <div className="flex flex-wrap gap-3 text-xs text-[var(--alo-text-muted)]">
+                    {Object.entries(ga4Report.totals).map(([metric, value]) => (
+                      <span key={metric}>
+                        <strong className="text-[var(--alo-text)]">{metric}:</strong>{' '}
+                        {value.toLocaleString(undefined, { maximumFractionDigits: 2 })} (Google total)
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              <p className="text-xs text-[var(--alo-text-muted)]">{ga4Report.note}{ga4Report.dataFreshness ? ` ${ga4Report.dataFreshness}` : ''}</p>
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
 
       {/* ── Conversion funnel ──────────────────────────────────────── */}
       <Card>

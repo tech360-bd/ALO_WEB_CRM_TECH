@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { withStudentAuth } from '@/lib/student-auth';
 import { removePrivateFile, storePrivateFile } from '@/lib/storage/private-file-store';
 import { refreshApplicationDocumentStatus } from '@/lib/application-manager/document-readiness';
+import { reportDocumentUploadCompleted } from '@/lib/analytics/application-events';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -199,6 +200,10 @@ export const POST = withStudentAuth(async (request, auth) => {
       }
       return created;
     });
+    // Analytics event AFTER the upload committed (never inside the transaction:
+    // a rolled-back upload must not be counted). Fire-and-forget, cannot fail the
+    // upload, and carries only the document KIND — never a filename or contents.
+    reportDocumentUploadCompleted({ reference: auth.studentId, category });
     return NextResponse.json({
       success: true,
       data: { ...document, downloadUrl: `/api/student/documents/${document.id}/download` },

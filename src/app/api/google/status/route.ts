@@ -10,6 +10,10 @@ import {
 import { describeCredential, verifyConnection } from '@/lib/seo/search-console-client';
 import { describeGoogleCredential } from '@/lib/google/oauth';
 import { verifyBusinessProfileConnection } from '@/lib/google/business-profile';
+import {
+  describeAnalyticsDataConfig,
+  verifyConnection as verifyAnalyticsDataConnection,
+} from '@/lib/google/analytics-data';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -65,6 +69,9 @@ export async function GET(request: NextRequest) {
     wantLive && config.businessProfile.accountId && credential.configured
       ? await verifyBusinessProfileConnection()
       : null;
+  const analyticsData = describeAnalyticsDataConfig();
+  const analyticsDataLive =
+    wantLive && analyticsData.configured ? await verifyAnalyticsDataConnection() : null;
 
   const services: Record<string, {
     configured: boolean;
@@ -105,6 +112,35 @@ export async function GET(request: NextRequest) {
       status: config.gtm.injectTags ? 'PARTIAL' : config.gtm.enabled ? 'NOT_VERIFIED' : 'NOT_CONFIGURED',
       reason: config.gtm.reason,
       detail: { containerId: config.gtm.containerId || null },
+    },
+    GA4_DATA_API: {
+      // Reporting reads. `configured` requires BOTH a property id and a
+      // credential, because either one alone produces an API error rather than
+      // a report.
+      configured: analyticsData.configured,
+      costTier: GOOGLE_SERVICE_COSTS.GA4_DATA_API.tier,
+      billingRequired: GOOGLE_SERVICE_COSTS.GA4_DATA_API.billingAccountRequired,
+      optional: GOOGLE_SERVICE_COSTS.GA4_DATA_API.optional,
+      liveVerified: analyticsDataLive
+        ? analyticsDataLive.status === 'READY'
+        : null,
+      status: analyticsDataLive
+        ? analyticsDataLive.status === 'READY'
+          ? 'PASS'
+          : analyticsDataLive.status === 'NOT_CONFIGURED'
+            ? 'NOT_CONFIGURED'
+            : 'BLOCKED'
+        : analyticsData.configured
+          ? 'NOT_VERIFIED'
+          : 'NOT_CONFIGURED',
+      reason: analyticsDataLive ? analyticsDataLive.reason ?? analyticsData.note : analyticsData.note,
+      detail: {
+        propertyId: analyticsData.propertyId || null,
+        authMode: analyticsData.authMode,
+        scope: 'https://www.googleapis.com/auth/analytics.readonly',
+        reportEndpoint: 'GET /api/google/analytics/report?preset=acquisition',
+        requiresOnProperty: 'Service account added as a Viewer on the GA4 property + Analytics Data API enabled in the Cloud project',
+      },
     },
     SEARCH_CONSOLE: {
       configured: searchConsoleCredential.configured,

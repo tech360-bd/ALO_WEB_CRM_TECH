@@ -46,6 +46,7 @@ export const GOOGLE_SERVICE_IDS = [
   'GA4',
   'GTM',
   'MEASUREMENT_PROTOCOL',
+  'GA4_DATA_API',
   'SEARCH_CONSOLE',
   'BUSINESS_PROFILE',
   'YOUTUBE',
@@ -83,6 +84,13 @@ export const GOOGLE_SERVICE_COSTS: Record<GoogleServiceId, CostClassification> =
     billingAccountRequired: false,
     costNote:
       'The GA4 Measurement Protocol (/mp/collect) is free. It needs only the property Measurement ID plus a stream API secret.',
+    optional: false,
+  },
+  GA4_DATA_API: {
+    tier: 'FREE',
+    billingAccountRequired: false,
+    costNote:
+      'The GA4 Analytics Data API (reporting reads) is free: Standard GA4 property data carries no per-query charge and no billing account is required, only a Cloud project with the API enabled and a viewer credential on the property. Quota (core report tokens per property per day) is the only limit. GA4 360 / BigQuery export are separate paid products and are NOT used.',
     optional: false,
   },
   SEARCH_CONSOLE: {
@@ -166,6 +174,16 @@ export interface GoogleStackConfig {
      * written into the production property.
      */
     injectTags: boolean;
+    reason: string;
+  };
+  /**
+   * GA4 reporting (Analytics Data API) — read side, separate credential use from
+   * the write path above. `propertyId` is the numeric GA4 property id, which is
+   * NOT the G- measurement id.
+   */
+  analyticsData: {
+    propertyId: string;
+    configured: boolean;
     reason: string;
   };
   gtm: {
@@ -436,6 +454,24 @@ export function getGoogleStackConfig(env: NodeJS.ProcessEnv = process.env): Goog
     ? `PROJECT ${cloudProject} CONFIGURED — Google Cloud is optional for ALO and no ALO service depends on it.`
     : 'NOT CONFIGURED — intentional. The existing VPS remains the production runtime; Cloud Run/Scheduler/Storage would require a billing account for no functional gain.';
 
+  // GA4 reporting reads. Separate from the tag loader: a property can be
+  // measurable (tags injecting) with no reporting credential, and vice versa.
+  const ga4PropertyRaw = firstString(env, 'GA4_PROPERTY_ID');
+  const ga4PropertyId = ga4PropertyRaw.replace(/^properties\//i, '');
+  const ga4PropertyValid = /^\d{5,15}$/.test(ga4PropertyId);
+  let analyticsDataReason: string;
+  if (!ga4PropertyRaw) {
+    analyticsDataReason =
+      'NOT CONFIGURED — set GA4_PROPERTY_ID (GA4 > Admin > Property settings) to enable reporting reads. This is the numeric property id, not the G- measurement id.';
+  } else if (!ga4PropertyValid) {
+    analyticsDataReason = `CONFIGURATION REQUIRED — GA4_PROPERTY_ID "${ga4PropertyRaw}" is not a numeric property id. Analytics Data API reports will not run until it is corrected.`;
+  } else if (searchConsoleAuthMode === 'none') {
+    analyticsDataReason =
+      'PARTIAL — GA4_PROPERTY_ID is set but no Google credential is present, so reporting reads cannot authenticate.';
+  } else {
+    analyticsDataReason = `CONFIGURED — property ${ga4PropertyId}. Live access is only proven by GET /api/google/analytics/report.`;
+  }
+
   const consentRaw = firstString(env, 'NEXT_PUBLIC_CONSENT_MODE');
 
   return {
@@ -447,6 +483,11 @@ export function getGoogleStackConfig(env: NodeJS.ProcessEnv = process.env): Goog
       apiSecretConfigured,
       injectTags: ga4Inject,
       reason: ga4Reason,
+    },
+    analyticsData: {
+      propertyId: ga4PropertyValid ? ga4PropertyId : '',
+      configured: ga4PropertyValid && searchConsoleAuthMode !== 'none',
+      reason: analyticsDataReason,
     },
     gtm: {
       containerId: gtmContainerId,
