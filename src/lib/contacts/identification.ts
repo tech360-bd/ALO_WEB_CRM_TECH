@@ -277,7 +277,7 @@ async function loadProfile(
   candidate: ContactCandidate,
   preloaded: {
     students: { id: string; studentId: string; name: string; email: string; phone: string; status: string; journeyStage: string; counselorId: string | null; counselorName: string }[];
-    leads: { id: string; name: string; phone: string; altPhone: string | null; email: string; status: string; counselorId: string | null; studentId: string | null }[];
+    leads: { id: string; fullName: string; phone: string; altPhone: string | null; email: string; status: string; counselorId: string | null; studentId: string | null }[];
     registryRows: { id: string; displayName: string; phone: string; normalizedPhone: string; email: string; assignedCounselorId: string | null; branch: string }[];
   },
 ): Promise<PrimaryIdentity | null> {
@@ -374,7 +374,7 @@ async function loadProfile(
       kind: 'lead',
       recordId: lead.id,
       publicId: lead.id,
-      name: lead.name || '(no name on record)',
+      name: lead.fullName || '(no name on record)',
       lifecycleStage: lead.status,
       status: lead.status,
       phones: collectPhones([

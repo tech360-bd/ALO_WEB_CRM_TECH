@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `AgentRelationship` (
   `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updatedAt` DATETIME(3) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `AgentRelationship_parentAgentId_childAgentId_relationshipType_key` (`parentAgentId`, `childAgentId`, `relationshipType`),
+  UNIQUE KEY `AgentRelationship_parent_child_type_key` (`parentAgentId`, `childAgentId`, `relationshipType`),
   KEY `AgentRelationship_parentAgentId_idx` (`parentAgentId`),
   KEY `AgentRelationship_childAgentId_idx` (`childAgentId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

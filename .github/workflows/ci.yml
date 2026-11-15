@@ -28,10 +28,6 @@ on:
 
 permissions:
   contents: read
-  # Temporary: publishes the complete tsc error list to a check run, because job
-  # logs are not retrievable from the environment where this branch is being
-  # triaged. Reverted as soon as the list has been captured.
-  checks: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -205,64 +201,12 @@ jobs:
           free -h
 
       - name: Typecheck
-        id: typecheck
-        continue-on-error: true
         env:
           NODE_OPTIONS: "--max-old-space-size=6144"
-        run: npm run typecheck 2>&1 | tee /tmp/tsc.txt
-
-      # TEMPORARY (removed in the next commit): job logs cannot be downloaded in
-      # the environment where this PR is being triaged, so publish the full tsc
-      # output as a check-run summary, which the GitHub API can return.
-      - name: Publish typecheck diagnostics
-        if: steps.typecheck.outcome == 'failure'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          head -c 60000 /tmp/tsc.txt > /tmp/tsc-trunc.txt || true
-          jq -Rs --arg sha "${{ github.sha }}" --arg repo "${{ github.repository }}" \
-            '{name:"tsc-report", head_sha:$sha, status:"completed", conclusion:"neutral",
-              output:{title:"TypeScript errors (full list)", summary:.}}' \
-            /tmp/tsc-trunc.txt > /tmp/tsc-payload.json
-          gh api "repos/${{ github.repository }}/check-runs" --method POST --input /tmp/tsc-payload.json >/dev/null
-          echo "published"
-
-      - name: Fail on typecheck errors
-        if: steps.typecheck.outcome == 'failure'
-        run: |
-          echo "::error::Typecheck failed — full list in the tsc-report check run"
-          exit 1
+        run: npm run typecheck
 
       - name: Tests (blocking; DB-integration files skip-with-reason when no test DATABASE_URL)
-        id: tests
-        continue-on-error: true
-        run: npm test 2>&1 | tee /tmp/tests.txt
-
-      # TEMPORARY (removed once the failing file is known): see the typecheck
-      # diagnostics note above — job logs are not downloadable here.
-      - name: Publish test diagnostics
-        if: steps.tests.outcome == 'failure'
-        run: |
-          {
-            echo "=== failing lines ==="
-            grep -aE 'FAIL |✖|×|AssertionError|Error:|expected|Expected' /tmp/tests.txt | head -200 || true
-            echo
-            echo "=== tail ==="
-            tail -80 /tmp/tests.txt
-          } > /tmp/test-summary.txt
-          head -c 60000 /tmp/test-summary.txt > /tmp/test-trunc.txt
-          jq -Rs --arg sha "${{ github.sha }}" \
-            '{name:"test-report", head_sha:$sha, status:"completed", conclusion:"neutral",
-              output:{title:"Failing tests", summary:.}}' \
-            /tmp/test-trunc.txt > /tmp/test-payload.json
-          gh api "repos/${{ github.repository }}/check-runs" --method POST --input /tmp/test-payload.json >/dev/null
-          echo published
-
-      - name: Fail on test failures
-        if: steps.tests.outcome == 'failure'
-        run: |
-          echo "::error::Tests failed — details in the test-report check run"
-          exit 1
+        run: npm test
 
       - name: Optional integration tests (requires an explicitly configured disposable TEST_DATABASE_URL)
         if: ${{ env.TEST_DATABASE_URL != '' }}
