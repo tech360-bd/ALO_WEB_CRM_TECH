@@ -97,7 +97,7 @@ export default function AICommandCenterPage() {
     { label: "Rules", value: o?.constitutional_rules ?? 0, sub: "constitutional", icon: Shield, color: "text-red-600", bg: "bg-red-50" },
     { label: "Workflows", value: o?.workflows.total ?? 0, sub: `${o?.workflows.active ?? 0} active`, icon: Workflow, color: "text-yellow-600", bg: "bg-yellow-50" },
     { label: "Events (24h)", value: o?.events.recent_24h ?? 0, sub: `${o?.events.total ?? 0} total`, icon: Radio, color: "text-pink-600", bg: "bg-pink-50" },
-    { label: "Audit Events", value: o?.audit.total_events ?? 0, sub: `${o?.audit.recent_24h ?? 0} today`, icon: ScrollText, color: "text-gray-600", bg: "bg-gray-50" },
+    { label: "Audit Events", value: o?.audit.total_events ?? 0, sub: `${o?.audit.recent_24h ?? 0} today`, icon: ScrollText, color: "text-alo-text-muted", bg: "bg-alo-surface-muted" },
     { label: "Failed Agents", value: o?.ai_employees.failed ?? 0, sub: "needs attention", icon: AlertTriangle, color: "text-red-600", bg: "bg-red-50" },
   ];
 
@@ -153,7 +153,7 @@ export default function AICommandCenterPage() {
                 </div>
                 <p className="text-2xl font-bold text-alo-text">{kpi.value}</p>
                 <p className="text-xs text-alo-text-muted">{kpi.label}</p>
-                <p className="text-[10px] text-alo-text-muted/70 mt-0.5">{kpi.sub}</p>
+                <p className="text-[11px] text-alo-text-muted/70 mt-0.5">{kpi.sub}</p>
               </CardContent>
             </Card>
           );
@@ -194,7 +194,7 @@ export default function AICommandCenterPage() {
                   status === "degraded" ? "bg-yellow-500" : "bg-gray-400"
                 }`} />
                 <span className="text-xs font-medium capitalize">{key.replace(/_/g, " ")}</span>
-                <span className="text-[10px] text-alo-text-muted ml-auto">{status}</span>
+                <span className="text-[11px] text-alo-text-muted ml-auto">{status}</span>
               </div>
             ))}
           </div>

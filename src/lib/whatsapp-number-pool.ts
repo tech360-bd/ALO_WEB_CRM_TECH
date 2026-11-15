@@ -8,53 +8,33 @@
 
 import { db } from '@/lib/db';
 import crypto from 'crypto';
+import {
+  COO_NUMBER,
+  EMPLOYEE_POOL,
+  MAIN_NUMBER,
+  OFFICIAL_NUMBERS,
+  normalizeBdPhone,
+  toBdDisplayPhone,
+} from './whatsapp-number-pool-plan';
 
-/** Return canonical digits for a valid Bangladesh mobile number, or empty. */
-export function normalizeBdPhone(phone: string): string {
-  if (!phone || typeof phone !== 'string') return '';
-  let digits = phone.trim().replace(/\D/g, '');
-  if (digits.startsWith('00')) digits = digits.slice(2);
-  if (digits.startsWith('01') && digits.length === 11) digits = `880${digits.slice(1)}`;
-  else if (digits.length === 10 && digits.startsWith('1')) digits = `880${digits}`;
-  return /^8801[3-9]\d{8}$/.test(digits) ? digits : '';
-}
-
-/** Normalize configured/input numbers to the local 01XXXXXXXXX display form. */
-export function toBdDisplayPhone(phone: string): string {
-  const normalized = normalizeBdPhone(phone);
-  // `normalized` is E.164 without '+', i.e. 880 + 10 subscriber digits. Slice 3
-  // removes the country code; slicing 2 left a stray leading 1 and produced
-  // 001XXXXXXXXXX, which never matches a configured sender or an inbound number.
-  return normalized ? `0${normalized.slice(3)}` : '';
-}
-
-function parseConfiguredList(value: string | undefined): string[] {
-  if (!value?.trim()) return [];
-  return [...new Set(value.split(/[\s,;]+/).map(toBdDisplayPhone).filter(Boolean))];
-}
-
-// Empty values deliberately disable routing. Do not put guessed or example
-// phone numbers in source code, environment templates, or seed data.
-export const MAIN_NUMBER = toBdDisplayPhone(process.env.ALO_MAIN_WHATSAPP_NUMBER || '');
-export const COO_NUMBER = toBdDisplayPhone(process.env.ALO_COO_WHATSAPP_NUMBER || '');
-export const EMPLOYEE_POOL = parseConfiguredList(process.env.ALO_EMPLOYEE_WHATSAPP_NUMBERS)
-  .filter((phone) => phone !== MAIN_NUMBER && phone !== COO_NUMBER);
-export const OFFICIAL_NUMBERS = [...new Set([MAIN_NUMBER, COO_NUMBER, ...EMPLOYEE_POOL].filter(Boolean))];
-
-export function getWhatsAppNumberConfigStatus() {
-  const configuredRaw = [
-    process.env.ALO_MAIN_WHATSAPP_NUMBER || '',
-    process.env.ALO_COO_WHATSAPP_NUMBER || '',
-    ...(process.env.ALO_EMPLOYEE_WHATSAPP_NUMBERS || '').split(/[\s,;]+/),
-  ].map((value) => value.trim()).filter(Boolean);
-  const validCount = configuredRaw.filter((value) => Boolean(toBdDisplayPhone(value))).length;
-  return {
-    configuredCount: OFFICIAL_NUMBERS.length,
-    mainConfigured: Boolean(MAIN_NUMBER),
-    urgentSupportConfigured: Boolean(COO_NUMBER),
-    invalidConfiguredCount: configuredRaw.length - validCount,
-  };
-}
+// Re-exported so every existing import path keeps working unchanged. The pure
+// implementation lives in `whatsapp-number-pool-plan.ts` (no Prisma dependency).
+export {
+  COO_NUMBER,
+  EMPLOYEE_POOL,
+  MAIN_NUMBER,
+  OFFICIAL_NUMBERS,
+  getPool,
+  getWhatsAppNumberConfigStatus,
+  normalizeBdPhone,
+  planPoolSeed,
+  reconcilePool,
+  toBdDisplayPhone,
+  type PoolReconciliation,
+  type PoolReconciliationEntry,
+  type PoolSeedPlan,
+  type PoolSeedPlanEntry,
+} from './whatsapp-number-pool-plan';
 
 /** Add only operator-configured numbers; never invent a number or mark it connected. */
 export async function seedOfficialNumberPool() {
@@ -219,6 +199,3 @@ export function generateSecureToken(): { raw: string; hash: string } {
   return { raw, hash };
 }
 
-export function getPool(): { number: string; reason: string }[] {
-  return OFFICIAL_NUMBERS.map((number) => ({ number, reason: 'operator_configured' }));
-}

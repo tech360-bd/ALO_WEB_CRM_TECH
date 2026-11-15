@@ -27,10 +27,16 @@ function migrationDirs(): string[] {
 }
 
 function applySql(state: SqlState, sql: string, dir: string, violations: string[]): void {
+  // Comments are not executed. The additive reconciliation migration documents its
+  // rollback as commented-out `-- DROP TABLE ...` statements at the bottom of the
+  // file; without this strip the simulator "applies" them and every table the
+  // migration just created is reported as missing — a false positive that hid the
+  // real drift checks behind a fixed list of 13 phantom tables.
+  const code = sql.replace(/\/\*[\s\S]*?\*\//g, '').replace(/--[^\n]*/g, '');
   // `CREATE TABLE IF NOT EXISTS` is valid MySQL and is used by the additive
   // reconciliation migrations, which intentionally re-declare tables that may
   // already exist on databases shaped by an earlier `prisma db push`.
-  for (const m of sql.matchAll(/CREATE TABLE (IF NOT EXISTS )?`(\w+)` \(([\s\S]*?)\n\)/g)) {
+  for (const m of code.matchAll(/CREATE TABLE (IF NOT EXISTS )?`(\w+)` \(([\s\S]*?)\n\)/g)) {
     const idempotent = Boolean(m[1]);
     const table = m[2];
     if (state.has(table) && !idempotent) violations.push(`${dir}: CREATE TABLE ${table} duplicates an earlier CREATE`);
@@ -44,7 +50,7 @@ function applySql(state: SqlState, sql: string, dir: string, violations: string[
   // Scan each complete ALTER TABLE statement, not just a leading run of ADD
   // clauses: MySQL allows MODIFY/INDEX/other clauses before ADD COLUMN, and the
   // schema simulator must still account for every added scalar column.
-  for (const m of sql.matchAll(/ALTER TABLE `(\w+)`([\s\S]*?);/g)) {
+  for (const m of code.matchAll(/ALTER TABLE `(\w+)`([\s\S]*?);/g)) {
     const table = m[1];
     const additions = [...m[2].matchAll(/\bADD\s+COLUMN\s+`(\w+)`/g)];
     if (!additions.length) continue;
@@ -55,8 +61,8 @@ function applySql(state: SqlState, sql: string, dir: string, violations: string[
       else state.get(table)!.add(col);
     }
   }
-  for (const m of sql.matchAll(/DROP TABLE (?:IF EXISTS )?`(\w+)`/g)) state.delete(m[1]);
-  for (const m of sql.matchAll(/REFERENCES `(\w+)`\s*\(/g)) {
+  for (const m of code.matchAll(/DROP TABLE (?:IF EXISTS )?`(\w+)`/g)) state.delete(m[1]);
+  for (const m of code.matchAll(/REFERENCES `(\w+)`\s*\(/g)) {
     if (!state.has(m[1])) violations.push(`${dir}: FOREIGN KEY references ${m[1]} before it exists`);
   }
 }

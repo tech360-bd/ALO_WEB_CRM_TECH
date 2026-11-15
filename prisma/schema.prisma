@@ -14272,7 +14272,7 @@ model AgentRelationship {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  @@unique([parentAgentId, childAgentId, relationshipType])
+  @@unique([parentAgentId, childAgentId, relationshipType], map: "AgentRelationship_parent_child_type_key")
   @@index([parentAgentId])
   @@index([childAgentId])
 }

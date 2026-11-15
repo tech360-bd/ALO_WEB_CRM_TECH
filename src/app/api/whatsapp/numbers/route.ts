@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuth, type AuthContext } from '@/lib/auth-middleware';
 import { mutationOriginAllowed } from '@/lib/request-origin';
-import { normalizeBdPhone, toBdDisplayPhone, OFFICIAL_NUMBERS, EMPLOYEE_POOL, MAIN_NUMBER, COO_NUMBER, seedOfficialNumberPool, getWhatsAppNumberConfigStatus } from '@/lib/whatsapp-number-pool';
+import { normalizeBdPhone, toBdDisplayPhone, OFFICIAL_NUMBERS, EMPLOYEE_POOL, MAIN_NUMBER, COO_NUMBER, seedOfficialNumberPool, getWhatsAppNumberConfigStatus, planPoolSeed, reconcilePool } from '@/lib/whatsapp-number-pool';
 import { getWhatsAppAccessToken, getWhatsAppGraphUrl } from '@/lib/whatsapp-config';
 
 function roles(auth: AuthContext): Set<string> {
@@ -48,9 +48,22 @@ export const GET = withAuth(async (_req: Request, auth: AuthContext) => {
   try {
     // Reads must not seed or otherwise mutate production data.
     const numbers = await db.whatsAppOfficialNumber.findMany({ orderBy: { phoneNumber: 'asc' } });
+    // Honest cross-check between what the environment allows the app to send from and
+    // what the registry actually holds. A number is never "working" because it is listed.
+    const reconciliation = reconcilePool({
+      configured: OFFICIAL_NUMBERS,
+      registered: numbers.map((number) => ({
+        phoneNumber: number.phoneNumber,
+        ownerType: number.ownerType,
+        connectionStatus: number.connectionStatus,
+        metaPhoneNumberId: number.metaPhoneNumberId,
+      })),
+      verifiedPhoneNumbers: numbers.filter((number) => isRecentlyVerified(number as unknown as Record<string, unknown>)).map((number) => number.phoneNumber),
+    });
     return NextResponse.json({
       success: true,
       numbers: numbers.map(safeNumber),
+      reconciliation,
       stats: {
         total: numbers.length,
         expected: OFFICIAL_NUMBERS.length,
@@ -78,6 +91,17 @@ export const POST = withAuth(async (req: Request, auth: AuthContext) => {
     body = parsed as Record<string, unknown>;
   } catch {
     return NextResponse.json({ success: false, error: 'Invalid JSON request body.' }, { status: 400 });
+  }
+
+  if (body.action === 'preview_seed') {
+    if (!isSuperAdmin(auth)) return NextResponse.json({ success: false, error: 'Super Admin access required to preview sender initialization.' }, { status: 403 });
+    try {
+      const existing = await db.whatsAppOfficialNumber.findMany({ select: { phoneNumber: true, normalizedPhone: true } });
+      const plan = planPoolSeed({ configured: OFFICIAL_NUMBERS, existing });
+      return NextResponse.json({ success: true, plan, wroteNothing: true, configStatus: getWhatsAppNumberConfigStatus() });
+    } catch {
+      return NextResponse.json({ success: false, error: 'Sender preview is temporarily unavailable.' }, { status: 503 });
+    }
   }
 
   if (body.action === 'seed_official_pool') {

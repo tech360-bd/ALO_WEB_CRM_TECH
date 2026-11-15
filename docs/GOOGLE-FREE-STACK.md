@@ -10,6 +10,13 @@ website or the CRM. Every service below is classified `FREE` (no billing account
 at all), `FREE TIER` (free within quota, but a billing account must exist) or
 `PAID` (billed usage). Two services fall outside `FREE`, and ALO uses neither.
 
+> **See also:** the audited, per-area documentation set in
+> [`docs/google-free-stack/`](google-free-stack/) — 15 documents covering the system audit,
+> account setup, API inventory, GA4/GTM/Search Console implementation, CRM attribution,
+> Business Profile, YouTube, Maps, security & RBAC, cost control, testing, deployment and the
+> final implementation report. That set is dated and status-labelled; this file remains the
+> operator's single-page reference.
+
 > **No secret appears anywhere in this file.** Where a credential is required the
 > environment variable is named and its Google Console location is given. Values
 > live only in the deployment environment.

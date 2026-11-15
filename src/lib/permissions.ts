@@ -19,6 +19,7 @@ export type PermissionModule =
   | "reports"
   | "finance"
   | "partners"
+  | "google"
   | "admin";
 
 export type PermissionAction =
@@ -44,6 +45,9 @@ export type PermissionAction =
   | "send"
   | "generate"
   | "finish"
+  // Destructive, confirmation-based operations whose separate grant matters
+  // (e.g. executing a contact merge rather than only reviewing one).
+  | "execute"
   // Student module — scoped view/update
   | "view_assigned"
   | "view_all"
@@ -208,6 +212,9 @@ export const PERMISSION_CATALOG: Permission[] = [
   { id: "contacts.view", module: "contacts", feature: "contacts", action: "view_assigned", description: "View contact records within assigned, branch, or partner scope" },
   { id: "contacts.manage", module: "contacts", feature: "contacts", action: "manage", description: "Create or update contacts within authorized scope" },
   { id: "contacts.merge_review", module: "contacts", feature: "contacts.merge_review", action: "review", description: "Review and decide a contact-match request; never silently merge" },
+  // Executing a merge is separated from reviewing one on purpose: reviewing is
+  // routine triage, executing rewrites the registry and must be an explicit grant.
+  { id: "contacts.merge_execute", module: "contacts", feature: "contacts.merge_execute", action: "execute", description: "Execute a confirmed contact merge within authorized scope; reversible, never automatic" },
   { id: "contacts.consent.manage", module: "contacts", feature: "contacts.consent", action: "manage", description: "Record purpose-specific consent or withdrawal evidence" },
   { id: "contacts.import", module: "contacts", feature: "contacts.import", action: "import", description: "Import authorized contacts after identity and consent checks" },
   { id: "contacts.consent.view", module: "contacts", feature: "contacts.consent", action: "view", description: "View purpose-specific consent and suppression evidence for authorized contacts" },
@@ -324,6 +331,20 @@ export const PERMISSION_CATALOG: Permission[] = [
   { id: "metrics.manage", module: "admin", feature: "metrics", action: "update", description: "Govern centralized verified metrics (sync, verify, expire)" },
   { id: "ad3", module: "admin", feature: "admin", action: "manage_employees", description: "Manage employees" },
   { id: "ad4", module: "admin", feature: "admin", action: "manage_branches", description: "Manage branches" },
+
+  // --- GOOGLE ECOSYSTEM (free stack) ---
+  // Read-only visibility of Google integration state is separated from the
+  // ability to change it, and neither grants access to a credential. Secrets are
+  // never readable through any permission: they live only in the server
+  // environment and are never returned by an API.
+  { id: "google.integrations.view", module: "google", feature: "google.integrations", action: "view", description: "View Google ecosystem connection status (GA4, GTM, Search Console, Business Profile, YouTube, Maps) and cost classification" },
+  { id: "google.integrations.manage", module: "google", feature: "google.integrations", action: "manage", description: "Manage Google integration configuration surface (never grants credential read)" },
+  { id: "google.analytics.view", module: "google", feature: "google.analytics", action: "view", description: "Read GA4 reporting through the Analytics Data API" },
+  { id: "google.search_console.view", module: "google", feature: "google.search_console", action: "view", description: "Read Search Console performance, sitemaps and indexing data" },
+  { id: "google.maps.manage", module: "google", feature: "google.maps", action: "manage", description: "Manage Google Maps Platform configuration. ALO does not use Maps (PAID); this permission exists so activation could never happen without it" },
+  { id: "google.youtube.manage", module: "google", feature: "google.youtube", action: "manage", description: "Manage the official ALO YouTube channel configuration and video IDs" },
+  { id: "google.billing.view", module: "google", feature: "google.billing", action: "view", description: "View Google service cost tier, billing requirement and quota exposure" },
+  { id: "google.audit.view", module: "google", feature: "google.audit", action: "view", description: "View the audit trail of Google integration configuration changes and failures" },
 ];
 
 // ============================================================
@@ -430,6 +451,10 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<RoleName, string[]> = {
     "f1", "f2", "f3", "f4",
   ],
   marketing_manager: [
+    // Google read-only reporting: the marketing manager is the role that acts on
+    // SEO and acquisition numbers, so they can see them without being able to
+    // change an integration or read a credential.
+    "google.integrations.view", "google.analytics.view", "google.search_console.view",
     "employee.dashboard.view",
     "s2", "s5",
     "m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9",

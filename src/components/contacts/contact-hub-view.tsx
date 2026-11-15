@@ -12,15 +12,19 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-type View = 'list' | 'detail' | 'import' | 'duplicates' | 'consent' | 'segments' | 'audit';
+type View = 'list' | 'detail' | 'import' | 'duplicates' | 'consent' | 'segments' | 'audit' | 'identify' | 'dashboard';
 
 const NAV: Array<{ href: string; label: string; view: View }> = [
   { href: '/crm/contacts', label: 'Contacts', view: 'list' },
+  { href: '/crm/contacts/dashboard', label: 'Dashboard', view: 'dashboard' },
   { href: '/crm/contacts/import', label: 'Import', view: 'import' },
   { href: '/crm/contacts/duplicates', label: 'Duplicates', view: 'duplicates' },
   { href: '/crm/contacts/consent', label: 'Consent', view: 'consent' },
   { href: '/crm/contacts/segments', label: 'Segments', view: 'segments' },
   { href: '/crm/contacts/audit', label: 'Audit', view: 'audit' },
+  // Inbound identification: type the number the phone is showing. This is the
+  // screen a counsellor needs while the call is still ringing.
+  { href: '/crm/contacts/identify', label: 'Identify', view: 'identify' },
 ];
 
 const BRAND = 'var(--alo-brand)';
@@ -75,6 +79,10 @@ export default function ContactHubView({ view, contactId }: { view: View; contac
       duplicates: '/api/crm/contacts/duplicates', consent: '/api/crm/contacts/consent',
       segments: '/api/crm/contacts/segments', audit: '/api/crm/contacts/audit',
       import: '/api/crm/contacts/import',
+      // Identify takes its input from the form, so the hub has no default list call
+      // for it; the mapping exists only to keep the record exhaustive.
+      identify: '/api/crm/contacts',
+      dashboard: '/api/crm/contacts/dashboard',
     };
     let target = url || fallback[view];
     if (view === 'list' && !url) {
@@ -95,7 +103,12 @@ export default function ContactHubView({ view, contactId }: { view: View; contac
     } finally { setLoading(false); }
   }, [view, contactId, search, category]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    // The identify view fetches only when a number is submitted, so the hub's
+    // list load is skipped rather than fired and ignored.
+    if (view === 'identify' || view === 'dashboard') return;
+    void load();
+  }, [load, view]);
 
   return (
     <main style={{ minHeight: '100vh', background: PAGE, color: TEXT, fontFamily: 'var(--font-sans, system-ui)' }}>
@@ -134,6 +147,8 @@ export default function ContactHubView({ view, contactId }: { view: View; contac
         {view === 'consent' && <ConsentView data={data} loading={loading} error={error} contactId={contactId} onLoad={(id) => void load(`/api/crm/contacts/consent?contactId=${encodeURIComponent(id)}`)} onDone={(text) => setMessage(text)} />}
         {view === 'segments' && <SegmentsView data={data} loading={loading} error={error} />}
         {view === 'audit' && <AuditView data={data} loading={loading} error={error} />}
+        {view === 'identify' && <IdentifyView />}
+        {view === 'dashboard' && <DashboardView />}
       </div>
     </main>
   );
@@ -456,6 +471,379 @@ function SegmentsView({ data, loading, error }: { data: Record<string, unknown> 
           <p style={{ color: MUTED, fontSize: 11 }}>{String(data?.note || '')}</p>
         </div>
       </div>}
+    </>
+  );
+}
+
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dashboard — the sixteen contact metrics
+// ─────────────────────────────────────────────────────────────────────────────
+// Every number is a live database reading. A metric whose query failed renders as
+// "unavailable" with its reason — never as 0, because an empty registry and a broken
+// query must not look the same. Each card states how the number is calculated.
+
+interface DashboardMetric {
+  key: string;
+  label: string;
+  definition: string;
+  source: string;
+  unit: 'count' | 'percent';
+  rangeScoped: boolean;
+  branchScoped: boolean;
+  value: number | null;
+  status: 'OK' | 'UNAVAILABLE';
+  reason?: string;
+}
+
+interface DashboardResponse {
+  success: boolean;
+  error?: string;
+  generatedAt?: string;
+  range?: { from: string; to: string; days: number; defaulted: boolean; adjustment: string | null };
+  branch?: { branch: string | null; applied: boolean; forced: boolean; reason: string };
+  metrics?: DashboardMetric[];
+  caveats?: string[];
+  scope?: string;
+  dataSource?: string;
+  mergedTagHandling?: string;
+}
+
+function DashboardView() {
+  const [data, setData] = useState<DashboardResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [branch, setBranch] = useState('');
+  const [showDefinitions, setShowDefinitions] = useState(false);
+
+  const submit = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    const params = new URLSearchParams();
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+    if (branch.trim()) params.set('branch', branch.trim());
+    const response = await api<DashboardResponse>(`/api/crm/contacts/dashboard${params.toString() ? `?${params.toString()}` : ''}`);
+    setLoading(false);
+    if (!response.ok) {
+      setData(null);
+      setError(response.data.error || `Dashboard unavailable (HTTP ${response.status}).`);
+      return;
+    }
+    setData(response.data);
+  }, [from, to, branch]);
+
+  useEffect(() => { void submit(); }, [submit]);
+
+  const metrics = data?.metrics || [];
+
+  return (
+    <>
+      <div style={card}>
+        <strong style={{ fontSize: 13 }}>Contact metrics</strong>
+        <p style={{ color: MUTED, fontSize: 12, marginTop: 6 }}>
+          Live database readings within your authorized scope. Metrics marked “current” are present-state
+          counts, not period counts. Nothing on this page is estimated.
+        </p>
+        <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <label style={{ fontSize: 12, color: MUTED }}>
+            From{' '}
+            <input type="date" value={from} onChange={(event) => setFrom(event.target.value)} style={{ ...input, width: 160 }} />
+          </label>
+          <label style={{ fontSize: 12, color: MUTED }}>
+            To{' '}
+            <input type="date" value={to} onChange={(event) => setTo(event.target.value)} style={{ ...input, width: 160 }} />
+          </label>
+          <input
+            value={branch}
+            onChange={(event) => setBranch(event.target.value)}
+            placeholder="Branch (company-wide roles only)"
+            style={{ ...input, maxWidth: 240 }}
+            aria-label="Branch filter"
+          />
+          <button style={button} onClick={() => void submit()} disabled={loading}>{loading ? 'Loading…' : 'Refresh'}</button>
+          <button style={secondary} onClick={() => setShowDefinitions((value) => !value)}>
+            {showDefinitions ? 'Hide definitions' : 'Show definitions'}
+          </button>
+        </div>
+        {data?.range ? (
+          <p style={{ color: MUTED, fontSize: 11, marginTop: 8 }}>
+            Range {new Date(data.range.from).toLocaleDateString()} → {new Date(data.range.to).toLocaleDateString()} ({data.range.days} days{data.range.defaulted ? ', default window' : ''}).
+            {data.range.adjustment ? ` ${data.range.adjustment}` : ''}
+          </p>
+        ) : null}
+        {data?.branch ? <p style={{ color: MUTED, fontSize: 11 }}>{data.branch.reason}</p> : null}
+      </div>
+
+      {error ? <p style={{ color: '#b42318', fontSize: 13, marginTop: 12 }}>{error}</p> : null}
+      {loading && metrics.length === 0 ? <p style={{ color: MUTED, fontSize: 13, marginTop: 12 }}>Loading live metrics…</p> : null}
+
+      {metrics.length > 0 ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginTop: 16 }}>
+          {metrics.map((metric) => (
+            <div key={metric.key} style={{ ...card, opacity: metric.status === 'OK' ? 1 : 0.85 }}>
+              <p style={{ margin: 0, fontSize: 11, color: MUTED, textTransform: 'uppercase', letterSpacing: 0.4 }}>{metric.label}</p>
+              <p style={{ margin: '6px 0 2px', fontSize: 24, fontWeight: 700 }}>
+                {metric.value === null ? 'Unavailable' : metric.unit === 'percent' ? `${metric.value}%` : metric.value.toLocaleString()}
+              </p>
+              <p style={{ margin: 0, fontSize: 11, color: MUTED }}>
+                {metric.rangeScoped ? 'Range-scoped' : 'Current state'}{metric.branchScoped ? ' · branch-scoped' : ''}
+              </p>
+              {metric.reason ? <p style={{ margin: '6px 0 0', fontSize: 11, color: '#b42318' }}>{metric.reason}</p> : null}
+              {showDefinitions ? (
+                <p style={{ margin: '8px 0 0', fontSize: 11, color: MUTED }}>
+                  {metric.definition}<br /><em>Source: {metric.source}</em>
+                </p>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {!loading && !error && metrics.length === 0 ? (
+        <p style={{ color: MUTED, fontSize: 13, marginTop: 12 }}>No metrics were returned. That is a failure, not an empty registry.</p>
+      ) : null}
+
+      {data?.caveats?.length ? (
+        <div style={{ ...card, marginTop: 16 }}>
+          <strong style={{ fontSize: 13 }}>How to read this</strong>
+          {data.caveats.map((caveat) => (
+            <p key={caveat} style={{ fontSize: 12, margin: '6px 0 0', color: MUTED }}>• {caveat}</p>
+          ))}
+          {data.dataSource ? <p style={{ fontSize: 11, margin: '8px 0 0', color: MUTED }}>Data source: {data.dataSource}</p> : null}
+          {data.mergedTagHandling ? <p style={{ fontSize: 11, margin: '4px 0 0', color: MUTED }}>{data.mergedTagHandling}</p> : null}
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Identify — "who is this number?"
+// ─────────────────────────────────────────────────────────────────────────────
+// The card is built server-side; this view only renders what the API proved. It
+// never guesses: multiple matches are shown as a list to confirm, a guardian number
+// is labelled as a guardian number, and an unknown number offers the allowed next
+// actions *without* creating anything.
+
+interface IdentifyPhone { value: string; normalized: string; source: string }
+interface IdentifyFollowUp { id: string; title: string; status: string; dueDate: string; overdue: boolean; priority: string }
+interface IdentifyGuardian {
+  guardianId: string; studentRecordId: string; studentPublicId: string; studentName: string; guardianName: string;
+  relationship: string; isPrimaryContact: boolean; isFinancialSponsor: boolean; profileHref: string;
+}
+interface IdentifyPossible {
+  kind: string; recordId: string; publicId: string; name: string; matchedOn: string;
+  distinguishing: string[]; profileHref: string;
+}
+interface IdentifyResult {
+  state: 'IDENTIFIED' | 'POSSIBLE_MATCHES' | 'GUARDIAN_NUMBER' | 'UNKNOWN';
+  queriedPhone: string;
+  matchedOn: string | null;
+  restricted: boolean;
+  requiresConfirmation: boolean;
+  notice: string;
+  possible: IdentifyPossible[];
+  guardians: IdentifyGuardian[];
+  unknown: { number: string; suggestedActions: string[]; notice: string } | null;
+  meta: { durationMs: number; realTimeVerified: boolean; realTimeNote: string };
+  audit?: { recorded: boolean; note: string };
+  primary: {
+    kind: string; publicId: string; name: string; lifecycleStage: string; status: string;
+    phones: IdentifyPhone[]; email: string; photoUrl: string | null; photoReason: string | null;
+    parentGuardian: IdentifyGuardian[]; counselor: { id: string; name: string } | null;
+    application: { university: string; course: string; stage: string; status: string } | null;
+    lastConversation: { channel: string; at: string; preview: string } | null;
+    openFollowUps: IdentifyFollowUp[]; historyCount: number; profileHref: string; scopeNotice: string | null;
+  } | null;
+}
+
+function IdentifyView() {
+  const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState<IdentifyResult | null>(null);
+
+  const submit = useCallback(async () => {
+    const value = phone.trim();
+    if (!value) { setError('Enter the number the call or message is coming from.'); return; }
+    setLoading(true); setError(''); setResult(null);
+    const response = await api<IdentifyResult & { error?: string; code?: string }>(`/api/crm/contacts/identify?phone=${encodeURIComponent(value)}`);
+    setLoading(false);
+    if (!response.ok) {
+      setError(response.data.error || `Identification failed (HTTP ${response.status}).`);
+      return;
+    }
+    setResult(response.data);
+  }, [phone]);
+
+  const row = (label: string, value: string) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '5px 0', borderBottom: `1px solid ${BORDER}`, fontSize: 12 }}>
+      <span style={{ color: MUTED }}>{label}</span>
+      <strong style={{ textAlign: 'right', overflowWrap: 'anywhere' }}>{value || '—'}</strong>
+    </div>
+  );
+
+  const primary = result?.primary || null;
+
+  return (
+    <>
+      <div style={card}>
+        <strong style={{ fontSize: 13 }}>Identify the person behind a number</strong>
+        <p style={{ color: MUTED, fontSize: 12, marginTop: 6 }}>
+          Identification uses stored phone numbers and Student IDs only. A name is never used to identify anyone,
+          and nothing is created for a number the CRM does not recognise.
+        </p>
+        <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+          <input
+            style={{ ...input, maxWidth: 260 }}
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+            onKeyDown={(event) => { if (event.key === 'Enter') void submit(); }}
+            placeholder="01XXXXXXXXX"
+            inputMode="tel"
+            aria-label="Caller phone number"
+          />
+          <button style={button} onClick={() => void submit()} disabled={loading}>
+            {loading ? 'Resolving…' : 'Identify'}
+          </button>
+        </div>
+        {error ? <p style={{ color: '#b42318', fontSize: 13, marginTop: 10 }}>{error}</p> : null}
+      </div>
+
+      {result ? (
+        <>
+          <div style={{ ...card, marginTop: 16, borderLeft: `4px solid ${result.state === 'IDENTIFIED' ? '#12805c' : result.state === 'UNKNOWN' ? '#b42318' : '#b45309'}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+              <strong style={{ fontSize: 13 }}>{result.state.replace(/_/g, ' ')}</strong>
+              <span style={{ color: MUTED, fontSize: 11 }}>
+                number {result.queriedPhone || '—'} · matched on {result.matchedOn || 'nothing'} · {result.meta.durationMs}ms
+              </span>
+            </div>
+            <p style={{ fontSize: 12, marginTop: 8 }}>{result.notice}</p>
+            {result.restricted ? <p style={{ color: '#b42318', fontSize: 12 }}>Details withheld: this record is outside your branch or assignment scope.</p> : null}
+            {result.audit && !result.audit.recorded ? <p style={{ color: '#b42318', fontSize: 11 }}>{result.audit.note}</p> : null}
+            <p style={{ color: MUTED, fontSize: 11, marginTop: 6 }}>{result.meta.realTimeNote}</p>
+          </div>
+
+          {primary ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginTop: 16 }}>
+              <div style={card}>
+                <strong style={{ fontSize: 13 }}>{primary.name}</strong>
+                <p style={{ color: MUTED, fontSize: 12, marginTop: 4 }}>{primary.kind.replace(/_/g, ' ')} · {primary.publicId}</p>
+                <div style={{ marginTop: 10 }}>
+                  {row('Student ID', primary.kind === 'student' ? primary.publicId : 'Not a registered student')}
+                  {row('Lifecycle stage', primary.lifecycleStage)}
+                  {row('Status', primary.status)}
+                  {row('Counsellor', primary.counselor?.name || '')}
+                  {row('Email', primary.email)}
+                  {row('Conversation history', `${primary.historyCount} recorded message(s)`)}
+                </div>
+                <a href={primary.profileHref} style={{ display: 'inline-block', marginTop: 12, color: BRAND, fontSize: 12, fontWeight: 600 }}>
+                  Open full profile →
+                </a>
+                {primary.photoReason ? <p style={{ color: MUTED, fontSize: 11, marginTop: 8 }}>{primary.photoReason}</p> : null}
+                {primary.scopeNotice ? <p style={{ color: MUTED, fontSize: 11, marginTop: 8 }}>{primary.scopeNotice}</p> : null}
+              </div>
+
+              <div style={card}>
+                <strong style={{ fontSize: 13 }}>Numbers on record</strong>
+                <div style={{ marginTop: 8 }}>
+                  {primary.phones.length === 0 ? <p style={{ color: MUTED, fontSize: 12 }}>No number stored on this record.</p> : null}
+                  {primary.phones.map((entry) => (
+                    <div key={entry.normalized} style={{ fontSize: 12, padding: '5px 0', borderBottom: `1px solid ${BORDER}` }}>
+                      {entry.normalized} <span style={{ color: MUTED }}>({entry.source})</span>
+                    </div>
+                  ))}
+                </div>
+                <strong style={{ fontSize: 13, display: 'block', marginTop: 14 }}>Application</strong>
+                {primary.application ? (
+                  <div style={{ marginTop: 6 }}>
+                    {row('University', primary.application.university)}
+                    {row('Course', primary.application.course)}
+                    {row('Stage', primary.application.stage)}
+                  </div>
+                ) : <p style={{ color: MUTED, fontSize: 12, marginTop: 6 }}>No application on record.</p>}
+                <strong style={{ fontSize: 13, display: 'block', marginTop: 14 }}>Last conversation</strong>
+                {primary.lastConversation ? (
+                  <p style={{ fontSize: 12, marginTop: 6 }}>
+                    {primary.lastConversation.channel} · {new Date(primary.lastConversation.at).toLocaleString()}
+                    <br /><span style={{ color: MUTED }}>{primary.lastConversation.preview || '(no text)'}</span>
+                  </p>
+                ) : <p style={{ color: MUTED, fontSize: 12, marginTop: 6 }}>No conversation linked to this record.</p>}
+              </div>
+
+              <div style={card}>
+                <strong style={{ fontSize: 13 }}>Family &amp; guardians</strong>
+                {primary.parentGuardian.length === 0 ? <p style={{ color: MUTED, fontSize: 12, marginTop: 6 }}>No parent/guardian recorded.</p> : null}
+                <div style={{ marginTop: 8 }}>
+                  {primary.parentGuardian.map((guardian) => (
+                    <div key={guardian.guardianId} style={{ fontSize: 12, padding: '6px 0', borderBottom: `1px solid ${BORDER}` }}>
+                      <strong>{guardian.guardianName}</strong> · {guardian.relationship}
+                      {guardian.isPrimaryContact ? ' · primary' : ''}{guardian.isFinancialSponsor ? ' · sponsor' : ''}
+                    </div>
+                  ))}
+                </div>
+                <strong style={{ fontSize: 13, display: 'block', marginTop: 14 }}>Open follow-ups</strong>
+                {primary.openFollowUps.length === 0 ? <p style={{ color: MUTED, fontSize: 12, marginTop: 6 }}>No open follow-up.</p> : null}
+                <div style={{ marginTop: 6 }}>
+                  {primary.openFollowUps.map((followUp) => (
+                    <div key={followUp.id} style={{ fontSize: 12, padding: '5px 0', borderBottom: `1px solid ${BORDER}`, color: followUp.overdue ? '#b42318' : TEXT }}>
+                      {followUp.title}
+                      <span style={{ color: MUTED }}> · due {followUp.dueDate ? new Date(followUp.dueDate).toLocaleDateString() : 'not set'}{followUp.overdue ? ' · overdue' : ''}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {result.possible.length > 0 ? (
+            <div style={{ ...card, marginTop: 16 }}>
+              <strong style={{ fontSize: 13 }}>Confirm which record this is ({result.possible.length})</strong>
+              <p style={{ color: MUTED, fontSize: 12, marginTop: 6 }}>
+                ALO never chooses for you and never merges records automatically. Confirm with the caller before opening a file.
+              </p>
+              <div style={{ marginTop: 10 }}>
+                {result.possible.map((candidate) => (
+                  <div key={`${candidate.kind}-${candidate.recordId}`} style={{ padding: '8px 0', borderBottom: `1px solid ${BORDER}`, fontSize: 12 }}>
+                    <strong>{candidate.name}</strong> · {candidate.publicId} · {candidate.kind.replace(/_/g, ' ')}
+                    <div style={{ color: MUTED }}>{candidate.distinguishing.join(' · ')}</div>
+                    <a href={candidate.profileHref} style={{ color: BRAND, fontWeight: 600 }}>Open record →</a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {result.guardians.length > 0 && result.state === 'GUARDIAN_NUMBER' ? (
+            <div style={{ ...card, marginTop: 16 }}>
+              <strong style={{ fontSize: 13 }}>This is a guardian number</strong>
+              <div style={{ marginTop: 8 }}>
+                {result.guardians.map((guardian) => (
+                  <div key={guardian.guardianId} style={{ fontSize: 12, padding: '6px 0', borderBottom: `1px solid ${BORDER}` }}>
+                    <strong>{guardian.guardianName}</strong> · {guardian.relationship} of {guardian.studentName} ({guardian.studentPublicId})
+                    <a href={guardian.profileHref} style={{ color: BRAND, fontWeight: 600, marginLeft: 8 }}>Open student →</a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {result.state === 'UNKNOWN' && result.unknown ? (
+            <div style={{ ...card, marginTop: 16 }}>
+              <strong style={{ fontSize: 13 }}>Unknown number — nothing was created</strong>
+              <p style={{ fontSize: 12, marginTop: 6 }}>{result.unknown.notice}</p>
+              <p style={{ color: MUTED, fontSize: 12 }}>
+                Allowed next actions: {result.unknown.suggestedActions.map((action) => action.replace(/_/g, ' ')).join(' · ')}
+              </p>
+            </div>
+          ) : null}
+        </>
+      ) : null}
     </>
   );
 }
