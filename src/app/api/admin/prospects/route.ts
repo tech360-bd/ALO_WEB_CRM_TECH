@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     if (!MANAGER_ROLES.includes(auth.userType.toUpperCase())) {
       return NextResponse.json({ success: false, error: 'A manager role is required.' }, { status: 403 });
     }
-    const status = (req.nextUrl.searchParams.get('relationshipStatus') || '').toUpperCase();
+    const status = (new URL(req.url).searchParams.get('relationshipStatus') || '').toUpperCase();
     const where = status && RELATIONSHIP_STATUSES.includes(status as any) ? { relationshipStatus: status } : undefined;
     try {
       const prospects = await db.b2bProspect.findMany({

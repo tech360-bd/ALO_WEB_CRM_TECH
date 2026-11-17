@@ -15,7 +15,7 @@ CREATE TABLE `website_consents` (
     `source` VARCHAR(32) NOT NULL DEFAULT 'cookie_banner',
     `withdrawnAt` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -46,7 +46,7 @@ CREATE TABLE `b2b_prospects` (
     `outreachPermission` BOOLEAN NOT NULL DEFAULT false,
     `doNotContact` BOOLEAN NOT NULL DEFAULT false,
     `dedupeKey` VARCHAR(512) NOT NULL,
-    `notes` TEXT NOT NULL,
+    `notes` VARCHAR(191) NOT NULL DEFAULT '',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
