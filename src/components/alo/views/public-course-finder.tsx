@@ -10,6 +10,7 @@ import {
 } from "@/components/alo/shared";
 import { Breadcrumb } from "@/components/alo/public-shared";
 import { PublicLeadForm } from "@/components/alo/public-lead-form";
+import { ALO_PUBLIC_CONTACT_CTA } from "@/lib/alo-site-info";
 import { fmtDate, type ViewKey } from "@/lib/alo-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -379,6 +380,24 @@ export function PublicCourseFinder({ onNavigate }: PublicCourseFinderProps) {
                   )}
                 </div>
                 <div className="flex items-center gap-2 sm:ml-auto">
+                  {ALO_PUBLIC_CONTACT_CTA.href.startsWith('https://wa.me/') || ALO_PUBLIC_CONTACT_CTA.href === '/contact' ? (
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className="h-11 text-[var(--alo-brand)] hover:bg-[var(--alo-brand-light)]"
+                    >
+                      <a
+                        href={ALO_PUBLIC_CONTACT_CTA.href.startsWith('https://wa.me/')
+                          ? `${ALO_PUBLIC_CONTACT_CTA.href}?text=${encodeURIComponent('Hi ALO Education, I need help choosing a course from the Course Finder.')}`
+                          : ALO_PUBLIC_CONTACT_CTA.href}
+                        target={ALO_PUBLIC_CONTACT_CTA.href.startsWith('https://wa.me/') ? '_blank' : undefined}
+                        rel={ALO_PUBLIC_CONTACT_CTA.href.startsWith('https://wa.me/') ? 'noreferrer' : undefined}
+                      >
+                        <Icon name="MessageCircle" className="size-4" />
+                        Continue on WhatsApp
+                      </a>
+                    </Button>
+                  ) : null}
                   <Button
                     onClick={() => setQuery((q) => q)}
                     className="h-11 bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90"

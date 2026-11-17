@@ -84,7 +84,10 @@ export default function CrmPartnersPage() {
     <div className="space-y-6 p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-alo-text">Partner Management</h1>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-alo-brand hover:bg-alo-brand-light text-white"><Plus className="mr-2 h-4 w-4" />Add Partner</Button>
+        <div className="flex items-center gap-2">
+          <a href="/admin/prospects" className="text-sm text-[var(--alo-brand)] underline">B2B Prospect Research Queue</a>
+          <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="bg-alo-brand hover:bg-alo-brand-light text-white"><Plus className="mr-2 h-4 w-4" />Add Partner</Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

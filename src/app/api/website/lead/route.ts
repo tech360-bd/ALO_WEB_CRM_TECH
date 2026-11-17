@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       // Form C (counselling booking) additions per spec 3.1: intended intake and
       // course level are already first-class lead fields; the WhatsApp opt-in is
       // recorded with the lead so the counselor contacts the right channel.
-      contactChannel, whatsappOptIn,
+      contactChannel, whatsappOptIn, marketingConsent,
     } = body;
 
     // Step 1b: Capture acquisition attribution before any write, so the
@@ -94,6 +94,10 @@ export async function POST(request: Request) {
       },
       orderBy: { createdAt: "desc" },
     });
+
+    // Recorded once, after the lead row is committed. `marketingConsent` must be
+    // an explicit true — anything else (absent/false) means no marketing consent.
+    const wantsMarketing = marketingConsent === true;
 
     let leadId: string;
     let isDuplicate = false;
@@ -156,6 +160,21 @@ export async function POST(request: Request) {
       ]);
       leadId = newLead.id;
     }
+    if (wantsMarketing) {
+      try {
+        const { grantConsent } = await import('@/lib/marketing-consent');
+        await grantConsent({
+          email: String(email || '').toLowerCase() || undefined,
+          consentSource: (source ? String(source) : 'PUBLIC_CONSULTATION').toUpperCase().slice(0, 64),
+          consentMethod: 'CHECKBOX',
+        });
+      } catch (consentError) {
+        console.error('[website-lead] marketing consent could not be recorded', {
+          reason: consentError instanceof Error ? consentError.message : String(consentError),
+        });
+      }
+    }
+
 
     // Step 5: Assign lead using a documented rule.
     // Rule: Round-robin among active counselors. If no counselors exist, leave unassigned

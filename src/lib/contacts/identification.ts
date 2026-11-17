@@ -118,9 +118,24 @@ export async function identifyByPhone(phone: string): Promise<IdentificationCard
 
   const { variants } = normalizedInput;
 
+  // Secondary numbers live in ContactPhone (spec §3). A match there resolves
+  // to the owning primary registry row; it never creates a second identity.
+  const secondaryRowsRaw = await db.contactPhone.findMany({
+    where: { normalizedPhone: { in: variants } },
+    select: { contactId: true, normalizedPhone: true, label: true },
+    take: MAX_CANDIDATES,
+  }).catch(() => [] as Array<{ contactId: string; normalizedPhone: string; label: string }>);
+  const secondaryContactIds = [...new Set(secondaryRowsRaw.map((row) => row.contactId))];
+
   const [registryRowsRaw, studentsRaw, leadsRaw, guardianRowsRaw] = await Promise.all([
     db.whatsAppContact.findMany({
-      where: { OR: [{ normalizedPhone: { in: variants } }, { phone: { in: variants } }] },
+      where: {
+        OR: [
+          { normalizedPhone: { in: variants } },
+          { phone: { in: variants } },
+          ...(secondaryContactIds.length ? [{ id: { in: secondaryContactIds } }] : []),
+        ],
+      },
       select: { id: true, displayName: true, phone: true, normalizedPhone: true, email: true, studentId: true, leadId: true, assignedCounselorId: true, branch: true },
       take: MAX_CANDIDATES,
     }),

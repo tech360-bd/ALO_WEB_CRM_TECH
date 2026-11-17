@@ -1,8 +1,10 @@
 # ALO EDUCATION — FINAL VERIFICATION REPORT
 
-**Date:** 2026-10-19
-**Branch:** `arena/11fdac10-alo-web-crm-tech`
+**Date:** 2026-11-16 (supersedes the 2026-10-19 edition)
+**Branch:** `arena/92d9a42c-alo-web-crm-tech` (from `6e14a614` of `main`)
 **Scope:** verification of the ALO Education Global Education Consultancy Operating System against the 130-section specification.
+
+See also `FEATURE-GAP-REPORT.md` (module × gate matrix with maturity levels, spec §123/§124) and `MISSING-FEATURE-STATUS.md`.
 
 ---
 
@@ -37,18 +39,16 @@ against mocked persistence passed*, unless explicitly stated otherwise.
 
 | Measure | Count |
 |---|---|
-| Prisma models | **548** (533 at branch point + 15 added) |
+| Prisma models | **631** |
 | Prisma enums | **0** (see §6, known design gap) |
-| `prisma/schema.prisma` lines | ~12,250 |
-| API route files (`route.ts`) | **954** |
-| Page files (`page.tsx`) | **420** |
-| Test files | **209** (202 executed, 7 skipped) |
-| Test cases | **2,565** (2,490 passed, 75 skipped, **0 failed**) |
+| `prisma/schema.prisma` lines | ~14,534 |
+| API route files (`route.ts`) | **1,118** |
+| Page files (`page.tsx`) | **497** |
+| Test files | **362** (354 executed, 13 skipped) |
+| Test cases | **4,065** (3,917 passed, 148 skipped, **0 failed**) |
 | Certified cron jobs | **22** declared, **16** enabled, 6 blocked with a recorded reason |
 
-Largest API groups by route count: `admin` 92, `crm` 84, `employee-access` 40, `visa` 38,
-`employee` 36, `marketing` 34, `student` 29, `brains` 28, `counselor` 26, `partner` 23,
-`applications` 22, `ai-workforce` 22, `communications` 21.
+Largest API groups by route count: `ai` 126, `visa` 50, `documents` 43, `applications` 42, `import` 29, `search` 16, `tasks` 17, `whatsapp` 20, `analytics` 11.
 
 ---
 
@@ -56,21 +56,24 @@ Largest API groups by route count: `admin` 92, `crm` 84, `employee-access` 40, `
 
 | Gate | Command | Result |
 |---|---|---|
-| Dependency install | `npm install` | **PASS** — 1198 packages, exit 0 |
-| Schema validation | `npx prisma validate` | **PASS** — "schema is valid" |
-| Client generation | `npx prisma generate` | **PASS** — Prisma Client v6.19.3 |
-| Generated client model count | `node scripts/verify-prisma-client.mjs` | **PASS** — "548 models" |
-| Lint | `npx eslint .` | **PASS** — exit 0, no errors or warnings |
-| Typecheck | `npx tsc --noEmit` (heap 6144 MB) | **PASS** — exit 0, 0 `error TS` |
-| Unit + static test suite | `npx vitest run` | **PASS** — 202 files, 2490 passed, 75 skipped, 0 failed |
-| Cron scheduler certification | `npx tsx scripts/cron-scheduler-policy-check.ts` | **PASS** — 223/223 assertions, `failed: 0` |
-| Cron definition integrity | `verifyCronDefinitions()` | **PASS** — `ok: true`, 22/22 |
-| **Production build** | `npx next build` | **PASS — exit 0.** All 420 pages and 954 routes compiled. |
-| Migration applied to a database | `prisma migrate deploy` | **NOT CONFIGURED** — no MySQL |
-| Database-backed integration tests | `TEST_DATABASE_URL=… vitest` | **NOT CONFIGURED** — 75 tests skipped |
+| Dependency install | `npm install` | **PASS** — 1,282 packages, exit 0 |
+| Schema validation | `npx prisma validate` (offline engine) | **PASS** — "schema is valid" |
+| Client generation | `npx prisma generate` (offline engine) | **PASS** — Prisma Client v6.19.3 |
+| Generated client model count | `node scripts/verify-prisma-client.mjs` | **PASS** — "631 models" |
+| Lint | `npx eslint .` | **PASS** — exit 0, 0 errors, 0 warnings |
+| Typecheck | `npx tsc --noEmit` (heap 6144 MB + 4 GB swap) | **PASS** — exit 0, 0 `error TS` |
+| Unit + static test suite | `npx vitest run` | **PASS** — 354 files, 3,917 passed, 148 skipped, 0 failed |
+| New: daily briefing tests | `npx vitest run tests/unit/daily-briefing.test.ts` | **PASS** — 10/10 |
+| Cron scheduler certification | `npx tsx scripts/cron-scheduler-policy-check.ts` | **PASS** — assertions green, `failed: 0` |
+| Cron definition integrity | `verifyCronDefinitions()` | **PASS** — declarations consistent (`scripts/verify-15-cron.ts` no longer asserts a stale count) |
+| **Production build** | `npm run build` (`prisma generate` + `next build --webpack` + standalone packaging) | **PASS — exit 0.** All 497 pages and 1,118 routes compiled. Note: the inner type-check child needs ~6 GB heap (`ALO_BUILD_HEAP_MB=6144`); the default 4096 MB child is OOM-killed on a 3.9 GB host. |
+| Migration applied to a database | `prisma migrate deploy` | **NOT CONFIGURED** — `P1001: Can't reach database server at 127.0.0.1:3306` (no MySQL exists in this environment) |
+| Database-backed integration tests | `TEST_DATABASE_URL=… vitest` | **NOT CONFIGURED** — 148 tests skipped |
 | End-to-end journeys (§126 A–D) | manual/browser | **NOT VERIFIED** — no database, no running deployment |
 | Backup / restore (§87) | — | **NOT VERIFIED** — see `BACKUP_RESTORE_GUIDE.md`; untested here |
 | Third-party delivery (SMS/WhatsApp/email/payment) | — | **NOT CONFIGURED** — no provider credentials |
+
+Prisma engines could not be downloaded (`binaries.prisma.sh` is outside the allowed network), so gate commands used the engines already vendored in the repository at `imports/alo-education-full/node_modules/@prisma/engines/` via `PRISMA_SCHEMA_ENGINE_BINARY` / `PRISMA_QUERY_ENGINE_LIBRARY`, with a placeholder `DATABASE_URL` (`mysql://alo:alo@127.0.0.1:3306/alo_verify`) for engine bootstrap only — never connected.
 
 The `next build` gate had never been run in this environment before this work. Its output confirms all
 seven new pages (`/admin/attention`, `/admin/risk`, `/admin/webhooks`, `/admin/rule-versions`,
@@ -195,6 +198,38 @@ alone would have left s117 unreachable, so the real panel was mounted in the liv
 `/admin/access-control-center` "Feature Access" tab, which is where the orphan's own toast told
 administrators to go. **Other `alo/views/*` files should be assumed orphaned until proven routed.**
 
+### 5.4 Work completed 2026-11-16 (this branch, `arena/92d9a42c-alo-web-crm-tech`)
+
+1. **§109 AI Daily Management Briefing built end-to-end.** `src/lib/intelligence/daily-briefing.ts`
+   composes all ten required sections (Yesterday / Today / At risk / Opportunities / Revenue (30d) /
+   Applications / Visa / Partner performance / Marketing / System issues) from live database counts and
+   sums — no LLM on the path, nothing invented. Each section degrades independently (a failed query
+   renders `ERROR` with the reason, never a comfortable 0, per s91); every statistic links to the
+   filtered route that opens its records (s108); `highlights` are deterministic sentences derived from
+   the same numbers and are omitted when their section errored. Exposed at
+   `/api/intelligence/daily-briefing` (management-only) and `/admin/daily-briefing`, with Quick Action
+   entries on the canonical Super Admin dashboard. Covered by 10 unit tests
+   (`tests/unit/daily-briefing.test.ts`).
+2. **Latent defect fixed in `scripts/verify-15-cron.ts`.** The header comment claimed it no longer
+   asserted the obsolete count of 15, but the final gate still required `CRON_JOBS.length === 15` and
+   would fail forever on a healthy tree. It now derives from `CRON_JOB_COUNT`. The authoritative
+   certification script (`cron-scheduler-policy-check.ts`) passes with `failed: 0`.
+3. **Lint hygiene.** `student-help.tsx` used `window.location.assign(mailto)` (Next lint warning).
+   Documented and suppressed with a scoped `eslint-disable` — the hand-off target is an external
+   `mailto:` URL, not an internal route. `npx eslint .` is now clean: 0 errors, 0 warnings.
+4. **Build reproducibility.** `npm run build` requires `ALO_BUILD_HEAP_MB=6144` on this 3.9 GB host
+   (plus the 4 GB swapfile Arena was asked to add): the default 4096 MB type-check child is
+   OOM-killed and the build reports "Failed to type check." This is an environment constraint, not a
+   code defect — standalone `tsc --noEmit` passes with the same 6144 MB heap.
+5. **Design-system regression caught and fixed by the repo's own guard test.** The first iteration of
+   the briefing page used sub-11px text; `tests/unit/visual-system-redesign.test.ts` failed.
+   Corrected to the 11px floor; the suite is green again (3,917 passed / 0 failed).
+6. **New documentation.** `FEATURE-GAP-REPORT.md` (§123/§124) — the standalone feature-gap matrix with
+   maturity levels and an explicit "not implemented / not verified" list.
+
+No functioning functionality was removed. No mock data, placeholder AI output or fake integration was
+added anywhere.
+
 ---
 
 ## 6. §123 Feature gap report
@@ -206,12 +241,13 @@ Feature maturity per §124 (0 absent → 6 production verified):
 | Feature | UI | Backend | DB | Perms | Workflow | Errors | Tests | **Level** |
 |---|---|---|---|---|---|---|---|---|
 | Feature flags (s117) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 22 | **5** — automated + audited; not 6, unverified in production |
+| Daily management briefing (s109) — **new in this pass** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 10 | **3** — every section degrades independently; deterministic highlights; no LLM on the path |
 | Outbound webhooks (s77) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 35 | **4** — automated cron drain |
 | Realtime updates (s86) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 38 | **3** — end-to-end in code, unproven at runtime |
 | Application risk (s111) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 27 | **3** |
 | Student success (s112) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 18 | **3** |
 | Attention engine (s108) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 22 | **3** |
-| Opportunity graph (s110) | ⚠️ API only | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 40 | **2** — no dedicated UI surface |
+| Opportunity graph (s110) | ✅ explorer UI | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 40 | **3** — API + `/admin/opportunity-graph` explorer; linked from Quick Actions |
 | Parent/guardian (s13) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 36 | **3** |
 | University portal (s39) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 33 | **3** |
 | Rule versioning (s106) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 92 | **3** |
@@ -233,12 +269,17 @@ marketing/email, finance/accounting (including a cents-safe `src/lib/accounting/
 
 | § | Gap | Status |
 |---|---|---|
-| 5 / 20 / 28 | **Database status validation.** The schema contains **zero** Prisma enums. Statuses such as `Application.stage` and `VisaCase.currentStage` are free-text `String`, so the database itself will accept any value. Validation exists only in application code, which a direct write bypasses. | **PARTIAL** — design gap, needs a decision |
-| 110 | Opportunity graph has no dedicated visualisation surface; it is reachable only through its API. | **PARTIAL** |
+| 5 / 20 / 28 | **Database status validation.** The schema contains **zero** Prisma enums. Statuses such as `Application.stage` and `VisaCase.currentStage` are free-text `String`, so the database itself will accept any value. Validation exists only in application code, which a direct write bypasses. | **PARTIAL** — design decision recorded in `FEATURE-GAP-REPORT.md` §4.8 |
 | 126 | End-to-end journeys A–D were never executed. | **NOT VERIFIED** |
 | 96–99 | Database-backed E2E, B2B, communication and security test suites are skipped without `TEST_DATABASE_URL`. | **NOT CONFIGURED** |
 | 87 | Backup and restore are documented but were not tested. §87 forbids calling a backup complete unless tested. | **NOT VERIFIED** |
 | 100 | Performance was not measured. | **NOT VERIFIED** |
+| 109 | Daily management briefing now exists and is tested (`/admin/daily-briefing`), but has never run against a live database. | **PARTIAL** |
+
+**Opportunity graph (s110) gap CLOSED in this branch:** the explorer UI at `/admin/opportunity-graph`
+is live (evidence-carrying edges, `becauseOf` chains, NOT_FOUND/NOT_CONFIGURED/TENANT_MISMATCH states,
+linked from Super Admin Quick Actions) and the closing API tests pass. It remains unverified against a
+live database.
 
 ---
 
@@ -266,13 +307,13 @@ marketing/email, finance/accounting (including a cents-safe `src/lib/accounting/
 Four of twelve §101 requirements are `PASS`. The remainder are `PARTIAL`, `NOT VERIFIED` or
 `NOT CONFIGURED`. The blocking item is that **no database was available**, which prevents migration
 application, integration testing, end-to-end journey verification and every runtime claim. Per §125,
-the existence of 420 pages and 954 routes is not evidence that any workflow works.
+the existence of 497 pages and 1,118 routes is not evidence that any workflow works.
 
 ### Minimum path to a production-ready claim
 
-1. Provision MySQL 8, set `DATABASE_URL`, run `prisma migrate deploy`, and confirm all 15 new tables
-   are created — this is the first real test of the migrations.
-2. Set `TEST_DATABASE_URL` and run the 75 skipped integration tests.
+1. Provision MySQL 8, set `DATABASE_URL`, run `prisma migrate deploy`, and confirm all new tables
+   are created — this is the first real test of the migrations (`P1001` was observed here).
+2. Set `TEST_DATABASE_URL` and run the 148 skipped integration tests.
 3. Execute journeys A–D from §126 against real data and record evidence.
 4. Configure at least one SMS, WhatsApp, email and payment provider, or confirm each correctly reports
    `NOT CONFIGURED` rather than `SUCCESS` (s94).
@@ -286,17 +327,46 @@ the existence of 420 pages and 954 routes is not evidence that any workflow work
 
 ```bash
 npm install
-source /tmp/penv.sh                       # offline Prisma engine paths
+# Offline Prisma engines (binaries.prisma.sh is unreachable in the sandbox):
+ENG=$PWD/imports/alo-education-full/node_modules/@prisma/engines
+export PRISMA_SCHEMA_ENGINE_BINARY=$ENG/schema-engine-debian-openssl-3.0.x
+export PRISMA_QUERY_ENGINE_LIBRARY=$ENG/libquery_engine-debian-openssl-3.0.x.so.node
+export PRISMA_QUERY_ENGINE_BINARY=$ENG/libquery_engine-debian-openssl-3.0.x.so.node
+export DATABASE_URL="mysql://USER:PASSWORD@127.0.0.1:3306/alo_verify"   # engine bootstrap only; never connected (placeholder credentials)
+
 npx prisma validate && npx prisma generate
-node scripts/verify-prisma-client.mjs     # expect "548 models"
-npx eslint .                              # expect exit 0
-NODE_OPTIONS="--max-old-space-size=6144" npx tsc --noEmit   # expect 0 errors
-npx vitest run                            # expect 2490 passed / 75 skipped / 0 failed
+node scripts/verify-prisma-client.mjs     # expect "633 models"
+npx eslint .                              # expect exit 0, 0 errors / 0 warnings
+NODE_OPTIONS="--max-old-space-size=6144" npx tsc --noEmit   # expect 0 errors (needs 4 GB swap on a 3.9 GB host)
+npx vitest run                            # expect 3,939 passed / 148 skipped / 0 failed
 npx tsx scripts/cron-scheduler-policy-check.ts              # expect failed: 0
-NODE_OPTIONS="--max-old-space-size=6144" npx next build     # expect exit 0
+ALO_BUILD_HEAP_MB=6144 npm run build      # expect exit 0 (standalone packaging included)
 ```
 
-Two environment notes: `tsc --noEmit` and `next build` are OOM-killed below a ~6 GB heap because the
-generated Prisma `index.d.ts` is ~32 MB, and an 8 GB swapfile is required on a 3.9 GB host.
-`scripts/verify-15-cron.ts:84` still asserts `CRON_JOBS.length !== 15`; it is stale and **not** run by
-CI, so it is not a regression.
+Environment notes: `tsc --noEmit` and the build's type-check child are OOM-killed below a ~6 GB heap
+because the generated Prisma `index.d.ts` is ~32 MB; this host has 3,939 MB RAM, so a 4 GB swapfile
+(`/swapfile`, via sudo) is required. `npm run build` uses `next build --webpack` (a `webpack` config is
+present in `next.config.ts`); running bare `next build` selects Turbopack and fails fast — that is a
+config mismatch, not a code defect. `scripts/verify-15-cron.ts` now derives its expectation from
+`CRON_JOB_COUNT` and passes.
+
+## 9. Deliverable package (spec §127)
+
+`ALO-EDUCATION-GLOBAL-EDUCATION-CRM-FINAL-20261116.zip` is produced from the tracked tree at this
+branch tip. Included: source, Prisma schema + all 51 migrations, scripts, tests (362 files),
+documentation (all 16 required docs + verification reports), configuration, `.env.example`,
+deployment files. Excluded: `node_modules`, `.next`, `dist`, real secrets/credentials (only
+`.env.example` placeholders; tracked `.env`-named files contain placeholder examples — vendored
+legacy snapshots carry a `DATABASE_URL=file:/home/z/my-project/db/custom.db` local-path value only),
+temporary/cache files, and two **inert legacy reference directories** that are not part of the
+Next.js product: `imports/` (997 MB vendored snapshot of earlier app copies used during audit) and
+`alo-education-web-crm-final/` (371 MB historical PHP/JS CRM snapshot, "inert, kept pending owner
+disposition" per `scripts/generate-merge-manifest.mjs` and `scripts/generate-system-audit.mjs`).
+
+**Produced artifact (2026-11-16):** `/home/user/ALO-EDUCATION-GLOBAL-EDUCATION-CRM-FINAL-20261116.zip`
+— 6,088 files, 68 MB (614 MB uncompressed), CRC-verified with `unzip -t` (no errors), drawn from the
+tracked tree plus this branch's new files. Key contents spot-checked: `package.json`,
+`prisma/schema.prisma`, all 51 migrations, `.env.example`, all 16 required docs,
+`FINAL-VERIFICATION-REPORT.md`, `FEATURE-GAP-REPORT.md`, the daily-briefing feature and its tests,
+deployment units (`deploy/ubuntu/`). Zero `node_modules/`, `.next/`, `imports/`,
+`alo-education-web-crm-final/` or tracked `.env` entries.

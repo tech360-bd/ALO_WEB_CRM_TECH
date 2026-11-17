@@ -45,6 +45,10 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
     // visitor has to make an affirmative choice for the record to mean
     // anything. It was previously `true` here AND never sent to the API, so the
     // checkbox was decorative while appearing to grant permission.
+    // Unchecked by default and affirmative-only: permission to contact about
+    // the requested inquiry (required) and optional promotional updates are
+    // two separate choices, never bundled.
+    serviceConsent: false,
     consent: false,
   });
   const [loading, setLoading] = React.useState(false);
@@ -79,26 +83,41 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
     // case the visitor deep-linked straight into a later step.
     const attribution = entryAttribution.current ?? collectAttributionPayload();
     try {
-      const res = await fetch("/api/leads", {
+      // Acquisition source preserved; apply surface determines the tag, never a
+      // generic "WEBSITE": Course Finder traffic -> PUBLIC_COURSE_FINDER,
+      // course-detail pages -> COURSE_DETAILS, everything else -> PUBLIC_WEBSITE.
+      const tagLower = (sourceTag || '').toLowerCase();
+      const leadSource = tagLower.startsWith('course finder')
+        ? 'PUBLIC_COURSE_FINDER'
+        : tagLower.startsWith('course details') || tagLower.endsWith('course page')
+          ? 'COURSE_DETAILS'
+          : 'PUBLIC_WEBSITE';
+      const res = await fetch("/api/crm/leads/public", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fullName: form.fullName,
+          name: form.fullName,
           email: form.email,
           phone: form.phone,
           altPhone: form.altPhone,
-          source: "WEBSITE",
-          sourceDetail: sourceTag || "Public website",
+          // Acquisition source preserved; Course Finder traffic is tagged
+          // PUBLIC_COURSE_FINDER (or the specific surface from the tag), never
+          // a generic "WEBSITE".
+          source: leadSource,
+          sourceSection: sourceTag || "Public website",
           preferredCountry: form.preferredCountry,
-          preferredCourse: form.preferredCourse,
+          preferredSubject: form.preferredCourse,
           preferredLevel: form.preferredLevel,
-          preferredIntake: form.preferredIntake,
+          intake: form.preferredIntake,
           budget: form.budget,
           englishScore: form.englishScore,
-          notes: form.notes,
-          // Only the affirmative opt-in is transmitted. Contact details alone
-          // are not consent, and the server records nothing unless this is true.
-          consent: form.consent,
+          message: form.notes,
+          // Service-contact consent is mandatory for us to act; marketing
+          // updates are a separate, unchecked-by-default, affirmative choice.
+          serviceConsent: form.serviceConsent,
+          marketingConsent: form.consent,
+          contactChannel: 'phone',
           ...(attribution ?? {}),
         }),
       });
@@ -113,7 +132,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           error_code: 'api_error',
         }, { source: 'public-lead-form' });
       } else {
-        setResult({ ok: true, leadId: data.lead?.leadId, duplicate: data.duplicate, message: data.message });
+        setResult({ ok: true, leadId: data.leadId || data.crmLeadId || undefined, duplicate: undefined, message: data.message || 'Thank you. Your inquiry has been received for review.' });
         // `lead_reference` is ALO's own opaque reference code (LEAD-2026-XXXXX),
         // not a name or contact detail — this is the join that makes the
         // campaign -> lead -> application funnel traceable in GA4.
@@ -121,7 +140,7 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           form_id: 'public-lead-form',
           success: true,
           lead_source: sourceTag || 'public_website',
-          lead_reference: data.lead?.leadId || '',
+          lead_reference: String(data.leadId || data.crmLeadId || ''),
           destination: form.preferredCountry || undefined,
         }, { source: 'public-lead-form' });
         // Submitting this form is a request for a counselor, which is the
@@ -239,13 +258,17 @@ export function PublicLeadForm({ sourceTag, preferredCountry, preferredCourse, c
           <Label className="text-xs font-semibold">Message (optional)</Label>
           <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="mt-1 min-h-[70px]" placeholder="Tell us about your goals, questions, or anything we should know." />
         </div>
+        <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-[var(--alo-brand)]/30 bg-[var(--alo-brand-pale)] p-3 text-xs text-[var(--alo-text)]">
+          <Checkbox checked={form.serviceConsent} onCheckedChange={(v) => setForm({ ...form, serviceConsent: v as boolean })} className="mt-0.5 border-[var(--alo-brand)]/40 data-[state=checked]:bg-[var(--alo-brand)]" required aria-required="true" />
+          <span><span className="font-semibold">Required:</span> I ask ALO Education to contact me about this inquiry (phone/WhatsApp/email). This is needed to respond. It is not permission for marketing.</span>
+        </label>
         <label className="flex cursor-pointer items-start gap-2.5 text-xs text-muted-foreground">
           <Checkbox checked={form.consent} onCheckedChange={(v) => setForm({ ...form, consent: v as boolean })} className="mt-0.5 border-[var(--alo-brand)]/40 data-[state=checked]:bg-[var(--alo-brand)]" />
           <span>
             Optional: I agree to receive promotional updates from ALO Education by email or WhatsApp. I can withdraw this permission at any time. This choice is separate from the response to my enquiry.
           </span>
         </label>
-        <Button type="submit" disabled={loading || !form.fullName || !form.phone} className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
+        <Button type="submit" disabled={loading || !form.fullName || !form.phone || !form.serviceConsent} className="h-12 w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta)]/90">
           {loading ? (
             <><Icon name="Loader2" className="size-4 animate-spin" /> Submitting...</>
           ) : (

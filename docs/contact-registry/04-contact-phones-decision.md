@@ -106,3 +106,24 @@ Adopt `contact_phones` when **any** of these becomes true:
    behaviour exactly; the primary column is never removed until the final release.
 
 **Status: NOT REQUIRED. No schema change, no migration, nothing to roll back.**
+
+---
+
+## Addendum — 2026-11-16 (owner task: "ALO CRM: Central Contact Registry … DONE FULL PROJECT")
+
+**Status change: `NOT REQUIRED (now)` → implemented additively (`ContactPhone`). Decision above preserved unchanged; this addendum records what reversed it and how the original risks were avoided.**
+
+What reversed it:
+
+1. The owner's directive for this pass is explicit: any asked-for feature that does not exist must be created; never delete; add and coordinate into one unified system. The spec (§3/§10) requires *multiple phone numbers per person, each separately searchable*, plus per-number WhatsApp/label metadata — i.e. the second documented trigger condition above (per-number metadata: label, WhatsApp flag, source, per-number creation audit).
+2. The spec's §24 requires tests that prove "multi-phone student" behaviour end-to-end at the API level — impossible without a storage place for the additional number's metadata.
+
+How the original cost analysis was respected:
+
+* **No backfill.** The table starts empty. Existing contacts are untouched; `WhatsAppContact.phone`/`normalizedPhone` remain the primary number and the send target, exactly as the analysis demanded ("Keep `WhatsAppContact.phone` as the primary number during coexistence … No query breaks").
+* **Additive migration only.** `20261117000000_contact_phones_merge_history` creates two new tables and alters nothing; `migration-safety.test.ts` proves it.
+* **No query removed or changed in shape.** Identification only *added* an optional lookup; the primary-number path is unchanged.
+* **Rollback is a drop of the new table** — the final "contract" step (dropping duplicate columns) was not performed and would need its own release.
+* Per-number *verification timestamps* are deliberately not modeled; `source`/audit covers provenance. Trigger condition 3 (Meta multi-number per wa_id) still does not apply.
+
+If a future pass performs the backfill (one `ContactPhone` row per existing masked number), it must follow §6 above: separate release, backup first, expand → migrate readers → contract.

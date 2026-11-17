@@ -11,7 +11,7 @@ import { allocateIdentifierCommitted } from '@/lib/identity/student-id';
 
 export interface StudentAuthContext {
   studentId: string;     // DB id (cuid)
-  studentCode: string;   // New IDs: AE-YYYYNNNN; historical IDs are preserved
+  studentCode: string;   // New IDs: AE-YYYYNNNNNN; historical IDs are preserved
   email: string;
   phone: string;
   name: string;
@@ -20,7 +20,7 @@ export interface StudentAuthContext {
 }
 
 // ============================================================
-// Generate a unique AE-YYYYNNNN student code (legacy IDs remain unchanged)
+// Generate a unique AE-YYYYNNNNNN student code (legacy IDs remain unchanged)
 // ============================================================
 export async function generateStudentCode(): Promise<string> {
   return allocateIdentifierCommitted('AE');
@@ -140,7 +140,7 @@ export async function authenticateStudentRequest(
 
   return {
     studentId: student.id,
-    studentCode: student.studentId, // stable Student ID; new codes use AE-YYYYNNNN
+    studentCode: student.studentId, // stable Student ID; new codes use AE-YYYYNNNNNN
     email: student.email,
     phone: student.phone,
     name: student.name,

@@ -369,6 +369,24 @@ export const POST = withAuth(async (req: Request, auth: AuthContext): Promise<Ne
         select: { id: true },
       });
 
+      // Queryable merge history (spec §10, §22): one row per pair, written in the
+      // same transaction as the merge so rolled-back merges leave no phantom rows.
+      for (const source of freshSources) {
+        await tx.contactMergeHistory.create({
+          data: {
+            destinationContactId: destinationId,
+            sourceContactId: source.id,
+            destinationPhone: freshDestination.normalizedPhone || '',
+            sourcePhone: source.normalizedPhone || source.phone || '',
+            mergedById: auth.actorUserId || auth.userId,
+            mergedByRole: (auth.roles || []).join(','),
+            preservedGoogleAliases: JSON.stringify(freshPlan.preserved.googleAliases || []),
+            mergeReason: reason || '',
+            mergeAuditId: audit.id,
+          },
+        });
+      }
+
       // One decision record per merged pair, so the review queue shows how the
       // duplicate was resolved instead of leaving it open forever.
       for (const source of freshSources) {

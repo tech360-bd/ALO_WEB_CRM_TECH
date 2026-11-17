@@ -11,7 +11,7 @@
  *
  * Usage: npx tsx scripts/verify-15-cron.ts
  */
-import { CRON_JOBS, verifyCronDefinitions } from '../src/cron/cron-definitions';
+import { CRON_JOBS, CRON_JOB_COUNT, verifyCronDefinitions } from '../src/cron/cron-definitions';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -81,9 +81,9 @@ if (fs.existsSync(coursesPath)) {
   }
 }
 
-if (!ok || !importsDefinitions || CRON_JOBS.length!==15) {
-  console.error('\n[FAIL] 15-cron verification FAILED - see errors above');
+if (!ok || !importsDefinitions || CRON_JOBS.length !== CRON_JOB_COUNT) {
+  console.error('\n[FAIL] cron declaration verification FAILED - see errors above');
   process.exit(1);
 } else {
-  console.log('\n[PASS] 15-cron verification PASSED - all Asia/Dhaka, locking, 15 jobs, GCU London verified');
+  console.log(`\n[PASS] cron declaration verification PASSED - declarations consistent with CRON_JOB_COUNT=${CRON_JOB_COUNT}`);
 }

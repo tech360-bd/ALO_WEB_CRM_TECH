@@ -12,7 +12,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-type View = 'list' | 'detail' | 'import' | 'duplicates' | 'consent' | 'segments' | 'audit' | 'identify' | 'dashboard';
+type View = 'list' | 'detail' | 'import' | 'duplicates' | 'consent' | 'segments' | 'audit' | 'identify' | 'dashboard' | 'numbers' | 'google' | 'health';
 
 const NAV: Array<{ href: string; label: string; view: View }> = [
   { href: '/crm/contacts', label: 'Contacts', view: 'list' },
@@ -25,6 +25,10 @@ const NAV: Array<{ href: string; label: string; view: View }> = [
   // Inbound identification: type the number the phone is showing. This is the
   // screen a counsellor needs while the call is still ringing.
   { href: '/crm/contacts/identify', label: 'Identify', view: 'identify' },
+  // External admin consoles — linked, not duplicated.
+  { href: '/admin/whatsapp-numbers', label: 'Company Numbers', view: 'numbers' },
+  { href: '/admin/google-contacts', label: 'Google Contacts', view: 'google' },
+  { href: '/admin/integration-health', label: 'Integration Health', view: 'health' },
 ];
 
 const BRAND = 'var(--alo-brand)';
@@ -83,6 +87,9 @@ export default function ContactHubView({ view, contactId }: { view: View; contac
       // for it; the mapping exists only to keep the record exhaustive.
       identify: '/api/crm/contacts',
       dashboard: '/api/crm/contacts/dashboard',
+      numbers: '/api/whatsapp/numbers',
+      google: '/api/google/contacts/status',
+      health: '/api/crm/contacts/dashboard',
     };
     let target = url || fallback[view];
     if (view === 'list' && !url) {
@@ -106,7 +113,7 @@ export default function ContactHubView({ view, contactId }: { view: View; contac
   useEffect(() => {
     // The identify view fetches only when a number is submitted, so the hub's
     // list load is skipped rather than fired and ignored.
-    if (view === 'identify' || view === 'dashboard') return;
+    if (view === 'identify' || view === 'dashboard' || view === 'numbers' || view === 'google' || view === 'health') return;
     void load();
   }, [load, view]);
 
@@ -207,6 +214,105 @@ function ListView({ data, loading, error, search, setSearch, category, setCatego
   );
 }
 
+
+interface SecondaryPhone {
+  id: string;
+  phone: string;
+  normalizedPhone: string;
+  label: string;
+  isPrimary: boolean;
+  isWhatsApp: boolean;
+  source: string;
+  sharedWithOtherContacts: number;
+}
+
+const PHONE_LABELS = ['PERSONAL', 'BUSINESS', 'WHATSAPP', 'ALTERNATIVE', 'EMERGENCY', 'FAMILY'] as const;
+
+function PhoneNumbersPanel({ contactId, onChanged }: { contactId: string; onChanged: (text: string) => void }) {
+  const [phones, setPhones] = useState<SecondaryPhone[] | null>(null);
+  const [error, setError] = useState('');
+  const [form, setForm] = useState({ phone: '', label: 'ALTERNATIVE', isWhatsApp: false });
+  const [saving, setSaving] = useState(false);
+
+  const load = useCallback(async () => {
+    const result = await api<{ phones?: SecondaryPhone[]; error?: string }>(`/api/crm/contacts/${encodeURIComponent(contactId)}/phones`);
+    if (!result.ok) { setError(String(result.data.error || `Failed (${result.status})`)); setPhones([]); return; }
+    setError('');
+    setPhones(result.data.phones || []);
+  }, [contactId]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const add = async () => {
+    if (!form.phone.trim()) { setError('Enter a phone number first.'); return; }
+    setSaving(true);
+    const result = await api<{ error?: string; sharedWithContacts?: number; note?: string }>(`/api/crm/contacts/${encodeURIComponent(contactId)}/phones`, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+    setSaving(false);
+    if (!result.ok) { setError(String(result.data.error || 'Could not add the number.')); return; }
+    setForm({ phone: '', label: 'ALTERNATIVE', isWhatsApp: false });
+    setError('');
+    onChanged(result.data.note || 'Phone number added and audited.');
+    void load();
+  };
+
+  const patch = async (phoneId: string, body: Record<string, unknown>, okText: string) => {
+    const result = await api<{ error?: string }>(`/api/crm/contacts/${encodeURIComponent(contactId)}/phones/${encodeURIComponent(phoneId)}`, {
+      method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+    });
+    if (!result.ok) { setError(String(result.data.error || 'Update failed.')); return; }
+    onChanged(okText);
+    void load();
+  };
+
+  const remove = async (phoneId: string) => {
+    const result = await api<{ error?: string }>(`/api/crm/contacts/${encodeURIComponent(contactId)}/phones/${encodeURIComponent(phoneId)}`, { method: 'DELETE' });
+    if (!result.ok) { setError(String(result.data.error || 'Remove failed.')); return; }
+    onChanged('Phone number removed; the removal was audited.');
+    void load();
+  };
+
+  return (
+    <div style={{ ...card, marginBottom: 16 }}>
+      <strong style={{ fontSize: 13 }}>Phone numbers</strong>
+      <p style={{ margin: '4px 0 10px', color: MUTED, fontSize: 11 }}>
+        The primary number stays on the contact record; these additional numbers remain individually searchable.
+        A number shared with another contact is allowed (family/business lines) and is never auto-merged.
+      </p>
+      {error && <p style={{ color: '#b42318', fontSize: 12 }}>Unavailable: {error}</p>}
+      {phones === null ? <p style={{ color: MUTED, fontSize: 12 }}>Loading live numbers…</p> : (
+        <div style={{ display: 'grid', gap: 8, marginBottom: 12 }}>
+          {phones.length === 0 && <p style={{ color: MUTED, fontSize: 12 }}>No secondary numbers recorded.</p>}
+          {phones.map((row) => (
+            <div key={row.id} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '8px 10px', fontSize: 12 }}>
+              <strong>{row.phone}</strong>
+              <span style={{ color: MUTED }}>{row.label}{row.isWhatsApp ? ' · WhatsApp' : ''}{row.isPrimary ? ' · primary-secondary' : ''}</span>
+              {row.sharedWithOtherContacts > 0 && <span style={{ color: '#b54708' }}>shared with {row.sharedWithOtherContacts} other contact{row.sharedWithOtherContacts === 1 ? '' : 's'}</span>}
+              <span style={{ marginLeft: 'auto', display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {!row.isPrimary && <button type="button" style={{ ...secondary, padding: '4px 10px', fontSize: 11 }} onClick={() => void patch(row.id, { isPrimary: true }, 'Marked as primary secondary number.')}>Make primary</button>}
+                <button type="button" style={{ ...secondary, padding: '4px 10px', fontSize: 11 }} onClick={() => void patch(row.id, { isWhatsApp: !row.isWhatsApp }, 'WhatsApp flag updated.')}>{row.isWhatsApp ? 'Unset WhatsApp' : 'Set WhatsApp'}</button>
+                <button type="button" style={{ ...secondary, padding: '4px 10px', fontSize: 11, color: '#b42318', borderColor: '#b42318' }} onClick={() => void remove(row.id)}>Remove</button>
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+        <input aria-label="New phone number" value={form.phone} onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))} placeholder="01XXXXXXXXX or +8801..." style={{ ...input, maxWidth: 220 }} />
+        <select aria-label="Number label" value={form.label} onChange={(event) => setForm((prev) => ({ ...prev, label: event.target.value }))} style={{ ...input, maxWidth: 170 }}>
+          {PHONE_LABELS.map((label) => <option key={label} value={label}>{label}</option>)}
+        </select>
+        <label style={{ fontSize: 12, color: MUTED, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <input type="checkbox" checked={form.isWhatsApp} onChange={(event) => setForm((prev) => ({ ...prev, isWhatsApp: event.target.checked }))} /> WhatsApp
+        </label>
+        <button type="button" style={button} disabled={saving} onClick={() => void add()}>{saving ? 'Adding…' : 'Add number'}</button>
+      </div>
+    </div>
+  );
+}
+
 function DetailView({ contactId, data, loading, error, onSaved }: {
   contactId: string; data: Record<string, unknown> | null; loading: boolean; error: string; onSaved: (text: string) => void;
 }) {
@@ -254,6 +360,7 @@ function DetailView({ contactId, data, loading, error, onSaved }: {
             <Link href={`/crm/contacts/consent?contactId=${encodeURIComponent(contactId)}`} style={{ color: BRAND, fontSize: 12 }}>Open consent ledger →</Link>
           </div>
         </div>
+        <PhoneNumbersPanel contactId={contactId} onChanged={onSaved} />
         <div style={{ ...card, marginBottom: 16 }}>
           <strong style={{ fontSize: 13 }}>Edit permitted fields</strong>
           <p style={{ color: MUTED, fontSize: 11 }}>Identity links, phone and consent/suppression state cannot be edited here.</p>
@@ -366,6 +473,120 @@ function ImportView({ data, loading, error, onDone }: {
   );
 }
 
+
+interface MergeRow { id: string; displayName: string; phone: string; email: string; studentId: string }
+
+/**
+ * Merge execution UI — the API was complete but API-only; this is the human
+ * approval surface required by the duplicate-resolution flow. Nothing merges
+ * automatically: preview writes nothing, execution needs the token the preview
+ * returns, a written reason, and the caller's `contacts.merge_execute` grant.
+ * Student identities are never rewritten; conflicting student/lead/partner ids
+ * are hard refusals from the planner.
+ */
+function MergePanel({ contactIds, onDone }: { contactIds: string[]; onDone: (text: string) => void }) {
+  const [rows, setRows] = useState<MergeRow[] | null>(null);
+  const [destinationId, setDestinationId] = useState('');
+  const [reason, setReason] = useState('');
+  const [preview, setPreview] = useState<{ ok: boolean; summary: string; token: string; blockers: string[] } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  const loadContacts = async () => {
+    setBusy(true);
+    setError('');
+    const loaded = await Promise.all(
+      contactIds.map(async (id) => {
+        const result = await api<{ contact?: Record<string, unknown>; error?: string }>(`/api/crm/contacts/${encodeURIComponent(id)}`);
+        if (!result.ok) return { id, displayName: `(out of scope or missing)`, phone: id, email: '', studentId: '' };
+        const c = (result.data.contact || {}) as Record<string, unknown>;
+        return {
+          id,
+          displayName: String(c.displayName || c.preferredName || c.id || id),
+          phone: String(c.phone || c.normalizedPhone || ''),
+          email: String(c.email || ''),
+          studentId: String(c.studentId || ''),
+        };
+      }),
+    );
+    setRows(loaded);
+    if (!destinationId && loaded.length > 0) setDestinationId(loaded[0].id);
+    setBusy(false);
+  };
+
+  const sourceIds = () => (rows || []).map((row) => row.id).filter((id) => id !== destinationId);
+
+  const runPreview = async () => {
+    if (!destinationId || sourceIds().length === 0) { setError('Choose which record survives; the rest become aliases.'); return; }
+    setBusy(true);
+    setError('');
+    setPreview(null);
+    const result = await api<{
+      success?: boolean; error?: string;
+      plan?: { ok?: boolean; confirmationToken?: string; blockers?: string[] };
+      summary?: string;
+    }>('/api/crm/contacts/merge', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ mode: 'preview', destinationId, sourceIds: sourceIds() }),
+    });
+    setBusy(false);
+    if (!result.ok || !result.data.plan) { setError(String(result.data.error || `Preview failed (${result.status}).`)); return; }
+    const plan = result.data.plan;
+    setPreview({
+      ok: Boolean(plan.ok),
+      summary: String(result.data.summary || (plan.ok ? 'Plan ready.' : 'Plan refused.')),
+      token: String(plan.confirmationToken || ''),
+      blockers: Array.isArray(plan.blockers) ? plan.blockers.map(String) : [],
+    });
+  };
+
+  const runExecute = async () => {
+    if (!preview?.ok || !preview.token) { setError('Preview the merge first.'); return; }
+    if (reason.trim().length < 10) { setError('A written reason of at least 10 characters is required.'); return; }
+    setBusy(true);
+    setError('');
+    const result = await api<{ success?: boolean; error?: string; merged?: boolean; auditId?: string }>('/api/crm/contacts/merge', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ mode: 'execute', destinationId, sourceIds: sourceIds(), reason: reason.trim(), confirmationToken: preview.token }),
+    });
+    setBusy(false);
+    if (!result.ok || !result.data.success) { setError(String(result.data.error || `Execute failed (${result.status}).`)); return; }
+    setPreview(null);
+    setReason('');
+    onDone('Merge executed — source rows kept as aliases, nothing deleted; reversal is available via the audit snapshot.');
+  };
+
+  return (
+    <div style={{ marginTop: 10, borderTop: `1px solid ${BORDER}`, paddingTop: 10 }}>
+      {rows === null ? (
+        <button type="button" style={{ ...secondary, padding: '4px 10px', fontSize: 11 }} disabled={busy} onClick={() => void loadContacts()}>{busy ? 'Loading records…' : 'Compare records & merge…'}</button>
+      ) : (
+        <div style={{ display: 'grid', gap: 8 }}>
+          <p style={{ margin: 0, fontSize: 11, color: MUTED }}>Choose the surviving record. The others are kept as searchable aliases — never deleted — and student identities are never rewritten.</p>
+          {error && <p style={{ margin: 0, color: '#b42318', fontSize: 12 }}>Unavailable: {error}</p>}
+          {rows.map((row) => (
+            <label key={row.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '6px 10px', cursor: 'pointer' }}>
+              <input type="radio" name={`merge-dest-${contactIds.join('-')}`} checked={destinationId === row.id} onChange={() => { setDestinationId(row.id); setPreview(null); }} />
+              <span><strong>{row.displayName}</strong> · {row.phone}{row.studentId ? ` · Student ${row.studentId}` : ''}{row.email ? ` · ${row.email}` : ''}</span>
+            </label>
+          ))}
+          <textarea aria-label="Merge reason" rows={2} value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Why these records are the same person (min 10 characters)…" style={{ ...input, fontFamily: 'inherit' }} />
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button type="button" style={{ ...secondary, padding: '6px 12px', fontSize: 12 }} disabled={busy} onClick={() => void runPreview()}>{busy ? 'Working…' : 'Preview merge (writes nothing)'}</button>
+            <button type="button" style={{ ...button, padding: '6px 12px', fontSize: 12 }} disabled={busy || !preview?.ok || reason.trim().length < 10} onClick={() => void runExecute()}>Execute merge</button>
+          </div>
+          {preview && (
+            <div style={{ border: `1px solid ${BORDER}`, borderRadius: 10, padding: '8px 10px', fontSize: 12 }}>
+              <p style={{ margin: 0 }}><strong>{preview.ok ? 'Plan ready' : 'Merge refused'}</strong> — {preview.summary}</p>
+              {preview.blockers.length > 0 && <ul style={{ margin: '6px 0 0', paddingLeft: 18, color: '#b42318' }}>{preview.blockers.map((blocker) => <li key={blocker}>{blocker}</li>)}</ul>}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DuplicatesView({ data, loading, error, onDone }: {
   data: Record<string, unknown> | null; loading: boolean; error: string; onDone: (text: string) => void;
 }) {
@@ -391,6 +612,7 @@ function DuplicatesView({ data, loading, error, onDone }: {
           <p style={{ color: MUTED, fontSize: 11 }}>{String(group.reason)}</p>
           <p style={{ fontSize: 11 }}>Contacts: {(group.contactIds as string[] || []).join(', ')}</p>
           <button type="button" style={secondary} onClick={() => void requestReview((group.contactIds as string[]) || [], `Manual review of ${String(group.matchedOn)} match ${String(group.key)}`)}>Request identity review</button>
+          {((group.contactIds as string[]) || []).length >= 2 && <MergePanel contactIds={(group.contactIds as string[]) || []} onDone={onDone} />}
         </div>
       ))}
       <Panel title={`Pending review items (${pending.length})`} rows={pending} columns={['id', 'incomingPhone', 'matchReason', 'status', 'createdAt']} />
