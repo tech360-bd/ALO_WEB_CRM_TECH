@@ -1,7 +1,7 @@
 /**
  * Canonical identifier allocation (student AE-, partner AEP-, employee EMP-).
  *
- * Format: new student IDs use `AE-<YEAR><4-digit sequence>`; partner/employee scopes retain the established 5-digit sequence. Legacy student IDs remain valid and are never rewritten.
+ * Format: new student IDs use `AE-<YEAR><6-digit sequence>` (e.g. AE-2026000001, per the owner-specified format of 2026-11-16); partner/employee scopes retain the established 5-digit sequence. Legacy student IDs (4/5/6-digit) remain valid and are never rewritten.
  *
  * Guarantees (MySQL):
  * - The sequence row is advanced with one atomic UPDATE. `LAST_INSERT_ID(expr)` returns the new
@@ -10,8 +10,8 @@
  *   released before anything was committed, so it is never visible outside the transaction.
  * - Numbers are never reused once committed. Gaps can appear (e.g. a rolled-back business
  *   operation after commit of a separate allocation); gaps are acceptable, reuse is not.
- * - Years follow the business calendar (Asia/Dhaka). Each year restarts at 0001 for AE and 00001 for other scopes.
- * - Sequence overflow (> 9999 for AE or > 99999 for partner/employee scopes in one year) fails closed.
+ * - Years follow the business calendar (Asia/Dhaka). Each year restarts at 000001 for AE and 00001 for other scopes.
+ * - Sequence overflow (> 999999 for AE or > 99999 for partner/employee scopes in one year) fails closed.
  *
  * Note: concurrency behaviour depends on MySQL row locking. It is verified only by the
  * real-database integration test, which requires a disposable MySQL instance.
@@ -22,7 +22,7 @@ import { db } from '@/lib/db';
 export type IdScope = 'AE' | 'AEP' | 'EMP';
 const SCOPES: readonly IdScope[] = ['AE', 'AEP', 'EMP'];
 const MAX_SEQUENCE = 99999;
-const MAX_STUDENT_SEQUENCE = 9999;
+const MAX_STUDENT_SEQUENCE = 999999;
 const BUSINESS_TIME_ZONE = 'Asia/Dhaka';
 
 export class IdentifierAllocationError extends Error {
@@ -47,7 +47,7 @@ export function formatIdentifier(scope: IdScope, year: number, sequence: number)
   if (!Number.isInteger(sequence) || sequence < 1 || sequence > maxSequence) {
     throw new IdentifierAllocationError('Identifier sequence exhausted for this year.');
   }
-  const width = scope === 'AE' ? 4 : 5;
+  const width = scope === 'AE' ? 6 : 5;
   return `${scope}-${year}${String(sequence).padStart(width, '0')}`;
 }
 

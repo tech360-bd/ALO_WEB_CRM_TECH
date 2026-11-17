@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Search, SlidersHorizontal, X, Clock, Award, Globe,
   ExternalLink, BookmarkPlus, GitCompare, Send, Loader2,
@@ -50,14 +50,6 @@ const SUBJECT_AREAS = [
   'Social Sciences', 'Education', 'Hospitality & Tourism',
 ];
 
-const MOCK_STUDENTS = [
-  { id: 's1', name: 'Ahmed Khan', ieltsScore: 7.0, pteScore: 65, gpa: 3.4 },
-  { id: 's2', name: 'Priya Sharma', ieltsScore: 6.5, pteScore: 58, gpa: 3.1 },
-  { id: 's3', name: 'David Chen', ieltsScore: 7.5, pteScore: 72, gpa: 3.8 },
-  { id: 's4', name: 'Fatima Al-Rashid', ieltsScore: 6.0, pteScore: 50, gpa: 2.9 },
-  { id: 's5', name: 'James Wilson', ieltsScore: 8.0, pteScore: 79, gpa: 3.6 },
-];
-
 interface Filters {
   search: string;
   countries: string[];
@@ -82,11 +74,16 @@ const DEFAULT_FILTERS: Filters = {
   ieltsMin: 0,
 };
 
-function EligibilityIndicator({ course, student }: { course: Course; student: typeof MOCK_STUDENTS[0] | null }) {
+export interface ManualEligibility {
+  ieltsScore?: number;
+  pteScore?: number;
+}
+
+function EligibilityIndicator({ course, student }: { course: Course; student: ManualEligibility | null }) {
   if (!student) return null;
 
-  const ieltsOk = !course.ieltsMin || student.ieltsScore >= course.ieltsMin;
-  const pteOk = !course.pteMin || student.pteScore >= course.pteMin;
+  const ieltsOk = student.ieltsScore == null || !course.ieltsMin || student.ieltsScore >= course.ieltsMin;
+  const pteOk = student.pteScore == null || !course.pteMin || student.pteScore >= course.pteMin;
 
   if (ieltsOk && pteOk) {
     return (
@@ -166,14 +163,10 @@ function ProCourseCard({
   course,
   selectedStudent,
   role,
-  onShortlist,
-  onApply,
 }: {
   course: Course;
-  selectedStudent: typeof MOCK_STUDENTS[0] | null;
+  selectedStudent: ManualEligibility | null;
   role: string;
-  onShortlist: (c: Course) => void;
-  onApply: (c: Course) => void;
 }) {
   const levelColors: Record<string, string> = {
     Undergraduate: 'bg-crm-success-bg text-crm-success-text',
@@ -291,16 +284,20 @@ function ProCourseCard({
         <div className="flex gap-2 pt-1">
           <Button
  size="sm"
- className="flex-1 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
- onClick={() => onShortlist(course)}
+ variant="outline"
+ className="flex-1"
+ disabled
+ title="Not wired yet — saving to a student's shortlist from CRM Pro is not connected to an endpoint. Use the student portal shortlist instead."
           >
             <ListPlus className="size-3 mr-1" />
             Shortlist
           </Button>
           <Button
  size="sm"
- className="flex-1 bg-[var(--alo-success-dark)] hover:bg-[var(--alo-success-dark)] text-white"
- onClick={() => onApply(course)}
+ variant="outline"
+ className="flex-1"
+ disabled
+ title="Not wired yet — creating an application from CRM Pro is not connected to an endpoint. Use the student portal application flow instead."
           >
             <FilePlus2 className="size-3 mr-1" />
             Apply
@@ -354,10 +351,18 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-  const [selectedStudentId, setSelectedStudentId] = useState('');
+  const [ieltsInput, setIeltsInput] = useState('');
+  const [pteInput, setPteInput] = useState('');
   const pageSize = 12;
 
-  const selectedStudent = MOCK_STUDENTS.find((s) => s.id === selectedStudentId) || null;
+  const selectedStudent: ManualEligibility | null = useMemo(() => {
+    const ielts = ieltsInput.trim() === '' ? undefined : Number(ieltsInput);
+    const pte = pteInput.trim() === '' ? undefined : Number(pteInput);
+    const ieltsScore = ielts != null && Number.isFinite(ielts) ? ielts : undefined;
+    const pteScore = pte != null && Number.isFinite(pte) ? pte : undefined;
+    if (ieltsScore == null && pteScore == null) return null;
+    return { ieltsScore, pteScore };
+  }, [ieltsInput, pteInput]);
 
   const fetchCourses = useCallback(async () => {
     setLoading(true);
@@ -402,23 +407,25 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
   };
 
   const handleExport = () => {
-    toast.success('Exporting results to CSV...');
-  };
-
-  const handleShortlist = (course: Course) => {
-    if (!selectedStudentId) {
-      toast.error('Please select a student first');
+    if (courses.length === 0) {
+      toast.error('Nothing to export — no courses match the current filters.');
       return;
     }
-    toast.success(`"${course.courseTitle}" added to ${selectedStudent?.name}'s shortlist`);
-  };
-
-  const handleApply = (course: Course) => {
-    if (!selectedStudentId) {
-      toast.error('Please select a student first');
-      return;
-    }
-    toast.success(`Application created for "${course.courseTitle}"`);
+    const header = ['Course ID', 'Course Title', 'University', 'Country', 'Study Level', 'Subject Area', 'Tuition Fee', 'Currency', 'Intake', 'IELTS Min', 'PTE Min', 'Source URL'];
+    const lines = courses.map((c) =>
+      [c.id, c.courseTitle, c.universityName, c.country, c.studyLevel, c.subjectArea ?? '', c.tuitionFee ?? '', c.tuitionCurrency ?? '', c.intake ?? '', c.ieltsMin ?? '', c.pteMin ?? '', c.sourceUrl ?? '']
+        .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+        .join(',')
+    );
+    const csv = [header.join(','), ...lines].join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `alo-course-finder-export-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${courses.length} course${courses.length === 1 ? '' : 's'} to CSV.`);
   };
 
   const toggleCountry = (country: string) => {
@@ -598,22 +605,40 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
               )}
             </div>
 
-            {/* Student Selector */}
-            <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
-              <SelectTrigger className="w-full sm:w-64 bg-[var(--alo-page)] border-[var(--alo-border)] text-white">
-                <SelectValue placeholder="Select student..." />
-              </SelectTrigger>
-              <SelectContent>
-                {MOCK_STUDENTS.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    <div className="flex items-center gap-2">
-                      <span>{s.name}</span>
-                      <span className="text-xs text-[var(--alo-text-muted)]">IELTS {s.ieltsScore}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* Manual eligibility check (no stored student profile required) */}
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={0}
+                step={0.5}
+                inputMode="decimal"
+                aria-label="IELTS overall score"
+                placeholder="IELTS…"
+                value={ieltsInput}
+                onChange={(e) => setIeltsInput(e.target.value)}
+                className="w-28 h-10 bg-[var(--alo-page)] border-[var(--alo-border)]"
+              />
+              <Input
+                type="number"
+                min={0}
+                step={1}
+                inputMode="numeric"
+                aria-label="PTE Academic score"
+                placeholder="PTE…"
+                value={pteInput}
+                onChange={(e) => setPteInput(e.target.value)}
+                className="w-24 h-10 bg-[var(--alo-page)] border-[var(--alo-border)]"
+              />
+              {(ieltsInput || pteInput) && (
+                <button
+                  type="button"
+                  onClick={() => { setIeltsInput(''); setPteInput(''); }}
+                  className="text-xs text-[var(--alo-text-muted)] underline hover:text-[var(--alo-text)]"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Pro Action Bar */}
@@ -665,7 +690,7 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
               {selectedStudent && (
                 <Badge variant="outline" className="text-xs border-crm-success-border text-crm-success-text bg-crm-success-bg">
                   <UserCheck className="size-3 mr-1" />
-                  {selectedStudent.name} — IELTS {selectedStudent.ieltsScore}
+                  Checking eligibility{selectedStudent.ieltsScore != null ? ` — IELTS ${selectedStudent.ieltsScore}` : ''}{selectedStudent.pteScore != null ? `${selectedStudent.ieltsScore != null ? ',' : ' —'} PTE ${selectedStudent.pteScore}` : ''}
                 </Badge>
               )}
             </div>
@@ -697,8 +722,6 @@ export function CourseFinderPro({ role = 'admin' }: { role?: string }) {
                     course={course}
                     selectedStudent={selectedStudent}
                     role={role}
-                    onShortlist={handleShortlist}
-                    onApply={handleApply}
                   />
                 ))}
               </div>

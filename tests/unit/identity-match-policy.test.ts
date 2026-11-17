@@ -104,7 +104,7 @@ describe('matchInboundIdentity', () => {
  */
 describe('student identifier formats accepted by the exact-ID tier', () => {
   const widths = [
-    ['AE-20260001', '4-digit (current allocator output)'],
+    ['AE-20260001', '4-digit (pre-2026-11 allocator output)'],
     ['AE-202600001', '5-digit (2026-10-24 target format)'],
     ['AE-2026000001', '6-digit (earliest legacy form)'],
   ] as const;

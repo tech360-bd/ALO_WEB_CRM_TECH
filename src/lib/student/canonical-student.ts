@@ -2,8 +2,8 @@
  * Canonical Student Identity Service
  *
  * Provides:
- *   - isCanonicalStudentCode(value): accepts current AE-YYYYNNNN and preserved legacy AE codes
- *   - generateCanonicalStudentCode(): year-prefixed sequential code (AE-YYYYNNNN)
+ *   - isCanonicalStudentCode(value): accepts current AE-YYYYNNNNNN and preserved legacy AE codes
+ *   - generateCanonicalStudentCode(): year-prefixed sequential code (AE-YYYYNNNNNN)
  *   - createCanonicalStudent(params): idempotent create / link by email
  *   - registerStudentAtomically(params): atomic User + Student creation in a transaction
  *
@@ -21,7 +21,7 @@ import { createRegistrationLead, type RegistrationAttributionInput } from "@/lib
 import { allocateIdentifier, allocateIdentifierCommitted } from "@/lib/identity/student-id";
 import { Prisma } from "@prisma/client";
 
-// New IDs use four sequence digits. Accept historical five/six-digit AE IDs and ALO-S IDs without rewriting them.
+// New IDs use six sequence digits. Accept historical four/five-digit AE IDs and ALO-S IDs without rewriting them.
 const CANONICAL_STUDENT_REGEX = /^(?:AE-\d{4}(?:\d{4}|\d{5}|\d{6})|ALO-S-\d+)$/;
 export const CONSENT_VERSION = "1.0";
 const MAX_CODE_RETRIES = 5;

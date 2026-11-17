@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 
-// New Student.studentId contract: AE-YYYYNNNN; accept historical five/six-digit IDs unchanged.
+// New Student.studentId contract: AE-YYYYNNNNNN (6-digit); accept historical 4/5/6-digit IDs unchanged.
 const CANONICAL_REGEX = /^(?:AE-\d{4}(?:\d{4}|\d{5}|\d{6})|ALO-S-\d+)$/;
 function isCanonicalStudentCode(value: string) { return typeof value === 'string' && CANONICAL_REGEX.test(value); }
 
@@ -23,7 +23,7 @@ describe('canonical Student ID format', () => {
     expect(canonical).toContain("allocateIdentifier(tx, 'AE')");
     expect(canonical).toContain('MAX_CODE_RETRIES');
     expect(allocator).toContain("timeZone: BUSINESS_TIME_ZONE");
-    expect(allocator).toContain("scope === 'AE' ? 4 : 5");
+    expect(allocator).toContain("scope === 'AE' ? 6 : 5");
   });
 });
 

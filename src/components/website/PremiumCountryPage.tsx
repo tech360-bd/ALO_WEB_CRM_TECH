@@ -47,6 +47,7 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
 
   const [leadForm, setLeadForm] = useState({
     name: '', phone: '', email: '', level: '', subject: '', intake: '', budget: '', englishTest: '', englishScore: '', message: '',
+    serviceConsent: false, marketingConsent: false,
   });
   const [leadSuccess, setLeadSuccess] = useState(false);
   const [leadSuccessMessage, setLeadSuccessMessage] = useState('Your enquiry was received for staff review.');
@@ -87,6 +88,10 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
           notes: [leadForm.englishTest && `English test: ${leadForm.englishTest}${leadForm.englishScore ? ` (${leadForm.englishScore})` : ''}`, leadForm.budget && `Budget: ${leadForm.budget}`, leadForm.message].filter(Boolean).join(' | '),
           source: `Website Destination: ${countryData.name}`,
           sourceSection: `country_page:${countryData.slug}`,
+          // Service-contact permission is required to act on the enquiry;
+          // promotional updates are a separate, optional, unchecked-by-default choice.
+          serviceConsent: leadForm.serviceConsent,
+          marketingConsent: leadForm.marketingConsent,
         }),
       });
       const data = await res.json().catch(() => null);
@@ -684,9 +689,19 @@ export default function PremiumCountryPage({ countryData, linkedCourses = [], li
                 <div className="sm:col-span-2"><label className="font-semibold">English Score</label><input value={leadForm.englishScore} onChange={e=>setLeadForm({...leadForm, englishScore:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm h-12" placeholder="Optional" /></div>
                 <div className="sm:col-span-2"><label className="font-semibold">Message</label><textarea value={leadForm.message} onChange={e=>setLeadForm({...leadForm, message:e.target.value})} className="w-full mt-1 p-3 bg-[var(--alo-page)] border border-[var(--alo-border)] rounded-xl text-sm min-h-[80px]" placeholder="Add any questions or context you want the team to review." /></div>
               </div>
-              <Button type="submit" disabled={submittingLead} className="w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting enquiry…' : 'Submit Enquiry'}</Button>
+              <div className="sm:col-span-2 space-y-2 pt-1">
+                <label className="flex items-start gap-2 text-xs text-[var(--alo-body)] cursor-pointer">
+                  <input type="checkbox" required checked={leadForm.serviceConsent} onChange={e=>setLeadForm({...leadForm, serviceConsent:e.target.checked})} className="mt-0.5 h-4 w-4 accent-[var(--alo-brand)]" />
+                  <span><span className="font-semibold">I agree that ALO Education may contact me about this inquiry</span> (phone, email or WhatsApp) to discuss my study-abroad options. This is required so we can act on your request.</span>
+                </label>
+                <label className="flex items-start gap-2 text-xs text-[var(--alo-body)] cursor-pointer">
+                  <input type="checkbox" checked={leadForm.marketingConsent} onChange={e=>setLeadForm({...leadForm, marketingConsent:e.target.checked})} className="mt-0.5 h-4 w-4 accent-[var(--alo-brand)]" />
+                  <span>Send me optional ALO updates about study-abroad tips, events and offers. You can opt out anytime. Unchecked by default.</span>
+                </label>
+              </div>
+              <Button type="submit" disabled={submittingLead || !leadForm.serviceConsent} className="w-full bg-[var(--alo-cta)] text-white hover:bg-[var(--alo-cta-hover)] h-12 font-bold rounded-xl">{submittingLead ? 'Submitting enquiry…' : 'Submit Enquiry'}</Button>
               {leadError && <p role="alert" className="text-center text-xs font-medium text-crm-danger-text">{leadError}</p>}
-              <p className="text-[11px] text-[var(--alo-text-muted)] text-center">Submitting creates a public enquiry for staff review. No promotional contact consent is recorded by this form.</p>
+              <p className="text-[11px] text-[var(--alo-text-muted)] text-center">Submitting creates a public enquiry for staff review. Promotional updates are only sent if you tick the optional box above.</p>
             </form>
           )}
         </div>

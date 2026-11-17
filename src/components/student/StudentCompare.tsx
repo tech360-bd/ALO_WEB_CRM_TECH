@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { usePortalStore } from '@/lib/stores/portal-store';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
 import {
   Table,
   TableBody,
@@ -19,289 +18,93 @@ import {
   BookmarkX,
   Bookmark,
   GitCompareArrows,
-  GraduationCap,
-  Globe,
-  Calendar,
-  Clock,
-  Languages,
-  AlertTriangle,
-  CheckCircle2,
-  XCircle,
   ArrowRight,
   Trash2,
-  Briefcase,
-  Home,
-  MapPin,
-  Award,
-  Banknote,
-  ShieldCheck,
+  Calendar,
+  Globe,
+  AlertTriangle,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────
-interface ShortlistedCourse {
+// Mirrors the real `SavedCourse` model (prisma/schema.prisma) and the
+// /api/student/shortlist payload. Nothing here is seeded: every value the
+// student sees comes from that endpoint or is rendered as "Not recorded".
+// This file intentionally contains NO visa, work-rights, PSW, ranking or
+// match-score claims — the CRM shortlist does not store them, and
+// inventing them would put fabricated facts in front of students.
+interface ShortlistRow {
   id: string;
-  name: string;
-  university: string;
+  courseName: string;
+  universityName: string;
   country: string;
-  city: string;
-  flag: string;
-  campus: string;
-  intake: string;
-  deadline: string;
-  duration: string;
-  tuition: string;
-  scholarship: string | null;
-  deposit: string;
-  ranking: number;
-  ieltsReq: string;
-  academicReq: string;
-  visaRisk: 'Low' | 'Medium' | 'High';
-  workRights: string;
-  postStudyWork: string;
-  accommodationEst: string;
   level: string;
-  subject: string;
-  logoColor: string;
-  matchScore: number;
+  department: string;
+  tuitionFee: string;
+  intake: string;
+  notes: string;
+  createdAt: string;
 }
 
-// ─── Mock Data ───────────────────────────────────────────────────────
-const INITIAL_SHORTLIST: ShortlistedCourse[] = [
-  {
-    id: 'sl-1',
-    name: 'MSc Data Science',
-    university: 'University of Glasgow',
-    country: 'UK',
-    city: 'Glasgow',
-    flag: '🇬🇧',
-    campus: 'Gilmorehill Campus',
-    intake: 'Sep 2026',
-    deadline: '15 Jul 2026',
-    duration: '1 year',
-    tuition: '£24,000',
-    scholarship: null,
-    deposit: '£2,000',
-    ranking: 76,
-    ieltsReq: '6.5 (no sub < 6.0)',
-    academicReq: '2:1 or GPA 3.2+',
-    visaRisk: 'Low',
-    workRights: '20 hrs/week term time',
-    postStudyWork: '2 years (PSW)',
-    accommodationEst: '£6,000 - £8,000/yr',
-    level: 'Masters',
-    subject: 'Computer Science',
-    logoColor: 'bg-[var(--alo-brand-hover)]',
-    matchScore: 92,
-  },
-  {
-    id: 'sl-2',
-    name: 'MSc Artificial Intelligence',
-    university: 'University of Southampton',
-    country: 'UK',
-    city: 'Southampton',
-    flag: '🇬🇧',
-    campus: 'Highfield Campus',
-    intake: 'Sep 2026',
-    deadline: '31 Jul 2026',
-    duration: '1 year',
-    tuition: '£29,000',
-    scholarship: null,
-    deposit: '£2,500',
-    ranking: 80,
-    ieltsReq: '6.5 (no sub < 6.0)',
-    academicReq: '2:1 or GPA 3.3+',
-    visaRisk: 'Low',
-    workRights: '20 hrs/week term time',
-    postStudyWork: '2 years (PSW)',
-    accommodationEst: '£7,000 - £9,000/yr',
-    level: 'Masters',
-    subject: 'Computer Science',
-    logoColor: 'bg-alo-brand',
-    matchScore: 90,
-  },
-  {
-    id: 'sl-3',
-    name: 'MBA',
-    university: 'University of Aberdeen',
-    country: 'UK',
-    city: 'Aberdeen',
-    flag: '🇬🇧',
-    campus: 'King\'s College Campus',
-    intake: 'Sep 2026',
-    deadline: '31 Jul 2026',
-    duration: '1 year',
-    tuition: '£18,000',
-    scholarship: '£3,000',
-    deposit: '£1,000',
-    ranking: 208,
-    ieltsReq: '6.5 (writing 6.0+)',
-    academicReq: '2:2 or GPA 3.0+',
-    visaRisk: 'Low',
-    workRights: '20 hrs/week term time',
-    postStudyWork: '2 years (PSW)',
-    accommodationEst: '£5,500 - £7,000/yr',
-    level: 'Masters',
-    subject: 'Business',
-    logoColor: 'bg-alo-error',
-    matchScore: 82,
-  },
-];
+const show = (value: string | null | undefined) =>
+  value && value.trim().length > 0 ? value : 'Not recorded';
 
-// ─── Comparison Table Row Config ─────────────────────────────────────
-interface CompareRow {
-  label: string;
-  icon: React.ElementType;
-  key: keyof ShortlistedCourse;
-  type: 'text' | 'currency' | 'ranking' | 'visa-risk';
-  best?: 'lowest' | 'highest';
-}
-
-const COMPARE_ROWS: CompareRow[] = [
-  { label: 'University', icon: GraduationCap, key: 'university', type: 'text' },
-  { label: 'Course Name', icon: GraduationCap, key: 'name', type: 'text' },
-  { label: 'Country', icon: Globe, key: 'country', type: 'text' },
-  { label: 'Campus', icon: MapPin, key: 'campus', type: 'text' },
-  { label: 'Tuition Fee', icon: Banknote, key: 'tuition', type: 'currency', best: 'lowest' },
-  { label: 'Scholarship', icon: Award, key: 'scholarship', type: 'text' },
-  { label: 'Deposit', icon: Banknote, key: 'deposit', type: 'currency', best: 'lowest' },
-  { label: 'Duration', icon: Clock, key: 'duration', type: 'text' },
-  { label: 'Ranking', icon: Award, key: 'ranking', type: 'ranking', best: 'highest' },
-  { label: 'Location', icon: MapPin, key: 'city', type: 'text' },
-  { label: 'Intake', icon: Calendar, key: 'intake', type: 'text' },
-  { label: 'Deadline', icon: Calendar, key: 'deadline', type: 'text' },
-  { label: 'IELTS Requirement', icon: Languages, key: 'ieltsReq', type: 'text' },
-  { label: 'Academic Requirement', icon: GraduationCap, key: 'academicReq', type: 'text' },
-  { label: 'Visa Risk', icon: ShieldCheck, key: 'visaRisk', type: 'visa-risk' },
-  { label: 'Work Rights', icon: Briefcase, key: 'workRights', type: 'text' },
-  { label: 'Post-study Work', icon: Briefcase, key: 'postStudyWork', type: 'text' },
-  { label: 'Accommodation Est.', icon: Home, key: 'accommodationEst', type: 'text' },
-];
-
-// ─── Helpers ─────────────────────────────────────────────────────────
-function parseCurrency(val: string): number {
-  return parseInt(val.replace(/[^0-9]/g, '')) || 0;
-}
-
-function visaRiskBadge(level: string) {
-  switch (level) {
-    case 'Low': return <Badge variant="success" className="text-xs">Low</Badge>;
-    case 'Medium': return <Badge variant="warning" className="text-xs">Medium</Badge>;
-    case 'High': return <Badge variant="danger" className="text-xs">High</Badge>;
-    default: return <span>{level}</span>;
-  }
-}
-
-function getBestValue(key: keyof ShortlistedCourse, best: 'lowest' | 'highest', courses: ShortlistedCourse[]): unknown {
-  const vals = courses.map((c) => {
-    const v = c[key];
-    if (typeof v === 'number') return v;
-    if (typeof v === 'string') return parseCurrency(v);
-    return 0;
-  });
-  if (best === 'lowest') return Math.min(...vals);
-  return Math.max(...vals);
-}
-
-function isCellBest(course: ShortlistedCourse, row: CompareRow, allCourses: ShortlistedCourse[]): boolean {
-  if (!row.best) return false;
-  const bestVal = getBestValue(row.key, row.best, allCourses);
-  const cellVal = course[row.key];
-  if (typeof cellVal === 'number') return cellVal === bestVal;
-  if (typeof cellVal === 'string') return parseCurrency(cellVal) === bestVal;
-  return false;
-}
-
-// ─── Shortlist Card (Compact) ───────────────────────────────────────
-function ShortlistCard({ course, isSelected, onToggleSelect, onRemove }: {
-  course: ShortlistedCourse;
-  isSelected: boolean;
-  onToggleSelect: () => void;
-  onRemove: () => void;
-}) {
-  return (
-    <div className={`group relative bg-white rounded-xl border p-4 hover:shadow-md transition-all duration-200 flex flex-col gap-3 ${isSelected ? 'border-[var(--alo-brand)] ring-2 ring-[var(--alo-brand)]/20' : 'border-[var(--alo-border)]'}`}>
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className={`shrink-0 size-10 rounded-lg ${course.logoColor} flex items-center justify-center text-white font-bold text-sm`}>
-            {course.university.charAt(0)}
-          </div>
-          <div className="min-w-0">
-            <h3 className="font-semibold text-[var(--alo-text)] text-sm line-clamp-1">{course.name}</h3>
-            <p className="text-xs text-[var(--alo-text-muted)] mt-0.5">{course.university}</p>
-          </div>
-        </div>
-        <div className="shrink-0 flex items-center gap-2">
-          <label className="flex items-center gap-1.5 cursor-pointer">
-            <Checkbox
-              checked={isSelected}
-              onCheckedChange={onToggleSelect}
-              className="data-[state=checked]:bg-[var(--alo-brand)] data-[state=checked]:border-[var(--alo-brand)]"
-            />
-          </label>
-          <Button variant="ghost" size="icon-sm" className="text-[var(--alo-text-muted)] hover:text-crm-danger-text h-7 w-7" onClick={onRemove}>
-            <Trash2 className="size-3.5" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-1.5 text-xs text-[var(--alo-text-muted)]">
-        <span className="text-sm">{course.flag}</span>
-        <span>{course.city}</span>
-        <span className="text-[var(--alo-placeholder)]">•</span>
-        <span>{course.country}</span>
-      </div>
-
-      <div className="flex flex-wrap gap-1.5">
-        <Badge variant="outline" className="text-[11px] px-2 py-0 border-[var(--alo-border)] text-[var(--alo-body)]">
-          <Calendar className="size-3 mr-1" /> {course.intake}
-        </Badge>
-        <Badge variant="outline" className="text-[11px] px-2 py-0 border-[var(--alo-border)] text-[var(--alo-body)]">
-          <Clock className="size-3 mr-1" /> {course.duration}
-        </Badge>
-      </div>
-
-      <div className="flex items-baseline gap-2">
-        <span className="text-lg font-bold text-[var(--alo-text)]">{course.tuition}</span>
-        {course.scholarship && (
-          <span className="text-xs font-semibold text-crm-success-text">Scholarship {course.scholarship}</span>
-        )}
-      </div>
-
-      <div className="flex items-center gap-3 text-xs text-[var(--alo-text-muted)]">
-        <span className="flex items-center gap-1"><Languages className="size-3" /> {course.ieltsReq.split(' ')[0]}</span>
-        <span className="flex items-center gap-1"><GraduationCap className="size-3" /> {course.academicReq}</span>
-      </div>
-
-      <div className="flex items-center gap-2 pt-1 mt-auto">
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="sm" className="flex-1 ">
-          Apply
-        </Button>
-        <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="outline" size="sm" className=" ">
-          <Bookmark className="size-3 fill-amber-500 text-crm-warning-text mr-1" />
-          Saved
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Component ──────────────────────────────────────────────────
 export default function StudentCompare() {
-  usePortalStore();
-
-  const [shortlist, setShortlist] = useState<ShortlistedCourse[]>(INITIAL_SHORTLIST);
+  const [rows, setRows] = useState<ShortlistRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState('shortlist');
+  const [pendingRemove, setPendingRemove] = useState<string | null>(null);
 
-  const selectedCourses = shortlist.filter((c) => selectedIds.has(c.id));
+  const loadShortlist = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/student/shortlist', { cache: 'no-store' });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.success === false) {
+        throw new Error(json.error || `Failed to load shortlist (${res.status})`);
+      }
+      setRows(Array.isArray(json.data) ? json.data : []);
+    } catch (err: any) {
+      setError(err?.message || 'Failed to load your shortlist. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const removeCourse = (id: string) => {
-    setShortlist((prev) => prev.filter((c) => c.id !== id));
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.delete(id);
-      return next;
-    });
+  useEffect(() => {
+    loadShortlist();
+  }, [loadShortlist]);
+
+  const selectedCourses = useMemo(
+    () => rows.filter((r) => selectedIds.has(r.id)),
+    [rows, selectedIds]
+  );
+
+  const removeCourse = async (id: string) => {
+    setPendingRemove(id);
+    try {
+      const res = await fetch('/api/student/shortlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'remove', courseId: id, courseName: rows.find((r) => r.id === id)?.courseName }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.success === false) {
+        throw new Error(json.error || `Failed to remove course (${res.status})`);
+      }
+      setRows((prev) => prev.filter((r) => r.id !== id));
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    } catch (err: any) {
+      setError(err?.message || 'Could not remove the course. Please try again.');
+    } finally {
+      setPendingRemove(null);
+    }
   };
 
   const toggleSelect = (id: string) => {
@@ -313,17 +116,9 @@ export default function StudentCompare() {
     });
   };
 
-  const handleCompareSelected = () => {
-    if (selectedCourses.length >= 2) {
-      setActiveTab('compare');
-    }
-  };
-
   return (
     <div className="min-h-screen bg-white">
-      {/* ─── Header ───────────────────────────────────────────────── */}
-      {/* Master §08-E inner-page hero: pale-blue band, breadcrumb-free,
-          navy title + secondary deck. No dark block, no photo scrim. */}
+      {/* Header */}
       <section className="border-b border-[var(--alo-border)] bg-alo-hero px-4 py-8 md:py-10">
         <div className="max-w-6xl mx-auto">
           <p className="caption-text mb-2">Course shortlist</p>
@@ -331,238 +126,192 @@ export default function StudentCompare() {
             Shortlist &amp; Compare
           </h1>
           <p className="text-[var(--alo-text-secondary)] text-sm md:text-base max-w-xl">
-            Save your favorite courses and compare them side by side to make the best decision for your future.
+            Your shortlisted courses are stored in your ALO portal. Compare the recorded details side by side; anything not yet recorded is labelled as such.
           </p>
         </div>
       </section>
 
-      {/* ─── Tabs ─────────────────────────────────────────────────── */}
+      {/* Tabs */}
       <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-              <TabsList className="h-10">
-                <TabsTrigger value="shortlist" className="gap-2 px-5">
-                  <Bookmark className="size-4" />
-                  My Shortlist
-                  {shortlist.length > 0 && (
-                    <span className="ml-1 size-5 rounded-full bg-[var(--alo-brand)] text-white text-[11px] flex items-center justify-center font-bold">
-                      {shortlist.length}
-                    </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="compare" className="gap-2 px-5">
-                  <GitCompareArrows className="size-4" />
-                  Compare
-                  {selectedCourses.length > 0 && (
-                    <span className="ml-1 size-5 rounded-full bg-[var(--alo-cta-hover)] text-white text-[11px] flex items-center justify-center font-bold">
-                      {selectedCourses.length}
-                    </span>
-                  )}
-                </TabsTrigger>
-              </TabsList>
+        {error && (
+          <div role="alert" className="mb-4 border border-crm-warning-border bg-crm-warning-bg text-crm-warning-text rounded-xl px-4 py-3 text-sm flex items-start gap-2">
+            <AlertTriangle className="size-4 mt-0.5 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
-              {activeTab === 'shortlist' && selectedCourses.length >= 2 && (
-                <Button variant="brand" onClick={handleCompareSelected} className="gap-2">
-                  <GitCompareArrows className="size-4" />
-                  Compare Selected ({selectedCourses.length})
-                  <ArrowRight className="size-4" />
-                </Button>
-              )}
-            </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <TabsList className="h-10">
+              <TabsTrigger value="shortlist" className="gap-2 px-5">
+                <Bookmark className="size-4" />
+                My Shortlist
+                {rows.length > 0 && (
+                  <span className="ml-1 size-5 rounded-full bg-[var(--alo-brand)] text-white text-[11px] flex items-center justify-center font-bold">
+                    {rows.length}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="compare" className="gap-2 px-5">
+                <GitCompareArrows className="size-4" />
+                Compare
+                {selectedCourses.length > 0 && (
+                  <span className="ml-1 size-5 rounded-full bg-[var(--alo-cta-hover)] text-white text-[11px] flex items-center justify-center font-bold">
+                    {selectedCourses.length}
+                  </span>
+                )}
+              </TabsTrigger>
+            </TabsList>
 
-            {/* ─── Shortlist Tab ──────────────────────────────────── */}
-            <TabsContent value="shortlist">
-              {shortlist.length === 0 ? (
-                <div className="text-center py-20">
-                  <BookmarkX className="size-16 text-[var(--alo-text-muted)] mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">No courses shortlisted yet</h3>
-                  <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto mb-6">
-                    Browse courses and click Shortlist to save them here. You can compare up to 5 courses side by side.
-                  </p>
-                  <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" className="gap-2">
+            {activeTab === 'shortlist' && selectedCourses.length >= 2 && (
+              <Button variant="brand" onClick={() => setActiveTab('compare')} className="gap-2">
+                <GitCompareArrows className="size-4" />
+                Compare Selected ({selectedCourses.length})
+                <ArrowRight className="size-4" />
+              </Button>
+            )}
+          </div>
+
+          {/* Shortlist Tab */}
+          <TabsContent value="shortlist">
+            {loading ? (
+              <div className="text-center py-20" role="status">
+                <p className="text-[var(--alo-text-muted)]">Loading your shortlist…</p>
+              </div>
+            ) : rows.length === 0 ? (
+              <div className="text-center py-20">
+                <BookmarkX className="size-16 text-[var(--alo-text-muted)] mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">No courses shortlisted yet</h3>
+                <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto mb-6">
+                  Browse the course finder and shortlist courses you like. You can keep up to 5 for side-by-side comparison.
+                </p>
+                <Link href="/course-finder">
+                  <Button variant="cta" className="gap-2">
                     Browse Courses
                     <ArrowRight className="size-4" />
                   </Button>
+                </Link>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-[var(--alo-text-muted)] mb-4">
+                  Select 2-5 courses to compare using the checkboxes.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {rows.map((row) => {
+                    const isSelected = selectedIds.has(row.id);
+                    return (
+                      <div
+                        key={row.id}
+                        className="flex items-start gap-3 border border-[var(--alo-border)] rounded-xl p-4 bg-white"
+                      >
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={() => toggleSelect(row.id)}
+                          aria-label={`Select ${row.courseName} for comparison`}
+                          className="mt-1"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-[var(--alo-text)] leading-snug">{row.courseName || 'Untitled course'}</div>
+                          <div className="mt-1 text-xs text-[var(--alo-text-muted)] flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <span className="inline-flex items-center gap-1"><Globe className="size-3" />{show(row.universityName)}{row.country ? ` — ${row.country}` : ''}</span>
+                          </div>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            {row.level && <Badge variant="outline" className="text-[11px] px-2 py-0">{row.level}</Badge>}
+                            {row.intake && (
+                              <Badge variant="outline" className="text-[11px] px-2 py-0">
+                                <Calendar className="size-3 mr-1" />{row.intake}
+                              </Badge>
+                            )}
+                            {row.tuitionFee && <Badge variant="outline" className="text-[11px] px-2 py-0">Tuition: {row.tuitionFee}</Badge>}
+                          </div>
+                          <div className="mt-3 flex items-center justify-end">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={pendingRemove === row.id}
+                              onClick={() => removeCourse(row.id)}
+                              className="gap-1 text-crm-danger-text border-crm-danger-border"
+                            >
+                              <Trash2 className="size-3" />
+                              {pendingRemove === row.id ? 'Removing…' : 'Remove'}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ) : (
-                <>
-                  <p className="text-sm text-[var(--alo-text-muted)] mb-4">
-                    Select courses to compare (2-5) by checking the boxes
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {shortlist.map((course) => (
-                      <ShortlistCard
-                        key={course.id}
-                        course={course}
-                        isSelected={selectedIds.has(course.id)}
-                        onToggleSelect={() => toggleSelect(course.id)}
-                        onRemove={() => removeCourse(course.id)}
-                      />
+              </>
+            )}
+          </TabsContent>
+
+          {/* Compare Tab */}
+          <TabsContent value="compare">
+            {selectedCourses.length < 2 ? (
+              <div className="text-center py-20">
+                <GitCompareArrows className="size-16 text-[var(--alo-text-muted)] mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">
+                  {selectedCourses.length === 0 ? 'No courses selected for comparison' : 'Select at least 2 courses'}
+                </h3>
+                <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto mb-6">
+                  Go to the Shortlist tab, select 2-5 courses using the checkboxes, and come back to see them side by side.
+                </p>
+                <Button variant="outline" onClick={() => setActiveTab('shortlist')} className="gap-2">
+                  Go to Shortlist
+                  <ArrowRight className="size-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[140px]">Detail</TableHead>
+                      {selectedCourses.map((course) => (
+                        <TableHead key={course.id} className="min-w-[200px] align-top">
+                          <div className="font-semibold text-[var(--alo-text)] leading-snug">{course.courseName || 'Untitled course'}</div>
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {([
+                      ['University', (c: ShortlistRow) => show(c.universityName)],
+                      ['Country', (c: ShortlistRow) => show(c.country)],
+                      ['Academic level', (c: ShortlistRow) => show(c.level)],
+                      ['Department', (c: ShortlistRow) => show(c.department)],
+                      ['Tuition fee', (c: ShortlistRow) => show(c.tuitionFee)],
+                      ['Intake', (c: ShortlistRow) => show(c.intake)],
+                      ['Shortlisted on', (c: ShortlistRow) => {
+                        const d = new Date(c.createdAt);
+                        return Number.isNaN(d.getTime()) ? 'Not recorded' : d.toLocaleDateString();
+                      }],
+                    ] as Array<[string, (c: ShortlistRow) => string]>).map(([label, render]) => (
+                      <TableRow key={label}>
+                        <TableCell className="font-medium text-[var(--alo-text-muted)]">{label}</TableCell>
+                        {selectedCourses.map((course) => (
+                          <TableCell key={course.id}>{render(course)}</TableCell>
+                        ))}
+                      </TableRow>
                     ))}
-                  </div>
-                </>
-              )}
-            </TabsContent>
-
-            {/* ─── Compare Tab ───────────────────────────────────── */}
-            <TabsContent value="compare">
-              {selectedCourses.length < 2 ? (
-                <div className="text-center py-20">
-                  <GitCompareArrows className="size-16 text-[var(--alo-text-muted)] mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-[var(--alo-body)] mb-2">
-                    {selectedCourses.length === 0
-                      ? 'No courses selected for comparison'
-                      : 'Select at least 2 courses'}
-                  </h3>
-                  <p className="text-sm text-[var(--alo-text-muted)] max-w-md mx-auto mb-6">
-                    Go to the Shortlist tab, select 2-5 courses using the checkboxes, and click &quot;Compare Selected&quot; to see them side by side.
-                  </p>
-                  <Button variant="outline" onClick={() => setActiveTab('shortlist')} className="gap-2">
-                    Go to Shortlist
-                    <ArrowRight className="size-4" />
-                  </Button>
-                </div>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm text-[var(--alo-text-muted)]">
-                      Comparing <span className="font-semibold text-[var(--alo-text)]">{selectedCourses.length}</span> courses
-                    </p>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)"
-                      variant="cta"
-                      size="lg"
-                      className="gap-2"
-                    >
-                      Apply to Selected
-                      <ArrowRight className="size-4" />
-                    </Button>
-                  </div>
-
-                  <div className="rounded-xl border border-[var(--alo-border)] overflow-hidden">
-                    <div className="overflow-x-auto custom-scrollbar">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-[180px] sticky left-0 bg-[var(--alo-page)] z-10 min-w-[180px]">
-                              Attribute
-                            </TableHead>
-                            {selectedCourses.map((course) => (
-                              <TableHead key={course.id} className="min-w-[200px] text-center">
-                                <div className="flex flex-col items-center gap-2">
-                                  <div className={`size-10 rounded-lg ${course.logoColor} flex items-center justify-center text-white font-bold text-sm`}>
-                                    {course.university.charAt(0)}
-                                  </div>
-                                  <span className="font-semibold text-[var(--alo-text)] text-xs leading-tight">
-                                    {course.university}
-                                  </span>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-crm-danger-text hover:text-crm-danger-text hover:bg-crm-danger-bg h-7 text-[11px] gap-1"
-                                    onClick={() => removeCourse(course.id)}
-                                  >
-                                    <Trash2 className="size-3" />
-                                    Remove
-                                  </Button>
-                                </div>
-                              </TableHead>
-                            ))}
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {COMPARE_ROWS.map((row, idx) => {
-                            const Icon = row.icon;
-                            return (
-                              <TableRow key={row.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--alo-page)]/50'}>
-                                <TableCell className="sticky left-0 bg-inherit z-10 font-medium text-[var(--alo-body)] text-xs">
-                                  <span className="flex items-center gap-2">
-                                    <Icon className="size-3.5 text-[var(--alo-text-muted)]" />
-                                    {row.label}
-                                  </span>
-                                </TableCell>
-                                {selectedCourses.map((course) => {
-                                  const value = course[row.key];
-                                  const isBest = isCellBest(course, row, selectedCourses);
-                                  return (
-                                    <TableCell
-                                      key={course.id}
-                                      className={`text-center text-sm ${isBest ? 'bg-crm-success-bg font-semibold text-crm-success-text' : 'text-[var(--alo-body)]'}`}
-                                    >
-                                      {row.type === 'visa-risk' ? (
-                                        visaRiskBadge(value as string)
-                                      ) : row.type === 'ranking' ? (
-                                        <div className="flex flex-col items-center">
-                                          <span>{String(value)}</span>
-                                          {isBest && (
-                                            <span className="text-[11px] text-crm-success-text font-medium">Best Ranking</span>
-                                          )}
-                                        </div>
-                                      ) : row.type === 'currency' && isBest ? (
-                                        <div className="flex flex-col items-center">
-                                          <span>{String(value)}</span>
-                                          <span className="text-[11px] text-crm-success-text font-medium">Lowest</span>
-                                        </div>
-                                      ) : (
-                                        <span>{value === null ? (
-                                          <span className="text-[var(--alo-text-muted)] italic">None</span>
-                                        ) : String(value)}</span>
-                                      )}
-                                    </TableCell>
-                                  );
-                                })}
-                              </TableRow>
-                            );
-                          })}
-
-                          {/* Match Score Row */}
-                          <TableRow className="bg-[var(--alo-page)]/50">
-                            <TableCell className="sticky left-0 bg-inherit z-10 font-medium text-[var(--alo-body)] text-xs">
-                              <span className="flex items-center gap-2">
-                                <CheckCircle2 className="size-3.5 text-[var(--alo-text-muted)]" />
-                                Match Score
-                              </span>
-                            </TableCell>
-                            {selectedCourses.map((course) => {
-                              const maxScore = Math.max(...selectedCourses.map((c) => c.matchScore));
-                              const isBest = course.matchScore === maxScore;
-                              return (
-                                <TableCell
-                                  key={course.id}
-                                  className={`text-center ${isBest ? 'bg-crm-success-bg' : ''}`}
-                                >
-                                  <div className={`inline-flex size-12 rounded-full items-center justify-center text-sm font-bold ${
-                                    course.matchScore >= 90 ? 'bg-[var(--alo-success)] text-white' :
-                                    course.matchScore >= 80 ? 'bg-[var(--alo-brand)] text-white' :
-                                    'bg-[var(--alo-warning)] text-white'
-                                  }`}>
-                                    {course.matchScore}%
-                                  </div>
-                                </TableCell>
-                              );
-                            })}
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </div>
-
-                  {/* Bottom Action */}
-                  <div className="mt-6 flex items-center justify-between">
-                    <Button variant="outline" onClick={() => setActiveTab('shortlist')} className="gap-2">
-                      <ArrowRight className="size-4 rotate-180" />
-                      Back to Shortlist
-                    </Button>
-                    <Button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" variant="cta" size="lg" className="gap-2">
-                      Apply to Selected ({selectedCourses.length})
-                      <ArrowRight className="size-4" />
-                    </Button>
-                  </div>
-                </>
-              )}
-            </TabsContent>
-          </Tabs>
-        </div>
+                    <TableRow>
+                      <TableCell className="font-medium text-[var(--alo-text-muted)]">Fees, deadlines, English &amp; academic requirements, scholarships, intakes</TableCell>
+                      {selectedCourses.map((course) => (
+                        <TableCell key={course.id} className="text-sm text-[var(--alo-text-muted)]">
+                          Not stored in your shortlist. Your counsellor can confirm the verified record for this course.
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableBody>
+                </Table>
+                <p className="mt-4 text-xs text-[var(--alo-text-muted)] border border-[var(--alo-border)] rounded-xl px-4 py-3">
+                  Only details stored against your saved shortlist are shown. Where a fee, deadline, requirement or scholarship is not recorded here, it is intentionally left blank rather than guessed — ask your ALO counsellor for the source-verified record before making any decision.
+                </p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </section>
     </div>
   );

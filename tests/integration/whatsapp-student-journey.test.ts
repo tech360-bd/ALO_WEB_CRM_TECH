@@ -150,7 +150,7 @@ describe.skipIf(!HAS_TEST_DB)('advisory lock serialization on real MySQL', () =>
       return `AE-${year}${String(Number(rows[0].value)).padStart(4, '0')}`;
     });
 
-    expect(studentId).toMatch(/^AE-2099\d{4}$/);
+    expect(studentId).toMatch(/^AE-2099\d{6}$/);
 
     const email = `${runId}-${randomUUID()}@example.invalid`;
     const created = await db.student.create({

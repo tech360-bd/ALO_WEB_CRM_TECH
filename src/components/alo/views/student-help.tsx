@@ -22,6 +22,8 @@ export function StudentHelp() {
     }
     const body = `Category: ${category}\n\n${message.trim()}\n\nStudent reference: please add your reference if appropriate.`;
     const mailto = `${ALO_CONTACT.emailHref}?subject=${encodeURIComponent(`[Student support] ${subject.trim()}`)}&body=${encodeURIComponent(body)}`;
+    // External mailto: URL — the lint rule cannot infer the scheme, so this is intentionally a location change to hand off to the OS mail client.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.assign(mailto);
   };
 

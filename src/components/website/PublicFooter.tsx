@@ -1,5 +1,6 @@
 'use client';
 
+import { ConsentPreferenceLink } from '@/components/analytics/ConsentBanner';
 /**
  * ALO Education — site-wide footer, rendered on EVERY public page (and never
  * inside an authenticated portal) by PublicLayoutWrapper from the root layout.
@@ -469,6 +470,8 @@ export default function PublicFooter() {
             <Link href="/communication-policy" className="transition-colors hover:text-black/60">Communication</Link>
             <span aria-hidden="true">·</span>
             <Link href="/lead-data-usage-policy" className="transition-colors hover:text-black/60">Lead Data</Link>
+            <span aria-hidden="true">·</span>
+            <ConsentPreferenceLink className="transition-colors hover:text-black/60" />
           </div>
         </div>
       </div>

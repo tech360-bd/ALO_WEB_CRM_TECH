@@ -20,6 +20,7 @@ const m = vi.hoisted(() => ({
   audits: [] as Array<Record<string, unknown>>,
   reviews: [] as Array<Record<string, unknown>>,
   updates: [] as Array<{ where: Record<string, unknown>; data: Record<string, unknown> }>,
+  mergeHistory: [] as Array<Record<string, unknown>>,
   reads: [] as string[],
   auditShouldFail: false,
   identifyFactory: null as null | ((phone: string) => unknown),
@@ -90,6 +91,12 @@ vi.mock('@/lib/db', () => {
       create: async (args: { data: Record<string, unknown> }) => {
         m.reviews.push(args.data);
         return { id: `review-${m.reviews.length}` };
+      },
+    },
+    contactMergeHistory: {
+      create: async (args: { data: Record<string, unknown> }) => {
+        m.mergeHistory.push(args.data);
+        return { id: `merge-history-${m.mergeHistory.length}` };
       },
     },
   };
@@ -215,6 +222,7 @@ beforeEach(() => {
   m.audits = [];
   m.reviews = [];
   m.updates = [];
+  m.mergeHistory = [];
   m.reads = [];
   m.auditShouldFail = false;
   m.identifyFactory = null;
