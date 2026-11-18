@@ -25,12 +25,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
+  Bot,
   ChevronDown,
+  Facebook,
   GraduationCap,
   LayoutGrid,
   LogIn,
   MapPin,
   Menu,
+  MessageCircle,
   Phone,
   X,
 } from 'lucide-react';
@@ -602,8 +605,54 @@ export default function PublicNavbar() {
           </DropdownTrigger>
         </div>
 
-        {/* RIGHT — CTA + mobile trigger */}
+        {/* RIGHT — Communication buttons + CTA + mobile trigger */}
         <div className="flex items-center gap-2">
+          {/* 1. AI AGENT BUTTON */}
+          <Button
+            size="sm"
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('alo:open-ai-chat'));
+            }}
+            className="hidden shrink-0 bg-alo-brand text-white px-3 py-2 font-semibold text-[13px] shadow-sm transition-all hover:bg-alo-brand-hover hover:shadow-md focus-visible:ring-alo-cta-accent xl:inline-flex gap-2"
+          >
+            <Bot className="h-4 w-4" />
+            <span className="hidden sm:inline">Chat with AI Agent</span>
+          </Button>
+
+          {/* 2. WHATSAPP AI AGENT BUTTON */}
+          {ALO_CONTACT.hasWhatsApp ? (
+            <a
+              href={`${ALO_CONTACT.whatsappHref}?text=Hi%20ALO%20Education%2C%20I%20want%20to%20apply%20for%20study%20abroad`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Message ALO Education on WhatsApp AI Agent"
+            >
+              <Button
+                size="sm"
+                className="hidden shrink-0 bg-alo-cta text-white px-3 py-2 font-semibold text-[13px] shadow-sm transition-all hover:bg-alo-cta-hover hover:shadow-md focus-visible:ring-alo-cta-accent xl:inline-flex gap-2"
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span className="hidden sm:inline">WhatsApp AI Agent</span>
+              </Button>
+            </a>
+          ) : null}
+
+          {/* 3. FACEBOOK BUTTON */}
+          <a
+            href="https://www.facebook.com/aloeducationbangladesh/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Message ALO Education on Facebook"
+          >
+            <Button
+              size="sm"
+              className="hidden shrink-0 bg-[#1877F2] text-white px-3 py-2 font-semibold text-[13px] shadow-sm transition-all hover:bg-alo-brand-hover hover:shadow-md focus-visible:ring-blue-500 xl:inline-flex gap-2"
+            >
+              <Facebook className="h-4 w-4" />
+              <span className="hidden sm:inline">Message us on Facebook</span>
+            </Button>
+          </a>
+
           <Button
             asChild
             size="lg"
@@ -637,6 +686,59 @@ export default function PublicNavbar() {
                   </div>
 
                   <div className="flex flex-col gap-1 px-4 py-4">
+                    {/* Mobile contact buttons — same 3 actions as desktop header */}
+                    <div className="flex flex-col gap-2 mb-4 pt-2 border-b border-alo-border">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-alo-text-muted">Quick Contact</p>
+                      <div className="flex flex-col gap-2">
+                        {/* Mobile: AI Agent */}
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            window.dispatchEvent(new CustomEvent('alo:open-ai-chat'));
+                            setMobileOpen(false);
+                          }}
+                          className="w-full bg-alo-brand text-white px-3 py-2.5 font-semibold text-[13px] shadow-sm transition-all hover:bg-alo-brand-hover gap-2 justify-start"
+                        >
+                          <Bot className="h-4 w-4" />
+                          <span>Chat with AI Agent</span>
+                        </Button>
+
+                        {/* Mobile: WhatsApp AI Agent */}
+                        {ALO_CONTACT.hasWhatsApp ? (
+                          <a
+                            href={`${ALO_CONTACT.whatsappHref}?text=Hi%20ALO%20Education%2C%20I%20want%20to%20apply%20for%20study%20abroad`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Message ALO Education on WhatsApp AI Agent"
+                          >
+                            <Button
+                              size="sm"
+                              className="w-full bg-alo-cta text-white px-3 py-2.5 font-semibold text-[13px] shadow-sm transition-all hover:bg-alo-cta-hover gap-2 justify-start"
+                            >
+                              <MessageCircle className="h-4 w-4" />
+                              <span>WhatsApp AI Agent</span>
+                            </Button>
+                          </a>
+                        ) : null}
+
+                        {/* Mobile: Facebook */}
+                        <a
+                          href="https://www.facebook.com/aloeducationbangladesh/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Message ALO Education on Facebook"
+                        >
+                          <Button
+                            size="sm"
+                            className="w-full bg-[#1877F2] text-white px-3 py-2.5 font-semibold text-[13px] shadow-sm transition-all hover:bg-alo-brand-hover gap-2 justify-start"
+                          >
+                            <Facebook className="h-4 w-4" />
+                            <span>Message us on Facebook</span>
+                          </Button>
+                        </a>
+                      </div>
+                    </div>
+
                     <Accordion type="single" collapsible className="w-full">
                       <MobileAccordionSection value="destinations" label={t('nav.destinations')}>
                         {destinations.map((d) => (

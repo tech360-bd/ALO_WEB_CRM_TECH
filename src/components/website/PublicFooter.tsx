@@ -22,6 +22,7 @@ import { ConsentPreferenceLink } from '@/components/analytics/ConsentBanner';
 
 import Link from 'next/link';
 import {
+  Bot,
   Building2,
   Facebook,
   GraduationCap,
@@ -400,6 +401,15 @@ export default function PublicFooter() {
                 <span className="text-alo-text-secondary">
                   <span className="font-semibold text-alo-text">Address: </span>
                   {ALO_CONTACT.address}
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Bot className="mt-0.5 h-4 w-4 shrink-0 text-alo-cta" aria-hidden="true" />
+                <span className="text-alo-text-secondary">
+                  <span className="font-semibold text-alo-text">AI Agent (24/7): </span>
+                  <span className="font-medium text-alo-brand hover:text-alo-cta cursor-pointer underline underline-offset-2" onClick={() => window.dispatchEvent(new CustomEvent('alo:open-ai-chat'))}>
+                    Chat with AI Agent
+                  </span>
                 </span>
               </li>
             </ul>
