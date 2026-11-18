@@ -1,8 +1,10 @@
 "use client";
 import { NamedIcon } from "@/components/ui/named-icon";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { CRM_MODULE_WORKSPACES } from "@/lib/super-admin/workspaces";
 
 type CrmModule = "overview" | "leads" | "students" | "applications" | "documents" | "visa" | "finance" | "marketing" | "hr" | "partners" | "universities" | "courses" | "communications" | "tasks" | "reports" | "audit";
 
@@ -25,8 +27,8 @@ const MODULES: { key: CrmModule; label: string; icon: string; desc: string }[] =
   { key: "audit", label: "Audit Logs", icon: "Lock", desc: "Security & audit" },
 ];
 
-export function SuperAdminCrmCommandCenter() {
-  const [activeModule, setActiveModule] = useState<CrmModule>("overview");
+export function SuperAdminCrmCommandCenter({ initialModule = "overview" }: { initialModule?: CrmModule }) {
+  const [activeModule, setActiveModule] = useState<CrmModule>(initialModule);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
@@ -177,16 +179,16 @@ export function SuperAdminCrmCommandCenter() {
     const items = Array.isArray(data) ? data : (Array.isArray(arr) ? arr : []);
     return (
       <div className="bg-white rounded-xl border overflow-hidden">
-        <div className="p-3 border-b flex justify-between items-center"><h4 className="font-semibold text-sm">{activeModule} — {items.length} records</h4><span className="text-xs text-[var(--alo-text-muted)]">Super Admin can perform agent tasks</span></div>
+        <div className="p-3 border-b flex justify-between items-center"><h4 className="font-semibold text-sm">{activeModule} — {items.length} records</h4><span className="text-xs text-[var(--alo-text-muted)]">Supported actions only; see the module workspace for full controls</span></div>
         <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
           <table className="w-full text-xs">
             <thead className="bg-[var(--alo-page)] sticky top-0"><tr><th className="text-left px-3 py-2">ID / Name</th><th className="text-left px-3 py-2">Details</th><th className="text-left px-3 py-2">Status</th><th className="text-right px-3 py-2">Agent Actions</th></tr></thead>
             <tbody>
               {items.map((it:any)=><tr key={it.id} className="border-t hover:bg-[var(--alo-page)]"><td className="px-3 py-2"><div className="font-medium truncate max-w-[180px]">{it.name||it.fullName||it.studentName||it.applicationCode||it.title||it.universityName||it.courseTitle||it.id.slice(0,12)}</div><div className="text-[11px] text-[var(--alo-text-muted)] font-mono">{it.id.slice(0,12)}</div></td><td className="px-3 py-2"><div className="truncate max-w-[280px] text-[var(--alo-body)]">{it.email||it.phone||it.university||it.country||it.destinationCountry||it.courseName||it.status||""} {it.stage?`• ${it.stage}`:""}</div></td><td className="px-3 py-2"><span className="px-2 py-0.5 bg-[var(--alo-surface-muted)] rounded-full text-[11px]">{it.status||it.stage||it.currentStage||"—"}</span></td><td className="px-3 py-2 text-right space-x-1">
-                {activeModule==="leads" && <button disabled={!!actionLoading} onClick={()=>handleAgentAction("assign_lead", { leadId: it.id, counselorId: "super_admin_assign", counselorName: "Super Admin" })} className="px-2 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded text-[11px]">Assign</button>}
+                {activeModule==="leads" && <Link href={CRM_MODULE_WORKSPACES.leads.href} className="inline-block px-2 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded text-[11px]">Open lead workspace</Link>}
                 {activeModule==="applications" && <><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "READY_TO_SUBMIT", note: "Super Admin moved to ready" })} className="px-2 py-1 bg-crm-success-bg hover:bg-crm-success-bg text-crm-success-text rounded text-[11px]">Ready</button><button onClick={()=>handleAgentAction("update_application_stage", { applicationId: it.id, stage: "SUBMITTED_TO_UNIVERSITY", note: "Super Admin submitted" })} className="px-2 py-1 bg-[var(--alo-brand-pale)] hover:bg-[var(--alo-brand-pale)] text-[var(--alo-brand)] rounded text-[11px]">Submit</button></>}
                 {activeModule==="documents" && <><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "APPROVED", reviewerNote: "Super Admin approved" })} className="px-2 py-1 bg-crm-success-bg hover:bg-crm-success-bg text-crm-success-text rounded text-[11px]">Approve</button><button onClick={()=>handleAgentAction("verify_document", { documentId: it.id, status: "REJECTED", reviewerNote: "Super Admin rejected — needs review" })} className="px-2 py-1 bg-crm-danger-bg hover:bg-crm-danger-bg text-crm-danger-text rounded text-[11px]">Reject</button></>}
-                <button disabled title="Not yet wired — disabled to avoid a silent no-op (tracked in BUTTON-INVENTORY.csv)" className="px-2 py-1 bg-[var(--alo-surface-muted)] hover:bg-[var(--alo-page)] rounded text-[11px]">View</button>
+                <Link href={CRM_MODULE_WORKSPACES[activeModule]?.href || "/admin/crm-command"} className="inline-block rounded bg-[var(--alo-surface-muted)] px-2 py-1 text-[11px] hover:bg-[var(--alo-page)]">Open workspace</Link>
               </td></tr>)}
               {items.length===0 && <tr><td colSpan={4} className="p-8 text-center text-[var(--alo-text-muted)]">No records</td></tr>}
             </tbody>
@@ -201,7 +203,7 @@ export function SuperAdminCrmCommandCenter() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-[var(--alo-text)]">Super Admin — CRM Command Center</h2>
-          <p className="text-sm text-[var(--alo-body)] mt-1">Full operations for every CRM module. Perform any agent task as Super Admin — lead assignment, application pipeline, doc verification, visa case, finance, marketing, HR, partners, data, comms, reports. Audit logged, RBAC protected, mobile PWA ready.</p>
+          <p className="text-sm text-[var(--alo-body)] mt-1">Live CRM overview with a small set of guarded quick actions. Use the linked module workspace for full record editing and its established validation, access controls and audit workflow.</p>
         </div>
         <div className="flex gap-2">
           <input placeholder="Search..." value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&fetchData()} className="border rounded-lg px-3 py-2 text-sm w-48" />
@@ -213,16 +215,23 @@ export function SuperAdminCrmCommandCenter() {
         {MODULES.map(m=><button key={m.key} onClick={()=>setActiveModule(m.key)} className={`px-3 py-2.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-1.5 ${activeModule===m.key ? "bg-[var(--alo-brand)] text-white border-[var(--alo-brand)] shadow" : "bg-white hover:bg-[var(--alo-page)] border-[var(--alo-border)] text-[var(--alo-body)]"}`}><NamedIcon name={m.icon} className="size-4" />{m.label}</button>)}
       </div>
 
+      {CRM_MODULE_WORKSPACES[activeModule] && (
+        <div className="flex flex-col gap-3 rounded-xl border border-[var(--alo-border)] bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-[var(--alo-text)]">Full module controls</p>
+            <p className="mt-1 text-xs text-[var(--alo-body)]">This command view is not a universal editor. Open the established workspace for supported edits, approvals and audit history.</p>
+          </div>
+          <Link href={CRM_MODULE_WORKSPACES[activeModule].href} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[var(--alo-brand)] px-4 py-2 text-xs font-semibold text-white hover:bg-[var(--alo-brand-hover)]">
+            {CRM_MODULE_WORKSPACES[activeModule].label}<NamedIcon name="ArrowUpRight" className="size-3.5" />
+          </Link>
+        </div>
+      )}
+
       {loading ? <div className="bg-white rounded-xl border p-12 text-center text-sm text-[var(--alo-text-muted)]">Loading real CRM data...</div> : activeModule==="overview" ? renderOverview() : renderListModule()}
 
-      <div className="bg-[var(--alo-brand-pale)] border border-[var(--alo-border)] rounded-xl p-4">
-        <h4 className="font-semibold text-sm text-[var(--alo-brand-deep)]">Paid-App Quality Guarantees — How Agent Tasks Handled Realistically</h4>
-        <div className="grid md:grid-cols-2 gap-3 mt-3 text-xs text-[var(--alo-brand-deep)]">
-          <div>✅ <b>Knowledge-aware:</b> Counselor tasks use country requirements, course matching, visa rules from. System checks eligibility, English tests, academic requirements before moving stages.</div>
-          <div>✅ <b>Skill-aware:</b> Document verification requires checklist, reviewer notes, audit trail. Visa tasks require risk assessment, funding review, study gap analysis.</div>
-          <div>✅ <b>No overlooked tasks:</b> SLA tracking, escalation, deadline monitoring, next-best-action, weekly reports ensure nothing missed. Every action audit logged.</div>
-          <div>✅ <b>Realistic workflow:</b> Lead → Student → Application → Document → Offer → CAS/I20 → Visa → Enrollment. Each stage validated, not mocked. Super Admin can act as any role securely.</div>
-        </div>
+      <div className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-brand-pale)] p-4">
+        <h4 className="text-sm font-semibold text-[var(--alo-brand-deep)]">Edit and access boundaries</h4>
+        <p className="mt-2 text-xs leading-5 text-[var(--alo-brand-deep)]">Quick actions shown here are limited to the actions explicitly rendered for the selected module. Other edits, approvals and impersonation must use their dedicated permission-checked workspace; this dashboard does not bypass role, tenant, consent or audit requirements.</p>
       </div>
     </div>
   );

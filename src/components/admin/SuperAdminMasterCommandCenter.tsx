@@ -4,8 +4,9 @@ import { NamedIcon } from "@/components/ui/named-icon";
 import { useState } from "react";
 import { SuperAdminWebsiteCmsHub } from "./SuperAdminWebsiteCmsHub";
 import { SuperAdminCrmCommandCenter } from "./SuperAdminCrmCommandCenter";
+import { SuperAdminPortalWorkspaceHub } from "./SuperAdminPortalWorkspaceHub";
 
-type Tab = "website" | "crm" | "agent-tasks" | "system" | "mobile";
+type Tab = "website" | "crm" | "portals" | "agent-tasks" | "system" | "mobile";
 
 export function SuperAdminMasterCommandCenter() {
   const [activeTab, setActiveTab] = useState<Tab>("website");
@@ -16,13 +17,13 @@ export function SuperAdminMasterCommandCenter() {
       <div className="bg-gradient-to-r from-[var(--alo-brand)] to-[var(--alo-brand-hover)] text-white px-6 py-4">
         <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl md:text-2xl font-heading font-bold flex items-center gap-2"><NamedIcon name="ShieldCheck" className="size-6" />Super Admin — Master Command Center <span className="text-xs bg-white/20 px-2 py-1 rounded-full font-medium">Paid-App Quality</span></h1>
-            <p className="text-sm text-[var(--alo-brand-pale)] mt-1">Edit any part of website & CRM directly • Perform any agent task • Live data • Audit logged • RBAC protected</p>
+            <h1 className="text-xl md:text-2xl font-heading font-bold flex items-center gap-2"><NamedIcon name="ShieldCheck" className="size-6" />Super Admin — Master Command Center</h1>
+            <p className="text-sm text-[var(--alo-brand-pale)] mt-1">Website CMS, CRM views and direct portal workspaces • Permission-checked module controls • Audit and approval workflows</p>
           </div>
           <div className="flex gap-2 text-xs">
-            <span className="bg-[var(--alo-success)]/20 border border-[var(--alo-success)]/30 px-3 py-1.5 rounded-full">✓ Live Operations</span>
-            <span className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-full">✓ Audit logged</span>
-            <span className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 px-3 py-1.5 rounded-full"><NamedIcon name="Smartphone" className="size-3.5" />PWA Mobile App</span>
+            <span className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-full">Live system routes</span>
+            <span className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-full">Module-level audit controls</span>
+            <span className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 px-3 py-1.5 rounded-full"><NamedIcon name="Smartphone" className="size-3.5" />Mobile-ready links</span>
           </div>
         </div>
       </div>
@@ -31,11 +32,12 @@ export function SuperAdminMasterCommandCenter() {
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-4">
         <div className="flex flex-wrap gap-2 bg-white rounded-xl border p-2 shadow-sm">
           {[
-            { key: "website", label: "Website CMS", icon: "Globe", desc: "Hero, Services, Stories, Team, FAQs, Countries" },
-            { key: "crm", label: "CRM Command", icon: "Briefcase", desc: "Leads, Students, Applications, Finance, HR, Partners" },
-            { key: "agent-tasks", label: "Agent Tasks Hub", icon: "CheckCircle2", desc: "Perform any agent task realistically" },
-            { key: "system", label: "System & Audit", icon: "Wrench", desc: "Health, Audit, Permissions, PWA Status" },
-            { key: "mobile", label: "Mobile PWA", icon: "Smartphone", desc: "Native app-like experience verification" },
+            { key: "website", label: "Website CMS", icon: "Globe", desc: "Public content and managed site sections" },
+            { key: "crm", label: "CRM Command", icon: "Briefcase", desc: "Live CRM overview and module workspaces" },
+            { key: "portals", label: "Portals & Workspaces", icon: "PanelsTopLeft", desc: "Student, employee, partner, university & parent" },
+            { key: "agent-tasks", label: "Agent Tasks", icon: "CheckCircle2", desc: "Live tasks and dedicated management routes" },
+            { key: "system", label: "System & Audit", icon: "Wrench", desc: "Audit, permissions and system controls" },
+            { key: "mobile", label: "Mobile PWA", icon: "Smartphone", desc: "Mobile portal access" },
           ].map(t => (
             <button key={t.key} onClick={()=>setActiveTab(t.key as Tab)} className={`flex-1 min-w-[140px] text-left px-4 py-3 rounded-xl border transition-all ${activeTab===t.key ? "bg-[var(--alo-brand)] text-white border-[var(--alo-brand)] shadow-md" : "bg-[var(--alo-page)] hover:bg-white border-[var(--alo-border)] text-[var(--alo-body)]"}`}>
               <div className="flex items-center gap-2 font-semibold text-sm"><NamedIcon name={t.icon} className="size-4" />{t.label}</div>
@@ -48,87 +50,42 @@ export function SuperAdminMasterCommandCenter() {
           {activeTab==="website" && <SuperAdminWebsiteCmsHub />}
           {activeTab==="crm" && <SuperAdminCrmCommandCenter />}
 
+          {activeTab==="portals" && <SuperAdminPortalWorkspaceHub />}
+
           {activeTab==="agent-tasks" && (
-            <div className="space-y-6">
-              <div className="bg-white rounded-xl border p-6">
-                <h2 className="text-xl font-bold">Agent Tasks Hub — Realistic Handling with Knowledge & Skills</h2>
-                <p className="text-sm text-[var(--alo-body)] mt-2">Super Admin can perform every task that agents currently perform. System ensures nothing overlooked, handles realistically with necessary knowledge/skills, guarantees paid-app quality.</p>
-
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                  {[
-                    { role: "Counselor", tasks: ["Lead qualification & scoring (uses country/course DB)", "Course matching with eligibility check (IELTS, GPA, budget)", "Student profile completion tracking", "Application draft → review → ready to submit", "SOP/CV review with AI originality check", "Follow-up tasks with SLA"], icon: "GraduationCap" },
-                    { role: "Application Team", tasks: ["Application submission to university/B2B", "Document checklist verification", "Offer management (conditional/unconditional)", "Deposit/CAS/I20/COE tracking", "Deadline monitoring with auto-reminders", "University communication"], icon: "FileEdit" },
-                    { role: "Visa Officer", tasks: ["Visa case creation & readiness score", "Document checklist per country (UK, USA, Canada...)", "Funding review, sponsor verification", "Study gap & refusal review", "Mock interview & feedback", "Visa readiness report with risk flags"], icon: "Stamp" },
-                    { role: "Finance", tasks: ["Payment instruction creation", "Commission tracking (university & partner)", "Payroll generation & approval", "Invoice management", "Revenue reporting"], icon: "Wallet" },
-                    { role: "Marketing", tasks: ["Campaign creation with brand check", "Content generation with approval workflow", "Lead scoring & assignment", "Social inbox & auto-reply", "Calendar scheduling"], icon: "Megaphone" },
-                    { role: "HR & Admin", tasks: ["Employee attendance & leave approval", "Payroll config & run", "Device management", "Document verification (NID, certificates)", "Performance tracking"], icon: "Users" },
-                    { role: "Partner Manager", tasks: ["Partner lead tracking", "Commission calculation", "Partner performance dashboard", "Agreement management"], icon: "Handshake" },
-                    { role: "International Officer", tasks: ["University research activity", "Partnership communication (email/agreement)", "Business strategy for rapid partnerships", "Evidence collection with source URLs"], icon: "Globe" },
-                    { role: "Data & Compliance", tasks: ["University/course data verification", "Source change detection", "Approval queue for critical changes", "Content audit logs"], icon: "Lock" },
-                  ].map(card => (
-                    <div key={card.role} className="border rounded-xl p-4 bg-[var(--alo-page)] hover:bg-white hover:shadow-sm transition-all">
-                      <div className="flex items-center gap-2 font-semibold text-sm"><NamedIcon name={card.icon} className="size-5" />{card.role}</div>
-                      <ul className="mt-3 space-y-1.5">
-                        {card.tasks.map(t=><li key={t} className="text-xs text-[var(--alo-body)] flex gap-1.5"><span className="text-crm-success-text">✓</span><span>{t}</span></li>)}
-                      </ul>
-                      <div className="mt-3 text-[11px] text-[var(--alo-text-muted)]">Live data, audit logged</div>
-                    </div>
-                  ))}
-                </div>
+            <div className="space-y-4">
+              <div className="rounded-xl border border-[var(--alo-border)] bg-white p-5">
+                <h2 className="text-lg font-bold text-[var(--alo-text)]">Live task records and guarded task workspaces</h2>
+                <p className="mt-1 text-sm text-[var(--alo-body)]">The task list below reads CRM task records. To create, assign or update tasks, use the dedicated task workspace; this tab does not claim that every agent action is available here.</p>
+                <a href="/admin/tasks" className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[var(--alo-brand)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--alo-brand-hover)]">Open task management</a>
               </div>
-
-              <div className="bg-crm-warning-bg border border-crm-warning-border rounded-xl p-5">
-                <h3 className="font-semibold text-crm-warning-text text-sm">Why Nothing Overlooked — System Design for Paid-App Quality</h3>
-                <div className="grid md:grid-cols-3 gap-4 mt-3 text-xs text-crm-warning-text">
-                  <div><b>1. Knowledge-aware:</b> Every task checks — country visa rules, work rights, English tests, entry requirements, university rankings, course fees, intake deadlines. No hardcoding.</div>
-                  <div><b>2. Skill-aware:</b> Document verification uses classification, checklist, audit. Visa uses funding/study gap/refusal review. Finance uses payroll calculation with PF/tax. HR uses attendance logic with holiday calendar.</div>
-                  <div><b>3. SLA & Escalation:</b> Communication SLA rules, SlaEvent, EscalationEvent ensure timely response. Missed response triggers warning → supervisor → manager. Dashboard shows breaches.</div>
-                </div>
-              </div>
+              <SuperAdminCrmCommandCenter initialModule="tasks" />
             </div>
           )}
 
           {activeTab==="system" && (
-            <div className="space-y-6">
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-xl border p-5"><h3 className="font-semibold text-sm flex items-center gap-1.5"><NamedIcon name="LockKeyhole" className="size-4" />RBAC &amp; Audit</h3><ul className="mt-3 space-y-2 text-xs text-[var(--alo-body)]"><li>✓ SUPER_ADMIN/ADMIN role check on all /api/admin/* routes</li><li>✓ authenticateRequest validates PortalSession + NextAuth</li><li>✓ Acting-as audited in PortalAuditLog</li><li>✓ Every website/CRM write calls logAuditAction</li><li>✓ Content audit log for services, countries, etc</li><li>✓ CrmAuditLog for data changes</li></ul></div>
-                <div className="bg-white rounded-xl border p-5"><h3 className="font-semibold text-sm flex items-center gap-1.5"><NamedIcon name="BadgeCheck" className="size-4" />Validation &amp; Realism</h3><ul className="mt-3 space-y-2 text-xs text-[var(--alo-body)]"><li>✓ Required fields validated (title, slug, name etc)</li><li>✓ Duplicate detection (slug unique, course code etc)</li><li>✓ Status workflow enforced (draft → pending → published)</li><li>✓ Country sub-data requires countryId</li><li>✓ Lead → Student → Application pipeline enforced</li><li>✓ Document versioning & review status</li></ul></div>
-                <div className="bg-white rounded-xl border p-5"><h3 className="font-semibold text-sm flex items-center gap-1.5"><NamedIcon name="Smartphone" className="size-4" />PWA Mobile</h3><ul className="mt-3 space-y-2 text-xs text-[var(--alo-body)]"><li>✓ manifest.json with standalone display</li><li>✓ Service worker sw.js with offline cache</li><li>✓ Icons 72→512 for all devices</li><li>✓ Apple meta tags & theme-color</li><li>✓ Install prompt (beforeinstallprompt)</li><li>✓ Offline page /offline with retry</li></ul></div>
+            <div className="space-y-5">
+              <div className="rounded-xl border border-[var(--alo-border)] bg-white p-5">
+                <h2 className="text-lg font-bold text-[var(--alo-text)]">System administration and evidence</h2>
+                <p className="mt-1 text-sm text-[var(--alo-body)]">Open the existing controls to inspect roles, access, audit events, security and integrations. The command center does not declare an area verified merely because its route is present.</p>
               </div>
-
-              <div className="bg-white rounded-xl border p-5">
-                <h3 className="font-semibold text-sm mb-3">Super Admin Capabilities — Verification Report</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs">
-                    <thead className="bg-[var(--alo-page)]"><tr><th className="text-left px-3 py-2">Area</th><th className="text-left px-3 py-2">Before</th><th className="text-left px-3 py-2">After (Now)</th><th className="text-left px-3 py-2">Live data?</th></tr></thead>
-                    <tbody>
-                      {[
-                        ["Website Hero Slides", "Mock in homepage-builder, setTimeout toast", "Full CRUD via /api/admin/website/cms?type=hero-slides + homepage aggregator PUT", "✓ Real"],
-                        ["Home Services", "Public GET only /api/website/services", "CRUD via cms API + existing /api/admin/services", "✓ Real"],
-                        ["Success Stories", "Public GET only", "CRUD via cms API, consentStatus, photo upload", "✓ Real"],
-                        ["Team Members", "Public GET only", "CRUD via cms API, bio, specialty", "✓ Real"],
-                        ["Homepage FAQs", "Public GET only", "CRUD via cms API, sortOrder", "✓ Real"],
-                        ["Home Sections", "No API", "CRUD via cms API, sectionKey upsert", "✓ Real"],
-                        ["English Tests", "Public GET only", "CRUD via cms API", "✓ Real"],
-                        ["Countries", "CRUD exists but no sub-data", "CRUD + 9 sub-tables (quickFacts, cities, reasons, entryReqs, englishTests, visaSteps, workRights, faqs, sources)", "✓ Real"],
-                        ["CRM Leads", "Real /api/crm/leads but Super Admin no unified view", "Unified CRM Command Center with assign action, funnel, search", "✓ Real"],
-                        ["Students", "Real PortalStudentProfile", "Super Admin CRM view with real counts, journeyStage", "✓ Real"],
-                        ["Applications", "Real Application model", "Super Admin can update stage, log status, audit", "✓ Real"],
-                        ["Documents", "Real StudentDocument", "Super Admin verify approve/reject with audit", "✓ Real"],
-                        ["Visa Cases", "Real VisaCase", "Super Admin update case, readiness, risk", "✓ Real"],
-                        ["Finance", "Real Payment/Commission/Payroll", "Super Admin view all finance modules", "✓ Real"],
-                        ["Marketing", "Real campaigns", "Super Admin view campaigns/leads/content", "✓ Real"],
-                        ["HR", "Real Employee/Attendance/Leave", "Super Admin view HR modules", "✓ Real"],
-                        ["Partners", "Real PartnerProfile", "Super Admin view partners & leads", "✓ Real"],
-                        ["Universities/Courses", "Real CrmUniversity/CrmCourse", "Super Admin search & view", "✓ Real"],
-                        ["Communications", "Real CommunicationThread/Message/SLA", "Super Admin view threads, SLA breaches", "✓ Real"],
-                        ["Agent Tasks", "Real CounselorTask/VisaTask/AiTask", "Super Admin perform any agent task via POST /api/admin/crm/command-center", "✓ Real"],
-                        ["PWA Mobile", "No manifest, no SW, no install", "manifest.json + sw.js + offline page + PwaRegister component + layout meta + icons", "✓ Real"],
-                      ].map(row=><tr key={row[0]} className="border-t"><td className="px-3 py-2 font-medium">{row[0]}</td><td className="px-3 py-2 text-[var(--alo-text-muted)]">{row[1]}</td><td className="px-3 py-2 text-crm-success-text">{row[2]}</td><td className="px-3 py-2">{row[3]}</td></tr>)}
-                    </tbody>
-                  </table>
-                </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {[
+                  { title: "Access control", description: "Employee roles, permission packages and access requests", href: "/admin/access-control-center" },
+                  { title: "Role permissions", description: "Review and manage role-permission assignments", href: "/admin/role-permissions" },
+                  { title: "Security", description: "Open security controls and status", href: "/admin/security" },
+                  { title: "Audit logs", description: "Inspect recorded administrative and CRM events", href: "/admin/audit-logs" },
+                  { title: "Change approvals", description: "Review pending changes and decision history", href: "/admin/change-approval" },
+                  { title: "Integration health", description: "Inspect configured integration status", href: "/admin/integration-health" },
+                ].map((item) => (
+                  <a key={item.href} href={item.href} className="rounded-xl border border-[var(--alo-border)] bg-white p-4 transition hover:border-[var(--alo-brand)] hover:shadow-sm">
+                    <span className="font-semibold text-sm text-[var(--alo-text)]">{item.title}</span>
+                    <span className="mt-1 block text-xs leading-5 text-[var(--alo-body)]">{item.description}</span>
+                    <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[var(--alo-brand)]">Open control <NamedIcon name="ArrowUpRight" className="size-3.5" /></span>
+                  </a>
+                ))}
               </div>
+              <p className="rounded-xl border border-[var(--alo-border)] bg-[var(--alo-page)] p-4 text-xs leading-5 text-[var(--alo-body)]">Production deployment, provider credentials and external hosting remain subject to their own operational ownership and are not changed from this screen.</p>
             </div>
           )}
 

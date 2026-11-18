@@ -1,10 +1,10 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2955,
+  "filesScanned": 2967,
   "summary": {
     "UNUSED": 92,
-    "REFERENCED_WITH_FALLBACK": 179,
+    "REFERENCED_WITH_FALLBACK": 180,
     "REFERENCED_FAIL_CLOSED": 22,
     "REFERENCED": 131,
     "PUBLIC": 14
@@ -1634,7 +1634,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 15,
+      "referenceCount": 16,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -1645,8 +1645,8 @@
       ],
       "sampleReferences": [
         "prisma/seed-100-departments.ts",
-        "prisma/seed-university-data.ts",
-        "scripts/db-diagnose.mjs"
+        "prisma/seed-catalog.ts",
+        "prisma/seed-university-data.ts"
       ]
     },
     {
@@ -6494,6 +6494,21 @@
       ],
       "sampleReferences": [
         "src/lib/ai-providers/unorouter.ts"
+      ]
+    },
+    {
+      "name": "UPLOAD_DIR",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [],
+      "sampleReferences": [
+        "prisma/seed-catalog.ts"
       ]
     },
     {

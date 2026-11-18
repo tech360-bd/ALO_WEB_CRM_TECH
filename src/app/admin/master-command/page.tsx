@@ -2,7 +2,7 @@ import { SuperAdminMasterCommandCenter } from "@/components/admin/SuperAdminMast
 
 export const metadata = {
   title: "Master Command Center — Super Admin",
-  description: "Super Admin Master Command Center — edit any part of website & CRM directly, perform any agent task, audit logged, RBAC, validation, mobile PWA native-like experience. Paid-app quality.",
+  description: "Super Admin workspace for website content, CRM dashboards, portal routes, and permission-checked module controls.",
 };
 
 export default function MasterCommandPage() {
