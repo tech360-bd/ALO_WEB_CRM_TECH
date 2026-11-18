@@ -14532,7 +14532,8 @@ model AgentResourceQuota {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  @@index([agentId])
+  // `agentId` already has a unique index via @unique; a second index on the
+  // same key adds write/storage cost without improving query plans.
 }
 
 // =============================================================================

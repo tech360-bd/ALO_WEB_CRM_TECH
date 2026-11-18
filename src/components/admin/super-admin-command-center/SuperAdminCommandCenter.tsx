@@ -204,6 +204,12 @@ export default function SuperAdminCommandCenter() {
           </div>
         </div>
 
+        <div className="px-4 pt-4">
+          <Link href="/admin/master-command" className="flex items-center justify-between rounded-xl border border-[var(--cc-border)] bg-[var(--cc-bg-1)] px-3 py-2.5 text-xs font-semibold text-[var(--cc-text-1)] hover:border-[var(--cc-blue)] hover:text-[var(--cc-blue)]">
+            Website &amp; CRM workspaces <NamedIcon name="ArrowUpRight" className="size-3.5" />
+          </Link>
+        </div>
+
         <nav className="py-4">
           {NAV.map((group) => (
             <div key={group.group}>

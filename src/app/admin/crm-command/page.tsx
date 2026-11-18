@@ -2,7 +2,7 @@ import { SuperAdminCrmCommandCenter } from "@/components/admin/SuperAdminCrmComm
 
 export const metadata = {
   title: "CRM Command Center — Super Admin",
-  description: "Full operations for every CRM module. Perform any agent task as Super Admin — lead assignment, application pipeline, doc verification, visa case, finance, marketing, HR, partners, data, comms, reports. Audit logged, RBAC, mobile PWA ready.",
+  description: "Live CRM overview with supported quick actions and links to the existing permission-checked module workspaces.",
 };
 
 export default function CrmCommandPage() {

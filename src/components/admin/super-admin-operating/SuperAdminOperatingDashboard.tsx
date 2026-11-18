@@ -418,6 +418,7 @@ const QUICK_ACTIONS = [
   { label: 'Open Employee Control', href: '/admin/employee-control' },
   { label: 'Permission Matrix', href: '/admin/role-permissions' },
   { label: 'Open AI Command Center', href: '/admin/ai-command-center' },
+  { label: 'Website & CRM Workspaces', href: '/admin/master-command' },
   { label: 'Open Reports', href: '/admin/reports' },
   { label: 'Create AI Build Request', href: '/admin/system-builder' },
   { label: 'Trigger Data Scan', href: '/admin/country-control' },
