@@ -127,6 +127,9 @@ export async function POST(request: NextRequest) {
   const englishTest = text(body, 'englishTest', 80);
   const englishScore = text(body, 'englishScore', 80) || text(body, 'targetScore', 80);
   const service = text(body, 'service', 100);
+  // Explicit, unbundled optional marketing permission. Absent or false means
+  // NOTHING — no default-to-granted path exists here or anywhere else.
+  const marketingConsent = body.marketingConsent === true;
   const message = text(body, 'message', 2000) || text(body, 'notes', 2000);
   const source = text(body, 'source', 100) || 'public_website';
   const sourceSection = text(body, 'sourceSection', 100) || source;
@@ -440,6 +443,28 @@ export async function POST(request: NextRequest) {
         },
       }).catch(() => null);
     }
+    if (marketingConsent && marketingLeadRecord?.id) {
+      await db.marketingLead.update({
+        where: { id: marketingLeadRecord.id },
+        data: { consent: true },
+      }).catch(() => null);
+      try {
+        const { grantConsent } = await import('@/lib/marketing-consent');
+        await grantConsent({
+          visitorId: attribution.visitorId || undefined,
+          email: email || undefined,
+          leadId: createdLeadId || undefined,
+          consentSource: (source || 'PUBLIC_ENQUIRY_FORM').toUpperCase().slice(0, 64),
+          consentMethod: 'CHECKBOX',
+        });
+      } catch (consentError) {
+        // The lead still stands; the consent record is best-effort and loud.
+        console.error('[public-lead->crm] marketing consent could not be recorded', {
+          reason: consentError instanceof Error ? consentError.message : String(consentError),
+        });
+      }
+    }
+
     if (marketingLeadRecord?.id && createdLeadId) {
       const scored = await scoreLead(createdLeadId).catch(() => null);
       if (scored) {
@@ -461,7 +486,7 @@ export async function POST(request: NextRequest) {
           identityReviewId: reviewId || null,
           counselorAssigned,
           assignmentReason,
-          marketingConsentRecorded: false,
+          marketingConsentRecorded: marketingConsent,
           attribution: describeAttribution(attribution),
         }),
       },

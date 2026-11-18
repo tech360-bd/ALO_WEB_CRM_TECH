@@ -28,18 +28,23 @@ import {
   type AnalyticsEventName,
   type AnalyticsEventParams,
 } from './events';
+import { getAnalyticsIdentity } from './visitor';
 
 /** Consent state persisted for the visitor. */
 export interface AnalyticsConsentState {
   /** Analytics storage (cookies / local identifiers). */
   analytics: boolean;
-  /** Ad personalisation / advertising storage. */
+  /** Ad personalisation / advertising storage (marketing category). */
   advertising: boolean;
+  /** Preferences / personalization storage (functional category). */
+  functional: boolean;
   /** True once the visitor has made an explicit choice. */
   decided: boolean;
 }
 
 export const CONSENT_STORAGE_KEY = 'alo.analytics.consent.v1';
+export const CONSENT_VERSION = '2.0';
+export const CONSENT_POLICY_VERSION = '2.0';
 
 type DataLayerEntry = Record<string, unknown>;
 
@@ -67,7 +72,7 @@ export function isAnalyticsReady(): boolean {
 }
 
 export function readConsentState(): AnalyticsConsentState {
-  const fallback: AnalyticsConsentState = { analytics: false, advertising: false, decided: false };
+  const fallback: AnalyticsConsentState = { analytics: false, advertising: false, functional: false, decided: false };
   if (typeof window === 'undefined') return fallback;
   try {
     const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);
@@ -76,6 +81,9 @@ export function readConsentState(): AnalyticsConsentState {
     return {
       analytics: parsed.analytics === true,
       advertising: parsed.advertising === true,
+      // Consent snapshots written before functional consent existed (v1) predate
+      // the preferences toggle; treat the missing flag as denied, never granted.
+      functional: parsed.functional === true,
       decided: parsed.decided === true,
     };
   } catch {
@@ -112,10 +120,9 @@ export function pushConsentCommand(mode: 'default' | 'update', state: AnalyticsC
         ad_user_data: state.advertising ? 'granted' : 'denied',
         ad_personalization: state.advertising ? 'granted' : 'denied',
         analytics_storage: state.analytics ? 'granted' : 'denied',
-        // ALO serves Bangladesh, the UK, the EU and Australia; region-specific
-        // behaviour is left to Google's defaults rather than hard-coded here.
+        // Strictly necessary baseline (site works without preferences).
         functionality_storage: 'granted',
-        personalization_storage: 'denied',
+        personalization_storage: state.functional ? 'granted' : 'denied',
         security_storage: 'granted',
         wait_for_update: mode === 'default' ? 500 : undefined,
       },
@@ -216,4 +223,70 @@ export function discardPendingEvents(): number {
 /** Number of events currently held awaiting a consent decision. */
 export function pendingEventCount(): number {
   return pendingQueue.length;
+}
+
+/**
+ * Persist the visitor's decision server-side (append-only audit record, spec:
+ * Cookie Consent Manager). Best-effort with a reported outcome — the browser
+ * localStorage copy remains the operative client signal, so a network failure
+ * never locks the visitor out of the site; callers surface `ok: false`.
+ */
+export interface ConsentRecordResult {
+  ok: boolean;
+  consentId?: string;
+  error?: string;
+}
+
+export async function recordWebsiteConsent(
+  state: AnalyticsConsentState,
+  source = 'cookie_banner',
+  visitorId?: string,
+): Promise<ConsentRecordResult> {
+  if (typeof window === 'undefined') return { ok: false, error: 'server side' };
+  const id = visitorId || getAnalyticsIdentity().visitorId;
+  if (!id) return { ok: false, error: 'visitor id unavailable' };
+  try {
+    const res = await fetch('/api/cookie-consent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        visitorId: id,
+        necessary: true,
+        analytics: state.analytics,
+        marketing: state.advertising,
+        functional: state.functional,
+        consentVersion: CONSENT_VERSION,
+        policyVersion: CONSENT_POLICY_VERSION,
+        source,
+      }),
+    });
+    const json = await res.json().catch(() => ({} as Record<string, unknown>));
+    if (!res.ok || (json as any).success === false) {
+      return { ok: false, error: String((json as any).error || `HTTP ${res.status}`) };
+    }
+    return { ok: true, consentId: String((json as any).consentId || '') };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : 'network error' };
+  }
+}
+
+/** Withdraw consent entirely (all optional categories denied + withdrawnAt). */
+export async function withdrawWebsiteConsent(visitorId?: string): Promise<ConsentRecordResult> {
+  if (typeof window === 'undefined') return { ok: false, error: 'server side' };
+  const id = visitorId || getAnalyticsIdentity().visitorId;
+  if (!id) return { ok: false, error: 'visitor id unavailable' };
+  try {
+    const res = await fetch('/api/cookie-consent', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visitorId: id, source: 'cookie_banner_withdraw' }),
+    });
+    const json = await res.json().catch(() => ({} as Record<string, unknown>));
+    if (!res.ok || (json as any).success === false) {
+      return { ok: false, error: String((json as any).error || `HTTP ${res.status}`) };
+    }
+    return { ok: true, consentId: String((json as any).consentId || '') };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : 'network error' };
+  }
 }

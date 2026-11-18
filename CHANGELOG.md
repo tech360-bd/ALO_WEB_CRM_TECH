@@ -5,6 +5,37 @@ All notable changes to the ALO Education ERP project are documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 2026-11-16
+
+### Added
+
+- **§109 AI Daily Management Briefing built end-to-end** — `src/lib/intelligence/daily-briefing.ts`
+  (`buildDailyBriefing`) composes Yesterday / Today / At risk / Opportunities / Revenue (30d) /
+  Applications / Visa / Partner performance / Marketing / System issues from live DB counts and sums.
+  Independent per-section failure isolation (failed queries render `ERROR`, never a fabricated 0),
+  every statistic links to its filtered records route, deterministic data-derived `highlights`.
+  New API route `/api/intelligence/daily-briefing` (management-only), new admin UI
+  `/admin/daily-briefing`, Quick Action entries on the Super Admin dashboard, 10 unit tests.
+- **`FEATURE-GAP-REPORT.md`** — standalone spec §123/§124 feature-gap matrix: ALO existing vs
+  benchmark categories vs missing vs implemented vs not-applicable, with maturity levels and an
+  explicit "not implemented / not verified" list.
+
+### Fixed
+
+- `scripts/verify-15-cron.ts` — final gate asserted the obsolete `CRON_JOBS.length === 15` despite
+  the header stating otherwise; now derives from `CRON_JOB_COUNT`.
+- `student-help.tsx` — external `mailto:` hand-off no longer trips the Next internal-navigation lint
+  rule without suppression comment documenting intent; `eslint .` clean (0/0).
+- `FINAL-VERIFICATION-REPORT.md` — re-graded with fresh 2026-11-16 evidence (631 models, 1,118 routes,
+  497 pages, 4,065 tests / 3,917 passed / 0 failed, offline-engine gates, ZIP deliverable §127).
+- `MISSING-FEATURE-STATUS.md` — rewritten for the current pass.
+
+### Notes
+
+- No database was reachable in this environment (`P1001`); migration application, DB-backed
+  integration tests (148 skipped), journeys A–D, backup/restore execution and provider delivery
+  remain `NOT CONFIGURED`/`NOT VERIFIED`. See `FINAL-VERIFICATION-REPORT.md`.
+
 ## [0.3.0] — 2026-07-27
 
 ### Summary

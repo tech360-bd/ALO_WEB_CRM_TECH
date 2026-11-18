@@ -28,6 +28,12 @@ export const ANALYTICS_EVENT_NAMES = [
   'university_search',
   'university_view',
   'scholarship_view',
+  // Country / destination pages (the two are separate surfaces: the country
+  // landing page and the destinations index)
+  'country_page_view',
+  'destination_page_view',
+  // Engagement
+  'page_scroll',
   // Lead funnel
   'lead_form_start',
   'lead_form_submit',
@@ -39,12 +45,16 @@ export const ANALYTICS_EVENT_NAMES = [
   // Application funnel
   'application_start',
   'application_submit',
+  'application_status_changed',
+  'document_upload_completed',
   // Account
   'student_registration',
   'student_login',
   // Service pages
   'visa_page_view',
   'ielts_page_view',
+  'pte_page_view',
+  'toefl_page_view',
   'english_test_start',
   'english_test_complete',
   // Business conversions (server-side Measurement Protocol)
@@ -116,6 +126,17 @@ export const ALLOWED_EVENT_PARAMS = [
   'application_stage',
   'enrollment_status',
   'test_session_id',
+  // Scroll depth milestone (25 / 50 / 75 / 90). A percentage, never a pixel
+  // offset: it is meaningful across viewports and cannot identify a device.
+  'scroll_depth_percent',
+  // Which kind of application document was uploaded, from a fixed vocabulary
+  // (identity | academic | english | financial | other). Never a file name, a
+  // document id or anything read out of the file itself.
+  'upload_kind',
+  // Application stage transition. Stage names are ALO workflow labels and carry
+  // no student data.
+  'stage_from',
+  'stage_to',
   'debug_mode',
 ] as const;
 
@@ -351,6 +372,8 @@ export type PageType =
   | 'country'
   | 'visa'
   | 'ielts'
+  | 'pte'
+  | 'toefl'
   | 'english_test'
   | 'scholarship_list'
   | 'scholarship_detail'
@@ -384,6 +407,13 @@ const PAGE_TYPE_RULES: { pattern: RegExp; type: PageType }[] = [
   { pattern: /^\/universities\/[^/]+/, type: 'university_detail' },
   { pattern: /^\/scholarships\/[^/]+/, type: 'scholarship_detail' },
   { pattern: /^\/language-prep\/(?:ielts|ielts-ukvi)(?:\/|$)/, type: 'ielts' },
+  // PTE and TOEFL are separate products with their own preparation pages and
+  // their own required events. Without these two rules they fell through to the
+  // generic `english_test` type and — because the derivation below treated any
+  // english_test page as IELTS — were reported as `ielts_page_view`, which is
+  // both wrong and the reason `pte_page_view` / `toefl_page_view` never fired.
+  { pattern: /^\/language-prep\/pte(?:-|\/|$)/i, type: 'pte' },
+  { pattern: /^\/language-prep\/toefl(?:-|\/|$)/i, type: 'toefl' },
   { pattern: /^\/destinations\/[^/]+/, type: 'country' },
   // List / hub pages.
   { pattern: /^\/(?:course-finder|courses|compare|eligibility-check)(?:\/|$)/, type: 'course_list' },
@@ -448,12 +478,35 @@ export function pageViewEventsFor(pathname: string): AnalyticsEventName[] {
   const path = (pathname || '/').split('?')[0].split('#')[0];
   const type = detectPageType(path);
   const events: AnalyticsEventName[] = [];
+  const isCountryDetail = /^\/destinations?\/[^/]+/.test(path);
 
   if (type === 'visa' || /\/visa(?:-guide)?(?:\/|$)/.test(path)) events.push('visa_page_view');
-  if (type === 'ielts' || /ielts/.test(path) || type === 'english_test') events.push('ielts_page_view');
+
+  // English examination pages. Each product reports its own event and none of
+  // them may claim another's traffic:
+  //   /language-prep/ielts*  → ielts_page_view
+  //   /language-prep/pte*    → pte_page_view
+  //   /language-prep/toefl*  → toefl_page_view
+  // The language-prep hub (`english_test` type) emits none of the three: it is a
+  // chooser, not an exam page, and attributing it to IELTS inflated the IELTS
+  // figure that the specification asks to be accurate.
+  if (type === 'ielts' || (type !== 'pte' && type !== 'toefl' && /ielts/i.test(path))) {
+    events.push('ielts_page_view');
+  }
+  if (type === 'pte') events.push('pte_page_view');
+  if (type === 'toefl') events.push('toefl_page_view');
+
   if (type === 'course_detail') events.push('course_view');
   if (type === 'university_detail') events.push('university_view');
   if (type === 'scholarship_detail') events.push('scholarship_view');
+
+  // Country vs destination. A country page is a specific study destination
+  // (`/destinations/uk` and its sub-pages); the destination index
+  // (`/destinations`) is the navigation surface that leads to them. Both are
+  // required events in the specification and they answer different questions,
+  // so they are emitted separately rather than collapsed into one name.
+  if (isCountryDetail) events.push('country_page_view');
+  else if (/^\/destinations?\/?$/.test(path)) events.push('destination_page_view');
 
   return events;
 }

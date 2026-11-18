@@ -20,6 +20,20 @@
 //   lint/test config is static and repo-controlled. Zero production impact.
 //   REVISIT: drop the waiver when braces ships a patched release — any other
 //   high/critical advisory (including a NEW one against braces) still fails.
+//
+// Waiver policy — GHSA-fc5q-39xc-vjpf (picomatch ≤4.0.7, id 1247710):
+//   picomatch@4.0.7 is the LATEST published release as of 2026-11-17; the
+//   advisory (ReDoS via single-branch repeated extglobs, CWE-1333,
+//   CVSS 7.5 availability-only) covers every existing release, so no upgrade
+//   path exists yet. Verified 2026-11-17: picomatch 4.0.7 enters the tree
+//   only via @parcel/watcher, tinyglobby, vite and vitest — all dev-only
+//   build/test tooling (package.json devDependencies: vite 8.2.4,
+//   vitest 4.1.11, eslint-config-next 16.4.0). No source file feeds
+//   user input into glob/micromatch/picomatch; every glob pattern in this
+//   repository is static and repo-controlled. Zero production impact.
+//   REVISIT: drop the waiver when picomatch ships a patched release — any
+//   other high/critical advisory (including a NEW one against picomatch)
+//   still fails.
 // ============================================================================
 import { execFileSync } from 'node:child_process';
 
@@ -29,6 +43,12 @@ const WAIVED_ADVISORIES = new Map([
     url: 'https://github.com/advisories/GHSA-vfj7-8cjw-p6xm',
     severity: 'high',
     affectedRange: '<=3.0.3',
+  }],
+  [1247710, {
+    packageName: 'picomatch',
+    url: 'https://github.com/advisories/GHSA-fc5q-39xc-vjpf',
+    severity: 'high',
+    affectedRange: '<=4.0.7',
   }],
 ]);
 

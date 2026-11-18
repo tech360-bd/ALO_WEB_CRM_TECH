@@ -423,6 +423,9 @@ const QUICK_ACTIONS = [
   { label: 'Trigger Data Scan', href: '/admin/country-control' },
   { label: 'Open Security Center', href: '/admin/security' },
   { label: 'Approve Queue', href: '/admin/approvals' },
+  { label: 'What Needs Attention', href: '/admin/attention' },
+  { label: 'Daily Management Briefing', href: '/admin/daily-briefing' },
+  { label: 'Opportunity Graph', href: '/admin/opportunity-graph' },
   { label: 'System Settings', href: '/admin/settings' },
 ] as const;
 

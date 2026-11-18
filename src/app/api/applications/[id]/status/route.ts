@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth-middleware';
 import { INTERNAL_STAGES, canViewB2B, canManageB2B, canViewB2BCommission, stripB2BFields } from '@/lib/application-manager/service';
 import { ApplicationStageTransitionError, transitionApplicationStage } from '@/lib/application-manager/stage-transition';
+import { reportApplicationStatusChanged } from '@/lib/analytics/application-events';
 
 const bodySchema = z.object({
   stage: z.enum(INTERNAL_STAGES),
@@ -33,6 +34,11 @@ export const PATCH = withAuth(async (req, auth, { params }: any) => {
     return NextResponse.json({ success: false, error: 'Forbidden: B2B stage transitions require application.manage_b2b permission.' }, { status: 403 });
   }
 
+  // Captured from inside the transaction so the analytics event can carry the
+  // real from/to stages after the commit. `let` rather than `const` because the
+  // transition is only known once the transaction has run.
+  let stageTransition: { from: string; to: string } | null = null;
+
   try {
     const updated = await db.$transaction(async (tx) => {
       const existing = await tx.application.findUnique({ where: { id: params.id } });
@@ -50,6 +56,7 @@ export const PATCH = withAuth(async (req, auth, { params }: any) => {
         reason,
         visibility: existing.isB2bConfidential ? 'B2B_CONFIDENTIAL' : 'public_safe',
       });
+      stageTransition = { from: transition.previousStage, to: transition.stage };
       const application = await tx.application.update({
         where: { id: params.id },
         data: {
@@ -74,6 +81,21 @@ export const PATCH = withAuth(async (req, auth, { params }: any) => {
       return application;
     });
     const safe = stripB2BFields(updated as any, canSeeB2B, canViewB2BCommission(auth.roles, auth.permissions));
+    // Analytics AFTER the commit. Fire-and-forget: a Google outage must never
+    // roll back or block a stage change. Only stage names and an opaque
+    // application reference leave the system.
+    // Cast through a local because the assignment happens inside the
+    // transaction callback, which TypeScript's control-flow analysis does not
+    // observe — without this the value narrows to `null` and the branches below
+    // would be treated as unreachable.
+    const committedTransition = stageTransition as { from: string; to: string } | null;
+    if (committedTransition) {
+      reportApplicationStatusChanged({
+        applicationId: params.id,
+        fromStage: committedTransition.from,
+        toStage: committedTransition.to,
+      });
+    }
     return NextResponse.json({ success: true, data: safe, application: safe });
   } catch (error: any) {
     if (['B2B_PERMISSION_REQUIRED', 'APPLICATION_SCOPE_DENIED'].includes(error?.code)) {

@@ -106,6 +106,7 @@ import { RealtimeNotificationProvider } from "@/components/realtime/RealtimeNoti
 import GoogleTags from "@/components/analytics/GoogleTags";
 import AnalyticsPageView from "@/components/analytics/AnalyticsPageView";
 import AnalyticsClickTracker from "@/components/analytics/AnalyticsClickTracker";
+import AnalyticsScrollTracker from "@/components/analytics/AnalyticsScrollTracker";
 
 export default function RootLayout({
   children,
@@ -139,8 +140,10 @@ export default function RootLayout({
               cannot see. Skips the first view under GTM to avoid double counting. */}
           <AnalyticsPageView />
           {/* One delegated listener measures every WhatsApp / tel: / mailto: link
-              on the site, including ones on pages that predate this work. */}
+              on the site, including ones that predate this work. */}
           <AnalyticsClickTracker />
+          {/* Scroll-depth milestones (25/50/75/90), once per page view. */}
+          <AnalyticsScrollTracker />
         </AloSiteOnly>
         {/* Centralized English + বাংলা i18n (no per-language route forks) */}
         <I18nProvider>

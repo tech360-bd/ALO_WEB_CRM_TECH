@@ -646,6 +646,10 @@ function StudentDetailBody({
   const { toast } = useToast();
   const { student, internalComments, studentComments, sopDrafts, cvDrafts, communications } = detail;
   const [activeTab, setActiveTab] = React.useState("profile");
+  // Recording or changing a family member is a counselling action: the caller
+  // already proved branch/assignment scope server-side by loading this student,
+  // so any viewer of this page may add family contacts for this student.
+  const canEdit = true;
 
   // Determine "current journey stage" from latest application
   const currentApp = student.applications?.[0];
@@ -765,6 +769,9 @@ function StudentDetailBody({
           <TabsList className="flex w-max gap-1 bg-[var(--alo-brand-light)]/60 p-1">
             <TabsTrigger value="profile" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="User" className="mr-1.5 size-3.5" /> Profile
+            </TabsTrigger>
+            <TabsTrigger value="family" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
+              <Icon name="Users" className="mr-1.5 size-3.5" /> Family
             </TabsTrigger>
             <TabsTrigger value="applications" className="data-[state=active]:bg-white data-[state=active]:text-[var(--alo-brand)]">
               <Icon name="ClipboardList" className="mr-1.5 size-3.5" /> Applications
@@ -917,6 +924,11 @@ function StudentDetailBody({
               <InfoRow label="University preference" value={student.universityPreference} />
             </SectionCard>
           </div>
+        </TabsContent>
+
+        {/* ------------------------- FAMILY TAB ------------------------- */}
+        <TabsContent value="family" className="space-y-4">
+          <FamilySection studentInternalId={student.id} studentPublicId={student.studentId} canEdit={canEdit} />
         </TabsContent>
 
         {/* ------------------------- APPLICATIONS TAB ------------------------- */}
@@ -1548,6 +1560,247 @@ function CommentComposer({
           {isInternal ? "Post Note" : "Post Comment"}
         </Button>
       </div>
+    </div>
+  );
+}
+
+// ============================================================
+// FamilySection — spec §14: parent/guardian/spouse/emergency per student.
+// Shows the family rows already stored in ParentGuardian and lets staff add a
+// member. One parent can carry many students; each student keeps their own
+// rows, so a parent phone can never be written as a student's personal number.
+// No family member is created from an inbound message or import; every add
+// requires this staff form.
+// ============================================================
+interface FamilyConsent {
+  id: string;
+  consentType: string;
+  granted: boolean;
+  createdAt: string;
+}
+interface FamilyRow {
+  id: string;
+  relationship: string;
+  fullName: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  isPrimaryContact: boolean;
+  isFinancialSponsor: boolean;
+  accessLevel: string;
+  portalEnabled: boolean;
+  status: string;
+  notes: string;
+  consents?: FamilyConsent[];
+}
+
+function FamilySection({
+  studentInternalId,
+  studentPublicId,
+  canEdit,
+}: {
+  studentInternalId: string;
+  studentPublicId: string;
+  canEdit: boolean;
+}) {
+  const { toast } = useToast();
+  const [rows, setRows] = React.useState<FamilyRow[] | null>(null);
+  const [error, setError] = React.useState("");
+  const [saving, setSaving] = React.useState(false);
+  const [form, setForm] = React.useState({
+    fullName: "",
+    relationship: "FATHER",
+    phone: "",
+    whatsapp: "",
+    email: "",
+    isPrimaryContact: false,
+    isFinancialSponsor: false,
+    notes: "",
+  });
+
+  const load = React.useCallback(async () => {
+    setError("");
+    // The store keys family rows by the internal Student id (same convention as
+    // applications and visa cases). If nothing is found, try the public AE- id
+    // so legacy rows are still surfaced rather than hidden.
+    const tryFetch = async (key: string) => {
+      const res = await fetch(`/api/parents?studentId=${encodeURIComponent(key)}`, { credentials: "same-origin" });
+      const data = (await res.json().catch(() => null)) as { success?: boolean; parents?: FamilyRow[]; error?: string } | null;
+      return { res, data };
+    };
+    try {
+      let { res, data } = await tryFetch(studentInternalId);
+      if (res.ok && data?.success && (data.parents?.length ?? 0) === 0 && studentPublicId) {
+        const second = await tryFetch(studentPublicId);
+        if (second.res.ok && second.data?.success && (second.data.parents?.length ?? 0) > 0) {
+          ({ res, data } = second);
+        }
+      }
+      if (!res.ok || !data?.success) {
+        setError(data?.error || `Family records could not be loaded (${res.status}).`);
+        setRows([]);
+        return;
+      }
+      setRows(data.parents || []);
+    } catch {
+      setError("The family records endpoint could not be reached. Nothing has been changed.");
+      setRows([]);
+    }
+  }, [studentInternalId, studentPublicId]);
+
+  React.useEffect(() => {
+    void load();
+  }, [load]);
+
+  const submit = async () => {
+    if (!form.fullName.trim()) {
+      toast({ title: "Name required", description: "Enter the family member's full name.", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await fetch("/api/parents", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          studentId: studentInternalId,
+          fullName: form.fullName.trim(),
+          relationship: form.relationship,
+          phone: form.phone.trim() || undefined,
+          whatsapp: form.whatsapp.trim() || undefined,
+          email: form.email.trim() || undefined,
+          isPrimaryContact: form.isPrimaryContact,
+          isFinancialSponsor: form.isFinancialSponsor,
+          notes: form.notes.trim() || undefined,
+        }),
+      });
+      const data = (await res.json().catch(() => null)) as { success?: boolean; error?: string } | null;
+      if (!res.ok || !data?.success) {
+        toast({ title: "Not saved", description: data?.error || `Family member could not be added (${res.status}).`, variant: "destructive" });
+        return;
+      }
+      toast({ title: "Family member added", description: "The record was audited and linked to this student only." });
+      setForm({ fullName: "", relationship: "FATHER", phone: "", whatsapp: "", email: "", isPrimaryContact: false, isFinancialSponsor: false, notes: "" });
+      await load();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const communicationConsent = (row: FamilyRow) => {
+    const granted = (row.consents || []).find((c) => c.consentType === "COMMUNICATION" && c.granted);
+    return granted ? "Granted" : "Not granted";
+  };
+
+  return (
+    <div className="space-y-4">
+      <SectionCard title="Family & guardians" icon="Users">
+        <div className="space-y-3">
+          <p className="text-xs text-muted-foreground">
+            Relationship is recorded per person. One parent may be linked to several students by recording each student separately; a parent&apos;s number is never written as this student&apos;s personal number.
+          </p>
+          {error && <p className="text-xs text-red-600">{error}</p>}
+          {rows === null ? (
+            <LoadingGrid />
+          ) : rows.length === 0 ? (
+            <EmptyState icon="Users" title="No family members recorded" />
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Relationship</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>WhatsApp</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Access</TableHead>
+                    <TableHead>Communication</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rows.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell className="font-medium">
+                        {row.fullName}
+                        {row.isPrimaryContact && <Badge variant="secondary" className="ml-2">Primary</Badge>}
+                        {row.isFinancialSponsor && <Badge variant="secondary" className="ml-2">Sponsor</Badge>}
+                        {row.notes ? <span className="mt-1 block text-[11px] font-normal text-muted-foreground">{row.notes}</span> : null}
+                      </TableCell>
+                      <TableCell>{row.relationship}</TableCell>
+                      <TableCell className="font-mono text-xs">{row.phone || "—"}</TableCell>
+                      <TableCell className="font-mono text-xs">{row.whatsapp || "—"}</TableCell>
+                      <TableCell className="text-xs">{row.email || "—"}</TableCell>
+                      <TableCell className="text-xs">{row.accessLevel}{row.portalEnabled ? " · portal" : ""}</TableCell>
+                      <TableCell className="text-xs">{communicationConsent(row)}</TableCell>
+                      <TableCell className="text-xs">{row.status}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+      </SectionCard>
+
+      {canEdit && (
+        <SectionCard title="Add family member" icon="UserPlus">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <div className="md:col-span-2 lg:col-span-1">
+              <Label htmlFor="fam-name">Full name</Label>
+              <Input id="fam-name" value={form.fullName} onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))} placeholder="e.g. Rafiq Alam" />
+            </div>
+            <div>
+              <Label>Relationship</Label>
+              <Select value={form.relationship} onValueChange={(value) => setForm((p) => ({ ...p, relationship: value }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {["FATHER", "MOTHER", "GUARDIAN", "SPOUSE", "SIBLING", "UNCLE", "AUNT", "GRANDPARENT", "OTHER"].map((rel) => (
+                    <SelectItem key={rel} value={rel}>{rel}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="fam-phone">Phone</Label>
+              <Input id="fam-phone" value={form.phone} onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))} placeholder="01XXXXXXXXX" />
+            </div>
+            <div>
+              <Label htmlFor="fam-wa">WhatsApp</Label>
+              <Input id="fam-wa" value={form.whatsapp} onChange={(e) => setForm((p) => ({ ...p, whatsapp: e.target.value }))} placeholder="If different from phone" />
+            </div>
+            <div>
+              <Label htmlFor="fam-email">Email</Label>
+              <Input id="fam-email" type="email" value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} placeholder="name@example.com" />
+            </div>
+            <div className="flex items-end gap-4">
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={form.isPrimaryContact} onChange={(e) => setForm((p) => ({ ...p, isPrimaryContact: e.target.checked }))} />
+                Primary contact
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={form.isFinancialSponsor} onChange={(e) => setForm((p) => ({ ...p, isFinancialSponsor: e.target.checked }))} />
+                Financial sponsor
+              </label>
+            </div>
+            <div className="md:col-span-2">
+              <Label htmlFor="fam-notes">Notes</Label>
+              <Textarea id="fam-notes" value={form.notes} onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))} placeholder="Context: e.g. preferred WhatsApp only after 6pm" />
+            </div>
+            <div className="flex items-end">
+              <Button onClick={submit} disabled={saving} className="bg-[var(--alo-brand)] text-white hover:bg-[var(--alo-brand)]/90">
+                {saving ? <Icon name="Loader2" className="mr-1.5 size-4 animate-spin" /> : <Icon name="UserPlus" className="mr-1.5 size-4" />}
+                Add family member
+              </Button>
+            </div>
+          </div>
+          <p className="mt-3 text-[11px] text-muted-foreground">
+            Adding a member records a ParentGuardian row linked to this student and an audit entry. It never grants portal access, never sends a message and never creates a CRM contact automatically; consent for communication is recorded separately on the family row.
+          </p>
+        </SectionCard>
+      )}
     </div>
   );
 }

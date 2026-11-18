@@ -18,6 +18,8 @@ const DEFAULT_LIMITS: Record<string, RateLimitConfig> = {
   document: { windowMs: 60 * 1000, max: 50 },
   admin_settings: { windowMs: 60 * 1000, max: 30 },
   lead_create: { windowMs: 60 * 1000, max: 5 },
+  cookie_consent: { windowMs: 60 * 60 * 1000, max: 30 }, // 30 consent writes/hour/IP
+  b2b_prospect_import: { windowMs: 60 * 60 * 1000, max: 10 }, // 10 imports/hour/actor
   webhook: { windowMs: 60 * 1000, max: 100 }, // Allow high for WhatsApp traffic
 };
 

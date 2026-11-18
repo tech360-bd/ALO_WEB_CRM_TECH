@@ -1,12 +1,12 @@
 {
   "generatedBy": "scripts/audit-env-vars.mjs",
   "note": "Application code is authoritative. A variable declared only in a template is UNUSED. Indirect reads through an injectable env record count as references.",
-  "filesScanned": 2901,
+  "filesScanned": 2955,
   "summary": {
     "UNUSED": 92,
-    "REFERENCED_WITH_FALLBACK": 175,
+    "REFERENCED_WITH_FALLBACK": 179,
     "REFERENCED_FAIL_CLOSED": 22,
-    "REFERENCED": 132,
+    "REFERENCED": 131,
     "PUBLIC": 14
   },
   "productionRequired": [
@@ -469,7 +469,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/lib/whatsapp-number-pool.ts"
+        "src/lib/whatsapp-number-pool-plan.ts"
       ]
     },
     {
@@ -554,7 +554,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/lib/whatsapp-number-pool.ts"
+        "src/lib/whatsapp-number-pool-plan.ts"
       ]
     },
     {
@@ -725,7 +725,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
-        "src/lib/whatsapp-number-pool.ts"
+        "src/lib/whatsapp-number-pool-plan.ts"
       ]
     },
     {
@@ -1634,7 +1634,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 13,
+      "referenceCount": 15,
       "failsClosedWhenMissing": true,
       "hasInlineFallback": true,
       "productionRequired": true,
@@ -1644,9 +1644,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "prisma/seed-100-departments.ts",
         "prisma/seed-university-data.ts",
-        "scripts/db-diagnose.mjs",
-        "scripts/dev-sqlite/mint-dev-jwt.mjs"
+        "scripts/db-diagnose.mjs"
       ]
     },
     {
@@ -2336,6 +2336,23 @@
       ]
     },
     {
+      "name": "GA4_PROPERTY_ID",
+      "classification": "REFERENCED",
+      "referenced": true,
+      "referencedIndirectly": true,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": false,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "src/lib/google/config.ts"
+      ]
+    },
+    {
       "name": "GEMINI_API_KEY",
       "classification": "UNUSED",
       "referenced": false,
@@ -2442,12 +2459,12 @@
     },
     {
       "name": "GOOGLE_CLIENT_ID",
-      "classification": "REFERENCED",
+      "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 3,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -2455,19 +2472,19 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "scripts/verify-contact-registry.mjs",
         "src/app/api/seo/health/route.ts",
-        "src/lib/doodle-note-engine.ts",
-        "src/lib/social/providers.ts"
+        "src/lib/doodle-note-engine.ts"
       ]
     },
     {
       "name": "GOOGLE_CLIENT_SECRET",
-      "classification": "REFERENCED",
+      "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 3,
+      "referenceCount": 4,
       "failsClosedWhenMissing": false,
-      "hasInlineFallback": false,
+      "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [
@@ -2475,9 +2492,9 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "scripts/verify-contact-registry.mjs",
         "src/app/api/seo/health/route.ts",
-        "src/lib/doodle-note-engine.ts",
-        "src/lib/social/providers.ts"
+        "src/lib/doodle-note-engine.ts"
       ]
     },
     {
@@ -2495,6 +2512,40 @@
       ],
       "sampleReferences": [
         "src/lib/google/config.ts"
+      ]
+    },
+    {
+      "name": "GOOGLE_CONTACTS_ACCOUNT",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "scripts/verify-contact-registry.mjs"
+      ]
+    },
+    {
+      "name": "GOOGLE_CONTACTS_REFRESH_TOKEN",
+      "classification": "REFERENCED_WITH_FALLBACK",
+      "referenced": true,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
+      "failsClosedWhenMissing": false,
+      "hasInlineFallback": true,
+      "productionRequired": false,
+      "productionRequiredReason": null,
+      "declaredIn": [
+        ".env.example"
+      ],
+      "sampleReferences": [
+        "scripts/verify-contact-registry.mjs"
       ]
     },
     {
@@ -2533,8 +2584,8 @@
       "name": "GOOGLE_OAUTH_REFRESH_TOKEN",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referencedIndirectly": true,
-      "referenceCount": 2,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -2543,8 +2594,7 @@
         ".env.example"
       ],
       "sampleReferences": [
-        "src/lib/google/config.ts",
-        "src/lib/google/oauth.ts"
+        "scripts/verify-contact-registry.mjs"
       ]
     },
     {
@@ -2567,7 +2617,7 @@
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
       "referencedIndirectly": false,
-      "referenceCount": 1,
+      "referenceCount": 2,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
@@ -2577,6 +2627,7 @@
         ".env.production.example"
       ],
       "sampleReferences": [
+        "scripts/verify-contact-registry.mjs",
         "src/app/api/seo/health/route.ts"
       ]
     },
@@ -2618,16 +2669,15 @@
       "name": "GOOGLE_SERVICE_ACCOUNT_JSON",
       "classification": "REFERENCED_WITH_FALLBACK",
       "referenced": true,
-      "referencedIndirectly": true,
-      "referenceCount": 2,
+      "referencedIndirectly": false,
+      "referenceCount": 1,
       "failsClosedWhenMissing": false,
       "hasInlineFallback": true,
       "productionRequired": false,
       "productionRequiredReason": null,
       "declaredIn": [],
       "sampleReferences": [
-        "src/lib/google/config.ts",
-        "src/lib/google/oauth.ts"
+        "scripts/verify-contact-registry.mjs"
       ]
     },
     {

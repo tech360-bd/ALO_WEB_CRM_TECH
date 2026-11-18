@@ -44,7 +44,9 @@ export class RAGEngine {
     }).catch(() => []);
 
     // 3. Verify access control for each chunk (defense in depth)
-    const accessibleChunks = [];
+    // Typed explicitly: an unannotated `[]` infers `never[]` here and every push
+    // below is then an error against an array that can never hold a value.
+    const accessibleChunks: RAGResult["chunks"] = [];
     for (const chunk of chunks) {
       const allowed = await SecurityEngine.enforceDepartmentIsolation(
         query.agentId,

@@ -15,14 +15,19 @@
  *   2. **OAuth refresh token** (`GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` +
  *      `GOOGLE_OAUTH_REFRESH_TOKEN`).
  *
- * Tokens are cached per scope until 60s before expiry.
+ * Tokens are cached per scope until 60s before expiry. A caller that supplies its
+ * own credential (`resolveUserScopedCredential`, used by the People API) gets a
+ * separate cache slot so the two credentials can never be confused.
+ *
+ * Scope list: Search Console, Business Profile, YouTube, and Contacts
+ * (`SCOPE_CONTACTS_READONLY`, People API — user-scoped only).
  *
  * Nothing here logs or returns a secret. Error messages are reduced to a fixed
  * string plus the error *name*, because a fetch failure message includes the
  * request URL — and for the token endpoint that URL carries the credential.
  */
 
-import { createSign, createPrivateKey, randomUUID } from 'node:crypto';
+import { createSign, createPrivateKey, createHash, randomUUID } from 'node:crypto';
 
 /** Read-only Search Console. */
 export const SCOPE_SEARCH_CONSOLE = 'https://www.googleapis.com/auth/webmasters.readonly';
@@ -32,6 +37,8 @@ export const SCOPE_BUSINESS_PROFILE = 'https://www.googleapis.com/auth/business.
 export const SCOPE_YOUTUBE_READONLY = 'https://www.googleapis.com/auth/youtube.readonly';
 /** Upload to YouTube. Requested only when ALO actually publishes. */
 export const SCOPE_YOUTUBE_UPLOAD = 'https://www.googleapis.com/auth/youtube.upload';
+/** Read the signed-in user's Google Contacts (People API). */
+export const SCOPE_CONTACTS_READONLY = 'https://www.googleapis.com/auth/contacts.readonly';
 
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const DEFAULT_TIMEOUT_MS = 15_000;
@@ -109,6 +116,36 @@ export function resolveGoogleCredential(env: NodeJS.ProcessEnv = process.env): G
   return { mode: 'none' };
 }
 
+/**
+ * Credential for a **user-scoped** API (the People API is the only one ALO
+ * needs): prefer an explicit OAuth refresh token even when a service account is
+ * also configured.
+ *
+ * `resolveGoogleCredential` deliberately prefers a service account, because that
+ * is right for Search Console / GA4 / Business Profile. A service account,
+ * however, has no mailbox and therefore can never read a Gmail account's
+ * contacts. Without this preference order a deployment that already holds a
+ * service account (from the Google stack work) would fail every contacts call
+ * with a misleading 403.
+ *
+ * Falls back to the shared credential so an operator who consented as the company
+ * account once (`GOOGLE_OAUTH_REFRESH_TOKEN`) needs no new secret.
+ */
+export function resolveUserScopedCredential(
+  env: NodeJS.ProcessEnv = process.env,
+  preferredRefreshTokenEnv: string[] = [],
+): GoogleCredential {
+  const clientId = (env.GOOGLE_CLIENT_ID || '').trim();
+  const clientSecret = (env.GOOGLE_CLIENT_SECRET || '').trim();
+  for (const name of preferredRefreshTokenEnv) {
+    const refreshToken = (env[name] || '').trim();
+    if (clientId && clientSecret && refreshToken) {
+      return { mode: 'oauth_refresh_token', clientId, clientSecret, refreshToken };
+    }
+  }
+  return resolveGoogleCredential(env);
+}
+
 /** Secret-free credential description, safe to return to an admin UI. */
 export function describeGoogleCredential(env: NodeJS.ProcessEnv = process.env): {
   mode: GoogleAuthMode;
@@ -162,10 +199,35 @@ interface CachedToken {
 /** One cache entry per scope — different scopes need different tokens. */
 const tokenCache = new Map<string, CachedToken>();
 
+/**
+ * Cache key = scope + a credential fingerprint.
+ *
+ * The fingerprint exists because a user-scoped call (People API) may use a
+ * different credential than the shared one for the same scope. It is a truncated
+ * identifier, never the secret itself: the refresh token is only hashed, and only
+ * in memory.
+ */
+function tokenCacheKey(scope: string, credential?: CredentialLike): string {
+  if (!credential) return scope;
+  const fingerprint = credential.refreshToken
+    ? createHash('sha256').update(credential.refreshToken).digest('hex').slice(0, 12)
+    : credential.serviceAccount?.client_email ?? 'none';
+  return `${scope}|${fingerprint}`;
+}
+
+type CredentialLike = { refreshToken?: string; serviceAccount?: { client_email: string } };
+
 /** Forget cached tokens. Call after a 401 so the next attempt re-authenticates. */
 export function clearGoogleTokenCache(scope?: string): void {
-  if (scope) tokenCache.delete(scope);
-  else tokenCache.clear();
+  if (!scope) {
+    tokenCache.clear();
+    return;
+  }
+  tokenCache.delete(scope);
+  // Also drop fingerprint-suffixed entries for the same scope.
+  for (const key of tokenCache.keys()) {
+    if (key.startsWith(`${scope}|`)) tokenCache.delete(key);
+  }
 }
 
 /**
@@ -178,18 +240,20 @@ export async function getGoogleAccessToken(
   scope: string,
   env: NodeJS.ProcessEnv = process.env,
   timeoutMs = DEFAULT_TIMEOUT_MS,
+  credentialOverride?: GoogleCredential,
 ): Promise<
   | { accessToken: string }
   // The error arm cannot include 'READY', so a caller that destructures
   // `{ status: token.error }` into GoogleApiResult type-checks without a cast.
   | { error: Exclude<GoogleAuthStatus, 'READY'>; reason: string; httpStatus?: number }
 > {
-  const credential = resolveGoogleCredential(env);
+  const credential = credentialOverride ?? resolveGoogleCredential(env);
   if (credential.mode === 'none') {
     return { error: 'NOT_CONFIGURED', reason: describeGoogleCredential(env).reason };
   }
+  const cacheKey = tokenCacheKey(scope, credential);
 
-  const cached = tokenCache.get(scope);
+  const cached = tokenCache.get(cacheKey);
   const now = Date.now();
   if (cached && cached.expiresAt - EXPIRY_SKEW_SECONDS * 1000 > now) {
     return { accessToken: cached.accessToken };
@@ -250,7 +314,7 @@ export async function getGoogleAccessToken(
   if (!payload.access_token) {
     return { error: 'AUTH_FAILED', reason: 'Google returned no access token.' };
   }
-  tokenCache.set(scope, {
+  tokenCache.set(cacheKey, {
     accessToken: payload.access_token,
     expiresAt: now + (payload.expires_in ?? 3600) * 1000,
   });
@@ -280,10 +344,11 @@ export async function googleApiRequest<T>(
   init: { method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'; body?: unknown } = {},
   env: NodeJS.ProcessEnv = process.env,
   timeoutMs = DEFAULT_TIMEOUT_MS,
+  credentialOverride?: GoogleCredential,
 ): Promise<GoogleApiResult<T>> {
   const attempt = async (forceRefresh: boolean): Promise<GoogleApiResult<T>> => {
     if (forceRefresh) clearGoogleTokenCache(scope);
-    const token = await getGoogleAccessToken(scope, env, timeoutMs);
+    const token = await getGoogleAccessToken(scope, env, timeoutMs, credentialOverride);
     if ('error' in token) {
       return { status: token.error, reason: token.reason, httpStatus: token.httpStatus };
     }

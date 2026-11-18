@@ -79,6 +79,8 @@ export default function EnquiryForm({
     intake: '',
     message: '',
     whatsappOptIn: true,
+    serviceConsent: false,
+    marketingConsent: false,
   });
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [error, setError] = useState('');
@@ -87,6 +89,11 @@ export default function EnquiryForm({
     event.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) {
       setError('Please add your name, email and phone number so the counselor can reply.');
+      setState('error');
+      return;
+    }
+    if (!form.serviceConsent) {
+      setError('Please confirm you would like us to contact you about this inquiry.');
       setState('error');
       return;
     }
@@ -106,6 +113,8 @@ export default function EnquiryForm({
           intake: form.intake,
           message: form.message,
           contactChannel: form.whatsappOptIn ? 'whatsapp' : 'phone',
+          serviceConsent: form.serviceConsent,
+          marketingConsent: form.marketingConsent,
           source: `${context.type}_enquiry`,
           sourceSection: `${context.type}-enquiry — ${context.subject}${context.reference ? ` (${context.reference})` : ''}`,
           leadType: `${context.type}_enquiry`,
@@ -234,11 +243,33 @@ export default function EnquiryForm({
       <label className="mt-3 flex items-start gap-3 rounded-xl border border-crm-success-border bg-crm-success-bg/60 p-3 text-xs text-[var(--crm-success-text)]">
         <input
           type="checkbox"
+          checked={form.serviceConsent}
+          onChange={(event) => setForm({ ...form, serviceConsent: event.target.checked })}
+          className="mt-0.5 h-4 w-4"
+          required
+          aria-required="true"
+        />
+        <span><span className="font-semibold">Required:</span> I ask ALO Education to contact me about this inquiry (phone/WhatsApp/email). Not permission for marketing.</span>
+      </label>
+
+      <label className="mt-2 flex items-start gap-3 rounded-xl border border-[var(--alo-border)] p-3 text-xs text-[var(--alo-text-muted)]">
+        <input
+          type="checkbox"
           checked={form.whatsappOptIn}
           onChange={(event) => setForm({ ...form, whatsappOptIn: event.target.checked })}
           className="mt-0.5 h-4 w-4"
         />
         <span><span className="font-semibold">Reply on WhatsApp</span> — quickest channel for international students.</span>
+      </label>
+
+      <label className="mt-2 flex items-start gap-3 rounded-xl border border-[var(--alo-border)] p-3 text-xs text-[var(--alo-text-muted)]">
+        <input
+          type="checkbox"
+          checked={form.marketingConsent}
+          onChange={(event) => setForm({ ...form, marketingConsent: event.target.checked })}
+          className="mt-0.5 h-4 w-4"
+        />
+        <span><span className="font-semibold">Optional:</span> I agree to receive promotional updates from ALO Education by email or WhatsApp. I can withdraw at any time. Separate from the response to my enquiry.</span>
       </label>
 
       {state === 'error' && (

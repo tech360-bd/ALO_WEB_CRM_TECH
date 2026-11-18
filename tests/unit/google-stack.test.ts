@@ -111,12 +111,17 @@ describe('detectPageType — real ALO routes', () => {
     expect(detectPageType('/language-prep/ielts-ukvi')).toBe('ielts');
     expect(detectPageType('/english-test-prep')).toBe('english_test');
     expect(detectPageType('/english-tests')).toBe('english_test');
-    // Every language-prep sub-page is an English-test page. PTE, TOEFL, Duolingo
-    // and the rest share the /language-prep parent, and only IELTS is broken out
-    // separately because the specification asks for its own event.
-    expect(detectPageType('/language-prep/pte-academic')).toBe('english_test');
-    expect(detectPageType('/language-prep/toefl-ibt')).toBe('english_test');
+    // PTE and TOEFL are now classified as themselves, not as the generic
+    // english_test bucket. The specification requires a distinct event for each
+    // (pte_page_view, toefl_page_view) and the previous mapping could not express
+    // that: every /language-prep page fell through to `english_test`, and the
+    // derivation then attributed ALL of them to ielts_page_view.
+    expect(detectPageType('/language-prep/pte-academic')).toBe('pte');
+    expect(detectPageType('/language-prep/toefl-ibt')).toBe('toefl');
+    // Pages that are genuinely a chooser with no single exam keep the generic
+    // type.
     expect(detectPageType('/language-prep/comparison')).toBe('english_test');
+    expect(detectPageType('/language-prep/duolingo')).toBe('english_test');
   });
 
   it('does not mistake a prefix for a page', () => {
@@ -178,10 +183,34 @@ describe('pageViewEventsFor — route-derived events cannot be forgotten or doub
     expect(pageViewEventsFor('/destinations/uk')).not.toContain('visa_page_view');
   });
 
-  it('emits ielts_page_view for IELTS and language-prep pages', () => {
+  it('emits ielts_page_view only for IELTS pages', () => {
     expect(pageViewEventsFor('/language-prep/ielts')).toContain('ielts_page_view');
     expect(pageViewEventsFor('/language-prep/ielts-ukvi')).toContain('ielts_page_view');
-    expect(pageViewEventsFor('/english-tests')).toContain('ielts_page_view');
+    // An English-tests hub is not an IELTS page. The old assertion here encoded
+    // the defect (any english_test page counted as IELTS), which inflated the
+    // IELTS figure the specification requires to be accurate.
+    expect(pageViewEventsFor('/english-tests')).not.toContain('ielts_page_view');
+    expect(pageViewEventsFor('/language-prep')).not.toContain('ielts_page_view');
+  });
+
+  it('emits a distinct event per examination product, never another product\'s event', () => {
+    expect(pageViewEventsFor('/language-prep/pte-academic')).toContain('pte_page_view');
+    expect(pageViewEventsFor('/language-prep/pte-academic')).not.toContain('ielts_page_view');
+    expect(pageViewEventsFor('/language-prep/toefl-ibt')).toContain('toefl_page_view');
+    expect(pageViewEventsFor('/language-prep/toefl-ibt')).not.toContain('ielts_page_view');
+    expect(pageViewEventsFor('/language-prep/toefl-ibt')).not.toContain('pte_page_view');
+  });
+
+  it('distinguishes a country page from the destinations index', () => {
+    // Both are required events and they answer different questions: which
+    // destination converted, versus whether the chooser was reached at all.
+    expect(pageViewEventsFor('/destinations/uk')).toContain('country_page_view');
+    expect(pageViewEventsFor('/destinations/uk/courses')).toContain('country_page_view');
+    expect(pageViewEventsFor('/destinations/uk')).not.toContain('destination_page_view');
+    expect(pageViewEventsFor('/destinations')).toContain('destination_page_view');
+    expect(pageViewEventsFor('/destinations')).not.toContain('country_page_view');
+    // /destinations/uk is still a country page for page_type purposes.
+    expect(pageViewEventsFor('/destinations/uk')).not.toContain('course_view');
   });
 
   it('emits nothing for a page that implies no service event', () => {

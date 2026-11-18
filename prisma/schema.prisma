@@ -4541,6 +4541,8 @@ model WhatsAppContact {
   @@index([countryCode])
   @@index([assignedCounselorId])
   @@index([branch])
+
+  phones ContactPhone[]
 }
 
 model WhatsAppMessageArchive {
@@ -14272,7 +14274,7 @@ model AgentRelationship {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  @@unique([parentAgentId, childAgentId, relationshipType])
+  @@unique([parentAgentId, childAgentId, relationshipType], map: "AgentRelationship_parent_child_type_key")
   @@index([parentAgentId])
   @@index([childAgentId])
 }
@@ -14531,4 +14533,128 @@ model AgentResourceQuota {
   updatedAt       DateTime @updatedAt
 
   @@index([agentId])
+}
+
+// =============================================================================
+// CONTACT REGISTRY EXTENSIONS (spec 2026-11-16)
+// =============================================================================
+
+/// Secondary / alternative phone numbers for one registry contact.
+///
+/// `WhatsAppContact` holds the *primary* number and enforces @unique on
+/// phone/normalizedPhone — that constraint protects the live identification
+/// path and must not be weakened. Real people carry personal, business and
+/// WhatsApp numbers; this child table keeps every one of them separately
+/// searchable without touching the primary-number guarantees (spec §3, §10).
+/// A row here never changes identity by itself: matching a secondary number
+/// resolves to its owning contact, and identity decisions still flow through
+/// the existing match policy (spec §5, §10 — no silent merges, no name-only
+/// identification).
+model ContactPhone {
+  id              String   @id @default(cuid())
+  contactId       String
+  phone           String
+  normalizedPhone String
+  label           String   @default("ALTERNATIVE") // PERSONAL | BUSINESS | WHATSAPP | ALTERNATIVE | EMERGENCY | FAMILY
+  isPrimary       Boolean  @default(false)
+  isWhatsApp      Boolean  @default(false)
+  source          String   @default("MANUAL") // MANUAL | GOOGLE_CONTACTS | WHATSAPP | IMPORT
+  createdBy       String   @default("")
+  createdAt       DateTime @default(now())
+
+  contact WhatsAppContact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, normalizedPhone])
+  @@index([normalizedPhone])
+  @@index([contactId])
+}
+
+/// Merge history for the duplicate-resolution workflow.
+///
+/// Contact merges are reversible alias operations (see src/lib/contacts/merge.ts).
+/// This table makes the outcome queryable without unpacking portalAuditLog JSON:
+/// one row per (destination, source) pair, written in the same transaction as the
+/// merge itself so a rolled-back merge can never leave phantom history (spec §10, §22).
+model ContactMergeHistory {
+  id                     String   @id @default(cuid())
+  destinationContactId   String
+  sourceContactId        String
+  destinationPhone       String   @default("")
+  sourcePhone            String   @default("")
+  mergedById             String   @default("")
+  mergedByRole           String   @default("")
+  preservedGoogleAliases String   @default("[]")
+  mergeReason            String   @default("")
+  mergeAuditId           String   @default("") // portalAuditLog.id when an audit row was written
+  mergedAt               DateTime @default(now())
+
+  @@index([destinationContactId])
+  @@index([sourceContactId])
+  @@index([mergedAt])
+}
+
+
+/// Cookie / analytics consent records for the public website (spec: Cookie Consent Manager).
+/// Append-only: one row per visitor decision/change. The website never stores raw
+/// browsing history or any student identity here; only an anonymous visitor token
+/// and the category choices with versions. Withdrawal is recorded as a new row with
+/// `withdrawnAt` set (all categories false), never by mutating history.
+model WebsiteConsent {
+  id             String    @id @default(cuid())
+  visitorId      String    @db.VarChar(64)
+  necessary      Boolean   @default(true)
+  analytics      Boolean   @default(false)
+  marketing      Boolean   @default(false)
+  functional     Boolean   @default(false)
+  consentVersion String    @default("2.0") @db.VarChar(32)
+  policyVersion  String    @default("2.0") @db.VarChar(32)
+  source         String    @default("cookie_banner") @db.VarChar(32)
+  withdrawnAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([visitorId, createdAt])
+  @@index([withdrawnAt])
+  @@map("website_consents")
+}
+
+/// B2B prospect research queue (spec: Google prospect sourcing + Import Center).
+/// Human-led discovery only. `sourceType` restricts what may be stored:
+///   - GOOGLE_MAPS / Places-origin rows MUST NOT carry business phone/email/address
+///     (Google policy forbids persisting Places content in an external CRM database);
+///     such rows are rejected by validation unless the only contact detail is the
+///     official website published by the business itself.
+///   - OFFICIAL_WEBSITE / HUMAN_GOOGLE_SEARCH / GOOGLE_FORMS / B2B_APPLY / OTHER may
+///     carry published business contact details with the source URL recorded.
+/// Lifecycle: DISCOVERED -> VERIFIED -> REVIEW_PENDING -> CONTACTED -> INTERESTED
+///           -> NEGOTIATION -> APPROVED_PARTNER (or REJECTED / DO_NOT_CONTACT).
+/// A prospect NEVER becomes an approved partner automatically.
+model B2bProspect {
+  id                String   @id @default(cuid())
+  organizationName  String   @default("")
+  contactPerson     String   @default("")
+  businessEmail     String   @default("")
+  businessPhone     String   @default("")
+  officialWebsite   String   @default("")
+  country           String   @default("")
+  city              String   @default("")
+  organizationType  String   @default("OTHER") // UNIVERSITY | COLLEGE | AGENCY | CONSULTANCY | LANGUAGE_PROVIDER | PARTNER | OTHER
+  sourceType        String   @default("HUMAN_GOOGLE_SEARCH")
+  sourceUrl         String   @default("")
+  researchDate      DateTime?
+  researcherId      String   @default("")
+  verificationStatus String  @default("DISCOVERED")
+  relationshipStatus String  @default("DISCOVERED")
+  outreachPermission Boolean @default(false)
+  doNotContact      Boolean  @default(false)
+  dedupeKey         String   @db.VarChar(512)
+  notes             String   @default("")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([dedupeKey])
+  @@index([relationshipStatus])
+  @@index([organizationType])
+  @@index([verificationStatus])
+  @@map("b2b_prospects")
 }

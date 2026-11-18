@@ -81,7 +81,7 @@ export default function CertificationPage() {
             <Badge className="bg-green-100 text-green-800">CERTIFIED</Badge>
             <Badge className="bg-yellow-100 text-yellow-800">CONDITIONALLY_CERTIFIED</Badge>
             <Badge className="bg-red-100 text-red-800">FAILED</Badge>
-            <Badge className="bg-gray-100 text-gray-800">EXPIRED</Badge>
+            <Badge className="bg-alo-surface-muted text-alo-text">EXPIRED</Badge>
             <Badge className="bg-blue-100 text-blue-800">UNDER_REVIEW</Badge>
           </div>
           <p className="text-sm text-muted mt-3">

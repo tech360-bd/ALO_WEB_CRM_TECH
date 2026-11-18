@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authenticateRequest } from '@/lib/auth-middleware';
 import { db } from '@/lib/db';
+import { reportEnglishTestComplete } from '@/lib/analytics/application-events';
 import {
   validateEducation,
   validateWork,
@@ -123,6 +124,14 @@ export async function POST(req: NextRequest) {
       if (!result.valid) return issuesResponse(result.issues);
       const created = await db.studentEnglishTestRecord.create({
         data: { ...(result.value as Record<string, never>), studentProfileId: profile.id } as never,
+      });
+      // english_test_complete: fired when an English test outcome is recorded
+      // against the student. Only the test family and the band leave the system;
+      // the section sub-scores stay in the CRM.
+      reportEnglishTestComplete({
+        reference: profile.studentId || profile.id,
+        testName: created.testName,
+        band: created.overallScore,
       });
       return NextResponse.json({ success: true, data: created }, { status: 201 });
     }

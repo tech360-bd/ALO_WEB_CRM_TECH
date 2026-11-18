@@ -49,9 +49,14 @@ password, or any token. Verification coverage:
 
 ## 3. Runtime configuration (separate from the registry)
 
-The following belong in the protected deployment environment (`.env.example`
-contains placeholders only). They control what the application is **allowed**
-to use; they are not proof of ownership either:
+The following belong in the protected deployment environment. As of 2026-11-16,
+`.env.example` ships the **owner-requested values** (`01805020100` main,
+`01805020101` COO, `01805020102`–`01805020119` pool) as the **configuration
+baseline** for fresh environments — not as proof of ownership or connectivity.
+A fresh environment still starts with every number unverified, and no outbound
+send is possible until an administrator supplies a Meta `phone_number_id`,
+`WABA` id and token and a provider verification succeeds. They control what the
+application is **allowed** to use; they are not proof of ownership either:
 
 - `ALO_MAIN_WHATSAPP_NUMBER`
 - `ALO_COO_WHATSAPP_NUMBER`

@@ -5,6 +5,7 @@ import { withAuth } from '@/lib/auth-middleware';
 import { canViewB2B, canViewB2BCommission, filterDocumentsByVisibility } from '@/lib/application-manager/service';
 import { nextDocumentVersion } from '@/lib/documents/document-rejection';
 import { refreshApplicationDocumentStatus } from '@/lib/application-manager/document-readiness';
+import { reportDocumentUploadCompleted } from '@/lib/analytics/application-events';
 
 const uploadSchema = z.object({
   documentType: z.string().trim().min(1).max(80),
@@ -224,6 +225,16 @@ export const POST = withAuth(async (req, auth, { params }: any) => {
       });
       return created;
     });
+    // Only a real byte-backed upload counts as a completed upload; creating a
+    // document REQUIREMENT does not. `document_upload_completed` is a conversion
+    // signal and would be meaningless if a requirement row fired it.
+    if (linkedStudentDocument && normalizedStatus !== 'REQUIRED') {
+      reportDocumentUploadCompleted({
+        reference: app.studentId,
+        category: body.documentType,
+        applicationReference: params.id,
+      });
+    }
     const safeDocument = isPartner
       ? { id: doc.id, applicationId: doc.applicationId, documentType: doc.documentType, fileName: doc.fileName, status: doc.status, visibility: doc.visibility, version: doc.version }
       : { ...doc, fileUrl: '', downloadUrl: doc.documentId ? `/api/visa/documents/${doc.documentId}/download` : null };

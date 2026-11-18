@@ -45,6 +45,9 @@ import {
   TrendingUp,
   ShieldCheck,
   Banknote,
+  Users,
+  UploadCloud,
+  Eye,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -173,6 +176,47 @@ interface IngestResponse {
   error?: string;
 }
 
+/** One row from the GA4 Analytics Data API report endpoint. */
+interface Ga4ReportRow {
+  dimensions: Record<string, string>;
+  metrics: Record<string, number>;
+}
+
+interface Ga4ReportResponse {
+  success: boolean;
+  status: string;
+  configured: boolean;
+  propertyId: string | null;
+  preset: string;
+  label: string;
+  rows: Ga4ReportRow[];
+  totals: Record<string, number>;
+  rowCount: number;
+  sampled: boolean | null;
+  dataFreshness: string | null;
+  period: { startDate: string; endDate: string };
+  fetchedAt: string | null;
+  reason?: string;
+  note: string;
+  error?: string;
+}
+
+/**
+ * Acquisition reports the specification requires, mapped to the named presets the
+ * API exposes. Traffic source, the organic/referral/direct split, campaigns and
+ * landing pages are the four that matter for recruitment reporting.
+ */
+const GA4_PRESETS = [
+  { value: 'acquisition', label: 'Source / medium' },
+  { value: 'channels', label: 'Channel group (organic, referral, direct)' },
+  { value: 'campaigns', label: 'Campaigns' },
+  { value: 'landingPages', label: 'Landing pages' },
+  { value: 'daily', label: 'Sessions per day' },
+  { value: 'events', label: 'Events received' },
+  { value: 'countries', label: 'Countries' },
+  { value: 'devices', label: 'Devices' },
+] as const;
+
 const GROUP_OPTIONS = [
   { value: 'channel', label: 'Channel (source / medium)' },
   { value: 'source', label: 'Source' },
@@ -184,6 +228,7 @@ const GROUP_OPTIONS = [
 
 const SERVICE_LABELS: Record<string, string> = {
   GA4: 'Google Analytics 4',
+  GA4_DATA_API: 'GA4 Analytics Data API (reporting)',
   GTM: 'Google Tag Manager',
   SEARCH_CONSOLE: 'Search Console',
   BUSINESS_PROFILE: 'Google Business Profile',
@@ -242,6 +287,242 @@ function percent(value: number | null): string {
   return `${(value * 100).toFixed(2)}%`;
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GOOGLE CONTACTS (People API)
+// ─────────────────────────────────────────────────────────────────────────────
+// The contacts integration is deliberately its own panel rather than a row in the
+// services table, because it does something the other services do not: it WRITES to
+// the CRM. The UI therefore shows a dry run before it offers an import, and it
+// states the source-of-truth rule on screen (Google may fill empty fields and add
+// contacts; it may never overwrite a CRM value or touch a Student).
+
+interface ContactsStatus {
+  account: string;
+  scope: string;
+  configured: boolean;
+  authMode: string;
+  note: string;
+  verdict: 'PASS' | 'NOT_CONFIGURED' | 'NOT_VERIFIED' | 'FAILED';
+  liveVerified: boolean;
+  live: { status: string; reachable: boolean; reason: string | null } | null;
+  syncedAt: string | null;
+  incrementalReady: boolean;
+  importedContacts: number;
+  pendingReviews: number;
+  lastBatch: { ranAt: string; status: string; found: number; created: number; linkedOrFilled: number; duplicates: number; errors: number } | null;
+  nextSteps: string[];
+}
+
+interface ContactsPlan {
+  mode: string;
+  wroteNothing: boolean;
+  incremental: boolean;
+  truncated: boolean;
+  counters?: { found: number; create: number; linkExisting: number; fillBlank: number; conflictReview: number; duplicate: number; skipped: number };
+  written?: { created: number; linkedOrFilled: number; reviewQueued: number; duplicates: number; errors: number };
+  samples?: Array<{ action: string; name: string; phone: string; reason: string }>;
+  notice?: string;
+  nextStep?: string;
+}
+
+function GoogleContactsPanel() {
+  const [status, setStatus] = useState<ContactsStatus | null>(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState<'check' | 'preview' | 'apply' | null>(null);
+  const [plan, setPlan] = useState<ContactsPlan | null>(null);
+
+  const loadStatus = useCallback(async (live: boolean) => {
+    setBusy('check');
+    setError('');
+    try {
+      const response = await fetch(`/api/google/contacts/status?live=${live ? 'true' : 'false'}`, { credentials: 'same-origin' });
+      const data = (await response.json()) as ContactsStatus & { error?: string };
+      if (!response.ok) throw new Error(data.error || `Status failed (HTTP ${response.status}).`);
+      setStatus(data);
+      if (live) {
+        toast[data.liveVerified ? 'success' : 'error'](
+          data.liveVerified
+            ? 'Google answered the People API for the contacts account.'
+            : data.live?.reason || 'Google did not confirm access to contacts.',
+        );
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Contacts status unavailable.');
+    } finally {
+      setBusy(null);
+    }
+  }, []);
+
+  const runSync = useCallback(async (mode: 'dry-run' | 'apply') => {
+    setBusy(mode === 'dry-run' ? 'preview' : 'apply');
+    setError('');
+    try {
+      const response = await fetch('/api/google/contacts/sync', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode }),
+      });
+      const data = (await response.json()) as ContactsPlan & { error?: string };
+      if (!response.ok) throw new Error(data.error || `Sync failed (HTTP ${response.status}).`);
+      setPlan({ ...data, mode });
+      toast.success(mode === 'dry-run' ? 'Preview complete — nothing was written.' : 'Import complete.');
+      if (mode === 'apply') await loadStatus(false);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Contacts sync failed.');
+    } finally {
+      setBusy(null);
+    }
+  }, [loadStatus]);
+
+  useEffect(() => {
+    void loadStatus(false);
+  }, [loadStatus]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Users className="size-4" /> Google Contacts → central contact registry
+        </CardTitle>
+        <CardDescription>
+          Imports the ALO Google Contacts account into the one contact registry the CRM already
+          uses. Google may add contacts and fill fields ALO left empty; it never overwrites a CRM
+          value, never touches a Student or Student ID, and never merges records automatically.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {error ? (
+          <div className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        ) : null}
+
+        {status ? (
+          <>
+            <div className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-lg border border-[var(--alo-border)] p-3">
+                <p className="text-xs uppercase text-[var(--alo-text-muted)]">Account</p>
+                <p className="truncate font-medium">{status.account}</p>
+              </div>
+              <div className="rounded-lg border border-[var(--alo-border)] p-3">
+                <p className="text-xs uppercase text-[var(--alo-text-muted)]">Credential</p>
+                <p className="font-medium">{status.configured ? 'OAuth refresh token present' : 'Not configured'}</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">mode: {status.authMode}</p>
+              </div>
+              <div className="rounded-lg border border-[var(--alo-border)] p-3">
+                <p className="text-xs uppercase text-[var(--alo-text-muted)]">Live verification</p>
+                <p className="font-medium">
+                  {status.liveVerified ? 'Verified by a real API call' : status.live ? 'Failed' : 'Not verified'}
+                </p>
+                <p className="text-xs text-[var(--alo-text-muted)]">Configuration alone is never reported as working.</p>
+              </div>
+              <div className="rounded-lg border border-[var(--alo-border)] p-3">
+                <p className="text-xs uppercase text-[var(--alo-text-muted)]">Last sync</p>
+                <p className="font-medium">{status.syncedAt ? new Date(status.syncedAt).toLocaleString() : 'Never run'}</p>
+                <p className="text-xs text-[var(--alo-text-muted)]">
+                  {status.importedContacts} imported · {status.pendingReviews} awaiting review
+                </p>
+              </div>
+            </div>
+
+            <p className="rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs text-[var(--alo-body)]">
+              {status.note}
+            </p>
+
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={() => void loadStatus(true)} disabled={busy !== null}>
+                <ShieldCheck className="mr-2 size-4" />
+                {busy === 'check' ? 'Calling Google…' : 'Verify access (live call)'}
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => void runSync('dry-run')} disabled={busy !== null || !status.configured}>
+                <Eye className="mr-2 size-4" />
+                {busy === 'preview' ? 'Reading contacts…' : 'Preview import (writes nothing)'}
+              </Button>
+              <Button size="sm" onClick={() => void runSync('apply')} disabled={busy !== null || !status.configured}>
+                <UploadCloud className="mr-2 size-4" />
+                {busy === 'apply' ? 'Importing…' : 'Import into registry'}
+              </Button>
+            </div>
+
+            {!status.configured ? (
+              <ul className="list-disc space-y-1 pl-5 text-xs text-[var(--alo-body)]">
+                {status.nextSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ul>
+            ) : null}
+
+            {status.lastBatch ? (
+              <div className="rounded-lg border border-[var(--alo-border)] p-3 text-xs">
+                <p className="font-semibold">Last run · {new Date(status.lastBatch.ranAt).toLocaleString()} ({status.lastBatch.status})</p>
+                <p className="text-[var(--alo-text-muted)]">
+                  found {status.lastBatch.found} · created {status.lastBatch.created} · linked/filled{' '}
+                  {status.lastBatch.linkedOrFilled} · duplicates {status.lastBatch.duplicates} · errors{' '}
+                  {status.lastBatch.errors}
+                </p>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <p className="text-sm text-[var(--alo-text-muted)]">Loading Google Contacts status…</p>
+        )}
+
+        {plan ? (
+          <div className="space-y-2 rounded-lg border border-[var(--alo-border)] bg-[var(--alo-page)] p-3 text-xs">
+            <p className="font-semibold">
+              {plan.mode === 'dry-run' ? 'Preview (nothing written)' : 'Import result'}
+              {plan.truncated ? ' — page ceiling reached, run again to continue' : ''}
+            </p>
+            {plan.counters ? (
+              <p>
+                found {plan.counters.found} · new {plan.counters.create} · link {plan.counters.linkExisting} ·
+                fill blanks {plan.counters.fillBlank} · review {plan.counters.conflictReview} · skipped{' '}
+                {plan.counters.skipped + plan.counters.duplicate}
+              </p>
+            ) : null}
+            {plan.written ? (
+              <p>
+                written: created {plan.written.created} · linked/filled {plan.written.linkedOrFilled} · queued
+                for review {plan.written.reviewQueued} · duplicates {plan.written.duplicates} · errors{' '}
+                {plan.written.errors}
+              </p>
+            ) : null}
+            {plan.notice ? <p className="text-[var(--alo-text-muted)]">{plan.notice}</p> : null}
+            {plan.nextStep ? <p className="text-[var(--alo-text-muted)]">{plan.nextStep}</p> : null}
+            {plan.samples && plan.samples.length > 0 ? (
+              <div className="max-h-56 overflow-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="text-[var(--alo-text-muted)]">
+                      <th className="p-1">Action</th>
+                      <th className="p-1">Name</th>
+                      <th className="p-1">Number</th>
+                      <th className="p-1">Why</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {plan.samples.map((sample, index) => (
+                      <tr key={`${sample.name}-${index}`} className="border-t border-[var(--alo-border)]">
+                        <td className="p-1 font-mono">{sample.action}</td>
+                        <td className="p-1">{sample.name}</td>
+                        <td className="p-1 font-mono">{sample.phone}</td>
+                        <td className="p-1 text-[var(--alo-text-muted)]">{sample.reason}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function GoogleStackAdminPage() {
   const [status, setStatus] = useState<GoogleStatusResponse | null>(null);
   const [statusError, setStatusError] = useState('');
@@ -264,6 +545,11 @@ export default function GoogleStackAdminPage() {
   const [loadingProfile, setLoadingProfile] = useState(false);
 
   const [ingesting, setIngesting] = useState(false);
+
+  const [ga4Report, setGa4Report] = useState<Ga4ReportResponse | null>(null);
+  const [ga4Error, setGa4Error] = useState('');
+  const [ga4Loading, setGa4Loading] = useState(false);
+  const [ga4Preset, setGa4Preset] = useState<string>('acquisition');
 
   const loadStatus = useCallback(async (live: boolean) => {
     setLoadingStatus(true);
@@ -302,6 +588,35 @@ export default function GoogleStackAdminPage() {
       setFunnelError(error instanceof Error ? error.message : 'Conversion funnel unavailable.');
     } finally {
       setLoadingFunnel(false);
+    }
+  }, []);
+
+  /**
+   * GA4 acquisition report.
+   *
+   * Deliberately NOT part of the initial load: every call costs a Google API
+   * round-trip against a shared property quota, and an operator should ask for it.
+   * The response carries its own `status`, so a NOT_CONFIGURED answer is shown as
+   * "not connected" rather than as a table of zeroes.
+   */
+  const loadGa4 = useCallback(async (preset: string) => {
+    setGa4Loading(true);
+    setGa4Error('');
+    try {
+      const response = await fetch(
+        `/api/google/analytics/report?preset=${encodeURIComponent(preset)}&startDate=28daysAgo&endDate=yesterday`,
+        { credentials: 'same-origin' },
+      );
+      const data = (await response.json()) as Ga4ReportResponse;
+      if (!response.ok) throw new Error(data.error || `GA4 report failed (HTTP ${response.status}).`);
+      setGa4Report(data);
+      if (data.status !== 'READY') {
+        toast.warning(data.reason || `GA4 reporting is ${data.status}.`);
+      }
+    } catch (error) {
+      setGa4Error(error instanceof Error ? error.message : 'GA4 reporting unavailable.');
+    } finally {
+      setGa4Loading(false);
     }
   }, []);
 
@@ -684,6 +999,153 @@ export default function GoogleStackAdminPage() {
         </Card>
       ) : null}
 
+      {/* ── GA4 acquisition reporting (Analytics Data API) ─────────── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Acquisition — GA4 (Analytics Data API)</CardTitle>
+          <CardDescription>
+            Live figures read from the configured GA4 property. This panel never substitutes a zero
+            for a failed Google request: if reporting is not connected, or Google refuses, it says so
+            and shows nothing.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 text-sm">
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="ga4-preset" className="text-xs">Report</Label>
+              <select
+                id="ga4-preset"
+                value={ga4Preset}
+                onChange={(event) => setGa4Preset(event.target.value)}
+                className="h-9 rounded-md border border-[var(--alo-border)] bg-white px-2 text-sm"
+              >
+                {GA4_PRESETS.map((preset) => (
+                  <option key={preset.value} value={preset.value}>{preset.label}</option>
+                ))}
+              </select>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={ga4Loading}
+              onClick={() => void loadGa4(ga4Preset)}
+            >
+              <RefreshCw className={`mr-1 size-3 ${ga4Loading ? 'animate-spin' : ''}`} />
+              {ga4Loading ? 'Reading GA4…' : 'Load report'}
+            </Button>
+            <span className="text-xs text-[var(--alo-text-muted)]">
+              Last 28 complete days (GA4 lags up to 48h).
+            </span>
+          </div>
+
+          {ga4Error ? (
+            <p className="rounded-md border border-crm-danger-border bg-crm-danger-bg p-2 text-crm-danger-text">
+              {ga4Error}
+            </p>
+          ) : null}
+
+          {!ga4Report && !ga4Error ? (
+            <p className="text-[var(--alo-text-muted)]">
+              Load a report to read acquisition data from GA4. Nothing is fetched automatically,
+              because each call consumes the property&apos;s reporting quota.
+            </p>
+          ) : null}
+
+          {ga4Report ? (
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                {ga4Report.status === 'READY' ? (
+                  <Badge className="border-crm-success-border bg-crm-success-bg text-crm-success-text">
+                    <CheckCircle2 className="mr-1 size-3" /> READY — {ga4Report.rowCount} rows
+                  </Badge>
+                ) : (
+                  <Badge className="border-crm-danger-border bg-crm-danger-bg text-crm-danger-text">
+                    <AlertTriangle className="mr-1 size-3" /> {ga4Report.status}
+                  </Badge>
+                )}
+                {ga4Report.propertyId ? (
+                  <Badge variant="outline">property {ga4Report.propertyId}</Badge>
+                ) : null}
+                <Badge variant="outline">
+                  {ga4Report.period.startDate} → {ga4Report.period.endDate}
+                </Badge>
+                {ga4Report.sampled ? <Badge variant="outline">sampled / (other) row present</Badge> : null}
+                {ga4Report.fetchedAt ? (
+                  <span className="text-xs text-[var(--alo-text-muted)]">
+                    fetched {new Date(ga4Report.fetchedAt).toLocaleString()}
+                  </span>
+                ) : null}
+              </div>
+
+              {ga4Report.reason ? (
+                <p className="rounded-md border border-crm-warning-border bg-crm-warning-bg p-2 text-crm-warning-text">
+                  {ga4Report.reason}
+                </p>
+              ) : null}
+
+              {ga4Report.status === 'READY' && ga4Report.rows.length === 0 ? (
+                <p className="text-[var(--alo-text-muted)]">
+                  GA4 answered and the property has no rows for this period. That is a real result, not
+                  a configuration error — a new property or a period before tagging started looks exactly
+                  like this.
+                </p>
+              ) : null}
+
+              {ga4Report.rows.length > 0 ? (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-[var(--alo-border)] text-left">
+                          {Object.keys(ga4Report.rows[0].dimensions).map((dimension) => (
+                            <th key={dimension} className="px-2 py-1 font-semibold">{dimension}</th>
+                          ))}
+                          {Object.keys(ga4Report.rows[0].metrics).map((metric) => (
+                            <th key={metric} className="px-2 py-1 text-right font-semibold">{metric}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ga4Report.rows.slice(0, 50).map((row, index) => (
+                          <tr key={`${index}-${Object.values(row.dimensions).join('-')}`} className="border-b border-[var(--alo-border)]/50">
+                            {Object.keys(ga4Report.rows[0].dimensions).map((dimension) => (
+                              <td key={dimension} className="px-2 py-1">{row.dimensions[dimension] || '(not set)'}</td>
+                            ))}
+                            {Object.keys(ga4Report.rows[0].metrics).map((metric) => (
+                              <td key={metric} className="px-2 py-1 text-right tabular-nums">
+                                {Number.isFinite(row.metrics[metric])
+                                  ? row.metrics[metric].toLocaleString(undefined, { maximumFractionDigits: 2 })
+                                  : '—'}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {ga4Report.rows.length > 50 ? (
+                    <p className="text-xs text-[var(--alo-text-muted)]">
+                      Showing the top 50 of {ga4Report.rows.length} rows (sorted by the report&apos;s
+                      primary metric).
+                    </p>
+                  ) : null}
+                  <div className="flex flex-wrap gap-3 text-xs text-[var(--alo-text-muted)]">
+                    {Object.entries(ga4Report.totals).map(([metric, value]) => (
+                      <span key={metric}>
+                        <strong className="text-[var(--alo-text)]">{metric}:</strong>{' '}
+                        {value.toLocaleString(undefined, { maximumFractionDigits: 2 })} (Google total)
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              <p className="text-xs text-[var(--alo-text-muted)]">{ga4Report.note}{ga4Report.dataFreshness ? ` ${ga4Report.dataFreshness}` : ''}</p>
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+
       {/* ── Conversion funnel ──────────────────────────────────────── */}
       <Card>
         <CardHeader>
@@ -805,6 +1267,8 @@ export default function GoogleStackAdminPage() {
           ) : null}
         </CardContent>
       </Card>
+
+      <GoogleContactsPanel />
 
       {/* ── Links to the existing SEO surfaces (never forked) ───────── */}
       <Card>
