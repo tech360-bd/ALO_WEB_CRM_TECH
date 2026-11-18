@@ -28,7 +28,7 @@ export const GET = withAuth(async (request: Request, auth) => {
     }
     // Resolve tenant-owned subscription ids first so a partner can never page
     // through another tenant's delivery log by omitting the filter.
-    let allowedSubscriptionIds: string[] | undefined;
+    let allowedSubscriptionIds: string[] = [];
     if (isPartner) {
         const owned = await db.webhookSubscription.findMany({
             where: { partnerId: auth.partnerId as string },
@@ -47,7 +47,7 @@ export const GET = withAuth(async (request: Request, auth) => {
         ...(status ? { status } : {}),
         ...(eventType ? { eventType } : {}),
         ...(subscriptionId ? { subscriptionId } : {}),
-        ...(allowedSubscriptionIds ? { subscriptionId: { in: allowedSubscriptionIds } } : {}),
+        ...(allowedSubscriptionIds.length > 0 ? { subscriptionId: { in: allowedSubscriptionIds } } : {}),
     };
     const [deliveries, total] = await Promise.all([
         db.webhookDelivery.findMany({

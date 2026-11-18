@@ -1,15 +1,21 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { authenticateRequest, type AuthContext } from '@/lib/auth-middleware';
 import { logSecurityAudit, validateRequestAccess } from '@/lib/access-control/central-security-engine';
 
 export async function POST(req: Request) {
   try {
-    const { adminId, employeeId, targetEmployeeId } = await req.json();
+    const authResult = await authenticateRequest(req);
+    if (authResult instanceof NextResponse) return authResult;
+    const auth = authResult as AuthContext;
 
-    if (!adminId || !employeeId || !targetEmployeeId) {
+    const { employeeId, targetEmployeeId } = await req.json();
+
+    if (!employeeId || !targetEmployeeId) {
       return NextResponse.json({ error: 'Missing reassignment parameters' }, { status: 400 });
     }
 
+    const adminId = auth.userId;
     const access = await validateRequestAccess({ userId: adminId }, 'employees', 'reassign');
     if (!access.allowed) {
       return NextResponse.json({ error: access.reason || 'Unauthorized' }, { status: 403 });
@@ -46,7 +52,7 @@ export async function POST(req: Request) {
 
     await logSecurityAudit({
       actorId: adminId,
-      actorRole: 'Admin',
+      actorRole: auth.userType,
       action: 'WORK_REASSIGNMENT_EXECUTED',
       targetType: 'Employee',
       targetId: employeeId,

@@ -14,8 +14,8 @@
  */
 const ALO_BRAND_CONTACT_DEFAULTS = {
   /** Display range, e.g. "+8801805020101-10"; the dial link uses the first number. */
-  contactPhone: '+8801805020101-10',
-  whatsappPhone: '+8801805020101',
+  contactPhone: '+8801805020100-10',
+  whatsappPhone: '+8801805020100',
 } as const;
 
 function readPublicPhone(value: string | undefined, requireInternational = false): { display: string; digits: string } | null {

@@ -27,11 +27,11 @@ describe('public header/footer brand contract (no deployment config)', () => {
   it('publishes the ALO contact numbers by default', () => {
     expect(ALO_CONTACT.hasWhatsApp).toBe(true);
     expect(ALO_CONTACT.hasContactPhone).toBe(true);
-    expect(ALO_CONTACT.whatsappDisplay).toBe('+8801805020101');
-    expect(ALO_CONTACT.whatsappHref).toBe('https://wa.me/8801805020101');
-    expect(ALO_CONTACT.mobileDisplay).toBe('+8801805020101-10');
+    expect(ALO_CONTACT.whatsappDisplay).toBe('+8801805020100');
+    expect(ALO_CONTACT.whatsappHref).toBe('https://wa.me/8801805020100');
+    expect(ALO_CONTACT.mobileDisplay).toBe('+8801805020100-10');
     // The "-10" range is display-only; the dial link must target the real first number.
-    expect(ALO_CONTACT.mobileHref).toBe('tel:+8801805020101');
+    expect(ALO_CONTACT.mobileHref).toBe('tel:+8801805020100');
   });
 
   it('keeps the remaining exact contact details', () => {

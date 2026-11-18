@@ -4,9 +4,9 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BRAND, fadeUp, fadeIn, scaleUp, slideFromLeft, slideFromRight, staggerContainer, staggerItem, staggerItemScale, sectionTitle, sectionSubtitle, viewportOnce, gradients } from './animations';
 import {
-  Globe, GraduationCap, Users, Award, BookOpen, Target, Eye, Heart,
+  Bot, Globe, GraduationCap, Users, Award, BookOpen, Target, Eye, Heart,
   Search, ArrowRight, MapPin, Calendar, DollarSign, MessageCircle, Phone,
-  CheckCircle, ChevronLeft, ChevronRight, ChevronDown, Shield, Zap, Send, Sparkles, UserCheck, Download,
+  CheckCircle, ChevronLeft, ChevronRight, ChevronDown, Shield, Zap, Send, Sparkles, UserCheck, Download, Facebook,
 } from 'lucide-react';
 import { buildStudyGuideText, destinationGuidePath, studyGuideFileName } from '@/lib/alo-study-steps';
 import { destinationCardImage } from './ImageMapping';
@@ -20,6 +20,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { EnglishExamBanner } from '@/components/website/EnglishExamCta';
+import { ALO_CONTACT } from '@/lib/alo-site-info';
 
 const C = BRAND;
 
@@ -193,6 +194,55 @@ function HeroSection() {
             <Button asChild size="lg" variant="outline" className="h-12 px-6 font-heading text-[15px] font-semibold">
               <Link href="/book-consultation">Book a Free Consultation</Link>
             </Button>
+          </div>
+
+          {/* Hero quick contact — 3 branded action buttons */}
+          <div className="flex flex-col gap-2 sm:flex-row pt-2">
+            {/* AI Agent */}
+            <Button
+              size="sm"
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('alo:open-ai-chat'));
+              }}
+              className="w-full sm:w-auto bg-alo-brand text-white px-4 py-2.5 font-semibold text-[13px] shadow-sm transition-all hover:bg-alo-brand-hover gap-2 justify-start sm:justify-center"
+            >
+              <Bot className="h-4 w-4" />
+              <span className="hidden sm:inline">Chat with AI Agent</span>
+            </Button>
+
+            {/* WhatsApp AI Agent */}
+            {ALO_CONTACT.hasWhatsApp ? (
+              <a
+                href={`${ALO_CONTACT.whatsappHref}?text=Hi%20ALO%20Education%2C%20I%20want%20to%20apply%20for%20study%20abroad`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Message ALO Education on WhatsApp AI Agent"
+              >
+                <Button
+                  size="sm"
+                  className="w-full sm:w-auto bg-alo-cta text-white px-4 py-2.5 font-semibold text-[13px] shadow-sm transition-all hover:bg-alo-cta-hover gap-2 justify-start sm:justify-center"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span className="hidden sm:inline">WhatsApp AI Agent</span>
+                </Button>
+              </a>
+            ) : null}
+
+            {/* Facebook */}
+            <a
+              href="https://www.facebook.com/aloeducationbangladesh/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Message ALO Education on Facebook"
+            >
+              <Button
+                size="sm"
+                className="w-full sm:w-auto bg-[#1877F2] text-white px-4 py-2.5 font-semibold text-[13px] shadow-sm transition-all hover:bg-alo-brand-hover gap-2 justify-start sm:justify-center"
+              >
+                <Facebook className="h-4 w-4" />
+                <span className="hidden sm:inline">Message us on Facebook</span>
+              </Button>
+            </a>
           </div>
 
           {/* Phase 1 §4 — the homepage course search is merged into the hero
